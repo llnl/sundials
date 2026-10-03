@@ -29,6 +29,14 @@ module farkode_forcingstep_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FForcingStepCreate
  public :: FForcingStepReInit
  public :: FForcingStepGetNumEvolves
@@ -39,10 +47,11 @@ function swigc_FForcingStepCreate(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FForcingStepCreate") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 type(C_PTR), value :: farg5
 type(C_PTR) :: fresult
 end function
@@ -51,11 +60,12 @@ function swigc_FForcingStepReInit(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FForcingStepReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -81,19 +91,19 @@ type(C_PTR) :: swig_result
 type(C_PTR) :: stepper1
 type(C_PTR) :: stepper2
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 type(C_PTR) :: farg5 
 
 farg1 = stepper1
 farg2 = stepper2
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 farg5 = sunctx
 fresult = swigc_FForcingStepCreate(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -107,19 +117,19 @@ type(C_PTR) :: arkode_mem
 type(C_PTR) :: stepper1
 type(C_PTR) :: stepper2
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = arkode_mem
 farg2 = stepper1
 farg3 = stepper2
 farg4 = t0
-farg5 = c_loc(y0)
+farg5 = y0%swigdata
 fresult = swigc_FForcingStepReInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function

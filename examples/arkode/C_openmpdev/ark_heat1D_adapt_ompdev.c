@@ -192,9 +192,6 @@ int main(void)
   if (check_flag(&flag, "ARKodeSetMaxNumSteps", 1)) { return 1; }
   flag = ARKodeSStolerances(arkode_mem, rtol, atol); /* Specify tolerances */
   if (check_flag(&flag, "ARKodeSStolerances", 1)) { return 1; }
-  flag = ARKodeSetAdaptivityMethod(arkode_mem, 2, 1, 0,
-                                   NULL); /* Set adaptivity method */
-  if (check_flag(&flag, "ARKodeSetAdaptivityMethod", 1)) { return 1; }
   flag = ARKodeSetPredictorMethod(arkode_mem, 0); /* Set predictor method */
   if (check_flag(&flag, "ARKodeSetPredictorMethod", 1)) { return 1; }
 

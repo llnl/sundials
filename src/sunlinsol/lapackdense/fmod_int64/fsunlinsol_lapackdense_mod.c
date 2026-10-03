@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,18 +240,184 @@
 
 #include "sunlinsol/sunlinsol_lapackdense.h"
 
-SWIGEXPORT SUNLinearSolver _wrap_FSUNLinSol_LapackDense(N_Vector farg1, SUNMatrix farg2, void *farg3) {
-  SUNLinearSolver fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_LapackDense__N_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::N", return );
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->N = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_SUNLinearSolverContent_LapackDense__N_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::N", return 0);
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  result =  ((arg1)->N);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_LapackDense__pivots_set(SwigClassWrapper const *farg1, int64_t *farg2) {
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype *arg2 = (sunindextype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::pivots", return );
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  arg2 = (sunindextype *)(farg2);
+  if (arg1) (arg1)->pivots = arg2;
+}
+
+
+SWIGEXPORT int64_t * _wrap_SUNLinearSolverContent_LapackDense__pivots_get(SwigClassWrapper const *farg1) {
+  int64_t * fresult ;
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::pivots", return 0);
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  result = (sunindextype *) ((arg1)->pivots);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_LapackDense__last_flag_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::last_flag", return );
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->last_flag = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_SUNLinearSolverContent_LapackDense__last_flag_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::last_flag", return 0);
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  result =  ((arg1)->last_flag);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNLinearSolverContent_LapackDense_() {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_LapackDense_ *result = 0 ;
+  
+  result = (struct SUNLinearSolverContent_LapackDense_ *)calloc(1, sizeof(struct SUNLinearSolverContent_LapackDense_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNLinearSolverContent_LapackDense_(SwigClassWrapper *farg1) {
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNLinearSolverContent_LapackDense_ *", "SUNLinearSolverContent_LapackDense_", "SUNLinearSolverContent_LapackDense_::~SUNLinearSolverContent_LapackDense_()", return );
+  arg1 = (struct SUNLinearSolverContent_LapackDense_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_LapackDense__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_LapackDense_ *arg1 = (struct SUNLinearSolverContent_LapackDense_ *) 0 ;
+  struct SUNLinearSolverContent_LapackDense_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNLinSol_LapackDense(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNContext arg3 = (SUNContext) 0 ;
   SUNLinearSolver result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "SUNLinSol_LapackDense(N_Vector,SUNMatrix,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNLinSol_LapackDense(N_Vector,SUNMatrix,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg2 = (SUNMatrix)(farg2->cptr);
   arg3 = (SUNContext)(farg3);
   result = (SUNLinearSolver)SUNLinSol_LapackDense(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 

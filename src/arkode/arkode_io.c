@@ -3537,3 +3537,50 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
 
   return (ARK_SUCCESS);
 }
+
+/*===============================================================
+  ARKODE + XBraid interface utility functions
+  ===============================================================*/
+
+/*---------------------------------------------------------------
+  arkSetForcePass:
+
+  Ignore the value of kflag after the temporal error test and
+  force the step to pass.
+  ---------------------------------------------------------------*/
+int arkSetForcePass(void* arkode_mem, sunbooleantype force_pass)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  ark_mem->force_pass = force_pass;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  arkGetLastKFlag:
+
+  The last kflag value returned by the temporal error test.
+  ---------------------------------------------------------------*/
+int arkGetLastKFlag(void* arkode_mem, int* last_kflag)
+{
+  ARKodeMem ark_mem;
+  if (arkode_mem == NULL)
+  {
+    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
+                    MSG_ARK_NO_MEM);
+    return (ARK_MEM_NULL);
+  }
+  ark_mem = (ARKodeMem)arkode_mem;
+
+  *last_kflag = ark_mem->last_kflag;
+
+  return (ARK_SUCCESS);
+}

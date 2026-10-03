@@ -46,7 +46,7 @@ extern "C" {
  * SPBCGS Implementation of SUNLinearSolver
  * ---------------------------------------- */
 
-struct _SUNLinearSolverContent_SPBCGS
+struct SUNLinearSolverContent_SPBCGS_
 {
   int maxl;
   int pretype;
@@ -72,7 +72,7 @@ struct _SUNLinearSolverContent_SPBCGS
   N_Vector vtemp;
 };
 
-typedef struct _SUNLinearSolverContent_SPBCGS* SUNLinearSolverContent_SPBCGS;
+typedef struct SUNLinearSolverContent_SPBCGS_* SUNLinearSolverContent_SPBCGS;
 
 /* ---------------------------------------
  *Exported Functions for SUNLINSOL_SPBCGS

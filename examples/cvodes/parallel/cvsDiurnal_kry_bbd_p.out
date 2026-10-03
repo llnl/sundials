@@ -65,8 +65,7 @@ nsetups =    83     netf    =    30
 npe     =     8     nps     =  1066
 ncfn    =     0     ncfl    =     0
 
-In CVBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 176
+In CVBBDPRE: no. flocal evals. = 176
 
 
 -------------------------------------------------------------------
@@ -132,5 +131,4 @@ nsetups =    94     netf    =    29
 npe     =     9     nps     =  1257
 ncfn    =     0     ncfl    =     0
 
-In CVBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 198
+In CVBBDPRE: no. flocal evals. = 198

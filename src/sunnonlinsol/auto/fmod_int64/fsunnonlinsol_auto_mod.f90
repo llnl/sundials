@@ -123,7 +123,7 @@ bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__fp_solver_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNNonlinearSolverContent_Auto__fp_solver_get(farg1) &
@@ -132,7 +132,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNNonlinearSolverContent_Auto__newton_solver_set(farg1, farg2) &
@@ -140,7 +140,7 @@ bind(C, name="_wrap_SUNNonlinearSolverContent_Auto__newton_solver_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNNonlinearSolverContent_Auto__newton_solver_get(farg1) &
@@ -149,7 +149,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(farg1, farg2) &
@@ -434,18 +434,20 @@ function swigc_FSUNNonlinSol_Auto(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNNonlinSol_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNNonlinSolSetSwitchingParameters_Auto(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNNonlinSolSetSwitchingParameters_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_LONG), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
@@ -457,7 +459,8 @@ function swigc_FSUNNonlinSolGetFixedPointSolver_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetFixedPointSolver_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -466,7 +469,8 @@ function swigc_FSUNNonlinSolGetNewtonSolver_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNewtonSolver_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -475,7 +479,8 @@ function swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetActiveSolverType_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -484,7 +489,8 @@ function swigc_FSUNNonlinSolGetSwitchCount_Auto(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetSwitchCount_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -493,7 +499,8 @@ function swigc_FSUNNonlinSolGetTotalNumItersByType_Auto(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolGetTotalNumItersByType_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -503,7 +510,8 @@ function swigc_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(farg1, farg2, farg3)
 bind(C, name="_wrap_FSUNNonlinSolGetTotalNumConvFailsByType_Auto") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -542,51 +550,51 @@ end function
 subroutine swigf_SUNNonlinearSolverContent_Auto__fp_solver_set(self, fp_solver)
 use, intrinsic :: ISO_C_BINDING
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(SUNNonlinearSolver), target, intent(inout) :: fp_solver
+class(SUNNonlinearSolver_), intent(in) :: fp_solver
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(fp_solver)
+farg2 = fp_solver%swigdata
 call swigc_SUNNonlinearSolverContent_Auto__fp_solver_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNNonlinearSolverContent_Auto__fp_solver_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
+type(SUNNonlinearSolver_) :: swig_result
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNNonlinearSolverContent_Auto__fp_solver_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNNonlinearSolverContent_Auto__newton_solver_set(self, newton_solver)
 use, intrinsic :: ISO_C_BINDING
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(SUNNonlinearSolver), target, intent(inout) :: newton_solver
+class(SUNNonlinearSolver_), intent(in) :: newton_solver
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(newton_solver)
+farg2 = newton_solver%swigdata
 call swigc_SUNNonlinearSolverContent_Auto__newton_solver_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNNonlinearSolverContent_Auto__newton_solver_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
+type(SUNNonlinearSolver_) :: swig_result
 class(SUNNonlinearSolverContent_Auto_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNNonlinearSolverContent_Auto__newton_solver_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNNonlinearSolverContent_Auto__getconvrate_fn_set(self, getconvrate_fn)
@@ -1004,23 +1012,23 @@ end subroutine
 function FSUNNonlinSol_Auto(y, m, initial_solver_type, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
+type(SUNNonlinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
 integer(C_INT), intent(in) :: m
 integer(SUNNonlinSolAutoType), intent(in) :: initial_solver_type
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 integer(C_INT) :: farg3 
 type(C_PTR) :: farg4 
 
-farg1 = c_loc(y)
+farg1 = y%swigdata
 farg2 = m
 farg3 = initial_solver_type
 farg4 = sunctx
 fresult = swigc_FSUNNonlinSol_Auto(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNNonlinSolSetSwitchingParameters_Auto(nls, newt_to_fp_threshold, newt_to_fp_delay, fp_to_newt_threshold, &
@@ -1028,19 +1036,19 @@ function FSUNNonlinSolSetSwitchingParameters_Auto(nls, newt_to_fp_threshold, new
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 real(C_DOUBLE), intent(in) :: newt_to_fp_threshold
 integer(C_LONG), intent(in) :: newt_to_fp_delay
 real(C_DOUBLE), intent(in) :: fp_to_newt_threshold
 integer(C_LONG), intent(in) :: fp_to_newt_delay
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 integer(C_LONG) :: farg3 
 real(C_DOUBLE) :: farg4 
 integer(C_LONG) :: farg5 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = newt_to_fp_threshold
 farg3 = newt_to_fp_delay
 farg4 = fp_to_newt_threshold
@@ -1053,13 +1061,13 @@ function FSUNNonlinSolGetFixedPointSolver_Auto(nls, fp_nls) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_PTR), target, intent(inout) :: fp_nls
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(fp_nls)
 fresult = swigc_FSUNNonlinSolGetFixedPointSolver_Auto(farg1, farg2)
 swig_result = fresult
@@ -1069,13 +1077,13 @@ function FSUNNonlinSolGetNewtonSolver_Auto(nls, newton_nls) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_PTR), target, intent(inout) :: newton_nls
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(newton_nls)
 fresult = swigc_FSUNNonlinSolGetNewtonSolver_Auto(farg1, farg2)
 swig_result = fresult
@@ -1085,13 +1093,13 @@ function FSUNNonlinSolGetActiveSolverType_Auto(nls, active_solver_type) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(SUNNonlinSolAutoType), target, intent(inout) :: active_solver_type
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(active_solver_type)
 fresult = swigc_FSUNNonlinSolGetActiveSolverType_Auto(farg1, farg2)
 swig_result = fresult
@@ -1101,13 +1109,13 @@ function FSUNNonlinSolGetSwitchCount_Auto(nls, switch_count) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_LONG), dimension(*), target, intent(inout) :: switch_count
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(switch_count(1))
 fresult = swigc_FSUNNonlinSolGetSwitchCount_Auto(farg1, farg2)
 swig_result = fresult
@@ -1117,15 +1125,15 @@ function FSUNNonlinSolGetTotalNumItersByType_Auto(nls, fp_iters, newt_iters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_LONG), dimension(*), target, intent(inout) :: fp_iters
 integer(C_LONG), dimension(*), target, intent(inout) :: newt_iters
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(fp_iters(1))
 farg3 = c_loc(newt_iters(1))
 fresult = swigc_FSUNNonlinSolGetTotalNumItersByType_Auto(farg1, farg2, farg3)
@@ -1136,15 +1144,15 @@ function FSUNNonlinSolGetTotalNumConvFailsByType_Auto(nls, fp_nconvfails, newt_n
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_LONG), dimension(*), target, intent(inout) :: fp_nconvfails
 integer(C_LONG), dimension(*), target, intent(inout) :: newt_nconvfails
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(fp_nconvfails(1))
 farg3 = c_loc(newt_nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetTotalNumConvFailsByType_Auto(farg1, farg2, farg3)

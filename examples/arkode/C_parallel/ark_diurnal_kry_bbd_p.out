@@ -65,8 +65,7 @@ nsetups =    75     netf    =    26
 npe     =     4     nps     =  8515
 ncfn    =     0     ncfl    =   391
 
-In ARKBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 88
+In ARKBBDPRE: no. flocal evals. = 88
 
 
 -------------------------------------------------------------------
@@ -132,5 +131,4 @@ nsetups =    77     netf    =    21
 npe     =     7     nps     =  9039
 ncfn    =     3     ncfl    =   793
 
-In ARKBBDPRE: real/integer local work space sizes = 1300, 192
-             no. flocal evals. = 154
+In ARKBBDPRE: no. flocal evals. = 154

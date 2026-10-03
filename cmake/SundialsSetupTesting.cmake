@@ -169,13 +169,9 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
     include(FetchContent)
     FetchContent_Declare(
       googletest
-      # Use commit with fix for implicit conversion warning with Clang 21+
-      # TODO(DJG): Update to v1.18.0 when available URL
-      # https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
-      # URL_HASH
-      # SHA256=a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c)
-      URL https://github.com/google/googletest/archive/fa8438ae6b70c57010177de47a9f13d7041a6328.zip
-    )
+      URL https://github.com/google/googletest/releases/download/v1.18.0/googletest-1.18.0.tar.gz
+      URL_HASH
+        SHA256=6e3191c1455468b3fc35a417fb565c1c5071aee1b7e7f85e30cf48a98d37d8b5)
     if(WIN32)
       # For Windows: Prevent overriding the parent project's compiler/linker
       # settings
@@ -183,7 +179,33 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
           ON
           CACHE BOOL "" FORCE)
     endif()
+    # Build googletest without the SUNDIALS warning flags or warnings as errors
+    set(_sundials_c_flags "${CMAKE_C_FLAGS}")
+    set(_sundials_cxx_flags "${CMAKE_CXX_FLAGS}")
+    set(_sundials_warning_as_error "${CMAKE_COMPILE_WARNING_AS_ERROR}")
+    set(CMAKE_C_FLAGS "${SUNDIALS_C_FLAGS_WITHOUT_WARNINGS}")
+    set(CMAKE_CXX_FLAGS "${SUNDIALS_CXX_FLAGS_WITHOUT_WARNINGS}")
+    set(CMAKE_COMPILE_WARNING_AS_ERROR OFF)
+
     FetchContent_MakeAvailable(googletest)
+
+    set(CMAKE_C_FLAGS "${_sundials_c_flags}")
+    set(CMAKE_CXX_FLAGS "${_sundials_cxx_flags}")
+    set(CMAKE_COMPILE_WARNING_AS_ERROR "${_sundials_warning_as_error}")
+
+    # Treat googletest headers as system headers so the SUNDIALS warning flags
+    # do not apply to them when compiling SUNDIALS tests
+    foreach(_target gtest gtest_main gmock gmock_main)
+      if(TARGET ${_target})
+        get_target_property(_dirs ${_target} INTERFACE_INCLUDE_DIRECTORIES)
+        if(_dirs)
+          set_target_properties(
+            ${_target} PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+                                  "${_dirs}")
+        endif()
+      endif()
+    endforeach()
+
     include(GoogleTest)
   endif()
 endif()

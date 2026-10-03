@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,8 +240,239 @@
 
 #include "nvector/nvector_mpimanyvector.h"
 
-SWIGEXPORT N_Vector _wrap_FN_VMake_MPIManyVector(int const *farg1, int32_t const *farg2, void *farg3, void *farg4) {
-  N_Vector fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__comm_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  MPI_Comm arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::comm", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+#if SUNDIALS_MPI_ENABLED
+  int flag = 0;
+  MPI_Initialized(&flag);
+  if(flag) {
+    arg2 = MPI_Comm_f2c((MPI_Fint)(*farg2));
+  } else {
+    arg2 = SUN_COMM_NULL;
+  }
+#else
+  arg2 = *farg2;
+#endif
+  if (arg1) (arg1)->comm = arg2;
+}
+
+
+SWIGEXPORT int _wrap_N_VectorContent_MPIManyVector__comm_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  MPI_Comm result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::comm", return 0);
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  result =  ((arg1)->comm);
+#if SUNDIALS_MPI_ENABLED
+  int flag = 0;
+  MPI_Initialized(&flag);
+  if(flag) {
+    fresult = (int)(MPI_Comm_c2f(result));
+  } else {
+    fresult = 0;
+  }
+#else
+  fresult = result;
+#endif
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__num_subvectors_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::num_subvectors", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->num_subvectors = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_N_VectorContent_MPIManyVector__num_subvectors_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::num_subvectors", return 0);
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  result =  ((arg1)->num_subvectors);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__global_length_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::global_length", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->global_length = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_N_VectorContent_MPIManyVector__global_length_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::global_length", return 0);
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  result =  ((arg1)->global_length);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__subvec_array_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::subvec_array", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->subvec_array = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_N_VectorContent_MPIManyVector__subvec_array_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::subvec_array", return 0);
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->subvec_array);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__own_data_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::own_data", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->own_data = arg2;
+}
+
+
+SWIGEXPORT int _wrap_N_VectorContent_MPIManyVector__own_data_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::own_data", return 0);
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  result = (int) ((arg1)->own_data);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_N_VectorContent_MPIManyVector_() {
+  SwigClassWrapper fresult ;
+  struct N_VectorContent_MPIManyVector_ *result = 0 ;
+  
+  result = (struct N_VectorContent_MPIManyVector_ *)calloc(1, sizeof(struct N_VectorContent_MPIManyVector_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_N_VectorContent_MPIManyVector_(SwigClassWrapper *farg1) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct N_VectorContent_MPIManyVector_ *", "N_VectorContent_MPIManyVector_", "N_VectorContent_MPIManyVector_::~N_VectorContent_MPIManyVector_()", return );
+  arg1 = (struct N_VectorContent_MPIManyVector_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_MPIManyVector__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct N_VectorContent_MPIManyVector_ *arg1 = (struct N_VectorContent_MPIManyVector_ *) 0 ;
+  struct N_VectorContent_MPIManyVector_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FN_VMake_MPIManyVector(int const *farg1, int32_t const *farg2, void *farg3, void *farg4) {
+  SwigClassWrapper fresult ;
   MPI_Comm arg1 ;
   sunindextype arg2 ;
   N_Vector *arg3 = (N_Vector *) 0 ;
@@ -234,13 +494,14 @@ SWIGEXPORT N_Vector _wrap_FN_VMake_MPIManyVector(int const *farg1, int32_t const
   arg3 = (N_Vector *)(farg3);
   arg4 = (SUNContext)(farg4);
   result = (N_Vector)N_VMake_MPIManyVector(arg1,arg2,arg3,arg4);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VNew_MPIManyVector(int32_t const *farg1, void *farg2, void *farg3) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VNew_MPIManyVector(int32_t const *farg1, void *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   N_Vector *arg2 = (N_Vector *) 0 ;
   SUNContext arg3 = (SUNContext) 0 ;
@@ -250,26 +511,29 @@ SWIGEXPORT N_Vector _wrap_FN_VNew_MPIManyVector(int32_t const *farg1, void *farg
   arg2 = (N_Vector *)(farg2);
   arg3 = (SUNContext)(farg3);
   result = (N_Vector)N_VNew_MPIManyVector(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VGetSubvector_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VGetSubvector_MPIManyVector(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   N_Vector result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetSubvector_MPIManyVector(N_Vector,sunindextype)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (sunindextype)(*farg2);
   result = (N_Vector)N_VGetSubvector_MPIManyVector(arg1,arg2);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VSetSubvectorArrayPointer_MPIManyVector(double *farg1, N_Vector farg2, int32_t const *farg3) {
+SWIGEXPORT int _wrap_FN_VSetSubvectorArrayPointer_MPIManyVector(double *farg1, SwigClassWrapper const *farg2, int32_t const *farg3) {
   int fresult ;
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -277,7 +541,8 @@ SWIGEXPORT int _wrap_FN_VSetSubvectorArrayPointer_MPIManyVector(double *farg1, N
   SUNErrCode result;
   
   arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VSetSubvectorArrayPointer_MPIManyVector(sunrealtype *,N_Vector,sunindextype)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (sunindextype)(*farg3);
   result = (SUNErrCode)N_VSetSubvectorArrayPointer_MPIManyVector(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
@@ -285,25 +550,27 @@ SWIGEXPORT int _wrap_FN_VSetSubvectorArrayPointer_MPIManyVector(double *farg1, N
 }
 
 
-SWIGEXPORT int32_t _wrap_FN_VGetNumSubvectors_MPIManyVector(N_Vector farg1) {
+SWIGEXPORT int32_t _wrap_FN_VGetNumSubvectors_MPIManyVector(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetNumSubvectors_MPIManyVector(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = N_VGetNumSubvectors_MPIManyVector(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FN_VGetSubvectorLocalLength_MPIManyVector(N_Vector farg1, int32_t const *farg2) {
+SWIGEXPORT int32_t _wrap_FN_VGetSubvectorLocalLength_MPIManyVector(SwigClassWrapper const *farg1, int32_t const *farg2) {
   int32_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype arg2 ;
   sunindextype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetSubvectorLocalLength_MPIManyVector(N_Vector,sunindextype)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (sunindextype)(*farg2);
   result = N_VGetSubvectorLocalLength_MPIManyVector(arg1,arg2);
   fresult = (sunindextype)(result);
@@ -311,13 +578,14 @@ SWIGEXPORT int32_t _wrap_FN_VGetSubvectorLocalLength_MPIManyVector(N_Vector farg
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableFusedOps_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableFusedOps_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -325,13 +593,14 @@ SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIManyVector(N_Vector farg1, int const 
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableLinearCombination_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableLinearCombination_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableLinearCombination_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableLinearCombination_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -339,13 +608,14 @@ SWIGEXPORT int _wrap_FN_VEnableLinearCombination_MPIManyVector(N_Vector farg1, i
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableScaleAddMulti_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableScaleAddMulti_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -353,13 +623,14 @@ SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_MPIManyVector(N_Vector farg1, int c
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableDotProdMulti_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableDotProdMulti_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -367,13 +638,14 @@ SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_MPIManyVector(N_Vector farg1, int co
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableLinearSumVectorArray_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableLinearSumVectorArray_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -381,13 +653,14 @@ SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_MPIManyVector(N_Vector farg1
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableScaleVectorArray_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableScaleVectorArray_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -395,13 +668,14 @@ SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_MPIManyVector(N_Vector farg1, in
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableConstVectorArray_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableConstVectorArray_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -409,13 +683,14 @@ SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_MPIManyVector(N_Vector farg1, in
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableWrmsNormVectorArray_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableWrmsNormVectorArray_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -423,13 +698,14 @@ SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_MPIManyVector(N_Vector farg1,
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableWrmsNormMaskVectorArray_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableWrmsNormMaskVectorArray_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -437,13 +713,14 @@ SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(N_Vector fa
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableDotProdMultiLocal_MPIManyVector(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableDotProdMultiLocal_MPIManyVector(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableDotProdMultiLocal_MPIManyVector(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableDotProdMultiLocal_MPIManyVector(arg1,arg2);
   fresult = (SUNErrCode)(result);

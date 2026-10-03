@@ -31,9 +31,6 @@ module fsunlinsol_klu_mod
  integer(C_INT), parameter, public :: SUNKLU_ORDERING_DEFAULT = 1_C_INT
  integer(C_INT), parameter, public :: SUNKLU_REINIT_FULL = 1_C_INT
  integer(C_INT), parameter, public :: SUNKLU_REINIT_PARTIAL = 2_C_INT
- public :: FSUNLinSol_KLU
- public :: FSUNLinSol_KLUReInit
- public :: FSUNLinSol_KLUSetOrdering
 
  integer, parameter :: swig_cmem_own_bit = 0
  integer, parameter :: swig_cmem_rvalue_bit = 1
@@ -45,34 +42,187 @@ module fsunlinsol_klu_mod
  type, public :: SWIGTYPE_p_klu_l_symbolic
   type(SwigClassWrapper), public :: swigdata
  end type
- public :: FSUNLinSol_KLUGetSymbolic
  type, public :: SWIGTYPE_p_klu_l_numeric
   type(SwigClassWrapper), public :: swigdata
  end type
- public :: FSUNLinSol_KLUGetNumeric
  type, public :: SWIGTYPE_p_klu_l_common
   type(SwigClassWrapper), public :: swigdata
  end type
+ ! struct struct SUNLinearSolverContent_KLU_
+ type, public :: SUNLinearSolverContent_KLU_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_last_flag => swigf_SUNLinearSolverContent_KLU__last_flag_set
+  procedure :: get_last_flag => swigf_SUNLinearSolverContent_KLU__last_flag_get
+  procedure :: set_first_factorize => swigf_SUNLinearSolverContent_KLU__first_factorize_set
+  procedure :: get_first_factorize => swigf_SUNLinearSolverContent_KLU__first_factorize_get
+  procedure :: set_symbolic => swigf_SUNLinearSolverContent_KLU__symbolic_set
+  procedure :: get_symbolic => swigf_SUNLinearSolverContent_KLU__symbolic_get
+  procedure :: set_numeric => swigf_SUNLinearSolverContent_KLU__numeric_set
+  procedure :: get_numeric => swigf_SUNLinearSolverContent_KLU__numeric_get
+  procedure :: set_common => swigf_SUNLinearSolverContent_KLU__common_set
+  procedure :: get_common => swigf_SUNLinearSolverContent_KLU__common_get
+  procedure :: set_klu_solver => swigf_SUNLinearSolverContent_KLU__klu_solver_set
+  procedure :: get_klu_solver => swigf_SUNLinearSolverContent_KLU__klu_solver_get
+  procedure :: release => swigf_release_SUNLinearSolverContent_KLU_
+  procedure, private :: swigf_SUNLinearSolverContent_KLU__op_assign__
+  generic :: assignment(=) => swigf_SUNLinearSolverContent_KLU__op_assign__
+ end type SUNLinearSolverContent_KLU_
+ interface SUNLinearSolverContent_KLU_
+  module procedure swigf_create_SUNLinearSolverContent_KLU_
+ end interface
+ public :: FSUNLinSol_KLU
+ public :: FSUNLinSol_KLUReInit
+ public :: FSUNLinSol_KLUSetOrdering
+ public :: FSUNLinSol_KLUGetSymbolic
+ public :: FSUNLinSol_KLUGetNumeric
  public :: FSUNLinSol_KLUGetCommon
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNLinearSolverContent_KLU__last_flag_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__last_flag_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__last_flag_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__last_flag_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_KLU__first_factorize_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__first_factorize_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__first_factorize_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__first_factorize_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_KLU__symbolic_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__symbolic_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__symbolic_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__symbolic_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_KLU__numeric_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__numeric_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__numeric_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__numeric_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_KLU__common_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__common_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__common_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__common_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_KLU__klu_solver_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__klu_solver_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_KLU__klu_solver_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__klu_solver_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_SUNLinearSolverContent_KLU_() &
+bind(C, name="_wrap_new_SUNLinearSolverContent_KLU_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNLinearSolverContent_KLU_(farg1) &
+bind(C, name="_wrap_delete_SUNLinearSolverContent_KLU_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNLinearSolverContent_KLU__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_KLU__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNLinSol_KLU(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNLinSol_KLU") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNLinSol_KLUReInit(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNLinSol_KLUReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT64_T), intent(in) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT) :: fresult
@@ -82,7 +232,8 @@ function swigc_FSUNLinSol_KLUSetOrdering(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSol_KLUSetOrdering") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -92,7 +243,7 @@ bind(C, name="_wrap_FSUNLinSol_KLUGetSymbolic") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
-type(C_PTR), value :: farg1
+type(SwigClassWrapper) :: farg1
 type(SwigClassWrapper) :: fresult
 end function
 
@@ -101,7 +252,7 @@ bind(C, name="_wrap_FSUNLinSol_KLUGetNumeric") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
-type(C_PTR), value :: farg1
+type(SwigClassWrapper) :: farg1
 type(SwigClassWrapper) :: fresult
 end function
 
@@ -110,7 +261,7 @@ bind(C, name="_wrap_FSUNLinSol_KLUGetCommon") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
-type(C_PTR), value :: farg1
+type(SwigClassWrapper) :: farg1
 type(SwigClassWrapper) :: fresult
 end function
 
@@ -119,41 +270,228 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNLinearSolverContent_KLU__last_flag_set(self, last_flag)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+integer(C_INT), intent(in) :: last_flag
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = last_flag
+call swigc_SUNLinearSolverContent_KLU__last_flag_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__last_flag_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__last_flag_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_KLU__first_factorize_set(self, first_factorize)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+integer(C_INT), intent(in) :: first_factorize
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = first_factorize
+call swigc_SUNLinearSolverContent_KLU__first_factorize_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__first_factorize_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__first_factorize_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_KLU__symbolic_set(self, symbolic)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+class(SWIGTYPE_p_klu_l_symbolic), intent(in) :: symbolic
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = symbolic%swigdata
+call swigc_SUNLinearSolverContent_KLU__symbolic_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__symbolic_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SWIGTYPE_p_klu_l_symbolic) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__symbolic_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_KLU__numeric_set(self, numeric)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+class(SWIGTYPE_p_klu_l_numeric), intent(in) :: numeric
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = numeric%swigdata
+call swigc_SUNLinearSolverContent_KLU__numeric_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__numeric_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SWIGTYPE_p_klu_l_numeric) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__numeric_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_KLU__common_set(self, common)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(SWIGTYPE_p_klu_l_common), intent(in) :: common
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = common%swigdata
+call swigc_SUNLinearSolverContent_KLU__common_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__common_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SWIGTYPE_p_klu_l_common) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__common_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_KLU__klu_solver_set(self, klu_solver)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: klu_solver
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = klu_solver
+call swigc_SUNLinearSolverContent_KLU__klu_solver_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_KLU__klu_solver_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolverContent_KLU_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_KLU__klu_solver_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNLinearSolverContent_KLU_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolverContent_KLU_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNLinearSolverContent_KLU_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNLinearSolverContent_KLU_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNLinearSolverContent_KLU_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolverContent_KLU__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_KLU_), intent(inout) :: self
+type(SUNLinearSolverContent_KLU_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNLinearSolverContent_KLU__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNLinSol_KLU(y, a, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNLinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
-type(SUNMatrix), target, intent(inout) :: a
+type(SUNLinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
+class(SUNMatrix_), intent(in) :: a
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(y)
-farg2 = c_loc(a)
+farg1 = y%swigdata
+farg2 = a%swigdata
 farg3 = sunctx
 fresult = swigc_FSUNLinSol_KLU(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNLinSol_KLUReInit(s, a, nnz, reinit_type) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: s
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT64_T), intent(in) :: nnz
 integer(C_INT), intent(in) :: reinit_type
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 integer(C_INT64_T) :: farg3 
 integer(C_INT) :: farg4 
 
-farg1 = c_loc(s)
-farg2 = c_loc(a)
+farg1 = s%swigdata
+farg2 = a%swigdata
 farg3 = nnz
 farg4 = reinit_type
 fresult = swigc_FSUNLinSol_KLUReInit(farg1, farg2, farg3, farg4)
@@ -164,13 +502,13 @@ function FSUNLinSol_KLUSetOrdering(s, ordering_choice) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT), intent(in) :: ordering_choice
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = ordering_choice
 fresult = swigc_FSUNLinSol_KLUSetOrdering(farg1, farg2)
 swig_result = fresult
@@ -180,11 +518,11 @@ function FSUNLinSol_KLUGetSymbolic(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(SWIGTYPE_p_klu_l_symbolic) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 type(SwigClassWrapper) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSol_KLUGetSymbolic(farg1)
 swig_result%swigdata = fresult
 end function
@@ -193,11 +531,11 @@ function FSUNLinSol_KLUGetNumeric(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(SWIGTYPE_p_klu_l_numeric) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 type(SwigClassWrapper) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSol_KLUGetNumeric(farg1)
 swig_result%swigdata = fresult
 end function
@@ -206,11 +544,11 @@ function FSUNLinSol_KLUGetCommon(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(SWIGTYPE_p_klu_l_common) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 type(SwigClassWrapper) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSol_KLUGetCommon(farg1)
 swig_result%swigdata = fresult
 end function

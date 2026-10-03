@@ -245,6 +245,20 @@ enum {
 #include "arkode/arkode_ls.h"
 
 
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 # ifndef strtoull
@@ -271,20 +285,6 @@ SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
 
 
 #include <string.h>
-
-
-typedef struct {
-    void* cptr;
-    int cmemflags;
-} SwigClassWrapper;
-
-
-SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
-    SwigClassWrapper result;
-    result.cptr = NULL;
-    result.cmemflags = 0;
-    return result;
-}
 
 
 SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
@@ -318,7 +318,7 @@ SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
   }
 }
 
-SWIGEXPORT int _wrap_FARKodeResize(void *farg1, N_Vector farg2, double const *farg3, double const *farg4, ARKVecResizeFn farg5, void *farg6) {
+SWIGEXPORT int _wrap_FARKodeResize(void *farg1, SwigClassWrapper const *farg2, double const *farg3, double const *farg4, ARKVecResizeFn farg5, void *farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -329,7 +329,8 @@ SWIGEXPORT int _wrap_FARKodeResize(void *farg1, N_Vector farg2, double const *fa
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeResize(void *,N_Vector,sunrealtype,sunrealtype,ARKVecResizeFn,void *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
   arg5 = (ARKVecResizeFn)(farg5);
@@ -340,7 +341,7 @@ SWIGEXPORT int _wrap_FARKodeResize(void *farg1, N_Vector farg2, double const *fa
 }
 
 
-SWIGEXPORT int _wrap_FARKodeReset(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FARKodeReset(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -349,7 +350,8 @@ SWIGEXPORT int _wrap_FARKodeReset(void *farg1, double const *farg2, N_Vector far
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "ARKodeReset(void *,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)ARKodeReset(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -398,7 +400,7 @@ SWIGEXPORT int _wrap_FARKodeSStolerances(void *farg1, double const *farg2, doubl
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSVtolerances(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FARKodeSVtolerances(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -407,7 +409,8 @@ SWIGEXPORT int _wrap_FARKodeSVtolerances(void *farg1, double const *farg2, N_Vec
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "ARKodeSVtolerances(void *,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)ARKodeSVtolerances(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -442,14 +445,15 @@ SWIGEXPORT int _wrap_FARKodeResStolerance(void *farg1, double const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeResVtolerance(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FARKodeResVtolerance(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeResVtolerance(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)ARKodeResVtolerance(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -732,14 +736,15 @@ SWIGEXPORT int _wrap_FARKodeSetPostprocessStageFn(void *farg1, ARKPostProcessFn 
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetNonlinearSolver(void *farg1, SUNNonlinearSolver farg2) {
+SWIGEXPORT int _wrap_FARKodeSetNonlinearSolver(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNNonlinearSolver arg2 = (SUNNonlinearSolver) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNNonlinearSolver)(farg2);
+  SWIG_check_mutable(*farg2, "SUNNonlinearSolver", "SUNNonlinearSolver_", "ARKodeSetNonlinearSolver(void *,SUNNonlinearSolver)", return 0);
+  arg2 = (SUNNonlinearSolver)(farg2->cptr);
   result = (int)ARKodeSetNonlinearSolver(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -940,14 +945,15 @@ SWIGEXPORT int _wrap_FARKodeSetStagePredictFn(void *farg1, ARKStagePredictFn far
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetAdaptController(void *farg1, SUNAdaptController farg2) {
+SWIGEXPORT int _wrap_FARKodeSetAdaptController(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNAdaptController arg2 = (SUNAdaptController) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNAdaptController)(farg2);
+  SWIG_check_mutable(*farg2, "SUNAdaptController", "SUNAdaptController_", "ARKodeSetAdaptController(void *,SUNAdaptController)", return 0);
+  arg2 = (SUNAdaptController)(farg2->cptr);
   result = (int)ARKodeSetAdaptController(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1154,14 +1160,15 @@ SWIGEXPORT int _wrap_FARKodeSetMaxErrTestFails(void *farg1, int const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetConstraints(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FARKodeSetConstraints(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeSetConstraints(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)ARKodeSetConstraints(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1306,7 +1313,7 @@ SWIGEXPORT int _wrap_FARKodeResetAccumulatedError(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeEvolve(void *farg1, double const *farg2, N_Vector farg3, double *farg4, int const *farg5) {
+SWIGEXPORT int _wrap_FARKodeEvolve(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double *farg4, int const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -1317,7 +1324,8 @@ SWIGEXPORT int _wrap_FARKodeEvolve(void *farg1, double const *farg2, N_Vector fa
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "ARKodeEvolve(void *,sunrealtype,N_Vector,sunrealtype *,int)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype *)(farg4);
   arg5 = (int)(*farg5);
   result = (int)ARKodeEvolve(arg1,arg2,arg3,arg4,arg5);
@@ -1326,7 +1334,7 @@ SWIGEXPORT int _wrap_FARKodeEvolve(void *farg1, double const *farg2, N_Vector fa
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetDky(void *farg1, double const *farg2, int const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FARKodeGetDky(void *farg1, double const *farg2, int const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -1337,14 +1345,15 @@ SWIGEXPORT int _wrap_FARKodeGetDky(void *farg1, double const *farg2, int const *
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "ARKodeGetDky(void *,sunrealtype,int,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)ARKodeGetDky(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FARKodeComputeState(void *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FARKodeComputeState(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -1352,8 +1361,10 @@ SWIGEXPORT int _wrap_FARKodeComputeState(void *farg1, N_Vector farg2, N_Vector f
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeComputeState(void *,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "ARKodeComputeState(void *,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)ARKodeComputeState(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -1446,14 +1457,15 @@ SWIGEXPORT int _wrap_FARKodeGetStepDirection(void *farg1, double *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetErrWeights(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FARKodeGetErrWeights(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeGetErrWeights(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)ARKodeGetErrWeights(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1603,14 +1615,15 @@ SWIGEXPORT int _wrap_FARKodeGetNumErrTestFails(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetEstLocalErrors(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FARKodeGetEstLocalErrors(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeGetEstLocalErrors(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)ARKodeGetEstLocalErrors(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -2058,14 +2071,15 @@ SWIGEXPORT int _wrap_FARKodeGetCurrentMassMatrix(void *farg1, void *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetResWeights(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FARKodeGetResWeights(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "ARKodeGetResWeights(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)ARKodeGetResWeights(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -3168,7 +3182,7 @@ SWIGEXPORT int _wrap_FARKodeSPRKTable_ToButcher(void *farg1, void *farg2, void *
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetLinearSolver(void *farg1, SUNLinearSolver farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FARKodeSetLinearSolver(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNLinearSolver arg2 = (SUNLinearSolver) 0 ;
@@ -3176,15 +3190,17 @@ SWIGEXPORT int _wrap_FARKodeSetLinearSolver(void *farg1, SUNLinearSolver farg2, 
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNLinearSolver)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNLinearSolver", "SUNLinearSolver_", "ARKodeSetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg2 = (SUNLinearSolver)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "ARKodeSetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (int)ARKodeSetLinearSolver(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FARKodeSetMassLinearSolver(void *farg1, SUNLinearSolver farg2, SUNMatrix farg3, int const *farg4) {
+SWIGEXPORT int _wrap_FARKodeSetMassLinearSolver(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3, int const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNLinearSolver arg2 = (SUNLinearSolver) 0 ;
@@ -3193,8 +3209,10 @@ SWIGEXPORT int _wrap_FARKodeSetMassLinearSolver(void *farg1, SUNLinearSolver far
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNLinearSolver)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNLinearSolver", "SUNLinearSolver_", "ARKodeSetMassLinearSolver(void *,SUNLinearSolver,SUNMatrix,int)", return 0);
+  arg2 = (SUNLinearSolver)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "ARKodeSetMassLinearSolver(void *,SUNLinearSolver,SUNMatrix,int)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   arg4 = (int)(*farg4);
   result = (int)ARKodeSetMassLinearSolver(arg1,arg2,arg3,arg4);
   fresult = (int)(result);

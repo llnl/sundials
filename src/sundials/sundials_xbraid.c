@@ -40,7 +40,7 @@ int SUNBraidApp_NewEmpty(braid_App* app)
 
   /* Create operations structure */
   ops = NULL;
-  ops = (SUNBraidOps)malloc(sizeof(struct _SUNBraidOps));
+  ops = (SUNBraidOps)malloc(sizeof(struct SUNBraidOps_));
   if (ops == NULL)
   {
     free(*app);

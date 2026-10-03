@@ -28,6 +28,31 @@ module fnvector_serial_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct N_VectorContent_Serial_
+ type, public :: N_VectorContent_Serial_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_length => swigf_N_VectorContent_Serial__length_set
+  procedure :: get_length => swigf_N_VectorContent_Serial__length_get
+  procedure :: set_own_data => swigf_N_VectorContent_Serial__own_data_set
+  procedure :: get_own_data => swigf_N_VectorContent_Serial__own_data_get
+  procedure :: set_data => swigf_N_VectorContent_Serial__data_set
+  procedure :: get_data => swigf_N_VectorContent_Serial__data_get
+  procedure :: release => swigf_release_N_VectorContent_Serial_
+  procedure, private :: swigf_N_VectorContent_Serial__op_assign__
+  generic :: assignment(=) => swigf_N_VectorContent_Serial__op_assign__
+ end type N_VectorContent_Serial_
+ interface N_VectorContent_Serial_
+  module procedure swigf_create_N_VectorContent_Serial_
+ end interface
  public :: FN_VNewEmpty_Serial
  public :: FN_VNew_Serial
  public :: FN_VMake_Serial
@@ -46,39 +71,117 @@ module fnvector_serial_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_N_VectorContent_Serial__length_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Serial__length_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Serial__length_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Serial__length_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Serial__own_data_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Serial__own_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Serial__own_data_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Serial__own_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Serial__data_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Serial__data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Serial__data_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Serial__data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_N_VectorContent_Serial_() &
+bind(C, name="_wrap_new_N_VectorContent_Serial_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_N_VectorContent_Serial_(farg1) &
+bind(C, name="_wrap_delete_N_VectorContent_Serial_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_N_VectorContent_Serial__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Serial__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FN_VNewEmpty_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VNewEmpty_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VNew_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VNew_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VMake_Serial(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VMake_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VEnableFusedOps_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableFusedOps_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -87,7 +190,8 @@ function swigc_FN_VEnableLinearCombination_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearCombination_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -96,7 +200,8 @@ function swigc_FN_VEnableScaleAddMulti_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleAddMulti_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -105,7 +210,8 @@ function swigc_FN_VEnableDotProdMulti_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableDotProdMulti_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -114,7 +220,8 @@ function swigc_FN_VEnableLinearSumVectorArray_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearSumVectorArray_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -123,7 +230,8 @@ function swigc_FN_VEnableScaleVectorArray_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleVectorArray_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -132,7 +240,8 @@ function swigc_FN_VEnableConstVectorArray_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableConstVectorArray_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -141,7 +250,8 @@ function swigc_FN_VEnableWrmsNormVectorArray_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormVectorArray_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -150,7 +260,8 @@ function swigc_FN_VEnableWrmsNormMaskVectorArray_Serial(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormMaskVectorArray_Serial") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -169,46 +280,158 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_N_VectorContent_Serial__length_set(self, length)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Serial_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: length
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = length
+call swigc_N_VectorContent_Serial__length_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Serial__length_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(N_VectorContent_Serial_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Serial__length_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_Serial__own_data_set(self, own_data)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Serial_), intent(in) :: self
+integer(C_INT), intent(in) :: own_data
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = own_data
+call swigc_N_VectorContent_Serial__own_data_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Serial__own_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(N_VectorContent_Serial_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Serial__own_data_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_Serial__data_set(self, data)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Serial_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(data(1))
+call swigc_N_VectorContent_Serial__data_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Serial__data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(N_VectorContent_Serial_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Serial__data_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+function swigf_create_N_VectorContent_Serial_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(N_VectorContent_Serial_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_N_VectorContent_Serial_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_N_VectorContent_Serial_(self)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Serial_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_N_VectorContent_Serial_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_VectorContent_Serial__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Serial_), intent(inout) :: self
+type(N_VectorContent_Serial_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_N_VectorContent_Serial__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FN_VNewEmpty_Serial(vec_length, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer(C_INT32_T), intent(in) :: vec_length
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = vec_length
 farg2 = sunctx
 fresult = swigc_FN_VNewEmpty_Serial(farg1, farg2)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VNew_Serial(vec_length, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer(C_INT32_T), intent(in) :: vec_length
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = vec_length
 farg2 = sunctx
 fresult = swigc_FN_VNew_Serial(farg1, farg2)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VMake_Serial(vec_length, v_data_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer(C_INT32_T), intent(in) :: vec_length
 real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
@@ -217,20 +440,20 @@ farg1 = vec_length
 farg2 = c_loc(v_data_1d(1))
 farg3 = sunctx
 fresult = swigc_FN_VMake_Serial(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VEnableFusedOps_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableFusedOps_Serial(farg1, farg2)
 swig_result = fresult
@@ -240,13 +463,13 @@ function FN_VEnableLinearCombination_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearCombination_Serial(farg1, farg2)
 swig_result = fresult
@@ -256,13 +479,13 @@ function FN_VEnableScaleAddMulti_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleAddMulti_Serial(farg1, farg2)
 swig_result = fresult
@@ -272,13 +495,13 @@ function FN_VEnableDotProdMulti_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableDotProdMulti_Serial(farg1, farg2)
 swig_result = fresult
@@ -288,13 +511,13 @@ function FN_VEnableLinearSumVectorArray_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearSumVectorArray_Serial(farg1, farg2)
 swig_result = fresult
@@ -304,13 +527,13 @@ function FN_VEnableScaleVectorArray_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleVectorArray_Serial(farg1, farg2)
 swig_result = fresult
@@ -320,13 +543,13 @@ function FN_VEnableConstVectorArray_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableConstVectorArray_Serial(farg1, farg2)
 swig_result = fresult
@@ -336,13 +559,13 @@ function FN_VEnableWrmsNormVectorArray_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormVectorArray_Serial(farg1, farg2)
 swig_result = fresult
@@ -352,13 +575,13 @@ function FN_VEnableWrmsNormMaskVectorArray_Serial(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormMaskVectorArray_Serial(farg1, farg2)
 swig_result = fresult

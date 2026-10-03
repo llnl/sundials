@@ -42,6 +42,10 @@ This module provides the following command:
    The flags are selected based on the compiler ID and command-line style
    (GCC-like or MSVC-like), so call this command after ``<lang>`` is enabled.
 
+   Sets ``SUNDIALS_<lang>_FLAGS_WITHOUT_WARNINGS`` to the value of
+   ``CMAKE_<lang>_FLAGS`` without the added flags e.g., for building third-party
+   code that should not use the SUNDIALS warning flags.
+
    The arguments are:
 
    ``<lang>``
@@ -127,7 +131,7 @@ function(sundials_add_warning_flags lang)
         endif()
 
         list(APPEND _swig_flags -Wno-cast-qual -Wno-missing-declarations
-             -Wno-unused-macros)
+             -Wno-unused-macros -Wno-strict-prototypes)
       endif()
 
       # Clang-based compilers: ignore unsupported flags (GCC-only or newer than
@@ -176,6 +180,11 @@ function(sundials_add_warning_flags lang)
       list(APPEND _flags -Werror)
     endif()
   endif()
+
+  # Flags without SUNDIALS warning flags e.g., for building third-party code
+  set(SUNDIALS_${lang}_FLAGS_WITHOUT_WARNINGS
+      "${CMAKE_${lang}_FLAGS}"
+      PARENT_SCOPE)
 
   # Prepend our flags so users can override them with CMAKE_<lang>_FLAGS
   if(_flags)

@@ -300,50 +300,54 @@ SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
   }
 }
 
-SWIGEXPORT void _wrap_SUNAdaptControllerContent_MRIHTol__HControl_set(SwigClassWrapper const *farg1, SUNAdaptController farg2) {
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_MRIHTol__HControl_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   struct SUNAdaptControllerContent_MRIHTol_ *arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *) 0 ;
   SUNAdaptController arg2 = (SUNAdaptController) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::HControl", return );
   arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *)(farg1->cptr);
-  arg2 = (SUNAdaptController)(farg2);
+  SWIG_check_mutable(*farg2, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptControllerContent_MRIHTol_::HControl", return );
+  arg2 = (SUNAdaptController)(farg2->cptr);
   if (arg1) (arg1)->HControl = arg2;
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_SUNAdaptControllerContent_MRIHTol__HControl_get(SwigClassWrapper const *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_SUNAdaptControllerContent_MRIHTol__HControl_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   struct SUNAdaptControllerContent_MRIHTol_ *arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *) 0 ;
   SUNAdaptController result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::HControl", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::HControl", return SwigClassWrapper_uninitialized());
   arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *)(farg1->cptr);
   result = (SUNAdaptController) ((arg1)->HControl);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_SUNAdaptControllerContent_MRIHTol__TolControl_set(SwigClassWrapper const *farg1, SUNAdaptController farg2) {
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_MRIHTol__TolControl_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   struct SUNAdaptControllerContent_MRIHTol_ *arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *) 0 ;
   SUNAdaptController arg2 = (SUNAdaptController) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::TolControl", return );
   arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *)(farg1->cptr);
-  arg2 = (SUNAdaptController)(farg2);
+  SWIG_check_mutable(*farg2, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptControllerContent_MRIHTol_::TolControl", return );
+  arg2 = (SUNAdaptController)(farg2->cptr);
   if (arg1) (arg1)->TolControl = arg2;
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_SUNAdaptControllerContent_MRIHTol__TolControl_get(SwigClassWrapper const *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_SUNAdaptControllerContent_MRIHTol__TolControl_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   struct SUNAdaptControllerContent_MRIHTol_ *arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *) 0 ;
   SUNAdaptController result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::TolControl", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_MRIHTol_ *", "SUNAdaptControllerContent_MRIHTol_", "SUNAdaptControllerContent_MRIHTol_::TolControl", return SwigClassWrapper_uninitialized());
   arg1 = (struct SUNAdaptControllerContent_MRIHTol_ *)(farg1->cptr);
   result = (SUNAdaptController) ((arg1)->TolControl);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
@@ -451,23 +455,26 @@ SWIGEXPORT void _wrap_SUNAdaptControllerContent_MRIHTol__op_assign__(SwigClassWr
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_MRIHTol(SUNAdaptController farg1, SUNAdaptController farg2, void *farg3) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_MRIHTol(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNAdaptController arg2 = (SUNAdaptController) 0 ;
   SUNContext arg3 = (SUNContext) 0 ;
   SUNAdaptController result;
   
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (SUNAdaptController)(farg2);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_MRIHTol(SUNAdaptController,SUNAdaptController,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg1 = (SUNAdaptController)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_MRIHTol(SUNAdaptController,SUNAdaptController,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg2 = (SUNAdaptController)(farg2->cptr);
   arg3 = (SUNContext)(farg3);
   result = (SUNAdaptController)SUNAdaptController_MRIHTol(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_MRIHTol(SUNAdaptController farg1, double const *farg2, double const *farg3, double const *farg4) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_MRIHTol(SwigClassWrapper const *farg1, double const *farg2, double const *farg3, double const *farg4) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -475,7 +482,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_MRIHTol(SUNAdaptController fa
   sunrealtype arg4 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_MRIHTol(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
@@ -485,13 +493,14 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_MRIHTol(SUNAdaptController fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_GetSlowController_MRIHTol(SUNAdaptController farg1, void *farg2) {
+SWIGEXPORT int _wrap_FSUNAdaptController_GetSlowController_MRIHTol(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNAdaptController *arg2 = (SUNAdaptController *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_GetSlowController_MRIHTol(SUNAdaptController,SUNAdaptController *)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (SUNAdaptController *)(farg2);
   result = (SUNErrCode)SUNAdaptController_GetSlowController_MRIHTol(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -499,13 +508,14 @@ SWIGEXPORT int _wrap_FSUNAdaptController_GetSlowController_MRIHTol(SUNAdaptContr
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_GetFastController_MRIHTol(SUNAdaptController farg1, void *farg2) {
+SWIGEXPORT int _wrap_FSUNAdaptController_GetFastController_MRIHTol(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNAdaptController *arg2 = (SUNAdaptController *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_GetFastController_MRIHTol(SUNAdaptController,SUNAdaptController *)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (SUNAdaptController *)(farg2);
   result = (SUNErrCode)SUNAdaptController_GetFastController_MRIHTol(arg1,arg2);
   fresult = (SUNErrCode)(result);

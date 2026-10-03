@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,8 +240,315 @@
 
 #include "sunmatrix/sunmatrix_band.h"
 
-SWIGEXPORT SUNMatrix _wrap_FSUNBandMatrix(int32_t const *farg1, int32_t const *farg2, int32_t const *farg3, void *farg4) {
-  SUNMatrix fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__M_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::M", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->M = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__M_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::M", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->M);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__N_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::N", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->N = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__N_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::N", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->N);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__ldim_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ldim", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->ldim = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__ldim_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ldim", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->ldim);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__mu_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::mu", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->mu = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__mu_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::mu", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->mu);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__ml_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ml", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->ml = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__ml_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ml", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->ml);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__s_mu_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::s_mu", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->s_mu = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__s_mu_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::s_mu", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->s_mu);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__data_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::data", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->data = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNMatrixContent_Band__data_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::data", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__ldata_set(SwigClassWrapper const *farg1, int32_t const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ldata", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->ldata = arg2;
+}
+
+
+SWIGEXPORT int32_t _wrap_SUNMatrixContent_Band__ldata_get(SwigClassWrapper const *farg1) {
+  int32_t fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::ldata", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result =  ((arg1)->ldata);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__cols_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunrealtype **arg2 = (sunrealtype **) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::cols", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  arg2 = (sunrealtype **)(farg2);
+  if (arg1) (arg1)->cols = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNMatrixContent_Band__cols_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  sunrealtype **result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::cols", return 0);
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  result = (sunrealtype **) ((arg1)->cols);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNMatrixContent_Band_() {
+  SwigClassWrapper fresult ;
+  struct SUNMatrixContent_Band_ *result = 0 ;
+  
+  result = (struct SUNMatrixContent_Band_ *)calloc(1, sizeof(struct SUNMatrixContent_Band_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNMatrixContent_Band_(SwigClassWrapper *farg1) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNMatrixContent_Band_ *", "SUNMatrixContent_Band_", "SUNMatrixContent_Band_::~SUNMatrixContent_Band_()", return );
+  arg1 = (struct SUNMatrixContent_Band_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Band__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNMatrixContent_Band_ *arg1 = (struct SUNMatrixContent_Band_ *) 0 ;
+  struct SUNMatrixContent_Band_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNBandMatrix(int32_t const *farg1, int32_t const *farg2, int32_t const *farg3, void *farg4) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   sunindextype arg2 ;
   sunindextype arg3 ;
@@ -224,13 +560,14 @@ SWIGEXPORT SUNMatrix _wrap_FSUNBandMatrix(int32_t const *farg1, int32_t const *f
   arg3 = (sunindextype)(*farg3);
   arg4 = (SUNContext)(farg4);
   result = (SUNMatrix)SUNBandMatrix(arg1,arg2,arg3,arg4);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT SUNMatrix _wrap_FSUNBandMatrixStorage(int32_t const *farg1, int32_t const *farg2, int32_t const *farg3, int32_t const *farg4, void *farg5) {
-  SUNMatrix fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNBandMatrixStorage(int32_t const *farg1, int32_t const *farg2, int32_t const *farg3, int32_t const *farg4, void *farg5) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   sunindextype arg2 ;
   sunindextype arg3 ;
@@ -244,176 +581,193 @@ SWIGEXPORT SUNMatrix _wrap_FSUNBandMatrixStorage(int32_t const *farg1, int32_t c
   arg4 = (sunindextype)(*farg4);
   arg5 = (SUNContext)(farg5);
   result = (SUNMatrix)SUNBandMatrixStorage(arg1,arg2,arg3,arg4,arg5);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNBandMatrix_Print(SUNMatrix farg1, void *farg2) {
+SWIGEXPORT void _wrap_FSUNBandMatrix_Print(SwigClassWrapper const *farg1, void *farg2) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_Print(SUNMatrix,FILE *)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   arg2 = (FILE *)(farg2);
   SUNBandMatrix_Print(arg1,arg2);
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_Rows(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_Rows(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_Rows(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_Rows(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_Columns(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_Columns(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_Columns(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_Columns(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LowerBandwidth(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LowerBandwidth(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_LowerBandwidth(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_LowerBandwidth(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_UpperBandwidth(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_UpperBandwidth(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_UpperBandwidth(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_UpperBandwidth(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_StoredUpperBandwidth(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_StoredUpperBandwidth(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_StoredUpperBandwidth(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_StoredUpperBandwidth(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LDim(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LDim(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_LDim(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_LDim(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LData(SUNMatrix farg1) {
+SWIGEXPORT int32_t _wrap_FSUNBandMatrix_LData(SwigClassWrapper const *farg1) {
   int32_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_LData(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNBandMatrix_LData(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT void * _wrap_FSUNBandMatrix_Cols(SUNMatrix farg1) {
+SWIGEXPORT void * _wrap_FSUNBandMatrix_Cols(SwigClassWrapper const *farg1) {
   void * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunrealtype **result = 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNBandMatrix_Cols(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (sunrealtype **)SUNBandMatrix_Cols(arg1);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatGetID_Band(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatGetID_Band(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix_ID result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatGetID_Band(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix_ID)SUNMatGetID_Band(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT SUNMatrix _wrap_FSUNMatClone_Band(SUNMatrix farg1) {
-  SUNMatrix fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNMatClone_Band(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatClone_Band(SUNMatrix)", return SwigClassWrapper_uninitialized());
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix)SUNMatClone_Band(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNMatDestroy_Band(SUNMatrix farg1) {
+SWIGEXPORT void _wrap_FSUNMatDestroy_Band(SwigClassWrapper const *farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatDestroy_Band(SUNMatrix)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   SUNMatDestroy_Band(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatZero_Band(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatZero_Band(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatZero_Band(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNErrCode)SUNMatZero_Band(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatCopy_Band(SUNMatrix farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatCopy_Band(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatCopy_Band(SUNMatrix,SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatCopy_Band(SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatCopy_Band(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(double const *farg1, SUNMatrix farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(double const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
@@ -421,54 +775,63 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(double const *farg1, SUNMatrix farg2, 
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd_Band(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd_Band(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (SUNErrCode)SUNMatScaleAdd_Band(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAddI_Band(double const *farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatScaleAddI_Band(double const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAddI_Band(sunrealtype,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatScaleAddI_Band(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatMatvec_Band(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatMatvec_Band(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatMatvec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatMatvec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatMatvec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatMatvec_Band(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec_Band(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec_Band(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatHermitianTransposeVec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec_Band(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatHermitianTransposeVec_Band(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;

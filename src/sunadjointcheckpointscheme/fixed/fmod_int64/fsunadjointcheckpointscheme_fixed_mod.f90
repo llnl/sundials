@@ -30,6 +30,14 @@ module fsunadjointcheckpointscheme_fixed_mod
  ! DECLARATION CONSTRUCTS
  public :: FSUNAdjointCheckpointScheme_Create_Fixed
  public :: FSUNAdjointCheckpointScheme_NeedsSaving_Fixed
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FSUNAdjointCheckpointScheme_InsertVector_Fixed
  public :: FSUNAdjointCheckpointScheme_LoadVector_Fixed
  public :: FSUNAdjointCheckpointScheme_Destroy_Fixed
@@ -67,11 +75,12 @@ function swigc_FSUNAdjointCheckpointScheme_InsertVector_Fixed(farg1, farg2, farg
 bind(C, name="_wrap_FSUNAdjointCheckpointScheme_InsertVector_Fixed") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_LONG), intent(in) :: farg2
 integer(C_LONG), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -174,19 +183,19 @@ type(C_PTR) :: check_scheme
 integer(C_LONG), intent(in) :: step_num
 integer(C_LONG), intent(in) :: stage_num
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: state
+class(N_Vector_), intent(in) :: state
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_LONG) :: farg2 
 integer(C_LONG) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = check_scheme
 farg2 = step_num
 farg3 = stage_num
 farg4 = t
-farg5 = c_loc(state)
+farg5 = state%swigdata
 fresult = swigc_FSUNAdjointCheckpointScheme_InsertVector_Fixed(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function

@@ -34,11 +34,11 @@
 
 /* macros for handling the different function names based on precision */
 #if defined(SUNDIALS_DOUBLE_PRECISION)
-#define _cusolverSpXcsrqrBufferInfoBatched cusolverSpDcsrqrBufferInfoBatched
-#define _cusolverSpXcsrqrsvBatched         cusolverSpDcsrqrsvBatched
+#define cusolverSpXcsrqrBufferInfoBatched cusolverSpDcsrqrBufferInfoBatched
+#define cusolverSpXcsrqrsvBatched         cusolverSpDcsrqrsvBatched
 #elif defined(SUNDIALS_SINGLE_PRECISION)
-#define _cusolverSpXcsrqrBufferInfoBatched cusolverSpScsrqrBufferInfoBatched
-#define _cusolverSpXcsrqrsvBatched         cusolverSpScsrqrsvBatched
+#define cusolverSpXcsrqrBufferInfoBatched cusolverSpScsrqrBufferInfoBatched
+#define cusolverSpXcsrqrsvBatched         cusolverSpScsrqrsvBatched
 #endif
 
 /*
@@ -260,12 +260,12 @@ int sunLinSolSetup_cuSolverSp_batchQR(SUNLinearSolver S, SUNMatrix A)
     }
 
     /* Compute the workspace we will need */
-    status = _cusolverSpXcsrqrBufferInfoBatched(SUN_CUSOL_HANDLE(S), blockrows,
-                                                blockcols, blocknnz, mat_descr,
-                                                d_data, d_rowptr, d_colind,
-                                                nblock, SUN_CUSP_QRINFO(S),
-                                                &SUN_CUSP_INTERNAL_SIZE(S),
-                                                &SUN_CUSP_WORK_SIZE(S));
+    status = cusolverSpXcsrqrBufferInfoBatched(SUN_CUSOL_HANDLE(S), blockrows,
+                                               blockcols, blocknnz, mat_descr,
+                                               d_data, d_rowptr, d_colind,
+                                               nblock, SUN_CUSP_QRINFO(S),
+                                               &SUN_CUSP_INTERNAL_SIZE(S),
+                                               &SUN_CUSP_WORK_SIZE(S));
 
     if (!SUNDIALS_CUSOLVER_VERIFY(status))
     {
@@ -316,11 +316,10 @@ int sunLinSolSolve_cuSolverSp_batchQR(SUNLinearSolver S, SUNMatrix A,
   d_colind  = SUNMatrix_cuSparse_IndexValues(A);
   mat_descr = SUNMatrix_cuSparse_MatDescr(A);
 
-  status = _cusolverSpXcsrqrsvBatched(SUN_CUSOL_HANDLE(S), blockrows, blockcols,
-                                      blocknnz, mat_descr, d_data, d_rowptr,
-                                      d_colind, device_b, device_x, nblock,
-                                      SUN_CUSP_QRINFO(S),
-                                      SUN_CUSP_QRWORKSPACE(S));
+  status = cusolverSpXcsrqrsvBatched(SUN_CUSOL_HANDLE(S), blockrows, blockcols,
+                                     blocknnz, mat_descr, d_data, d_rowptr,
+                                     d_colind, device_b, device_x, nblock,
+                                     SUN_CUSP_QRINFO(S), SUN_CUSP_QRWORKSPACE(S));
 
   if (!SUNDIALS_CUSOLVER_VERIFY(status))
   {

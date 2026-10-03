@@ -28,6 +28,14 @@ module fnvector_mpiplusx_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FN_VMake_MPIPlusX
  public :: FN_VGetLocalVector_MPIPlusX
  public :: FN_VEnableFusedOps_MPIPlusX
@@ -41,25 +49,28 @@ function swigc_FN_VMake_MPIPlusX(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VMake_MPIPlusX") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VGetLocalVector_MPIPlusX(farg1) &
 bind(C, name="_wrap_FN_VGetLocalVector_MPIPlusX") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VEnableFusedOps_MPIPlusX(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableFusedOps_MPIPlusX") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -81,46 +92,46 @@ contains
 function FN_VMake_MPIPlusX(comm, x, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer :: comm
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = int(comm, C_INT)
-farg2 = c_loc(x)
+farg2 = x%swigdata
 farg3 = sunctx
 fresult = swigc_FN_VMake_MPIPlusX(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VGetLocalVector_MPIPlusX(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: v
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(N_Vector_) :: swig_result
+class(N_Vector_), intent(in) :: v
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 fresult = swigc_FN_VGetLocalVector_MPIPlusX(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VEnableFusedOps_MPIPlusX(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableFusedOps_MPIPlusX(farg1, farg2)
 swig_result = fresult

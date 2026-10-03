@@ -28,6 +28,35 @@ module fnvector_mpimanyvector_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct N_VectorContent_MPIManyVector_
+ type, public :: N_VectorContent_MPIManyVector_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_comm => swigf_N_VectorContent_MPIManyVector__comm_set
+  procedure :: get_comm => swigf_N_VectorContent_MPIManyVector__comm_get
+  procedure :: set_num_subvectors => swigf_N_VectorContent_MPIManyVector__num_subvectors_set
+  procedure :: get_num_subvectors => swigf_N_VectorContent_MPIManyVector__num_subvectors_get
+  procedure :: set_global_length => swigf_N_VectorContent_MPIManyVector__global_length_set
+  procedure :: get_global_length => swigf_N_VectorContent_MPIManyVector__global_length_get
+  procedure :: set_subvec_array => swigf_N_VectorContent_MPIManyVector__subvec_array_set
+  procedure :: get_subvec_array => swigf_N_VectorContent_MPIManyVector__subvec_array_get
+  procedure :: set_own_data => swigf_N_VectorContent_MPIManyVector__own_data_set
+  procedure :: get_own_data => swigf_N_VectorContent_MPIManyVector__own_data_get
+  procedure :: release => swigf_release_N_VectorContent_MPIManyVector_
+  procedure, private :: swigf_N_VectorContent_MPIManyVector__op_assign__
+  generic :: assignment(=) => swigf_N_VectorContent_MPIManyVector__op_assign__
+ end type N_VectorContent_MPIManyVector_
+ interface N_VectorContent_MPIManyVector_
+  module procedure swigf_create_N_VectorContent_MPIManyVector_
+ end interface
  public :: FN_VMake_MPIManyVector
  public :: FN_VNew_MPIManyVector
  public :: FN_VGetSubvector_MPIManyVector
@@ -50,42 +79,154 @@ module fnvector_mpimanyvector_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_N_VectorContent_MPIManyVector__comm_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__comm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_MPIManyVector__comm_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__comm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_MPIManyVector__num_subvectors_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__num_subvectors_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_MPIManyVector__num_subvectors_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__num_subvectors_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_MPIManyVector__global_length_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__global_length_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_MPIManyVector__global_length_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__global_length_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_MPIManyVector__subvec_array_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__subvec_array_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_N_VectorContent_MPIManyVector__subvec_array_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__subvec_array_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_MPIManyVector__own_data_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__own_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_MPIManyVector__own_data_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__own_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+function swigc_new_N_VectorContent_MPIManyVector_() &
+bind(C, name="_wrap_new_N_VectorContent_MPIManyVector_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_N_VectorContent_MPIManyVector_(farg1) &
+bind(C, name="_wrap_delete_N_VectorContent_MPIManyVector_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_N_VectorContent_MPIManyVector__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_MPIManyVector__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FN_VMake_MPIManyVector(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VMake_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 type(C_PTR), value :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VNew_MPIManyVector(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VNew_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VGetSubvector_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VGetSubvector_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VSetSubvectorArrayPointer_MPIManyVector(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VSetSubvectorArrayPointer_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 integer(C_INT) :: fresult
 end function
@@ -94,7 +235,8 @@ function swigc_FN_VGetNumSubvectors_MPIManyVector(farg1) &
 bind(C, name="_wrap_FN_VGetNumSubvectors_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -102,7 +244,8 @@ function swigc_FN_VGetSubvectorLocalLength_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VGetSubvectorLocalLength_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T) :: fresult
 end function
@@ -111,7 +254,8 @@ function swigc_FN_VEnableFusedOps_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableFusedOps_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -120,7 +264,8 @@ function swigc_FN_VEnableLinearCombination_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearCombination_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -129,7 +274,8 @@ function swigc_FN_VEnableScaleAddMulti_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleAddMulti_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -138,7 +284,8 @@ function swigc_FN_VEnableDotProdMulti_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableDotProdMulti_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -147,7 +294,8 @@ function swigc_FN_VEnableLinearSumVectorArray_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearSumVectorArray_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -156,7 +304,8 @@ function swigc_FN_VEnableScaleVectorArray_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleVectorArray_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -165,7 +314,8 @@ function swigc_FN_VEnableConstVectorArray_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableConstVectorArray_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -174,7 +324,8 @@ function swigc_FN_VEnableWrmsNormVectorArray_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormVectorArray_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -183,7 +334,8 @@ function swigc_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -192,7 +344,8 @@ function swigc_FN_VEnableDotProdMultiLocal_MPIManyVector(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableDotProdMultiLocal_MPIManyVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -216,15 +369,177 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_N_VectorContent_MPIManyVector__comm_set(self, comm)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer :: comm
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = int(comm, C_INT)
+call swigc_N_VectorContent_MPIManyVector__comm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_MPIManyVector__comm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer :: swig_result
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_MPIManyVector__comm_get(farg1)
+swig_result = int(fresult)
+end function
+
+subroutine swigf_N_VectorContent_MPIManyVector__num_subvectors_set(self, num_subvectors)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: num_subvectors
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = num_subvectors
+call swigc_N_VectorContent_MPIManyVector__num_subvectors_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_MPIManyVector__num_subvectors_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_MPIManyVector__num_subvectors_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_MPIManyVector__global_length_set(self, global_length)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: global_length
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = global_length
+call swigc_N_VectorContent_MPIManyVector__global_length_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_MPIManyVector__global_length_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_MPIManyVector__global_length_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_MPIManyVector__subvec_array_set(self, subvec_array)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+type(C_PTR) :: subvec_array
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = subvec_array
+call swigc_N_VectorContent_MPIManyVector__subvec_array_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_MPIManyVector__subvec_array_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_MPIManyVector__subvec_array_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_MPIManyVector__own_data_set(self, own_data)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT), intent(in) :: own_data
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = own_data
+call swigc_N_VectorContent_MPIManyVector__own_data_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_MPIManyVector__own_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(N_VectorContent_MPIManyVector_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_MPIManyVector__own_data_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_N_VectorContent_MPIManyVector_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(N_VectorContent_MPIManyVector_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_N_VectorContent_MPIManyVector_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_N_VectorContent_MPIManyVector_(self)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_N_VectorContent_MPIManyVector_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_VectorContent_MPIManyVector__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_MPIManyVector_), intent(inout) :: self
+type(N_VectorContent_MPIManyVector_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_N_VectorContent_MPIManyVector__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FN_VMake_MPIManyVector(comm, num_subvectors, vec_array_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer :: comm
 integer(C_INT32_T), intent(in) :: num_subvectors
 type(C_PTR) :: vec_array_1d
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT32_T) :: farg2 
 type(C_PTR) :: farg3 
@@ -235,17 +550,17 @@ farg2 = num_subvectors
 farg3 = vec_array_1d
 farg4 = sunctx
 fresult = swigc_FN_VMake_MPIManyVector(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VNew_MPIManyVector(num_subvectors, vec_array_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer(C_INT32_T), intent(in) :: num_subvectors
 type(C_PTR) :: vec_array_1d
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
@@ -254,23 +569,23 @@ farg1 = num_subvectors
 farg2 = vec_array_1d
 farg3 = sunctx
 fresult = swigc_FN_VNew_MPIManyVector(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VGetSubvector_MPIManyVector(v, vec_num) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: v
+type(N_Vector_) :: swig_result
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T), intent(in) :: vec_num
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT32_T) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = vec_num
 fresult = swigc_FN_VGetSubvector_MPIManyVector(farg1, farg2)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VSetSubvectorArrayPointer_MPIManyVector(v_data_1d, v, vec_num) &
@@ -278,15 +593,15 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T), intent(in) :: vec_num
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 integer(C_INT32_T) :: farg3 
 
 farg1 = c_loc(v_data_1d(1))
-farg2 = c_loc(v)
+farg2 = v%swigdata
 farg3 = vec_num
 fresult = swigc_FN_VSetSubvectorArrayPointer_MPIManyVector(farg1, farg2, farg3)
 swig_result = fresult
@@ -296,11 +611,11 @@ function FN_VGetNumSubvectors_MPIManyVector(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 fresult = swigc_FN_VGetNumSubvectors_MPIManyVector(farg1)
 swig_result = fresult
 end function
@@ -309,13 +624,13 @@ function FN_VGetSubvectorLocalLength_MPIManyVector(v, vec_num) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T), intent(in) :: vec_num
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT32_T) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = vec_num
 fresult = swigc_FN_VGetSubvectorLocalLength_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -325,13 +640,13 @@ function FN_VEnableFusedOps_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableFusedOps_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -341,13 +656,13 @@ function FN_VEnableLinearCombination_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearCombination_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -357,13 +672,13 @@ function FN_VEnableScaleAddMulti_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleAddMulti_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -373,13 +688,13 @@ function FN_VEnableDotProdMulti_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableDotProdMulti_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -389,13 +704,13 @@ function FN_VEnableLinearSumVectorArray_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearSumVectorArray_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -405,13 +720,13 @@ function FN_VEnableScaleVectorArray_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleVectorArray_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -421,13 +736,13 @@ function FN_VEnableConstVectorArray_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableConstVectorArray_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -437,13 +752,13 @@ function FN_VEnableWrmsNormVectorArray_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormVectorArray_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -453,13 +768,13 @@ function FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormMaskVectorArray_MPIManyVector(farg1, farg2)
 swig_result = fresult
@@ -469,13 +784,13 @@ function FN_VEnableDotProdMultiLocal_MPIManyVector(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableDotProdMultiLocal_MPIManyVector(farg1, farg2)
 swig_result = fresult

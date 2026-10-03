@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,8 +240,219 @@
 
 #include "sunmatrix/sunmatrix_dense.h"
 
-SWIGEXPORT SUNMatrix _wrap_FSUNDenseMatrix(int64_t const *farg1, int64_t const *farg2, void *farg3) {
-  SUNMatrix fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__M_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::M", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->M = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_SUNMatrixContent_Dense__M_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::M", return 0);
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  result =  ((arg1)->M);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__N_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::N", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->N = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_SUNMatrixContent_Dense__N_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::N", return 0);
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  result =  ((arg1)->N);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__data_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::data", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->data = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNMatrixContent_Dense__data_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::data", return 0);
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__ldata_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::ldata", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->ldata = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_SUNMatrixContent_Dense__ldata_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::ldata", return 0);
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  result =  ((arg1)->ldata);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__cols_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunrealtype **arg2 = (sunrealtype **) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::cols", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  arg2 = (sunrealtype **)(farg2);
+  if (arg1) (arg1)->cols = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNMatrixContent_Dense__cols_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  sunrealtype **result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::cols", return 0);
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  result = (sunrealtype **) ((arg1)->cols);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNMatrixContent_Dense_() {
+  SwigClassWrapper fresult ;
+  struct SUNMatrixContent_Dense_ *result = 0 ;
+  
+  result = (struct SUNMatrixContent_Dense_ *)calloc(1, sizeof(struct SUNMatrixContent_Dense_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNMatrixContent_Dense_(SwigClassWrapper *farg1) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNMatrixContent_Dense_ *", "SUNMatrixContent_Dense_", "SUNMatrixContent_Dense_::~SUNMatrixContent_Dense_()", return );
+  arg1 = (struct SUNMatrixContent_Dense_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrixContent_Dense__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNMatrixContent_Dense_ *arg1 = (struct SUNMatrixContent_Dense_ *) 0 ;
+  struct SUNMatrixContent_Dense_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNDenseMatrix(int64_t const *farg1, int64_t const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   sunindextype arg2 ;
   SUNContext arg3 = (SUNContext) 0 ;
@@ -222,128 +462,141 @@ SWIGEXPORT SUNMatrix _wrap_FSUNDenseMatrix(int64_t const *farg1, int64_t const *
   arg2 = (sunindextype)(*farg2);
   arg3 = (SUNContext)(farg3);
   result = (SUNMatrix)SUNDenseMatrix(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNDenseMatrix_Print(SUNMatrix farg1, void *farg2) {
+SWIGEXPORT void _wrap_FSUNDenseMatrix_Print(SwigClassWrapper const *farg1, void *farg2) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNDenseMatrix_Print(SUNMatrix,FILE *)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   arg2 = (FILE *)(farg2);
   SUNDenseMatrix_Print(arg1,arg2);
 }
 
 
-SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_Rows(SUNMatrix farg1) {
+SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_Rows(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNDenseMatrix_Rows(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNDenseMatrix_Rows(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_Columns(SUNMatrix farg1) {
+SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_Columns(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNDenseMatrix_Columns(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNDenseMatrix_Columns(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_LData(SUNMatrix farg1) {
+SWIGEXPORT int64_t _wrap_FSUNDenseMatrix_LData(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunindextype result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNDenseMatrix_LData(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = SUNDenseMatrix_LData(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT void * _wrap_FSUNDenseMatrix_Cols(SUNMatrix farg1) {
+SWIGEXPORT void * _wrap_FSUNDenseMatrix_Cols(SwigClassWrapper const *farg1) {
   void * fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   sunrealtype **result = 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNDenseMatrix_Cols(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (sunrealtype **)SUNDenseMatrix_Cols(arg1);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatGetID_Dense(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatGetID_Dense(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix_ID result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatGetID_Dense(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix_ID)SUNMatGetID_Dense(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT SUNMatrix _wrap_FSUNMatClone_Dense(SUNMatrix farg1) {
-  SUNMatrix fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNMatClone_Dense(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatClone_Dense(SUNMatrix)", return SwigClassWrapper_uninitialized());
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix)SUNMatClone_Dense(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNMatDestroy_Dense(SUNMatrix farg1) {
+SWIGEXPORT void _wrap_FSUNMatDestroy_Dense(SwigClassWrapper const *farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatDestroy_Dense(SUNMatrix)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   SUNMatDestroy_Dense(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatZero_Dense(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatZero_Dense(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatZero_Dense(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNErrCode)SUNMatZero_Dense(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatCopy_Dense(SUNMatrix farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatCopy_Dense(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatCopy_Dense(SUNMatrix,SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatCopy_Dense(SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatCopy_Dense(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAdd_Dense(double const *farg1, SUNMatrix farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FSUNMatScaleAdd_Dense(double const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
@@ -351,54 +604,63 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd_Dense(double const *farg1, SUNMatrix farg2,
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd_Dense(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd_Dense(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (SUNErrCode)SUNMatScaleAdd_Dense(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAddI_Dense(double const *farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatScaleAddI_Dense(double const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAddI_Dense(sunrealtype,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatScaleAddI_Dense(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatMatvec_Dense(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatMatvec_Dense(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatMatvec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatMatvec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatMatvec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatMatvec_Dense(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec_Dense(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec_Dense(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatHermitianTransposeVec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec_Dense(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatHermitianTransposeVec_Dense(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;

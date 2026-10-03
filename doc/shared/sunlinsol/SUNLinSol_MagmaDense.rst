@@ -106,7 +106,7 @@ The SUNLinearSolver_MagmaDense module defines the object *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_MagmaDense {
+   struct SUNLinearSolverContent_MagmaDense_ {
      int             last_flag;
      sunbooleantype  async;
      sunindextype    N;

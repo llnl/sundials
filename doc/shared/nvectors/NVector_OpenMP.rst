@@ -38,7 +38,7 @@ supplied argument in the vector constructor.
 
 .. code-block:: c
 
-   struct _N_VectorContent_OpenMP {
+   struct N_VectorContent_OpenMP_ {
      sunindextype length;
      sunbooleantype own_data;
      sunrealtype *data;

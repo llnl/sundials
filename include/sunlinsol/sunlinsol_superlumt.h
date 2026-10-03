@@ -75,7 +75,7 @@ extern "C" {
  * SuperLUMT Implementation of SUNLinearSolver
  * -------------------------------------------- */
 
-struct _SUNLinearSolverContent_SuperLUMT
+struct SUNLinearSolverContent_SuperLUMT_
 {
   int last_flag;
   int first_factorize;
@@ -89,7 +89,7 @@ struct _SUNLinearSolverContent_SuperLUMT
   superlumt_options_t* options;
 };
 
-typedef struct _SUNLinearSolverContent_SuperLUMT* SUNLinearSolverContent_SuperLUMT;
+typedef struct SUNLinearSolverContent_SuperLUMT_* SUNLinearSolverContent_SuperLUMT;
 
 /* -------------------------------------------
  * Exported Functions for SUNLINSOL_SUPERLUMT

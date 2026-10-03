@@ -28,6 +28,35 @@ module fnvector_parallel_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct N_VectorContent_Parallel_
+ type, public :: N_VectorContent_Parallel_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_local_length => swigf_N_VectorContent_Parallel__local_length_set
+  procedure :: get_local_length => swigf_N_VectorContent_Parallel__local_length_get
+  procedure :: set_global_length => swigf_N_VectorContent_Parallel__global_length_set
+  procedure :: get_global_length => swigf_N_VectorContent_Parallel__global_length_get
+  procedure :: set_own_data => swigf_N_VectorContent_Parallel__own_data_set
+  procedure :: get_own_data => swigf_N_VectorContent_Parallel__own_data_get
+  procedure :: set_data => swigf_N_VectorContent_Parallel__data_set
+  procedure :: get_data => swigf_N_VectorContent_Parallel__data_get
+  procedure :: set_comm => swigf_N_VectorContent_Parallel__comm_set
+  procedure :: get_comm => swigf_N_VectorContent_Parallel__comm_get
+  procedure :: release => swigf_release_N_VectorContent_Parallel_
+  procedure, private :: swigf_N_VectorContent_Parallel__op_assign__
+  generic :: assignment(=) => swigf_N_VectorContent_Parallel__op_assign__
+ end type N_VectorContent_Parallel_
+ interface N_VectorContent_Parallel_
+  module procedure swigf_create_N_VectorContent_Parallel_
+ end interface
  public :: FN_VNew_Parallel
  public :: FN_VNewEmpty_Parallel
  public :: FN_VMake_Parallel
@@ -47,45 +76,157 @@ module fnvector_parallel_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_N_VectorContent_Parallel__local_length_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__local_length_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Parallel__local_length_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Parallel__local_length_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Parallel__global_length_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__global_length_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Parallel__global_length_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Parallel__global_length_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Parallel__own_data_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__own_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Parallel__own_data_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Parallel__own_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Parallel__data_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Parallel__data_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Parallel__data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_N_VectorContent_Parallel__comm_set(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__comm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_N_VectorContent_Parallel__comm_get(farg1) &
+bind(C, name="_wrap_N_VectorContent_Parallel__comm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+function swigc_new_N_VectorContent_Parallel_() &
+bind(C, name="_wrap_new_N_VectorContent_Parallel_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_N_VectorContent_Parallel_(farg1) &
+bind(C, name="_wrap_delete_N_VectorContent_Parallel_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_N_VectorContent_Parallel__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_N_VectorContent_Parallel__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FN_VNew_Parallel(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VNew_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VNewEmpty_Parallel(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VNewEmpty_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VMake_Parallel(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FN_VMake_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR), value :: farg5
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VEnableFusedOps_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableFusedOps_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -94,7 +235,8 @@ function swigc_FN_VEnableLinearCombination_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearCombination_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -103,7 +245,8 @@ function swigc_FN_VEnableScaleAddMulti_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleAddMulti_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -112,7 +255,8 @@ function swigc_FN_VEnableDotProdMulti_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableDotProdMulti_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -121,7 +265,8 @@ function swigc_FN_VEnableLinearSumVectorArray_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableLinearSumVectorArray_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -130,7 +275,8 @@ function swigc_FN_VEnableScaleVectorArray_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableScaleVectorArray_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -139,7 +285,8 @@ function swigc_FN_VEnableConstVectorArray_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableConstVectorArray_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -148,7 +295,8 @@ function swigc_FN_VEnableWrmsNormVectorArray_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormVectorArray_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -157,7 +305,8 @@ function swigc_FN_VEnableWrmsNormMaskVectorArray_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableWrmsNormMaskVectorArray_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -166,7 +315,8 @@ function swigc_FN_VEnableDotProdMultiLocal_Parallel(farg1, farg2) &
 bind(C, name="_wrap_FN_VEnableDotProdMultiLocal_Parallel") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -185,15 +335,177 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_N_VectorContent_Parallel__local_length_set(self, local_length)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: local_length
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = local_length
+call swigc_N_VectorContent_Parallel__local_length_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Parallel__local_length_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Parallel__local_length_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_Parallel__global_length_set(self, global_length)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: global_length
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = global_length
+call swigc_N_VectorContent_Parallel__global_length_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Parallel__global_length_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Parallel__global_length_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_Parallel__own_data_set(self, own_data)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT), intent(in) :: own_data
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = own_data
+call swigc_N_VectorContent_Parallel__own_data_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Parallel__own_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Parallel__own_data_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_VectorContent_Parallel__data_set(self, data)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(data(1))
+call swigc_N_VectorContent_Parallel__data_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Parallel__data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(N_VectorContent_Parallel_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Parallel__data_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_N_VectorContent_Parallel__comm_set(self, comm)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer :: comm
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = int(comm, C_INT)
+call swigc_N_VectorContent_Parallel__comm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_VectorContent_Parallel__comm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer :: swig_result
+class(N_VectorContent_Parallel_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_VectorContent_Parallel__comm_get(farg1)
+swig_result = int(fresult)
+end function
+
+function swigf_create_N_VectorContent_Parallel_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(N_VectorContent_Parallel_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_N_VectorContent_Parallel_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_N_VectorContent_Parallel_(self)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_N_VectorContent_Parallel_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_VectorContent_Parallel__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(N_VectorContent_Parallel_), intent(inout) :: self
+type(N_VectorContent_Parallel_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_N_VectorContent_Parallel__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FN_VNew_Parallel(comm, local_length, global_length, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer :: comm
 integer(C_INT32_T), intent(in) :: local_length
 integer(C_INT32_T), intent(in) :: global_length
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT32_T) :: farg2 
 integer(C_INT32_T) :: farg3 
@@ -204,18 +516,18 @@ farg2 = local_length
 farg3 = global_length
 farg4 = sunctx
 fresult = swigc_FN_VNew_Parallel(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VNewEmpty_Parallel(comm, local_length, global_length, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer :: comm
 integer(C_INT32_T), intent(in) :: local_length
 integer(C_INT32_T), intent(in) :: global_length
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT32_T) :: farg2 
 integer(C_INT32_T) :: farg3 
@@ -226,19 +538,19 @@ farg2 = local_length
 farg3 = global_length
 farg4 = sunctx
 fresult = swigc_FN_VNewEmpty_Parallel(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VMake_Parallel(comm, local_length, global_length, v_data_1d, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 integer :: comm
 integer(C_INT32_T), intent(in) :: local_length
 integer(C_INT32_T), intent(in) :: global_length
 real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
 integer(C_INT32_T) :: farg2 
 integer(C_INT32_T) :: farg3 
@@ -251,20 +563,20 @@ farg3 = global_length
 farg4 = c_loc(v_data_1d(1))
 farg5 = sunctx
 fresult = swigc_FN_VMake_Parallel(farg1, farg2, farg3, farg4, farg5)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VEnableFusedOps_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableFusedOps_Parallel(farg1, farg2)
 swig_result = fresult
@@ -274,13 +586,13 @@ function FN_VEnableLinearCombination_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearCombination_Parallel(farg1, farg2)
 swig_result = fresult
@@ -290,13 +602,13 @@ function FN_VEnableScaleAddMulti_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleAddMulti_Parallel(farg1, farg2)
 swig_result = fresult
@@ -306,13 +618,13 @@ function FN_VEnableDotProdMulti_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableDotProdMulti_Parallel(farg1, farg2)
 swig_result = fresult
@@ -322,13 +634,13 @@ function FN_VEnableLinearSumVectorArray_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableLinearSumVectorArray_Parallel(farg1, farg2)
 swig_result = fresult
@@ -338,13 +650,13 @@ function FN_VEnableScaleVectorArray_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableScaleVectorArray_Parallel(farg1, farg2)
 swig_result = fresult
@@ -354,13 +666,13 @@ function FN_VEnableConstVectorArray_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableConstVectorArray_Parallel(farg1, farg2)
 swig_result = fresult
@@ -370,13 +682,13 @@ function FN_VEnableWrmsNormVectorArray_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormVectorArray_Parallel(farg1, farg2)
 swig_result = fresult
@@ -386,13 +698,13 @@ function FN_VEnableWrmsNormMaskVectorArray_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableWrmsNormMaskVectorArray_Parallel(farg1, farg2)
 swig_result = fresult
@@ -402,13 +714,13 @@ function FN_VEnableDotProdMultiLocal_Parallel(v, tf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT), intent(in) :: tf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = tf
 fresult = swigc_FN_VEnableDotProdMultiLocal_Parallel(farg1, farg2)
 swig_result = fresult

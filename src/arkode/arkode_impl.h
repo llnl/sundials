@@ -306,13 +306,13 @@ typedef int (*ARKTimestepSetForcingFn)(ARKodeMem ark_mem, sunrealtype tshift,
   ===============================================================*/
 
 /* Forward reference for pointer to ARKInterp_Ops object */
-typedef struct _generic_ARKInterpOps* ARKInterpOps;
+typedef struct ARKInterpOps_* ARKInterpOps;
 
 /* Forward reference for pointer to ARKInterp object */
-typedef struct _generic_ARKInterp* ARKInterp;
+typedef struct ARKInterp_* ARKInterp;
 
 /* Structure containing function pointers to interpolation operations  */
-struct _generic_ARKInterpOps
+struct ARKInterpOps_
 {
   int (*resize)(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
                 void* resize_data, N_Vector tmpl);
@@ -327,7 +327,7 @@ struct _generic_ARKInterpOps
 
 /* An interpolation module consists of an implementation-dependent 'content'
    structure, and a pointer to a structure of implementation-dependent operations. */
-struct _generic_ARKInterp
+struct ARKInterp_
 {
   void* content;
   ARKInterpOps ops;

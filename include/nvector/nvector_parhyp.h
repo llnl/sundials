@@ -62,7 +62,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_ParHyp
+struct N_VectorContent_ParHyp_
 {
   sunindextype local_length;    /* local vector length         */
   sunindextype global_length;   /* global vector length        */
@@ -72,7 +72,7 @@ struct _N_VectorContent_ParHyp
   HYPRE_ParVector x; /* the actual HYPRE_ParVector object */
 };
 
-typedef struct _N_VectorContent_ParHyp* N_VectorContent_ParHyp;
+typedef struct N_VectorContent_ParHyp_* N_VectorContent_ParHyp;
 
 /*
  * -----------------------------------------------------------------

@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,31 +240,709 @@
 
 #include "sunlinsol/sunlinsol_spfgmr.h"
 
-SWIGEXPORT SUNLinearSolver _wrap_FSUNLinSol_SPFGMR(N_Vector farg1, int const *farg2, int const *farg3, void *farg4) {
-  SUNLinearSolver fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__maxl_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::maxl", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->maxl = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__maxl_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::maxl", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->maxl);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__pretype_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::pretype", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->pretype = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__pretype_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::pretype", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->pretype);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__gstype_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::gstype", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->gstype = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__gstype_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::gstype", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->gstype);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__max_restarts_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::max_restarts", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->max_restarts = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__max_restarts_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::max_restarts", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->max_restarts);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__zeroguess_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::zeroguess", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->zeroguess = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__zeroguess_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::zeroguess", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->zeroguess);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__numiters_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::numiters", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->numiters = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__numiters_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::numiters", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->numiters);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__resnorm_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::resnorm", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->resnorm = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNLinearSolverContent_SPFGMR__resnorm_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::resnorm", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->resnorm);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__last_flag_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::last_flag", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->last_flag = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNLinearSolverContent_SPFGMR__last_flag_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::last_flag", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (int) ((arg1)->last_flag);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__ATimes_set(SwigClassWrapper const *farg1, SUNATimesFn farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNATimesFn arg2 = (SUNATimesFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::ATimes", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (SUNATimesFn)(farg2);
+  if (arg1) (arg1)->ATimes = arg2;
+}
+
+
+SWIGEXPORT SUNATimesFn _wrap_SUNLinearSolverContent_SPFGMR__ATimes_get(SwigClassWrapper const *farg1) {
+  SUNATimesFn fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNATimesFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::ATimes", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (SUNATimesFn) ((arg1)->ATimes);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__ATData_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::ATData", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->ATData = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__ATData_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::ATData", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (void *) ((arg1)->ATData);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__Psetup_set(SwigClassWrapper const *farg1, SUNPSetupFn farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNPSetupFn arg2 = (SUNPSetupFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Psetup", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (SUNPSetupFn)(farg2);
+  if (arg1) (arg1)->Psetup = arg2;
+}
+
+
+SWIGEXPORT SUNPSetupFn _wrap_SUNLinearSolverContent_SPFGMR__Psetup_get(SwigClassWrapper const *farg1) {
+  SUNPSetupFn fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNPSetupFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Psetup", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (SUNPSetupFn) ((arg1)->Psetup);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__Psolve_set(SwigClassWrapper const *farg1, SUNPSolveFn farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNPSolveFn arg2 = (SUNPSolveFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Psolve", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (SUNPSolveFn)(farg2);
+  if (arg1) (arg1)->Psolve = arg2;
+}
+
+
+SWIGEXPORT SUNPSolveFn _wrap_SUNLinearSolverContent_SPFGMR__Psolve_get(SwigClassWrapper const *farg1) {
+  SUNPSolveFn fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  SUNPSolveFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Psolve", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (SUNPSolveFn) ((arg1)->Psolve);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__PData_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::PData", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->PData = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__PData_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::PData", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (void *) ((arg1)->PData);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__s1_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::s1", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNLinearSolverContent_SPFGMR_::s1", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->s1 = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNLinearSolverContent_SPFGMR__s1_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::s1", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->s1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__s2_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::s2", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNLinearSolverContent_SPFGMR_::s2", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->s2 = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNLinearSolverContent_SPFGMR__s2_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::s2", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->s2);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__V_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::V", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->V = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__V_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::V", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->V);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__Z_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Z", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->Z = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__Z_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Z", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->Z);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__Hes_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype **arg2 = (sunrealtype **) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Hes", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (sunrealtype **)(farg2);
+  if (arg1) (arg1)->Hes = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__Hes_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype **result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Hes", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (sunrealtype **) ((arg1)->Hes);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__givens_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::givens", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->givens = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNLinearSolverContent_SPFGMR__givens_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::givens", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->givens);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__xcor_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::xcor", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNLinearSolverContent_SPFGMR_::xcor", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->xcor = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNLinearSolverContent_SPFGMR__xcor_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::xcor", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->xcor);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__yg_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::yg", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->yg = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNLinearSolverContent_SPFGMR__yg_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::yg", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->yg);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__vtemp_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::vtemp", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNLinearSolverContent_SPFGMR_::vtemp", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->vtemp = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNLinearSolverContent_SPFGMR__vtemp_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::vtemp", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->vtemp);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__cv_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::cv", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->cv = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNLinearSolverContent_SPFGMR__cv_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::cv", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->cv);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__Xv_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Xv", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->Xv = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolverContent_SPFGMR__Xv_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::Xv", return 0);
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->Xv);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNLinearSolverContent_SPFGMR_() {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolverContent_SPFGMR_ *result = 0 ;
+  
+  result = (struct SUNLinearSolverContent_SPFGMR_ *)calloc(1, sizeof(struct SUNLinearSolverContent_SPFGMR_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNLinearSolverContent_SPFGMR_(SwigClassWrapper *farg1) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNLinearSolverContent_SPFGMR_ *", "SUNLinearSolverContent_SPFGMR_", "SUNLinearSolverContent_SPFGMR_::~SUNLinearSolverContent_SPFGMR_()", return );
+  arg1 = (struct SUNLinearSolverContent_SPFGMR_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolverContent_SPFGMR__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolverContent_SPFGMR_ *arg1 = (struct SUNLinearSolverContent_SPFGMR_ *) 0 ;
+  struct SUNLinearSolverContent_SPFGMR_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNLinSol_SPFGMR(SwigClassWrapper const *farg1, int const *farg2, int const *farg3, void *farg4) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   int arg3 ;
   SUNContext arg4 = (SUNContext) 0 ;
   SUNLinearSolver result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "SUNLinSol_SPFGMR(N_Vector,int,int,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   arg3 = (int)(*farg3);
   arg4 = (SUNContext)(farg4);
   result = (SUNLinearSolver)SUNLinSol_SPFGMR(arg1,arg2,arg3,arg4);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetPrecType(SUNLinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetPrecType(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSol_SPFGMRSetPrecType(SUNLinearSolver,int)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNLinSol_SPFGMRSetPrecType(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -243,13 +950,14 @@ SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetPrecType(SUNLinearSolver farg1, int con
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetGSType(SUNLinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetGSType(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSol_SPFGMRSetGSType(SUNLinearSolver,int)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNLinSol_SPFGMRSetGSType(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -257,13 +965,14 @@ SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetGSType(SUNLinearSolver farg1, int const
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetMaxRestarts(SUNLinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNLinSol_SPFGMRSetMaxRestarts(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSol_SPFGMRSetMaxRestarts(SUNLinearSolver,int)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNLinSol_SPFGMRSetMaxRestarts(arg1,arg2);
   fresult = (SUNErrCode)(result);

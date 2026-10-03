@@ -164,7 +164,7 @@ structure.
 
 .. code-block:: c
 
-  struct _SUNNonlinearSolverContent_PetscSNES {
+  struct SUNNonlinearSolverContent_PetscSNES_ {
     int sysfn_last_err;
     PetscErrorCode petsc_last_err;
     long int nconvfails;

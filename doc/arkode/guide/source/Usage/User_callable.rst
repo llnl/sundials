@@ -1805,9 +1805,8 @@ Reset accumulated error                                     :c:func:`ARKodeReset
 
       Any value below 1.0 will imply a reset to the default value.
 
-      If both this and one of the stepper ``SetAdaptivityMethod`` functions or
-      :c:func:`ARKodeSetAdaptController` will be called, then this routine must be called
-      *second*.
+      If both this and :c:func:`ARKodeSetAdaptController` will be called, then
+      this routine must be called *second*.
 
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.error_bias".

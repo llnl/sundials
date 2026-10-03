@@ -30,6 +30,71 @@ module fsunlinsol_spgmr_mod
  ! DECLARATION CONSTRUCTS
  integer(C_INT), parameter, public :: SUNSPGMR_MAXL_DEFAULT = 5_C_INT
  integer(C_INT), parameter, public :: SUNSPGMR_MAXRS_DEFAULT = 0_C_INT
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNLinearSolverContent_SPGMR_
+ type, public :: SUNLinearSolverContent_SPGMR_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_maxl => swigf_SUNLinearSolverContent_SPGMR__maxl_set
+  procedure :: get_maxl => swigf_SUNLinearSolverContent_SPGMR__maxl_get
+  procedure :: set_pretype => swigf_SUNLinearSolverContent_SPGMR__pretype_set
+  procedure :: get_pretype => swigf_SUNLinearSolverContent_SPGMR__pretype_get
+  procedure :: set_gstype => swigf_SUNLinearSolverContent_SPGMR__gstype_set
+  procedure :: get_gstype => swigf_SUNLinearSolverContent_SPGMR__gstype_get
+  procedure :: set_max_restarts => swigf_SUNLinearSolverContent_SPGMR__max_restarts_set
+  procedure :: get_max_restarts => swigf_SUNLinearSolverContent_SPGMR__max_restarts_get
+  procedure :: set_zeroguess => swigf_SUNLinearSolverContent_SPGMR__zeroguess_set
+  procedure :: get_zeroguess => swigf_SUNLinearSolverContent_SPGMR__zeroguess_get
+  procedure :: set_numiters => swigf_SUNLinearSolverContent_SPGMR__numiters_set
+  procedure :: get_numiters => swigf_SUNLinearSolverContent_SPGMR__numiters_get
+  procedure :: set_resnorm => swigf_SUNLinearSolverContent_SPGMR__resnorm_set
+  procedure :: get_resnorm => swigf_SUNLinearSolverContent_SPGMR__resnorm_get
+  procedure :: set_last_flag => swigf_SUNLinearSolverContent_SPGMR__last_flag_set
+  procedure :: get_last_flag => swigf_SUNLinearSolverContent_SPGMR__last_flag_get
+  procedure :: set_ATimes => swigf_SUNLinearSolverContent_SPGMR__ATimes_set
+  procedure :: get_ATimes => swigf_SUNLinearSolverContent_SPGMR__ATimes_get
+  procedure :: set_ATData => swigf_SUNLinearSolverContent_SPGMR__ATData_set
+  procedure :: get_ATData => swigf_SUNLinearSolverContent_SPGMR__ATData_get
+  procedure :: set_Psetup => swigf_SUNLinearSolverContent_SPGMR__Psetup_set
+  procedure :: get_Psetup => swigf_SUNLinearSolverContent_SPGMR__Psetup_get
+  procedure :: set_Psolve => swigf_SUNLinearSolverContent_SPGMR__Psolve_set
+  procedure :: get_Psolve => swigf_SUNLinearSolverContent_SPGMR__Psolve_get
+  procedure :: set_PData => swigf_SUNLinearSolverContent_SPGMR__PData_set
+  procedure :: get_PData => swigf_SUNLinearSolverContent_SPGMR__PData_get
+  procedure :: set_s1 => swigf_SUNLinearSolverContent_SPGMR__s1_set
+  procedure :: get_s1 => swigf_SUNLinearSolverContent_SPGMR__s1_get
+  procedure :: set_s2 => swigf_SUNLinearSolverContent_SPGMR__s2_set
+  procedure :: get_s2 => swigf_SUNLinearSolverContent_SPGMR__s2_get
+  procedure :: set_V => swigf_SUNLinearSolverContent_SPGMR__V_set
+  procedure :: get_V => swigf_SUNLinearSolverContent_SPGMR__V_get
+  procedure :: set_Hes => swigf_SUNLinearSolverContent_SPGMR__Hes_set
+  procedure :: get_Hes => swigf_SUNLinearSolverContent_SPGMR__Hes_get
+  procedure :: set_givens => swigf_SUNLinearSolverContent_SPGMR__givens_set
+  procedure :: get_givens => swigf_SUNLinearSolverContent_SPGMR__givens_get
+  procedure :: set_xcor => swigf_SUNLinearSolverContent_SPGMR__xcor_set
+  procedure :: get_xcor => swigf_SUNLinearSolverContent_SPGMR__xcor_get
+  procedure :: set_yg => swigf_SUNLinearSolverContent_SPGMR__yg_set
+  procedure :: get_yg => swigf_SUNLinearSolverContent_SPGMR__yg_get
+  procedure :: set_vtemp => swigf_SUNLinearSolverContent_SPGMR__vtemp_set
+  procedure :: get_vtemp => swigf_SUNLinearSolverContent_SPGMR__vtemp_get
+  procedure :: set_cv => swigf_SUNLinearSolverContent_SPGMR__cv_set
+  procedure :: get_cv => swigf_SUNLinearSolverContent_SPGMR__cv_get
+  procedure :: set_Xv => swigf_SUNLinearSolverContent_SPGMR__Xv_set
+  procedure :: get_Xv => swigf_SUNLinearSolverContent_SPGMR__Xv_get
+  procedure :: release => swigf_release_SUNLinearSolverContent_SPGMR_
+  procedure, private :: swigf_SUNLinearSolverContent_SPGMR__op_assign__
+  generic :: assignment(=) => swigf_SUNLinearSolverContent_SPGMR__op_assign__
+ end type SUNLinearSolverContent_SPGMR_
+ interface SUNLinearSolverContent_SPGMR_
+  module procedure swigf_create_SUNLinearSolverContent_SPGMR_
+ end interface
  public :: FSUNLinSol_SPGMR
  public :: FSUNLinSol_SPGMRSetPrecType
  public :: FSUNLinSol_SPGMRSetGSType
@@ -37,22 +102,438 @@ module fsunlinsol_spgmr_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNLinearSolverContent_SPGMR__maxl_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__maxl_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__maxl_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__maxl_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__pretype_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__pretype_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__pretype_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__pretype_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__gstype_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__gstype_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__gstype_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__gstype_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__max_restarts_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__max_restarts_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__max_restarts_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__max_restarts_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__zeroguess_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__zeroguess_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__zeroguess_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__zeroguess_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__numiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__numiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__numiters_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__numiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__resnorm_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__resnorm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__resnorm_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__resnorm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__last_flag_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__last_flag_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__last_flag_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__last_flag_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__ATimes_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__ATimes_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__ATimes_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__ATimes_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__ATData_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__ATData_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__ATData_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__ATData_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__Psetup_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Psetup_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__Psetup_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Psetup_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__Psolve_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Psolve_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__Psolve_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Psolve_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__PData_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__PData_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__PData_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__PData_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__s1_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__s1_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__s1_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__s1_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__s2_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__s2_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__s2_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__s2_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__V_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__V_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__V_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__V_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__Hes_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Hes_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__Hes_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Hes_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__givens_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__givens_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__givens_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__givens_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__xcor_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__xcor_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__xcor_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__xcor_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__yg_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__yg_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__yg_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__yg_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__vtemp_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__vtemp_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__vtemp_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__vtemp_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__cv_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__cv_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__cv_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__cv_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__Xv_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Xv_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_SPGMR__Xv_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__Xv_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNLinearSolverContent_SPGMR_() &
+bind(C, name="_wrap_new_SUNLinearSolverContent_SPGMR_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNLinearSolverContent_SPGMR_(farg1) &
+bind(C, name="_wrap_delete_SUNLinearSolverContent_SPGMR_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNLinearSolverContent_SPGMR__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_SPGMR__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNLinSol_SPGMR(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNLinSol_SPGMR") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNLinSol_SPGMRSetPrecType(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSol_SPGMRSetPrecType") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -61,7 +542,8 @@ function swigc_FSUNLinSol_SPGMRSetGSType(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSol_SPGMRSetGSType") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -70,7 +552,8 @@ function swigc_FSUNLinSol_SPGMRSetMaxRestarts(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSol_SPGMRSetMaxRestarts") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -80,39 +563,651 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNLinearSolverContent_SPGMR__maxl_set(self, maxl)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: maxl
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = maxl
+call swigc_SUNLinearSolverContent_SPGMR__maxl_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__maxl_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__maxl_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__pretype_set(self, pretype)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: pretype
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = pretype
+call swigc_SUNLinearSolverContent_SPGMR__pretype_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__pretype_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__pretype_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__gstype_set(self, gstype)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: gstype
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gstype
+call swigc_SUNLinearSolverContent_SPGMR__gstype_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__gstype_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__gstype_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__max_restarts_set(self, max_restarts)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: max_restarts
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = max_restarts
+call swigc_SUNLinearSolverContent_SPGMR__max_restarts_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__max_restarts_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__max_restarts_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__zeroguess_set(self, zeroguess)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: zeroguess
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = zeroguess
+call swigc_SUNLinearSolverContent_SPGMR__zeroguess_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__zeroguess_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__zeroguess_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__numiters_set(self, numiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: numiters
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = numiters
+call swigc_SUNLinearSolverContent_SPGMR__numiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__numiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__numiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__resnorm_set(self, resnorm)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: resnorm
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = resnorm
+call swigc_SUNLinearSolverContent_SPGMR__resnorm_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__resnorm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__resnorm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__last_flag_set(self, last_flag)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT), intent(in) :: last_flag
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = last_flag
+call swigc_SUNLinearSolverContent_SPGMR__last_flag_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__last_flag_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__last_flag_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__ATimes_set(self, atimes)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: atimes
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = atimes
+call swigc_SUNLinearSolverContent_SPGMR__ATimes_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__ATimes_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__ATimes_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__ATData_set(self, atdata)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: atdata
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = atdata
+call swigc_SUNLinearSolverContent_SPGMR__ATData_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__ATData_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__ATData_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__Psetup_set(self, psetup)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: psetup
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = psetup
+call swigc_SUNLinearSolverContent_SPGMR__Psetup_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__Psetup_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__Psetup_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__Psolve_set(self, psolve)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: psolve
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = psolve
+call swigc_SUNLinearSolverContent_SPGMR__Psolve_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__Psolve_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__Psolve_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__PData_set(self, pdata)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: pdata
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = pdata
+call swigc_SUNLinearSolverContent_SPGMR__PData_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__PData_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__PData_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__s1_set(self, s1)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+class(N_Vector_), intent(in) :: s1
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = s1%swigdata
+call swigc_SUNLinearSolverContent_SPGMR__s1_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__s1_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__s1_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__s2_set(self, s2)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+class(N_Vector_), intent(in) :: s2
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = s2%swigdata
+call swigc_SUNLinearSolverContent_SPGMR__s2_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__s2_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__s2_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__V_set(self, v)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: v
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = v
+call swigc_SUNLinearSolverContent_SPGMR__V_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__V_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__V_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__Hes_set(self, hes)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR), target, intent(inout) :: hes
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(hes)
+call swigc_SUNLinearSolverContent_SPGMR__Hes_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__Hes_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), pointer :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__Hes_get(farg1)
+call c_f_pointer(fresult, swig_result)
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__givens_set(self, givens)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: givens
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(givens(1))
+call swigc_SUNLinearSolverContent_SPGMR__givens_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__givens_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__givens_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__xcor_set(self, xcor)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+class(N_Vector_), intent(in) :: xcor
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = xcor%swigdata
+call swigc_SUNLinearSolverContent_SPGMR__xcor_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__xcor_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__xcor_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__yg_set(self, yg)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: yg
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(yg(1))
+call swigc_SUNLinearSolverContent_SPGMR__yg_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__yg_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__yg_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__vtemp_set(self, vtemp)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+class(N_Vector_), intent(in) :: vtemp
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = vtemp%swigdata
+call swigc_SUNLinearSolverContent_SPGMR__vtemp_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__vtemp_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__vtemp_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__cv_set(self, cv)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: cv
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(cv(1))
+call swigc_SUNLinearSolverContent_SPGMR__cv_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__cv_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__cv_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__Xv_set(self, xv)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: xv
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = xv
+call swigc_SUNLinearSolverContent_SPGMR__Xv_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_SPGMR__Xv_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolverContent_SPGMR_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_SPGMR__Xv_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNLinearSolverContent_SPGMR_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolverContent_SPGMR_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNLinearSolverContent_SPGMR_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNLinearSolverContent_SPGMR_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNLinearSolverContent_SPGMR_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolverContent_SPGMR__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_SPGMR_), intent(inout) :: self
+type(SUNLinearSolverContent_SPGMR_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNLinearSolverContent_SPGMR__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNLinSol_SPGMR(y, pretype, maxl, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNLinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
+type(SUNLinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
 integer(C_INT), intent(in) :: pretype
 integer(C_INT), intent(in) :: maxl
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 integer(C_INT) :: farg3 
 type(C_PTR) :: farg4 
 
-farg1 = c_loc(y)
+farg1 = y%swigdata
 farg2 = pretype
 farg3 = maxl
 farg4 = sunctx
 fresult = swigc_FSUNLinSol_SPGMR(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNLinSol_SPGMRSetPrecType(s, pretype) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT), intent(in) :: pretype
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = pretype
 fresult = swigc_FSUNLinSol_SPGMRSetPrecType(farg1, farg2)
 swig_result = fresult
@@ -122,13 +1217,13 @@ function FSUNLinSol_SPGMRSetGSType(s, gstype) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT), intent(in) :: gstype
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = gstype
 fresult = swigc_FSUNLinSol_SPGMRSetGSType(farg1, farg2)
 swig_result = fresult
@@ -138,13 +1233,13 @@ function FSUNLinSol_SPGMRSetMaxRestarts(s, maxrs) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT), intent(in) :: maxrs
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = maxrs
 fresult = swigc_FSUNLinSol_SPGMRSetMaxRestarts(farg1, farg2)
 swig_result = fresult

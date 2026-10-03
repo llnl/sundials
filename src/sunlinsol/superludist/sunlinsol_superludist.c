@@ -37,6 +37,7 @@
 #elif defined(SUNDIALS_SINGLE_PRECISION)
 #include <superlu_sdefs.h>
 
+
 #define xSolveFinalize sSolveFinalize
 #define pxgssvx        psgssvx
 #else

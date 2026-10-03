@@ -144,7 +144,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__V_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__V_get(farg1) &
@@ -153,7 +153,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__Av_set(farg1, farg2) &
@@ -161,7 +161,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__Av_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__Av_get(farg1) &
@@ -170,7 +170,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__v_prev_set(farg1, farg2) &
@@ -178,7 +178,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__v_prev_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__v_prev_get(farg1) &
@@ -187,7 +187,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__rhs_linY_set(farg1, farg2) &
@@ -195,7 +195,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__rhs_linY_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__rhs_linY_get(farg1) &
@@ -204,7 +204,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__Fy_set(farg1, farg2) &
@@ -212,7 +212,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__Fy_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__Fy_get(farg1) &
@@ -221,7 +221,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__work_set(farg1, farg2) &
@@ -229,7 +229,7 @@ bind(C, name="_wrap_SUNDomEigEstimatorContent_Power__work_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNDomEigEstimatorContent_Power__work_get(farg1) &
@@ -238,7 +238,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Power__num_warmups_set(farg1, farg2) &
@@ -455,7 +455,8 @@ function swigc_FSUNDomEigEstimator_Power(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNDomEigEstimator_Power") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_LONG), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 type(C_PTR), value :: farg4
@@ -513,8 +514,9 @@ function swigc_FSUNDomEigEstimator_SetInitialGuess_Power(farg1, farg2) &
 bind(C, name="_wrap_FSUNDomEigEstimator_SetInitialGuess_Power") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -522,9 +524,10 @@ function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Power(farg1, farg2, 
 bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Power") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -666,151 +669,151 @@ end function
 subroutine swigf_SUNDomEigEstimatorContent_Power__V_set(self, v)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(v)
+farg2 = v%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__V_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__V_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__V_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__Av_set(self, av)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: av
+class(N_Vector_), intent(in) :: av
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(av)
+farg2 = av%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__Av_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__Av_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__Av_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__v_prev_set(self, v_prev)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: v_prev
+class(N_Vector_), intent(in) :: v_prev
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(v_prev)
+farg2 = v_prev%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__v_prev_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__v_prev_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__v_prev_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__rhs_linY_set(self, rhs_liny)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: rhs_liny
+class(N_Vector_), intent(in) :: rhs_liny
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(rhs_liny)
+farg2 = rhs_liny%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__rhs_linY_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__rhs_linY_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__rhs_linY_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__Fy_set(self, fy)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: fy
+class(N_Vector_), intent(in) :: fy
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(fy)
+farg2 = fy%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__Fy_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__Fy_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__Fy_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__work_set(self, work)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(N_Vector), target, intent(inout) :: work
+class(N_Vector_), intent(in) :: work
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(work)
+farg2 = work%swigdata
 call swigc_SUNDomEigEstimatorContent_Power__work_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNDomEigEstimatorContent_Power__work_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 class(SUNDomEigEstimatorContent_Power_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Power__work_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNDomEigEstimatorContent_Power__num_warmups_set(self, num_warmups)
@@ -1129,17 +1132,17 @@ function FSUNDomEigEstimator_Power(q, max_iters, rel_tol, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(SUNDomEigEstimator), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: q
+class(N_Vector_), intent(in) :: q
 integer(C_LONG), intent(in) :: max_iters
 real(C_DOUBLE), intent(in) :: rel_tol
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_LONG) :: farg2 
 real(C_DOUBLE) :: farg3 
 type(C_PTR) :: farg4 
 
-farg1 = c_loc(q)
+farg1 = q%swigdata
 farg2 = max_iters
 farg3 = rel_tol
 farg4 = sunctx
@@ -1238,13 +1241,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNDomEigEstimator), target, intent(inout) :: dee
-type(N_Vector), target, intent(inout) :: q
+class(N_Vector_), intent(in) :: q
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c_loc(dee)
-farg2 = c_loc(q)
+farg2 = q%swigdata
 fresult = swigc_FSUNDomEigEstimator_SetInitialGuess_Power(farg1, farg2)
 swig_result = fresult
 end function
@@ -1255,15 +1258,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNDomEigEstimator), target, intent(inout) :: dee
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c_loc(dee)
 farg2 = t
-farg3 = c_loc(v)
+farg3 = v%swigdata
 fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint_Power(farg1, farg2, farg3)
 swig_result = fresult
 end function

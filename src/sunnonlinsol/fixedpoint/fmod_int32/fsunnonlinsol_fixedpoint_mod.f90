@@ -28,6 +28,81 @@ module fsunnonlinsol_fixedpoint_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNNonlinearSolverContent_FixedPoint_
+ type, public :: SUNNonlinearSolverContent_FixedPoint_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_Sys => swigf_SUNNonlinearSolverContent_FixedPoint__Sys_set
+  procedure :: get_Sys => swigf_SUNNonlinearSolverContent_FixedPoint__Sys_get
+  procedure :: set_CTest => swigf_SUNNonlinearSolverContent_FixedPoint__CTest_set
+  procedure :: get_CTest => swigf_SUNNonlinearSolverContent_FixedPoint__CTest_get
+  procedure :: set_norm_fn => swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_set
+  procedure :: get_norm_fn => swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_get
+  procedure :: set_norm_fn_data => swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set
+  procedure :: get_norm_fn_data => swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get
+  procedure :: set_getupdatenorm_fn => swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UON3R
+  procedure :: get_getupdatenorm_fn => swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UOMTO
+  procedure :: set_getupdatenorm_data => swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHC24
+  procedure :: get_getupdatenorm_data => swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHBS1
+  procedure :: set_m => swigf_SUNNonlinearSolverContent_FixedPoint__m_set
+  procedure :: get_m => swigf_SUNNonlinearSolverContent_FixedPoint__m_get
+  procedure :: set_imap => swigf_SUNNonlinearSolverContent_FixedPoint__imap_set
+  procedure :: get_imap => swigf_SUNNonlinearSolverContent_FixedPoint__imap_get
+  procedure :: set_damping => swigf_SUNNonlinearSolverContent_FixedPoint__damping_set
+  procedure :: get_damping => swigf_SUNNonlinearSolverContent_FixedPoint__damping_get
+  procedure :: set_beta => swigf_SUNNonlinearSolverContent_FixedPoint__beta_set
+  procedure :: get_beta => swigf_SUNNonlinearSolverContent_FixedPoint__beta_get
+  procedure :: set_R => swigf_SUNNonlinearSolverContent_FixedPoint__R_set
+  procedure :: get_R => swigf_SUNNonlinearSolverContent_FixedPoint__R_get
+  procedure :: set_gamma => swigf_SUNNonlinearSolverContent_FixedPoint__gamma_set
+  procedure :: get_gamma => swigf_SUNNonlinearSolverContent_FixedPoint__gamma_get
+  procedure :: set_cvals => swigf_SUNNonlinearSolverContent_FixedPoint__cvals_set
+  procedure :: get_cvals => swigf_SUNNonlinearSolverContent_FixedPoint__cvals_get
+  procedure :: set_delnrm => swigf_SUNNonlinearSolverContent_FixedPoint__delnrm_set
+  procedure :: get_delnrm => swigf_SUNNonlinearSolverContent_FixedPoint__delnrm_get
+  procedure :: set_df => swigf_SUNNonlinearSolverContent_FixedPoint__df_set
+  procedure :: get_df => swigf_SUNNonlinearSolverContent_FixedPoint__df_get
+  procedure :: set_dg => swigf_SUNNonlinearSolverContent_FixedPoint__dg_set
+  procedure :: get_dg => swigf_SUNNonlinearSolverContent_FixedPoint__dg_get
+  procedure :: set_q => swigf_SUNNonlinearSolverContent_FixedPoint__q_set
+  procedure :: get_q => swigf_SUNNonlinearSolverContent_FixedPoint__q_get
+  procedure :: set_Xvecs => swigf_SUNNonlinearSolverContent_FixedPoint__Xvecs_set
+  procedure :: get_Xvecs => swigf_SUNNonlinearSolverContent_FixedPoint__Xvecs_get
+  procedure :: set_yprev => swigf_SUNNonlinearSolverContent_FixedPoint__yprev_set
+  procedure :: get_yprev => swigf_SUNNonlinearSolverContent_FixedPoint__yprev_get
+  procedure :: set_gy => swigf_SUNNonlinearSolverContent_FixedPoint__gy_set
+  procedure :: get_gy => swigf_SUNNonlinearSolverContent_FixedPoint__gy_get
+  procedure :: set_fold => swigf_SUNNonlinearSolverContent_FixedPoint__fold_set
+  procedure :: get_fold => swigf_SUNNonlinearSolverContent_FixedPoint__fold_get
+  procedure :: set_gold => swigf_SUNNonlinearSolverContent_FixedPoint__gold_set
+  procedure :: get_gold => swigf_SUNNonlinearSolverContent_FixedPoint__gold_get
+  procedure :: set_delta => swigf_SUNNonlinearSolverContent_FixedPoint__delta_set
+  procedure :: get_delta => swigf_SUNNonlinearSolverContent_FixedPoint__delta_get
+  procedure :: set_curiter => swigf_SUNNonlinearSolverContent_FixedPoint__curiter_set
+  procedure :: get_curiter => swigf_SUNNonlinearSolverContent_FixedPoint__curiter_get
+  procedure :: set_maxiters => swigf_SUNNonlinearSolverContent_FixedPoint__maxiters_set
+  procedure :: get_maxiters => swigf_SUNNonlinearSolverContent_FixedPoint__maxiters_get
+  procedure :: set_niters => swigf_SUNNonlinearSolverContent_FixedPoint__niters_set
+  procedure :: get_niters => swigf_SUNNonlinearSolverContent_FixedPoint__niters_get
+  procedure :: set_nconvfails => swigf_SUNNonlinearSolverContent_FixedPoint__nconvfails_set
+  procedure :: get_nconvfails => swigf_SUNNonlinearSolverContent_FixedPoint__nconvfails_get
+  procedure :: set_ctest_data => swigf_SUNNonlinearSolverContent_FixedPoint__ctest_data_set
+  procedure :: get_ctest_data => swigf_SUNNonlinearSolverContent_FixedPoint__ctest_data_get
+  procedure :: release => swigf_release_SUNNonlinearSolverContent_FixedPoint_
+  procedure, private :: swigf_SUNNonlinearSolverContent_FixedPoint__op_assign__
+  generic :: assignment(=) => swigf_SUNNonlinearSolverContent_FixedPoint__op_assign__
+ end type SUNNonlinearSolverContent_FixedPoint_
+ interface SUNNonlinearSolverContent_FixedPoint_
+  module procedure swigf_create_SUNNonlinearSolverContent_FixedPoint_
+ end interface
  public :: FSUNNonlinSol_FixedPoint
  public :: FSUNNonlinSol_FixedPointSens
  public :: FSUNNonlinSolSetDamping_FixedPoint
@@ -35,32 +110,534 @@ module fsunnonlinsol_fixedpoint_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__Sys_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__Sys_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__Sys_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__Sys_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__CTest_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__CTest_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__CTest_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__CTest_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UON3R(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UOMTO(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHC24(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHBS1(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__m_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__m_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__m_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__m_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__imap_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__imap_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__imap_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__imap_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__damping_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__damping_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__damping_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__damping_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__beta_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__beta_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__beta_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__beta_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__R_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__R_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__R_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__R_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__gamma_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gamma_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__gamma_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gamma_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__cvals_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__cvals_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__cvals_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__cvals_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__delnrm_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__delnrm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__delnrm_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__delnrm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__df_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__df_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__df_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__df_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__dg_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__dg_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__dg_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__dg_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__q_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__q_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__q_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__q_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__Xvecs_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__Xvecs_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__Xvecs_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__Xvecs_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__yprev_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__yprev_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__yprev_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__yprev_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__gy_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gy_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__gy_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gy_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__fold_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__fold_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__fold_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__fold_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__gold_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gold_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__gold_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__gold_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__delta_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__delta_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__delta_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__delta_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__curiter_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__curiter_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__curiter_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__curiter_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__maxiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__maxiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__maxiters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__maxiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__niters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__niters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__niters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__niters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__nconvfails_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__nconvfails_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__nconvfails_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__nconvfails_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__ctest_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__ctest_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_FixedPoint__ctest_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__ctest_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNNonlinearSolverContent_FixedPoint_() &
+bind(C, name="_wrap_new_SUNNonlinearSolverContent_FixedPoint_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNNonlinearSolverContent_FixedPoint_(farg1) &
+bind(C, name="_wrap_delete_SUNNonlinearSolverContent_FixedPoint_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNNonlinearSolverContent_FixedPoint__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_FixedPoint__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNNonlinSol_FixedPoint(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSol_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNNonlinSol_FixedPointSens(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNNonlinSol_FixedPointSens") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNNonlinSolSetDamping_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetDamping_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -69,7 +646,8 @@ function swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetSysFn_FixedPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -79,58 +657,795 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__Sys_set(self, sys)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: sys
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sys
+call swigc_SUNNonlinearSolverContent_FixedPoint__Sys_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__Sys_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__Sys_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__CTest_set(self, ctest)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: ctest
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ctest
+call swigc_SUNNonlinearSolverContent_FixedPoint__CTest_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__CTest_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__CTest_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_set(self, norm_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: norm_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = norm_fn
+call swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set(self, norm_fn_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: norm_fn_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = norm_fn_data
+call swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UON3R(self, getupdatenorm_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getupdatenorm_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getupdatenorm_fn
+call swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UON3R(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UOMTO(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1UOMTO(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHC24(self, getupdatenorm_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: getupdatenorm_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getupdatenorm_data
+call swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHC24(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHBS1(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__getupdatenorm1KHBS1(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__m_set(self, m)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT), intent(in) :: m
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = m
+call swigc_SUNNonlinearSolverContent_FixedPoint__m_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__m_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__m_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__imap_set(self, imap)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT), dimension(*), target, intent(inout) :: imap
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(imap(1))
+call swigc_SUNNonlinearSolverContent_FixedPoint__imap_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__imap_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT), dimension(:), pointer :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__imap_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__damping_set(self, damping)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT), intent(in) :: damping
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = damping
+call swigc_SUNNonlinearSolverContent_FixedPoint__damping_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__damping_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__damping_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__beta_set(self, beta)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: beta
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = beta
+call swigc_SUNNonlinearSolverContent_FixedPoint__beta_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__beta_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__beta_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__R_set(self, r)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: r
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(r(1))
+call swigc_SUNNonlinearSolverContent_FixedPoint__R_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__R_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__R_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__gamma_set(self, gamma)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: gamma
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(gamma(1))
+call swigc_SUNNonlinearSolverContent_FixedPoint__gamma_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__gamma_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__gamma_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__cvals_set(self, cvals)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: cvals
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(cvals(1))
+call swigc_SUNNonlinearSolverContent_FixedPoint__cvals_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__cvals_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__cvals_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__delnrm_set(self, delnrm)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: delnrm
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = delnrm
+call swigc_SUNNonlinearSolverContent_FixedPoint__delnrm_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__delnrm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__delnrm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__df_set(self, df)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: df
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = df
+call swigc_SUNNonlinearSolverContent_FixedPoint__df_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__df_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__df_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__dg_set(self, dg)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: dg
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = dg
+call swigc_SUNNonlinearSolverContent_FixedPoint__dg_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__dg_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__dg_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__q_set(self, q)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: q
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = q
+call swigc_SUNNonlinearSolverContent_FixedPoint__q_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__q_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__q_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__Xvecs_set(self, xvecs)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: xvecs
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = xvecs
+call swigc_SUNNonlinearSolverContent_FixedPoint__Xvecs_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__Xvecs_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__Xvecs_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__yprev_set(self, yprev)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+class(N_Vector_), intent(in) :: yprev
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = yprev%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__yprev_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__yprev_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__yprev_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__gy_set(self, gy)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+class(N_Vector_), intent(in) :: gy
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gy%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__gy_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__gy_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__gy_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__fold_set(self, fold)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+class(N_Vector_), intent(in) :: fold
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = fold%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__fold_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__fold_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__fold_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__gold_set(self, gold)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+class(N_Vector_), intent(in) :: gold
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gold%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__gold_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__gold_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__gold_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__delta_set(self, delta)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+class(N_Vector_), intent(in) :: delta
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = delta%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__delta_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__delta_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__delta_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__curiter_set(self, curiter)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT), intent(in) :: curiter
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = curiter
+call swigc_SUNNonlinearSolverContent_FixedPoint__curiter_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__curiter_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__curiter_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__maxiters_set(self, maxiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT), intent(in) :: maxiters
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = maxiters
+call swigc_SUNNonlinearSolverContent_FixedPoint__maxiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__maxiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__maxiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__niters_set(self, niters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_LONG), intent(in) :: niters
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = niters
+call swigc_SUNNonlinearSolverContent_FixedPoint__niters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__niters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__niters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__nconvfails_set(self, nconvfails)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_LONG), intent(in) :: nconvfails
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nconvfails
+call swigc_SUNNonlinearSolverContent_FixedPoint__nconvfails_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__nconvfails_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__nconvfails_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__ctest_data_set(self, ctest_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: ctest_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ctest_data
+call swigc_SUNNonlinearSolverContent_FixedPoint__ctest_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_FixedPoint__ctest_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_FixedPoint__ctest_data_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNNonlinearSolverContent_FixedPoint_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNNonlinearSolverContent_FixedPoint_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNNonlinearSolverContent_FixedPoint_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNNonlinearSolverContent_FixedPoint_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNNonlinearSolverContent_FixedPoint_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNNonlinearSolverContent_FixedPoint__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_FixedPoint_), intent(inout) :: self
+type(SUNNonlinearSolverContent_FixedPoint_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNNonlinearSolverContent_FixedPoint__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNNonlinSol_FixedPoint(y, m, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
+type(SUNNonlinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
 integer(C_INT), intent(in) :: m
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(y)
+farg1 = y%swigdata
 farg2 = m
 farg3 = sunctx
 fresult = swigc_FSUNNonlinSol_FixedPoint(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNNonlinSol_FixedPointSens(count, y, m, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
+type(SUNNonlinearSolver_) :: swig_result
 integer(C_INT), intent(in) :: count
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: y
 integer(C_INT), intent(in) :: m
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 integer(C_INT) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = count
-farg2 = c_loc(y)
+farg2 = y%swigdata
 farg3 = m
 farg4 = sunctx
 fresult = swigc_FSUNNonlinSol_FixedPointSens(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNNonlinSolSetDamping_FixedPoint(nls, beta) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 real(C_DOUBLE), intent(in) :: beta
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = beta
 fresult = swigc_FSUNNonlinSolSetDamping_FixedPoint(farg1, farg2)
 swig_result = fresult
@@ -140,13 +1455,13 @@ function FSUNNonlinSolGetSysFn_FixedPoint(nls, sysfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), target, intent(inout) :: sysfn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(sysfn)
 fresult = swigc_FSUNNonlinSolGetSysFn_FixedPoint(farg1, farg2)
 swig_result = fresult

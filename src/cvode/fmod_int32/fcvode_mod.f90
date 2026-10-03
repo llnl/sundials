@@ -67,6 +67,14 @@ module fcvode_mod
  integer(C_INT), parameter, public :: CV_CONTEXT_ERR = -32_C_INT
  integer(C_INT), parameter, public :: CV_UNRECOGNIZED_ERR = -99_C_INT
  public :: FCVodeCreate
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FCVodeInit
  public :: FCVodeReInit
  public :: FCVodeResizeHistory
@@ -221,10 +229,11 @@ function swigc_FCVodeInit(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FCVodeInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -232,9 +241,10 @@ function swigc_FCVodeReInit(farg1, farg2, farg3) &
 bind(C, name="_wrap_FCVodeReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -265,9 +275,10 @@ function swigc_FCVodeSVtolerances(farg1, farg2, farg3) &
 bind(C, name="_wrap_FCVodeSVtolerances") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -284,8 +295,9 @@ function swigc_FCVodeSetConstraints(farg1, farg2) &
 bind(C, name="_wrap_FCVodeSetConstraints") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -419,8 +431,9 @@ function swigc_FCVodeSetNonlinearSolver(farg1, farg2) &
 bind(C, name="_wrap_FCVodeSetNonlinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -599,9 +612,10 @@ function swigc_FCVode(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FCVode") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT), intent(in) :: farg5
 integer(C_INT) :: fresult
@@ -611,9 +625,10 @@ function swigc_FCVodeComputeState(farg1, farg2, farg3) &
 bind(C, name="_wrap_FCVodeComputeState") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -621,10 +636,11 @@ function swigc_FCVodeGetDky(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FCVodeGetDky") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -758,8 +774,9 @@ function swigc_FCVodeGetErrWeights(farg1, farg2) &
 bind(C, name="_wrap_FCVodeGetErrWeights") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -767,8 +784,9 @@ function swigc_FCVodeGetEstLocalErrors(farg1, farg2) &
 bind(C, name="_wrap_FCVodeGetEstLocalErrors") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1022,9 +1040,10 @@ function swigc_FCVodeSetLinearSolver(farg1, farg2, farg3) &
 bind(C, name="_wrap_FCVodeSetLinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1344,17 +1363,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 type(C_FUNPTR), intent(in), value :: f
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = cvode_mem
 farg2 = f
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 fresult = swigc_FCVodeInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -1365,15 +1384,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = cvode_mem
 farg2 = t0
-farg3 = c_loc(y0)
+farg3 = y0%swigdata
 fresult = swigc_FCVodeReInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -1431,15 +1450,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: reltol
-type(N_Vector), target, intent(inout) :: abstol
+class(N_Vector_), intent(in) :: abstol
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = cvode_mem
 farg2 = reltol
-farg3 = c_loc(abstol)
+farg3 = abstol%swigdata
 fresult = swigc_FCVodeSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -1465,13 +1484,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(N_Vector), target, intent(inout) :: constraints
+class(N_Vector_), intent(in) :: constraints
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(constraints)
+farg2 = constraints%swigdata
 fresult = swigc_FCVodeSetConstraints(farg1, farg2)
 swig_result = fresult
 end function
@@ -1705,13 +1724,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(nls)
+farg2 = nls%swigdata
 fresult = swigc_FCVodeSetNonlinearSolver(farg1, farg2)
 swig_result = fresult
 end function
@@ -2026,19 +2045,19 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: yout
+class(N_Vector_), intent(in) :: yout
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT), intent(in) :: itask
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 integer(C_INT) :: farg5 
 
 farg1 = cvode_mem
 farg2 = tout
-farg3 = c_loc(yout)
+farg3 = yout%swigdata
 farg4 = c_loc(tret(1))
 farg5 = itask
 fresult = swigc_FCVode(farg1, farg2, farg3, farg4, farg5)
@@ -2050,16 +2069,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(N_Vector), target, intent(inout) :: ycor
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: ycor
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = cvode_mem
-farg2 = c_loc(ycor)
-farg3 = c_loc(y)
+farg2 = ycor%swigdata
+farg3 = y%swigdata
 fresult = swigc_FCVodeComputeState(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -2071,17 +2090,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(N_Vector), target, intent(inout) :: dky
+class(N_Vector_), intent(in) :: dky
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
 integer(C_INT) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = cvode_mem
 farg2 = t
 farg3 = k
-farg4 = c_loc(dky)
+farg4 = dky%swigdata
 fresult = swigc_FCVodeGetDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -2315,13 +2334,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(N_Vector), target, intent(inout) :: eweight
+class(N_Vector_), intent(in) :: eweight
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(eweight)
+farg2 = eweight%swigdata
 fresult = swigc_FCVodeGetErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -2331,13 +2350,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(N_Vector), target, intent(inout) :: ele
+class(N_Vector_), intent(in) :: ele
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = cvode_mem
-farg2 = c_loc(ele)
+farg2 = ele%swigdata
 fresult = swigc_FCVodeGetEstLocalErrors(farg1, farg2)
 swig_result = fresult
 end function
@@ -2818,16 +2837,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: cvode_mem
-type(SUNLinearSolver), target, intent(inout) :: ls
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: ls
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = cvode_mem
-farg2 = c_loc(ls)
-farg3 = c_loc(a)
+farg2 = ls%swigdata
+farg3 = a%swigdata
 fresult = swigc_FCVodeSetLinearSolver(farg1, farg2, farg3)
 swig_result = fresult
 end function

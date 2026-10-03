@@ -55,7 +55,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_Petsc
+struct N_VectorContent_Petsc_
 {
   sunindextype local_length;  /* copy of local vector length  */
   sunindextype global_length; /* copy of global vector length */
@@ -64,7 +64,7 @@ struct _N_VectorContent_Petsc
   MPI_Comm comm;              /* copy of MPI communicator     */
 };
 
-typedef struct _N_VectorContent_Petsc* N_VectorContent_Petsc;
+typedef struct N_VectorContent_Petsc_* N_VectorContent_Petsc;
 
 /*
  * -----------------------------------------------------------------

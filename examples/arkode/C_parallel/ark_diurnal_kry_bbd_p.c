@@ -509,6 +509,9 @@ static void PrintFinalStats(void* arkode_mem)
   printf("nsetups = %5ld     netf    = %5ld\n", nsetups, netf);
   printf("npe     = %5ld     nps     = %5ld\n", npe, nps);
   printf("ncfn    = %5ld     ncfl    = %5ld\n\n", ncfn, ncfl);
+  flag = ARKBBDPrecGetNumGfnEvals(arkode_mem, &ngevalsBBDP);
+  check_flag(&flag, "ARKBBDPrecGetNumGfnEvals", 1, 0);
+  printf("In ARKBBDPRE: no. flocal evals. = %ld\n", ngevalsBBDP);
 }
 
 /* Routine to send boundary data to neighboring PEs */
