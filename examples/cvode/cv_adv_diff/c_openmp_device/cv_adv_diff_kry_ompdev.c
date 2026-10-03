@@ -239,7 +239,7 @@ static void SetIC(N_Vector u, UserData data)
   const sunindextype NEQ = data->NEQ;
 
   /* Extract pointer to solution vector data on the host */
-  sunrealtype* udata = N_VGetHostArrayPointer_OpenMPDEV(u);
+  sunrealtype* udata = N_VGetArrayPointer(u);
 
   sunindextype i, j, tid;
   sunrealtype x, y;
@@ -283,8 +283,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* udata = N_VGetDeviceArrayPointer_OpenMPDEV(u);
-  sunrealtype* dudata      = N_VGetDeviceArrayPointer_OpenMPDEV(udot);
+  const sunrealtype* udata = N_VGetDeviceArrayPointer(u);
+  sunrealtype* dudata      = N_VGetDeviceArrayPointer(udot);
 
   /* Get device */
   dev = omp_get_default_device();
@@ -333,8 +333,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* vdata = N_VGetDeviceArrayPointer_OpenMPDEV(v);
-  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer_OpenMPDEV(Jv);
+  const sunrealtype* vdata = N_VGetDeviceArrayPointer(v);
+  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer(Jv);
 
   N_VConst(ZERO, Jv);
 

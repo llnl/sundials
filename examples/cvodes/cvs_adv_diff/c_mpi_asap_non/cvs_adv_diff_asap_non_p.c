@@ -352,8 +352,8 @@ int main(int argc, char* argv[])
   PrintOutput(g_val, uB, data);
 
   /* Free memory */
-  N_VDestroy_Parallel(u);
-  N_VDestroy_Parallel(uB);
+  N_VDestroy(u);
+  N_VDestroy(uB);
   CVodeFree(&cvode_mem);
   SUNNonlinSolFree(NLS);
   SUNNonlinSolFree(NLSB);
@@ -412,9 +412,9 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   last_pe  = npes - 1;
 
   /* Obtain local arrays */
-  udata     = N_VGetArrayPointer_Parallel(u);
-  dudata    = N_VGetArrayPointer_Parallel(udot);
-  my_length = N_VGetLocalLength_Parallel(u);
+  udata     = N_VGetArrayPointer(u);
+  dudata    = N_VGetArrayPointer(udot);
+  my_length = N_VGetLocalLength(u);
 
   /* Pass needed data to processes before and after current process. */
   if (my_pe != 0)
@@ -484,8 +484,8 @@ static int fB(sunrealtype t, N_Vector u, N_Vector uB, N_Vector uBdot,
   { /* This process performs the quadratures */
 
     /* Obtain local arrays */
-    duBdata   = N_VGetArrayPointer_Parallel(uBdot);
-    my_length = N_VGetLocalLength_Parallel(uB);
+    duBdata   = N_VGetArrayPointer(uBdot);
+    my_length = N_VGetLocalLength(uB);
 
     /* Loop over all other processes and load right hand side of quadrature eqs. */
     duBdata[0] = ZERO;
@@ -509,10 +509,10 @@ static int fB(sunrealtype t, N_Vector u, N_Vector uB, N_Vector uBdot,
     z2    = data->z2;
 
     /* Obtain local arrays */
-    uBdata    = N_VGetArrayPointer_Parallel(uB);
-    duBdata   = N_VGetArrayPointer_Parallel(uBdot);
-    udata     = N_VGetArrayPointer_Parallel(u);
-    my_length = N_VGetLocalLength_Parallel(uB);
+    uBdata    = N_VGetArrayPointer(uB);
+    duBdata   = N_VGetArrayPointer(uBdot);
+    udata     = N_VGetArrayPointer(u);
+    my_length = N_VGetLocalLength(uB);
 
     /* Compute related parameters. */
     my_pe_m1 = my_pe - 1;
@@ -615,8 +615,8 @@ static void SetIC(N_Vector u, sunrealtype dx, sunindextype my_length,
   sunrealtype* udata;
 
   /* Set pointer to data array and get local length of u */
-  udata     = N_VGetArrayPointer_Parallel(u);
-  my_length = N_VGetLocalLength_Parallel(u);
+  udata     = N_VGetArrayPointer(u);
+  my_length = N_VGetLocalLength(u);
 
   /* Load initial profile into u vector */
   for (i = 1; i <= my_length; i++)
@@ -638,8 +638,8 @@ static void SetICback(N_Vector uB, sunindextype my_base)
   sunindextype my_length;
 
   /* Set pointer to data array and get local length of uB */
-  uBdata    = N_VGetArrayPointer_Parallel(uB);
-  my_length = N_VGetLocalLength_Parallel(uB);
+  uBdata    = N_VGetArrayPointer(uB);
+  my_length = N_VGetLocalLength(uB);
 
   /* Set adjoint states to 1.0 and quadrature variables to 0.0 */
   if (my_base == -1)
@@ -699,8 +699,8 @@ static sunrealtype Compute_g(N_Vector u, UserData data)
   }
   else
   { /* Compute local portion of the integral */
-    udata     = N_VGetArrayPointer_Parallel(u);
-    my_length = N_VGetLocalLength_Parallel(u);
+    udata     = N_VGetArrayPointer(u);
+    my_length = N_VGetLocalLength(u);
     my_intgr  = Xintgr(udata, my_length, dx);
     MPI_Send(&my_intgr, 1, MPI_SUNREALTYPE, npes, 0, comm);
     return (my_intgr);
@@ -727,7 +727,7 @@ static void PrintOutput(sunrealtype g_val, N_Vector uB, UserData data)
   nperpe  = data->nperpe;
   nrem    = data->nrem;
 
-  uBdata = N_VGetArrayPointer_Parallel(uB);
+  uBdata = N_VGetArrayPointer(uB);
 
   if (my_pe == npes)
   {

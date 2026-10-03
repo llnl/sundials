@@ -336,9 +336,9 @@ int resHeat(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr, void* user_da
   sunrealtype coeff;
   UserData data;
 
-  const sunrealtype* uu_data = N_VGetDeviceArrayPointer_Raja(uu);
-  const sunrealtype* up_data = N_VGetDeviceArrayPointer_Raja(up);
-  sunrealtype* rr_data       = N_VGetDeviceArrayPointer_Raja(rr);
+  const sunrealtype* uu_data = N_VGetDeviceArrayPointer(uu);
+  const sunrealtype* up_data = N_VGetDeviceArrayPointer(up);
+  sunrealtype* rr_data       = N_VGetDeviceArrayPointer(rr);
 
   data = (UserData)user_data;
 
@@ -397,7 +397,7 @@ int PsetupHeat(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
   UserData data;
 
   data              = (UserData)prec_data;
-  ppv               = N_VGetDeviceArrayPointer_Raja(data->pp);
+  ppv               = N_VGetDeviceArrayPointer(data->pp);
   mm                = data->mm;
   sunrealtype coeff = data->coeff;
 
@@ -456,7 +456,7 @@ static int SetInitialProfile(UserData data, N_Vector uu, N_Vector up, N_Vector r
 
   mm = data->mm;
 
-  udata = N_VGetHostArrayPointer_Raja(uu);
+  udata = N_VGetArrayPointer(uu);
 
   /* Initialize uu on all grid points. */
   for (j = 0; j < mm; j++)
@@ -482,7 +482,7 @@ static int SetInitialProfile(UserData data, N_Vector uu, N_Vector up, N_Vector r
   N_VScale(-ONE, res, up);
 
   /* Set up at boundary points to zero. */
-  updata = N_VGetDeviceArrayPointer_Raja(up);
+  updata = N_VGetDeviceArrayPointer(up);
   mm1    = mm - 1;
 
   RAJA::forall<MY_EXEC>(RAJA::RangeSegment(zero, mm * mm),

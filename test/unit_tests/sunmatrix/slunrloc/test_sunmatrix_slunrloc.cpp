@@ -568,8 +568,8 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   ydata = N_VGetArrayPointer(y);
 
   /* check data lengths */
-  xldata = N_VGetLocalLength_Parallel(x);
-  yldata = N_VGetLocalLength_Parallel(y);
+  xldata = N_VGetLocalLength(x);
+  yldata = N_VGetLocalLength(y);
 
   if (xldata != yldata)
   {

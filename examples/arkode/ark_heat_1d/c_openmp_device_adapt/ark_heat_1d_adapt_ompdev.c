@@ -176,7 +176,7 @@ int main(void)
 
   /* output initial condition to disk */
   N_VCopyFromDevice_OpenMPDEV(y);
-  data = N_VGetHostArrayPointer_OpenMPDEV(y);
+  data = N_VGetArrayPointer(y);
   for (i = 0; i < udata->N; i++) { fprintf(UFID, " %.16" ESYM, data[i]); }
   fprintf(UFID, "\n");
 
@@ -262,7 +262,7 @@ int main(void)
 
     /* output results and current mesh to disk */
     N_VCopyFromDevice_OpenMPDEV(y);
-    data = N_VGetHostArrayPointer_OpenMPDEV(y);
+    data = N_VGetArrayPointer(y);
     for (i = 0; i < udata->N; i++) { fprintf(UFID, " %.16" ESYM, data[i]); }
     fprintf(UFID, "\n");
     for (i = 0; i < udata->N; i++)
@@ -361,9 +361,9 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
   dev = omp_get_default_device();
 
   /* access data arrays */
-  Y = N_VGetDeviceArrayPointer_OpenMPDEV(y);
+  Y = N_VGetDeviceArrayPointer(y);
   if (check_flag((void*)Y, "N_VGetDeviceArrayPointer", 0)) { return 1; }
-  Ydot = N_VGetDeviceArrayPointer_OpenMPDEV(ydot);
+  Ydot = N_VGetDeviceArrayPointer(ydot);
   if (check_flag((void*)Ydot, "N_VGetDeviceArrayPointer", 0)) { return 1; }
 
   /* Initialize ydot to zero - also handles boundary conditions */
@@ -404,9 +404,9 @@ static int Jac(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
   dev = omp_get_default_device();
 
   /* access data arrays */
-  V = N_VGetDeviceArrayPointer_OpenMPDEV(v);
+  V = N_VGetDeviceArrayPointer(v);
   if (check_flag((void*)V, "N_VGetDeviceArrayPointer", 0)) { return 1; }
-  JV = N_VGetDeviceArrayPointer_OpenMPDEV(Jv);
+  JV = N_VGetDeviceArrayPointer(Jv);
   if (check_flag((void*)JV, "N_VGetDeviceArrayPointer", 0)) { return 1; }
 
   /* initialize Jv product to zero - also handles boundary conditions */
@@ -448,11 +448,8 @@ sunrealtype* adapt_mesh(N_Vector y, sunindextype* Nnew, UserData udata)
 
   /* Access current solution and mesh arrays */
   xold = udata->x_host;
-  Y = N_VGetHostArrayPointer_OpenMPDEV(y); /* assumes copy to host already done */
-  if (check_flag((void*)Y, "N_VGetHostArrayPointer_OpenMPDEV", 0))
-  {
-    return NULL;
-  }
+  Y    = N_VGetArrayPointer(y); /* assumes copy to host already done */
+  if (check_flag((void*)Y, "N_VGetArrayPointer", 0)) { return NULL; }
 
   /* create marking array */
   marks = calloc(udata->N - 1, sizeof(int));
@@ -538,16 +535,10 @@ static int project(sunindextype Nold, sunrealtype* xold, N_Vector yold,
   int dev = omp_get_default_device();
 
   /* Access data arrays */
-  Yold = N_VGetDeviceArrayPointer_OpenMPDEV(yold); /* access data arrays */
-  if (check_flag((void*)Yold, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
-  Ynew = N_VGetDeviceArrayPointer_OpenMPDEV(ynew);
-  if (check_flag((void*)Ynew, "N_VGetDeviceArrayPointer_OpenMPDEV", 0))
-  {
-    return 1;
-  }
+  Yold = N_VGetDeviceArrayPointer(yold); /* access data arrays */
+  if (check_flag((void*)Yold, "N_VGetDeviceArrayPointer", 0)) { return 1; }
+  Ynew = N_VGetDeviceArrayPointer(ynew);
+  if (check_flag((void*)Ynew, "N_VGetDeviceArrayPointer", 0)) { return 1; }
 
   /* loop over new mesh, finding corresponding interval within old mesh,
      and perform piecewise linear interpolation from yold to ynew */

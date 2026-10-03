@@ -25,13 +25,12 @@
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_types.h>
 #ifdef MANYVECTOR_BUILD_WITH_MPI
-#include <nvector/nvector_mpimanyvector.h>
+#include <nvector/nvector_mpimanyvector_deprecated.h>
 #include <sundials/priv/sundials_mpi_errors_impl.h>
 #else
-#include <nvector/nvector_manyvector.h>
+#include <nvector/nvector_manyvector_deprecated.h>
 #endif
 #include <sundials/priv/sundials_context_impl.h>
-#include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
 
 #include "sundials_macros.h"
@@ -41,6 +40,74 @@
 #define MVAPPEND(fun) fun##_MPIManyVector
 #else
 #define MVAPPEND(fun) fun##_ManyVector
+#endif
+
+/* Functions attached to the N_Vector */
+static void MVAPPEND(nvAbs)(N_Vector x, N_Vector z);
+static void MVAPPEND(nvAddConst)(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode MVAPPEND(nvBufPack)(N_Vector x, void* buf);
+static SUNErrCode MVAPPEND(nvBufSize)(N_Vector x, sunindextype* size);
+static SUNErrCode MVAPPEND(nvBufUnpack)(N_Vector x, void* buf);
+static N_Vector MVAPPEND(nvCloneEmpty)(N_Vector w);
+static N_Vector MVAPPEND(nvClone)(N_Vector w);
+static void MVAPPEND(nvCompare)(sunrealtype c, N_Vector x, N_Vector z);
+static void MVAPPEND(nvConst)(sunrealtype c, N_Vector z);
+static sunbooleantype MVAPPEND(nvConstrMaskLocal)(N_Vector c, N_Vector x,
+                                                  N_Vector m);
+static void MVAPPEND(nvDestroy)(N_Vector v);
+static void MVAPPEND(nvDiv)(N_Vector x, N_Vector y, N_Vector z);
+static sunrealtype MVAPPEND(nvDotProdLocal)(N_Vector x, N_Vector y);
+static SUNErrCode MVAPPEND(nvDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
+                                                sunrealtype* dotprods);
+static SUNErrCode MVAPPEND(nvDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
+                                           sunrealtype* dotprods);
+static SUNErrCode MVAPPEND(nvLinearSumVectorArray)(int nvec, sunrealtype a,
+                                                   N_Vector* X, sunrealtype b,
+                                                   N_Vector* Y, N_Vector* Z);
+static SUNErrCode MVAPPEND(nvScaleVectorArray)(int nvec, sunrealtype* c,
+                                               N_Vector* X, N_Vector* Z);
+static SUNErrCode MVAPPEND(nvConstVectorArray)(int nvecs, sunrealtype c,
+                                               N_Vector* Z);
+static sunindextype MVAPPEND(nvGetLength)(N_Vector v);
+static N_Vector_ID MVAPPEND(nvGetVectorID)(N_Vector v);
+static sunbooleantype MVAPPEND(nvInvTestLocal)(N_Vector x, N_Vector z);
+static void MVAPPEND(nvInv)(N_Vector x, N_Vector z);
+static sunrealtype MVAPPEND(nvL1NormLocal)(N_Vector x);
+static SUNErrCode MVAPPEND(nvLinearCombination)(int nvec, sunrealtype* c,
+                                                N_Vector* V, N_Vector z);
+static void MVAPPEND(nvLinearSum)(sunrealtype a, N_Vector x, sunrealtype b,
+                                  N_Vector y, N_Vector z);
+static sunrealtype MVAPPEND(nvMaxNormLocal)(N_Vector x);
+static sunrealtype MVAPPEND(nvMinLocal)(N_Vector x);
+static sunrealtype MVAPPEND(nvMinQuotientLocal)(N_Vector num, N_Vector denom);
+static void MVAPPEND(nvPrintFile)(N_Vector v, FILE* outfile);
+static void MVAPPEND(nvPrint)(N_Vector v);
+static void MVAPPEND(nvProd)(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode MVAPPEND(nvScaleAddMulti)(int nvec, sunrealtype* a, N_Vector x,
+                                            N_Vector* Y, N_Vector* Z);
+static void MVAPPEND(nvScale)(sunrealtype c, N_Vector x, N_Vector z);
+static sunrealtype MVAPPEND(nvWL2Norm)(N_Vector x, N_Vector w);
+static sunrealtype MVAPPEND(nvWSqrSumLocal)(N_Vector x, N_Vector w);
+static sunrealtype MVAPPEND(nvWSqrSumMaskLocal)(N_Vector x, N_Vector w,
+                                                N_Vector id);
+static SUNErrCode MVAPPEND(nvWrmsNormMaskVectorArray)(int nvec, N_Vector* X,
+                                                      N_Vector* W, N_Vector id,
+                                                      sunrealtype* nrm);
+static sunrealtype MVAPPEND(nvWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode MVAPPEND(nvWrmsNormVectorArray)(int nvecs, N_Vector* X,
+                                                  N_Vector* W, sunrealtype* nrm);
+static sunrealtype MVAPPEND(nvWrmsNorm)(N_Vector x, N_Vector w);
+#ifdef MANYVECTOR_BUILD_WITH_MPI
+static sunbooleantype MVAPPEND(nvConstrMask)(N_Vector c, N_Vector x, N_Vector m);
+static SUNErrCode MVAPPEND(nvDotProdMultiAllReduce)(int nvec_total, N_Vector x,
+                                                    sunrealtype* sum);
+static sunrealtype MVAPPEND(nvDotProd)(N_Vector x, N_Vector y);
+static MPI_Comm MVAPPEND(nvGetCommunicator)(N_Vector v);
+static sunbooleantype MVAPPEND(nvInvTest)(N_Vector x, N_Vector z);
+static sunrealtype MVAPPEND(nvL1Norm)(N_Vector x);
+static sunrealtype MVAPPEND(nvMaxNorm)(N_Vector x);
+static sunrealtype MVAPPEND(nvMinQuotient)(N_Vector num, N_Vector denom);
+static sunrealtype MVAPPEND(nvMin)(N_Vector x);
 #endif
 
 #define ZERO SUN_RCONST(0.0)
@@ -104,66 +171,66 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid     = N_VGetVectorID_MPIManyVector;
-  v->ops->nvcloneempty      = N_VCloneEmpty_MPIManyVector;
-  v->ops->nvclone           = N_VClone_MPIManyVector;
-  v->ops->nvdestroy         = N_VDestroy_MPIManyVector;
-  v->ops->nvgetcommunicator = N_VGetCommunicator_MPIManyVector;
-  v->ops->nvgetlength       = N_VGetLength_MPIManyVector;
+  v->ops->nvgetvectorid     = nvGetVectorID_MPIManyVector;
+  v->ops->nvcloneempty      = nvCloneEmpty_MPIManyVector;
+  v->ops->nvclone           = nvClone_MPIManyVector;
+  v->ops->nvdestroy         = nvDestroy_MPIManyVector;
+  v->ops->nvgetcommunicator = nvGetCommunicator_MPIManyVector;
+  v->ops->nvgetlength       = nvGetLength_MPIManyVector;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_MPIManyVector;
-  v->ops->nvconst        = N_VConst_MPIManyVector;
-  v->ops->nvprod         = N_VProd_MPIManyVector;
-  v->ops->nvdiv          = N_VDiv_MPIManyVector;
-  v->ops->nvscale        = N_VScale_MPIManyVector;
-  v->ops->nvabs          = N_VAbs_MPIManyVector;
-  v->ops->nvinv          = N_VInv_MPIManyVector;
-  v->ops->nvaddconst     = N_VAddConst_MPIManyVector;
-  v->ops->nvdotprod      = N_VDotProd_MPIManyVector;
-  v->ops->nvmaxnorm      = N_VMaxNorm_MPIManyVector;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_MPIManyVector;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_MPIManyVector;
-  v->ops->nvmin          = N_VMin_MPIManyVector;
-  v->ops->nvwl2norm      = N_VWL2Norm_MPIManyVector;
-  v->ops->nvl1norm       = N_VL1Norm_MPIManyVector;
-  v->ops->nvcompare      = N_VCompare_MPIManyVector;
-  v->ops->nvinvtest      = N_VInvTest_MPIManyVector;
-  v->ops->nvconstrmask   = N_VConstrMask_MPIManyVector;
-  v->ops->nvminquotient  = N_VMinQuotient_MPIManyVector;
+  v->ops->nvlinearsum    = nvLinearSum_MPIManyVector;
+  v->ops->nvconst        = nvConst_MPIManyVector;
+  v->ops->nvprod         = nvProd_MPIManyVector;
+  v->ops->nvdiv          = nvDiv_MPIManyVector;
+  v->ops->nvscale        = nvScale_MPIManyVector;
+  v->ops->nvabs          = nvAbs_MPIManyVector;
+  v->ops->nvinv          = nvInv_MPIManyVector;
+  v->ops->nvaddconst     = nvAddConst_MPIManyVector;
+  v->ops->nvdotprod      = nvDotProd_MPIManyVector;
+  v->ops->nvmaxnorm      = nvMaxNorm_MPIManyVector;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_MPIManyVector;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_MPIManyVector;
+  v->ops->nvmin          = nvMin_MPIManyVector;
+  v->ops->nvwl2norm      = nvWL2Norm_MPIManyVector;
+  v->ops->nvl1norm       = nvL1Norm_MPIManyVector;
+  v->ops->nvcompare      = nvCompare_MPIManyVector;
+  v->ops->nvinvtest      = nvInvTest_MPIManyVector;
+  v->ops->nvconstrmask   = nvConstrMask_MPIManyVector;
+  v->ops->nvminquotient  = nvMinQuotient_MPIManyVector;
 
   /* fused vector operations */
-  v->ops->nvlinearcombination = N_VLinearCombination_MPIManyVector;
-  v->ops->nvscaleaddmulti     = N_VScaleAddMulti_MPIManyVector;
-  v->ops->nvdotprodmulti      = N_VDotProdMulti_MPIManyVector;
+  v->ops->nvlinearcombination = nvLinearCombination_MPIManyVector;
+  v->ops->nvscaleaddmulti     = nvScaleAddMulti_MPIManyVector;
+  v->ops->nvdotprodmulti      = nvDotProdMulti_MPIManyVector;
 
   /* vector array operations */
-  v->ops->nvwrmsnormvectorarray     = N_VWrmsNormVectorArray_MPIManyVector;
-  v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_MPIManyVector;
+  v->ops->nvwrmsnormvectorarray     = nvWrmsNormVectorArray_MPIManyVector;
+  v->ops->nvwrmsnormmaskvectorarray = nvWrmsNormMaskVectorArray_MPIManyVector;
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = N_VDotProdLocal_MPIManyVector;
-  v->ops->nvmaxnormlocal     = N_VMaxNormLocal_MPIManyVector;
-  v->ops->nvminlocal         = N_VMinLocal_MPIManyVector;
-  v->ops->nvl1normlocal      = N_VL1NormLocal_MPIManyVector;
-  v->ops->nvinvtestlocal     = N_VInvTestLocal_MPIManyVector;
-  v->ops->nvconstrmasklocal  = N_VConstrMaskLocal_MPIManyVector;
-  v->ops->nvminquotientlocal = N_VMinQuotientLocal_MPIManyVector;
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_MPIManyVector;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_MPIManyVector;
+  v->ops->nvdotprodlocal     = nvDotProdLocal_MPIManyVector;
+  v->ops->nvmaxnormlocal     = nvMaxNormLocal_MPIManyVector;
+  v->ops->nvminlocal         = nvMinLocal_MPIManyVector;
+  v->ops->nvl1normlocal      = nvL1NormLocal_MPIManyVector;
+  v->ops->nvinvtestlocal     = nvInvTestLocal_MPIManyVector;
+  v->ops->nvconstrmasklocal  = nvConstrMaskLocal_MPIManyVector;
+  v->ops->nvminquotientlocal = nvMinQuotientLocal_MPIManyVector;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_MPIManyVector;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_MPIManyVector;
 
   /* single buffer reduction operations */
-  v->ops->nvdotprodmultilocal     = N_VDotProdMultiLocal_MPIManyVector;
-  v->ops->nvdotprodmultiallreduce = N_VDotProdMultiAllReduce_MPIManyVector;
+  v->ops->nvdotprodmultilocal     = nvDotProdMultiLocal_MPIManyVector;
+  v->ops->nvdotprodmultiallreduce = nvDotProdMultiAllReduce_MPIManyVector;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_MPIManyVector;
-  v->ops->nvbufpack   = N_VBufPack_MPIManyVector;
-  v->ops->nvbufunpack = N_VBufUnpack_MPIManyVector;
+  v->ops->nvbufsize   = nvBufSize_MPIManyVector;
+  v->ops->nvbufpack   = nvBufPack_MPIManyVector;
+  v->ops->nvbufunpack = nvBufUnpack_MPIManyVector;
 
   /* debugging functions */
-  v->ops->nvprint     = N_VPrint_MPIManyVector;
-  v->ops->nvprintfile = N_VPrintFile_MPIManyVector;
+  v->ops->nvprint     = nvPrint_MPIManyVector;
+  v->ops->nvprintfile = nvPrintFile_MPIManyVector;
 
   /* Create content */
   content = NULL;
@@ -324,64 +391,64 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid = N_VGetVectorID_ManyVector;
-  v->ops->nvcloneempty  = N_VCloneEmpty_ManyVector;
-  v->ops->nvclone       = N_VClone_ManyVector;
-  v->ops->nvdestroy     = N_VDestroy_ManyVector;
-  v->ops->nvgetlength   = N_VGetLength_ManyVector;
+  v->ops->nvgetvectorid = nvGetVectorID_ManyVector;
+  v->ops->nvcloneempty  = nvCloneEmpty_ManyVector;
+  v->ops->nvclone       = nvClone_ManyVector;
+  v->ops->nvdestroy     = nvDestroy_ManyVector;
+  v->ops->nvgetlength   = nvGetLength_ManyVector;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_ManyVector;
-  v->ops->nvconst        = N_VConst_ManyVector;
-  v->ops->nvprod         = N_VProd_ManyVector;
-  v->ops->nvdiv          = N_VDiv_ManyVector;
-  v->ops->nvscale        = N_VScale_ManyVector;
-  v->ops->nvabs          = N_VAbs_ManyVector;
-  v->ops->nvinv          = N_VInv_ManyVector;
-  v->ops->nvaddconst     = N_VAddConst_ManyVector;
-  v->ops->nvdotprod      = N_VDotProdLocal_ManyVector;
-  v->ops->nvmaxnorm      = N_VMaxNormLocal_ManyVector;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_ManyVector;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_ManyVector;
-  v->ops->nvmin          = N_VMinLocal_ManyVector;
-  v->ops->nvwl2norm      = N_VWL2Norm_ManyVector;
-  v->ops->nvl1norm       = N_VL1NormLocal_ManyVector;
-  v->ops->nvcompare      = N_VCompare_ManyVector;
-  v->ops->nvinvtest      = N_VInvTestLocal_ManyVector;
-  v->ops->nvconstrmask   = N_VConstrMaskLocal_ManyVector;
-  v->ops->nvminquotient  = N_VMinQuotientLocal_ManyVector;
+  v->ops->nvlinearsum    = nvLinearSum_ManyVector;
+  v->ops->nvconst        = nvConst_ManyVector;
+  v->ops->nvprod         = nvProd_ManyVector;
+  v->ops->nvdiv          = nvDiv_ManyVector;
+  v->ops->nvscale        = nvScale_ManyVector;
+  v->ops->nvabs          = nvAbs_ManyVector;
+  v->ops->nvinv          = nvInv_ManyVector;
+  v->ops->nvaddconst     = nvAddConst_ManyVector;
+  v->ops->nvdotprod      = nvDotProdLocal_ManyVector;
+  v->ops->nvmaxnorm      = nvMaxNormLocal_ManyVector;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_ManyVector;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_ManyVector;
+  v->ops->nvmin          = nvMinLocal_ManyVector;
+  v->ops->nvwl2norm      = nvWL2Norm_ManyVector;
+  v->ops->nvl1norm       = nvL1NormLocal_ManyVector;
+  v->ops->nvcompare      = nvCompare_ManyVector;
+  v->ops->nvinvtest      = nvInvTestLocal_ManyVector;
+  v->ops->nvconstrmask   = nvConstrMaskLocal_ManyVector;
+  v->ops->nvminquotient  = nvMinQuotientLocal_ManyVector;
 
   /* fused vector operations */
-  v->ops->nvlinearcombination = N_VLinearCombination_ManyVector;
-  v->ops->nvscaleaddmulti     = N_VScaleAddMulti_ManyVector;
-  v->ops->nvdotprodmulti      = N_VDotProdMulti_ManyVector;
+  v->ops->nvlinearcombination = nvLinearCombination_ManyVector;
+  v->ops->nvscaleaddmulti     = nvScaleAddMulti_ManyVector;
+  v->ops->nvdotprodmulti      = nvDotProdMulti_ManyVector;
 
   /* vector array operations */
-  v->ops->nvwrmsnormvectorarray     = N_VWrmsNormVectorArray_ManyVector;
-  v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_ManyVector;
+  v->ops->nvwrmsnormvectorarray     = nvWrmsNormVectorArray_ManyVector;
+  v->ops->nvwrmsnormmaskvectorarray = nvWrmsNormMaskVectorArray_ManyVector;
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = N_VDotProdLocal_ManyVector;
-  v->ops->nvmaxnormlocal     = N_VMaxNormLocal_ManyVector;
-  v->ops->nvminlocal         = N_VMinLocal_ManyVector;
-  v->ops->nvl1normlocal      = N_VL1NormLocal_ManyVector;
-  v->ops->nvinvtestlocal     = N_VInvTestLocal_ManyVector;
-  v->ops->nvconstrmasklocal  = N_VConstrMaskLocal_ManyVector;
-  v->ops->nvminquotientlocal = N_VMinQuotientLocal_ManyVector;
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_ManyVector;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_ManyVector;
+  v->ops->nvdotprodlocal     = nvDotProdLocal_ManyVector;
+  v->ops->nvmaxnormlocal     = nvMaxNormLocal_ManyVector;
+  v->ops->nvminlocal         = nvMinLocal_ManyVector;
+  v->ops->nvl1normlocal      = nvL1NormLocal_ManyVector;
+  v->ops->nvinvtestlocal     = nvInvTestLocal_ManyVector;
+  v->ops->nvconstrmasklocal  = nvConstrMaskLocal_ManyVector;
+  v->ops->nvminquotientlocal = nvMinQuotientLocal_ManyVector;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_ManyVector;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_ManyVector;
 
   /* single buffer reduction operations */
-  v->ops->nvdotprodmultilocal = N_VDotProdMultiLocal_ManyVector;
+  v->ops->nvdotprodmultilocal = nvDotProdMultiLocal_ManyVector;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_ManyVector;
-  v->ops->nvbufpack   = N_VBufPack_ManyVector;
-  v->ops->nvbufunpack = N_VBufUnpack_ManyVector;
+  v->ops->nvbufsize   = nvBufSize_ManyVector;
+  v->ops->nvbufpack   = nvBufPack_ManyVector;
+  v->ops->nvbufunpack = nvBufUnpack_ManyVector;
 
   /* debugging functions */
-  v->ops->nvprint     = N_VPrint_ManyVector;
-  v->ops->nvprintfile = N_VPrintFile_ManyVector;
+  v->ops->nvprint     = nvPrint_ManyVector;
+  v->ops->nvprintfile = nvPrintFile_ManyVector;
 
   /* Create content */
   content = NULL;
@@ -477,7 +544,7 @@ sunindextype MVAPPEND(N_VGetNumSubvectors)(N_Vector v)
 
 /* Returns vector type ID. Used to identify vector implementation
    from abstract N_Vector interface. */
-N_Vector_ID MVAPPEND(N_VGetVectorID)(SUNDIALS_MAYBE_UNUSED N_Vector v)
+N_Vector_ID MVAPPEND(nvGetVectorID)(SUNDIALS_MAYBE_UNUSED N_Vector v)
 {
 #ifdef MANYVECTOR_BUILD_WITH_MPI
   return (SUNDIALS_NVEC_MPIMANYVECTOR);
@@ -487,7 +554,7 @@ N_Vector_ID MVAPPEND(N_VGetVectorID)(SUNDIALS_MAYBE_UNUSED N_Vector v)
 }
 
 /* Prints the vector to stdout, calling Print on subvectors. */
-void MVAPPEND(N_VPrint)(N_Vector x)
+void MVAPPEND(nvPrint)(N_Vector x)
 {
   sunindextype i;
   for (i = 0; i < MANYVECTOR_NUM_SUBVECS(x); i++)
@@ -498,7 +565,7 @@ void MVAPPEND(N_VPrint)(N_Vector x)
 }
 
 /* Prints the vector to outfile, calling PrintFile on subvectors. */
-void MVAPPEND(N_VPrintFile)(N_Vector x, FILE* outfile)
+void MVAPPEND(nvPrintFile)(N_Vector x, FILE* outfile)
 {
   sunindextype i;
   for (i = 0; i < MANYVECTOR_NUM_SUBVECS(x); i++)
@@ -509,19 +576,19 @@ void MVAPPEND(N_VPrintFile)(N_Vector x, FILE* outfile)
 }
 
 /* Clones a ManyVector, calling CloneEmpty on subvectors. */
-N_Vector MVAPPEND(N_VCloneEmpty)(N_Vector w)
+N_Vector MVAPPEND(nvCloneEmpty)(N_Vector w)
 {
   return (ManyVectorClone(w, SUNTRUE));
 }
 
 /* Clones a ManyVector, calling Clone on subvectors. */
-N_Vector MVAPPEND(N_VClone)(N_Vector w)
+N_Vector MVAPPEND(nvClone)(N_Vector w)
 {
   return (ManyVectorClone(w, SUNFALSE));
 }
 
 /* Destroys a ManyVector */
-void MVAPPEND(N_VDestroy)(N_Vector v)
+void MVAPPEND(nvDestroy)(N_Vector v)
 {
   SUNFunctionBegin(v->sunctx);
 
@@ -574,14 +641,14 @@ void MVAPPEND(N_VDestroy)(N_Vector v)
 
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 /* This function retrieves the MPI Communicator from an MPIManyVector object. */
-MPI_Comm N_VGetCommunicator_MPIManyVector(N_Vector v)
+MPI_Comm nvGetCommunicator_MPIManyVector(N_Vector v)
 {
   return (MANYVECTOR_COMM(v));
 }
 #endif
 
 /* This function retrieves the global length of a ManyVector object. */
-sunindextype MVAPPEND(N_VGetLength)(N_Vector v)
+sunindextype MVAPPEND(nvGetLength)(N_Vector v)
 {
   return (MANYVECTOR_GLOBLENGTH(v));
 }
@@ -599,8 +666,8 @@ sunindextype MVAPPEND(N_VGetSubvectorLocalLength)(N_Vector v, sunindextype vec_n
 /* Performs the linear sum z = a*x + b*y by calling N_VLinearSum on all subvectors;
    this routine does not check that x, y and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VLinearSum)(sunrealtype a, N_Vector x, sunrealtype b,
-                            N_Vector y, N_Vector z)
+void MVAPPEND(nvLinearSum)(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                           N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -614,7 +681,7 @@ void MVAPPEND(N_VLinearSum)(sunrealtype a, N_Vector x, sunrealtype b,
 }
 
 /* Performs the operation z = c by calling N_VConst on all subvectors. */
-void MVAPPEND(N_VConst)(sunrealtype c, N_Vector z)
+void MVAPPEND(nvConst)(sunrealtype c, N_Vector z)
 {
   SUNFunctionBegin(z->sunctx);
   sunindextype i;
@@ -629,7 +696,7 @@ void MVAPPEND(N_VConst)(sunrealtype c, N_Vector z)
 /* Performs the operation z_j = x_j*y_j by calling N_VProd on all subvectors;
    this routine does not check that x, y and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VProd)(N_Vector x, N_Vector y, N_Vector z)
+void MVAPPEND(nvProd)(N_Vector x, N_Vector y, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -645,7 +712,7 @@ void MVAPPEND(N_VProd)(N_Vector x, N_Vector y, N_Vector z)
 /* Performs the operation z_j = x_j/y_j by calling N_VDiv on all subvectors;
    this routine does not check that x, y and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VDiv)(N_Vector x, N_Vector y, N_Vector z)
+void MVAPPEND(nvDiv)(N_Vector x, N_Vector y, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -661,7 +728,7 @@ void MVAPPEND(N_VDiv)(N_Vector x, N_Vector y, N_Vector z)
 /* Performs the operation z_j = c*x_j by calling N_VScale on all subvectors;
    this routine does not check that x and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VScale)(sunrealtype c, N_Vector x, N_Vector z)
+void MVAPPEND(nvScale)(sunrealtype c, N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -676,7 +743,7 @@ void MVAPPEND(N_VScale)(sunrealtype c, N_Vector x, N_Vector z)
 /* Performs the operation z_j = |x_j| by calling N_VAbs on all subvectors;
    this routine does not check that x and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VAbs)(N_Vector x, N_Vector z)
+void MVAPPEND(nvAbs)(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -691,7 +758,7 @@ void MVAPPEND(N_VAbs)(N_Vector x, N_Vector z)
 /* Performs the operation z_j = 1/x_j by calling N_VInv on all subvectors;
    this routine does not check that x and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VInv)(N_Vector x, N_Vector z)
+void MVAPPEND(nvInv)(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -706,7 +773,7 @@ void MVAPPEND(N_VInv)(N_Vector x, N_Vector z)
 /* Performs the operation z_j = x_j + b by calling N_VAddConst on all subvectors;
    this routine does not check that x and z are ManyVectors, if they have the
    same number of subvectors, or if these subvectors are compatible. */
-void MVAPPEND(N_VAddConst)(N_Vector x, sunrealtype b, N_Vector z)
+void MVAPPEND(nvAddConst)(N_Vector x, sunrealtype b, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -727,7 +794,7 @@ void MVAPPEND(N_VAddConst)(N_Vector x, sunrealtype b, N_Vector z)
    function pointer), then this routine will call N_VDotProd, but only
    accumulate the sum if this is the root task for that subvector's
    communicator (note: serial vectors are always root task). */
-sunrealtype MVAPPEND(N_VDotProdLocal)(N_Vector x, N_Vector y)
+sunrealtype MVAPPEND(nvDotProdLocal)(N_Vector x, N_Vector y)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -780,11 +847,11 @@ sunrealtype MVAPPEND(N_VDotProdLocal)(N_Vector x, N_Vector y)
    combining the results.  This routine does not check that x and y are
    ManyVectors, if they have the same number of subvectors, or if these
    subvectors are compatible. */
-sunrealtype N_VDotProd_MPIManyVector(N_Vector x, N_Vector y)
+sunrealtype nvDotProd_MPIManyVector(N_Vector x, N_Vector y)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype lsum, gsum;
-  lsum = gsum = N_VDotProdLocal_MPIManyVector(x, y);
+  lsum = gsum = nvDotProdLocal_MPIManyVector(x, y);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -800,7 +867,7 @@ sunrealtype N_VDotProd_MPIManyVector(N_Vector x, N_Vector y)
 
    If any subvector does not implement the N_VMaxNormLocal routine (NULL
    function pointer), then this routine will call N_VMaxNorm instead. */
-sunrealtype MVAPPEND(N_VMaxNormLocal)(N_Vector x)
+sunrealtype MVAPPEND(nvMaxNormLocal)(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -834,11 +901,11 @@ sunrealtype MVAPPEND(N_VMaxNormLocal)(N_Vector x)
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 /* Performs the maximum norm of a ManyVector by calling N_VMaxNormLocal and
    combining the results. */
-sunrealtype N_VMaxNorm_MPIManyVector(N_Vector x)
+sunrealtype nvMaxNorm_MPIManyVector(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype lmax, gmax;
-  lmax = gmax = N_VMaxNormLocal_MPIManyVector(x);
+  lmax = gmax = nvMaxNormLocal_MPIManyVector(x);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -859,7 +926,7 @@ sunrealtype N_VMaxNorm_MPIManyVector(N_Vector x)
    to unravel the squared sum of the subvector components.  It will then only
    accumulate this to the overall sum if this is the root task for that
    subvector's communicator (note: serial vectors are always root task). */
-sunrealtype MVAPPEND(N_VWSqrSumLocal)(N_Vector x, N_Vector w)
+sunrealtype MVAPPEND(nvWSqrSumLocal)(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i, N;
@@ -919,13 +986,13 @@ sunrealtype MVAPPEND(N_VWSqrSumLocal)(N_Vector x, N_Vector w)
    combining the results; this routine does not check that x and
    w are ManyVectors, if they have the same number of subvectors, or if these
    subvectors are compatible. */
-sunrealtype MVAPPEND(N_VWrmsNorm)(N_Vector x, N_Vector w)
+sunrealtype MVAPPEND(nvWrmsNorm)(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype gsum;
 #ifdef MANYVECTOR_BUILD_WITH_MPI
   sunrealtype lsum;
-  lsum = gsum = N_VWSqrSumLocal_MPIManyVector(x, w);
+  lsum = gsum = nvWSqrSumLocal_MPIManyVector(x, w);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -933,7 +1000,7 @@ sunrealtype MVAPPEND(N_VWrmsNorm)(N_Vector x, N_Vector w)
                                        MPI_SUM, MANYVECTOR_COMM(x)));
   }
 #else
-  gsum = N_VWSqrSumLocal_ManyVector(x, w);
+  gsum = nvWSqrSumLocal_ManyVector(x, w);
   SUNCheckLastErrNoRet();
 #endif
   return (SUNRsqrt(gsum / (MANYVECTOR_GLOBLENGTH(x))));
@@ -950,7 +1017,7 @@ sunrealtype MVAPPEND(N_VWrmsNorm)(N_Vector x, N_Vector w)
    It will then only accumulate this to the overall sum if this is the root
    task for that subvector's communicator (note: serial vectors are always
    root task). */
-sunrealtype MVAPPEND(N_VWSqrSumMaskLocal)(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype MVAPPEND(nvWSqrSumMaskLocal)(N_Vector x, N_Vector w, N_Vector id)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i, N;
@@ -1013,13 +1080,13 @@ sunrealtype MVAPPEND(N_VWSqrSumMaskLocal)(N_Vector x, N_Vector w, N_Vector id)
    and combining the results; this routine does not check that x, w and id are
    ManyVectors, if they have the same number of subvectors, or if these subvectors
    are compatible. */
-sunrealtype MVAPPEND(N_VWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype MVAPPEND(nvWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype gsum;
 #ifdef MANYVECTOR_BUILD_WITH_MPI
   sunrealtype lsum;
-  lsum = gsum = N_VWSqrSumMaskLocal_MPIManyVector(x, w, id);
+  lsum = gsum = nvWSqrSumMaskLocal_MPIManyVector(x, w, id);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -1027,7 +1094,7 @@ sunrealtype MVAPPEND(N_VWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id)
                                        MPI_SUM, MANYVECTOR_COMM(x)));
   }
 #else
-  gsum = N_VWSqrSumMaskLocal_ManyVector(x, w, id);
+  gsum = nvWSqrSumMaskLocal_ManyVector(x, w, id);
   SUNCheckLastErrNoRet();
 #endif
   return (SUNRsqrt(gsum / (MANYVECTOR_GLOBLENGTH(x))));
@@ -1038,7 +1105,7 @@ sunrealtype MVAPPEND(N_VWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id)
 
    If any subvector does not implement the N_VMinLocal routine (NULL
    function pointer), then this routine will call N_VMin instead. */
-sunrealtype MVAPPEND(N_VMinLocal)(N_Vector x)
+sunrealtype MVAPPEND(nvMinLocal)(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1072,11 +1139,11 @@ sunrealtype MVAPPEND(N_VMinLocal)(N_Vector x)
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 /* Computes the minimum entry of a ManyVector by calling N_VMinLocal and
    combining the results. */
-sunrealtype N_VMin_MPIManyVector(N_Vector x)
+sunrealtype nvMin_MPIManyVector(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype lmin, gmin;
-  lmin = gmin = N_VMinLocal_MPIManyVector(x);
+  lmin = gmin = nvMinLocal_MPIManyVector(x);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -1091,13 +1158,13 @@ sunrealtype N_VMin_MPIManyVector(N_Vector x)
    'massaging' the result.  This routine does not check that x and w are
    ManyVectors, if they have the same number of subvectors, or if these
    subvectors are compatible. */
-sunrealtype MVAPPEND(N_VWL2Norm)(N_Vector x, N_Vector w)
+sunrealtype MVAPPEND(nvWL2Norm)(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype gsum;
 #ifdef MANYVECTOR_BUILD_WITH_MPI
   sunrealtype lsum;
-  lsum = gsum = N_VWSqrSumLocal_MPIManyVector(x, w);
+  lsum = gsum = nvWSqrSumLocal_MPIManyVector(x, w);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -1105,7 +1172,7 @@ sunrealtype MVAPPEND(N_VWL2Norm)(N_Vector x, N_Vector w)
                                        MPI_SUM, MANYVECTOR_COMM(x)));
   }
 #else
-  gsum = N_VWSqrSumLocal_ManyVector(x, w);
+  gsum = nvWSqrSumLocal_ManyVector(x, w);
   SUNCheckLastErrNoRet();
 #endif
   return (SUNRsqrt(gsum));
@@ -1116,7 +1183,7 @@ sunrealtype MVAPPEND(N_VWL2Norm)(N_Vector x, N_Vector w)
    (NULL function pointer), then this routine will call N_VL1Norm, but only
    accumulate the sum if this is the root task for that subvector's
    communicator (note: serial vectors are always root task). */
-sunrealtype MVAPPEND(N_VL1NormLocal)(N_Vector x)
+sunrealtype MVAPPEND(nvL1NormLocal)(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1168,11 +1235,11 @@ sunrealtype MVAPPEND(N_VL1NormLocal)(N_Vector x)
 #ifdef MANYVECTOR_BUILD_WITH_MPI
 /* Performs the L1 norm of a ManyVector by calling N_VL1NormLocal and
    combining the results. */
-sunrealtype N_VL1Norm_MPIManyVector(N_Vector x)
+sunrealtype nvL1Norm_MPIManyVector(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype lsum, gsum;
-  lsum = gsum = N_VL1NormLocal_MPIManyVector(x);
+  lsum = gsum = nvL1NormLocal_MPIManyVector(x);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
   {
@@ -1186,7 +1253,7 @@ sunrealtype N_VL1Norm_MPIManyVector(N_Vector x)
 /* Performs N_VCompare on all subvectors; this routine does not check that x and z are
    ManyVectors, if they have the same number of subvectors, or if these subvectors are
    compatible. */
-void MVAPPEND(N_VCompare)(sunrealtype c, N_Vector x, N_Vector z)
+void MVAPPEND(nvCompare)(sunrealtype c, N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1205,7 +1272,7 @@ void MVAPPEND(N_VCompare)(sunrealtype c, N_Vector x, N_Vector z)
 
    If any subvector does not implement the N_VInvTestLocal routine (NULL
    function pointer), then this routine will call N_VInvTest instead. */
-sunbooleantype MVAPPEND(N_VInvTestLocal)(N_Vector x, N_Vector z)
+sunbooleantype MVAPPEND(nvInvTestLocal)(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1241,11 +1308,11 @@ sunbooleantype MVAPPEND(N_VInvTestLocal)(N_Vector x, N_Vector z)
    combining the results. This routine does not check that x and z
    are ManyVectors, if they have the same number of subvectors, or if these
    subvectors are compatible. */
-sunbooleantype N_VInvTest_MPIManyVector(N_Vector x, N_Vector z)
+sunbooleantype nvInvTest_MPIManyVector(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype val, gval;
-  sunbooleantype invtest = N_VInvTestLocal_MPIManyVector(x, z);
+  sunbooleantype invtest = nvInvTestLocal_MPIManyVector(x, z);
   SUNCheckLastErrNoRet();
   val = gval = (invtest) ? ONE : ZERO;
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
@@ -1264,7 +1331,7 @@ sunbooleantype N_VInvTest_MPIManyVector(N_Vector x, N_Vector z)
 
    If any subvector does not implement the N_VConstrMaskLocal routine (NULL
    function pointer), then this routine will call N_VConstrMask instead. */
-sunbooleantype MVAPPEND(N_VConstrMaskLocal)(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype MVAPPEND(nvConstrMaskLocal)(N_Vector c, N_Vector x, N_Vector m)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1303,11 +1370,11 @@ sunbooleantype MVAPPEND(N_VConstrMaskLocal)(N_Vector c, N_Vector x, N_Vector m)
    combining the results.  This routine does not check that c, x and m
    are ManyVectors, if they have the same number of subvectors, or if these
    subvectors are compatible. */
-sunbooleantype N_VConstrMask_MPIManyVector(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMask_MPIManyVector(N_Vector c, N_Vector x, N_Vector m)
 {
   SUNFunctionBegin(x->sunctx);
   sunrealtype val, gval;
-  sunbooleantype constrmask = N_VConstrMaskLocal_MPIManyVector(c, x, m);
+  sunbooleantype constrmask = nvConstrMaskLocal_MPIManyVector(c, x, m);
   SUNCheckLastErrNoRet();
   val = gval = (constrmask) ? ONE : ZERO;
   if (MANYVECTOR_COMM(x) != MPI_COMM_NULL)
@@ -1326,7 +1393,7 @@ sunbooleantype N_VConstrMask_MPIManyVector(N_Vector c, N_Vector x, N_Vector m)
 
    If any subvector does not implement the N_VMinQuotientLocal routine (NULL
    function pointer), then this routine will call N_VMinQuotient instead. */
-sunrealtype MVAPPEND(N_VMinQuotientLocal)(N_Vector num, N_Vector denom)
+sunrealtype MVAPPEND(nvMinQuotientLocal)(N_Vector num, N_Vector denom)
 {
   SUNFunctionBegin(num->sunctx);
   sunindextype i;
@@ -1364,11 +1431,11 @@ sunrealtype MVAPPEND(N_VMinQuotientLocal)(N_Vector num, N_Vector denom)
    and combining the results.  This routine does not check that num and
    denom are ManyVectors, if they have the same number of subvectors, or if
    these subvectors are compatible. */
-sunrealtype N_VMinQuotient_MPIManyVector(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_MPIManyVector(N_Vector num, N_Vector denom)
 {
   SUNFunctionBegin(num->sunctx);
   sunrealtype lmin, gmin;
-  lmin = gmin = N_VMinQuotientLocal_MPIManyVector(num, denom);
+  lmin = gmin = nvMinQuotientLocal_MPIManyVector(num, denom);
   SUNCheckLastErrNoRet();
   if (MANYVECTOR_COMM(num) != MPI_COMM_NULL)
   {
@@ -1383,8 +1450,8 @@ sunrealtype N_VMinQuotient_MPIManyVector(N_Vector num, N_Vector denom)
    Single buffer reduction operations
    ----------------------------------------------------------------- */
 
-SUNErrCode MVAPPEND(N_VDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
-                                          sunrealtype* dotprods)
+SUNErrCode MVAPPEND(nvDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
+                                         sunrealtype* dotprods)
 {
   SUNFunctionBegin(x->sunctx);
   int j;
@@ -1426,8 +1493,8 @@ SUNErrCode MVAPPEND(N_VDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
 }
 
 #ifdef MANYVECTOR_BUILD_WITH_MPI
-SUNErrCode N_VDotProdMultiAllReduce_MPIManyVector(int nvec_total, N_Vector x,
-                                                  sunrealtype* sum)
+SUNErrCode nvDotProdMultiAllReduce_MPIManyVector(int nvec_total, N_Vector x,
+                                                 sunrealtype* sum)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1454,8 +1521,8 @@ SUNErrCode N_VDotProdMultiAllReduce_MPIManyVector(int nvec_total, N_Vector x,
    array-of-arrays of N_Vectors that comprise X.  This routine will be
    passed an array of ManyVectors, so to call the subvector-specific routines
    we must unravel the subvectors while retaining an array of outer vectors. */
-SUNErrCode MVAPPEND(N_VLinearCombination)(int nvec, sunrealtype* c, N_Vector* X,
-                                          N_Vector z)
+SUNErrCode MVAPPEND(nvLinearCombination)(int nvec, sunrealtype* c, N_Vector* X,
+                                         N_Vector z)
 {
   SUNFunctionBegin(z->sunctx);
   sunindextype i, j;
@@ -1490,8 +1557,8 @@ SUNErrCode MVAPPEND(N_VLinearCombination)(int nvec, sunrealtype* c, N_Vector* X,
    N_Vectors that comprise Y and Z.  This routine will be passed an array of
    ManyVectors, so to call the subvector-specific routines we must unravel
    the subvectors while retaining an array of outer vectors. */
-SUNErrCode MVAPPEND(N_VScaleAddMulti)(int nvec, sunrealtype* a, N_Vector x,
-                                      N_Vector* Y, N_Vector* Z)
+SUNErrCode MVAPPEND(nvScaleAddMulti)(int nvec, sunrealtype* a, N_Vector x,
+                                     N_Vector* Y, N_Vector* Z)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i, j;
@@ -1532,8 +1599,8 @@ SUNErrCode MVAPPEND(N_VScaleAddMulti)(int nvec, sunrealtype* a, N_Vector x,
    will require only a single array-valued reduction operation (in contrast to calling
    N_VDotProdMulti on all subvectors, where we would require num_subvectors separate
    reductions). */
-SUNErrCode MVAPPEND(N_VDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
-                                     sunrealtype* dotprods)
+SUNErrCode MVAPPEND(nvDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
+                                    sunrealtype* dotprods)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype i;
@@ -1571,9 +1638,9 @@ SUNErrCode MVAPPEND(N_VDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
    N_Vectors that comprise X, Y and Z.  This routine will be passed arrays of
    ManyVectors, so to call the subvector-specific routines we must unravel
    the subvectors while retaining arrays of outer vectors. */
-SUNErrCode MVAPPEND(N_VLinearSumVectorArray)(int nvec, sunrealtype a,
-                                             N_Vector* X, sunrealtype b,
-                                             N_Vector* Y, N_Vector* Z)
+SUNErrCode MVAPPEND(nvLinearSumVectorArray)(int nvec, sunrealtype a,
+                                            N_Vector* X, sunrealtype b,
+                                            N_Vector* Y, N_Vector* Z)
 {
   SUNFunctionBegin(X[0]->sunctx);
   sunindextype i, j;
@@ -1623,8 +1690,8 @@ SUNErrCode MVAPPEND(N_VLinearSumVectorArray)(int nvec, sunrealtype a,
    N_Vectors that comprise X and Z.  This routine will be passed arrays of
    ManyVectors, so to call the subvector-specific routines we must unravel
    the subvectors while retaining arrays of outer vectors. */
-SUNErrCode MVAPPEND(N_VScaleVectorArray)(int nvec, sunrealtype* c, N_Vector* X,
-                                         N_Vector* Z)
+SUNErrCode MVAPPEND(nvScaleVectorArray)(int nvec, sunrealtype* c, N_Vector* X,
+                                        N_Vector* Z)
 {
   SUNFunctionBegin(X[0]->sunctx);
   sunindextype i, j;
@@ -1667,7 +1734,7 @@ SUNErrCode MVAPPEND(N_VScaleVectorArray)(int nvec, sunrealtype* c, N_Vector* X,
    N_Vectors that comprise Z.  This routine will be passed an array of
    ManyVectors, so to call the subvector-specific routines we must unravel
    the subvectors while retaining an array of outer vectors. */
-SUNErrCode MVAPPEND(N_VConstVectorArray)(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode MVAPPEND(nvConstVectorArray)(int nvec, sunrealtype c, N_Vector* Z)
 {
   SUNFunctionBegin(Z[0]->sunctx);
   sunindextype i, j;
@@ -1703,8 +1770,8 @@ SUNErrCode MVAPPEND(N_VConstVectorArray)(int nvec, sunrealtype c, N_Vector* Z)
    will require only a single array-valued reduction operation (in contrast to calling
    N_VWrmsNormVectorArray on all subvectors, where we would require num_subvectors
    separate reductions). */
-SUNErrCode MVAPPEND(N_VWrmsNormVectorArray)(int nvec, N_Vector* X, N_Vector* W,
-                                            sunrealtype* nrm)
+SUNErrCode MVAPPEND(nvWrmsNormVectorArray)(int nvec, N_Vector* X, N_Vector* W,
+                                           sunrealtype* nrm)
 {
   SUNFunctionBegin(X[0]->sunctx);
   sunindextype i;
@@ -1745,9 +1812,8 @@ SUNErrCode MVAPPEND(N_VWrmsNormVectorArray)(int nvec, N_Vector* X, N_Vector* W,
    routine will require only a single array-valued reduction operation (in contrast
    to calling N_VWrmsNormMaskVectorArray on all subvectors, where we would require
    num_subvectors separate reductions). */
-SUNErrCode MVAPPEND(N_VWrmsNormMaskVectorArray)(int nvec, N_Vector* X,
-                                                N_Vector* W, N_Vector id,
-                                                sunrealtype* nrm)
+SUNErrCode MVAPPEND(nvWrmsNormMaskVectorArray)(int nvec, N_Vector* X, N_Vector* W,
+                                               N_Vector id, sunrealtype* nrm)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -1782,7 +1848,7 @@ SUNErrCode MVAPPEND(N_VWrmsNormMaskVectorArray)(int nvec, N_Vector* X,
 
 /* Performs the BufSize operation by calling N_VBufSize for each subvector and
    combining results */
-SUNErrCode MVAPPEND(N_VBufSize)(N_Vector x, sunindextype* size)
+SUNErrCode MVAPPEND(nvBufSize)(N_Vector x, sunindextype* size)
 {
   SUNFunctionBegin(x->sunctx);
   sunindextype subvec_size; /* subvector buffer size */
@@ -1806,7 +1872,7 @@ SUNErrCode MVAPPEND(N_VBufSize)(N_Vector x, sunindextype* size)
 /* Performs the BufPack operation by calling N_VBufPack for each subvector where
    the output buffer is offset by the buffer size used by the the previous
    subvector in the set */
-SUNErrCode MVAPPEND(N_VBufPack)(N_Vector x, void* buf)
+SUNErrCode MVAPPEND(nvBufPack)(N_Vector x, void* buf)
 {
   SUNFunctionBegin(x->sunctx);
   void* loc;           /* location in output buffer */
@@ -1836,7 +1902,7 @@ SUNErrCode MVAPPEND(N_VBufPack)(N_Vector x, void* buf)
 /* Performs the BufUnpack operation by calling N_VBufUnpack for each subvector
    where the input buffer is offset by the buffer size used by the the previous
    subvector in the set */
-SUNErrCode MVAPPEND(N_VBufUnpack)(N_Vector x, void* buf)
+SUNErrCode MVAPPEND(nvBufUnpack)(N_Vector x, void* buf)
 {
   SUNFunctionBegin(x->sunctx);
   void* loc;           /* location in input buffer */
@@ -1872,19 +1938,19 @@ SUNErrCode MVAPPEND(N_VEnableFusedOps)(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = MVAPPEND(N_VLinearCombination);
-    v->ops->nvscaleaddmulti     = MVAPPEND(N_VScaleAddMulti);
-    v->ops->nvdotprodmulti      = MVAPPEND(N_VDotProdMulti);
+    v->ops->nvlinearcombination = MVAPPEND(nvLinearCombination);
+    v->ops->nvscaleaddmulti     = MVAPPEND(nvScaleAddMulti);
+    v->ops->nvdotprodmulti      = MVAPPEND(nvDotProdMulti);
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = MVAPPEND(N_VLinearSumVectorArray);
-    v->ops->nvscalevectorarray         = MVAPPEND(N_VScaleVectorArray);
-    v->ops->nvconstvectorarray         = MVAPPEND(N_VConstVectorArray);
-    v->ops->nvwrmsnormvectorarray      = MVAPPEND(N_VWrmsNormVectorArray);
-    v->ops->nvwrmsnormmaskvectorarray  = MVAPPEND(N_VWrmsNormMaskVectorArray);
+    v->ops->nvlinearsumvectorarray     = MVAPPEND(nvLinearSumVectorArray);
+    v->ops->nvscalevectorarray         = MVAPPEND(nvScaleVectorArray);
+    v->ops->nvconstvectorarray         = MVAPPEND(nvConstVectorArray);
+    v->ops->nvwrmsnormvectorarray      = MVAPPEND(nvWrmsNormVectorArray);
+    v->ops->nvwrmsnormmaskvectorarray  = MVAPPEND(nvWrmsNormMaskVectorArray);
     v->ops->nvscaleaddmultivectorarray = NULL;
     v->ops->nvlinearcombinationvectorarray = NULL;
     /* enable single buffer reduction operations */
-    v->ops->nvdotprodmultilocal = MVAPPEND(N_VDotProdMultiLocal);
+    v->ops->nvdotprodmultilocal = MVAPPEND(nvDotProdMultiLocal);
   }
   else
   {
@@ -1911,7 +1977,7 @@ SUNErrCode MVAPPEND(N_VEnableFusedOps)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableLinearCombination)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearcombination = MVAPPEND(N_VLinearCombination); }
+  if (tf) { v->ops->nvlinearcombination = MVAPPEND(nvLinearCombination); }
   else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
@@ -1921,7 +1987,7 @@ SUNErrCode MVAPPEND(N_VEnableLinearCombination)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableScaleAddMulti)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvscaleaddmulti = MVAPPEND(N_VScaleAddMulti); }
+  if (tf) { v->ops->nvscaleaddmulti = MVAPPEND(nvScaleAddMulti); }
   else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
@@ -1931,7 +1997,7 @@ SUNErrCode MVAPPEND(N_VEnableScaleAddMulti)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableDotProdMulti)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvdotprodmulti = MVAPPEND(N_VDotProdMulti); }
+  if (tf) { v->ops->nvdotprodmulti = MVAPPEND(nvDotProdMulti); }
   else { v->ops->nvdotprodmulti = NULL; }
 
   /* return success */
@@ -1941,10 +2007,7 @@ SUNErrCode MVAPPEND(N_VEnableDotProdMulti)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableLinearSumVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf)
-  {
-    v->ops->nvlinearsumvectorarray = MVAPPEND(N_VLinearSumVectorArray);
-  }
+  if (tf) { v->ops->nvlinearsumvectorarray = MVAPPEND(nvLinearSumVectorArray); }
   else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
@@ -1954,7 +2017,7 @@ SUNErrCode MVAPPEND(N_VEnableLinearSumVectorArray)(N_Vector v, sunbooleantype tf
 SUNErrCode MVAPPEND(N_VEnableScaleVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvscalevectorarray = MVAPPEND(N_VScaleVectorArray); }
+  if (tf) { v->ops->nvscalevectorarray = MVAPPEND(nvScaleVectorArray); }
   else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
@@ -1964,7 +2027,7 @@ SUNErrCode MVAPPEND(N_VEnableScaleVectorArray)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableConstVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvconstvectorarray = MVAPPEND(N_VConstVectorArray); }
+  if (tf) { v->ops->nvconstvectorarray = MVAPPEND(nvConstVectorArray); }
   else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
@@ -1974,7 +2037,7 @@ SUNErrCode MVAPPEND(N_VEnableConstVectorArray)(N_Vector v, sunbooleantype tf)
 SUNErrCode MVAPPEND(N_VEnableWrmsNormVectorArray)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvwrmsnormvectorarray = MVAPPEND(N_VWrmsNormVectorArray); }
+  if (tf) { v->ops->nvwrmsnormvectorarray = MVAPPEND(nvWrmsNormVectorArray); }
   else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   /* return success */
@@ -1987,7 +2050,7 @@ SUNErrCode MVAPPEND(N_VEnableWrmsNormMaskVectorArray)(N_Vector v,
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvwrmsnormmaskvectorarray = MVAPPEND(N_VWrmsNormMaskVectorArray);
+    v->ops->nvwrmsnormmaskvectorarray = MVAPPEND(nvWrmsNormMaskVectorArray);
   }
   else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
@@ -1998,7 +2061,7 @@ SUNErrCode MVAPPEND(N_VEnableWrmsNormMaskVectorArray)(N_Vector v,
 SUNErrCode MVAPPEND(N_VEnableDotProdMultiLocal)(N_Vector v, sunbooleantype tf)
 {
   /* enable/disable operation */
-  if (tf) { v->ops->nvdotprodmultilocal = MVAPPEND(N_VDotProdMultiLocal); }
+  if (tf) { v->ops->nvdotprodmultilocal = MVAPPEND(nvDotProdMultiLocal); }
   else { v->ops->nvdotprodmultilocal = NULL; }
 
   /* return success */
@@ -2104,4 +2167,240 @@ static int SubvectorMPIRank(N_Vector x)
 
   return rank;
 }
+#endif
+
+/* Deprecated concrete operation wrappers */
+
+void MVAPPEND(N_VAbs)(N_Vector x, N_Vector z) { MVAPPEND(nvAbs)(x, z); }
+
+void MVAPPEND(N_VAddConst)(N_Vector x, sunrealtype b, N_Vector z)
+{
+  MVAPPEND(nvAddConst)(x, b, z);
+}
+
+SUNErrCode MVAPPEND(N_VLinearSumVectorArray)(int nvec, sunrealtype a,
+                                             N_Vector* X, sunrealtype b,
+                                             N_Vector* Y, N_Vector* Z)
+{
+  return MVAPPEND(nvLinearSumVectorArray)(nvec, a, X, b, Y, Z);
+}
+
+SUNErrCode MVAPPEND(N_VScaleVectorArray)(int nvec, sunrealtype* c, N_Vector* X,
+                                         N_Vector* Z)
+{
+  return MVAPPEND(nvScaleVectorArray)(nvec, c, X, Z);
+}
+
+SUNErrCode MVAPPEND(N_VConstVectorArray)(int nvecs, sunrealtype c, N_Vector* Z)
+{
+  return MVAPPEND(nvConstVectorArray)(nvecs, c, Z);
+}
+
+SUNErrCode MVAPPEND(N_VBufPack)(N_Vector x, void* buf)
+{
+  return MVAPPEND(nvBufPack)(x, buf);
+}
+
+SUNErrCode MVAPPEND(N_VBufSize)(N_Vector x, sunindextype* size)
+{
+  return MVAPPEND(nvBufSize)(x, size);
+}
+
+SUNErrCode MVAPPEND(N_VBufUnpack)(N_Vector x, void* buf)
+{
+  return MVAPPEND(nvBufUnpack)(x, buf);
+}
+
+N_Vector MVAPPEND(N_VCloneEmpty)(N_Vector w)
+{
+  return MVAPPEND(nvCloneEmpty)(w);
+}
+
+N_Vector MVAPPEND(N_VClone)(N_Vector w) { return MVAPPEND(nvClone)(w); }
+
+void MVAPPEND(N_VCompare)(sunrealtype c, N_Vector x, N_Vector z)
+{
+  MVAPPEND(nvCompare)(c, x, z);
+}
+
+void MVAPPEND(N_VConst)(sunrealtype c, N_Vector z) { MVAPPEND(nvConst)(c, z); }
+
+sunbooleantype MVAPPEND(N_VConstrMaskLocal)(N_Vector c, N_Vector x, N_Vector m)
+{
+  return MVAPPEND(nvConstrMaskLocal)(c, x, m);
+}
+
+void MVAPPEND(N_VDestroy)(N_Vector v) { MVAPPEND(nvDestroy)(v); }
+
+void MVAPPEND(N_VDiv)(N_Vector x, N_Vector y, N_Vector z)
+{
+  MVAPPEND(nvDiv)(x, y, z);
+}
+
+sunrealtype MVAPPEND(N_VDotProdLocal)(N_Vector x, N_Vector y)
+{
+  return MVAPPEND(nvDotProdLocal)(x, y);
+}
+
+SUNErrCode MVAPPEND(N_VDotProdMultiLocal)(int nvec, N_Vector x, N_Vector* Y,
+                                          sunrealtype* dotprods)
+{
+  return MVAPPEND(nvDotProdMultiLocal)(nvec, x, Y, dotprods);
+}
+
+SUNErrCode MVAPPEND(N_VDotProdMulti)(int nvec, N_Vector x, N_Vector* Y,
+                                     sunrealtype* dotprods)
+{
+  return MVAPPEND(nvDotProdMulti)(nvec, x, Y, dotprods);
+}
+
+sunindextype MVAPPEND(N_VGetLength)(N_Vector v)
+{
+  return MVAPPEND(nvGetLength)(v);
+}
+
+N_Vector_ID MVAPPEND(N_VGetVectorID)(N_Vector v)
+{
+  return MVAPPEND(nvGetVectorID)(v);
+}
+
+sunbooleantype MVAPPEND(N_VInvTestLocal)(N_Vector x, N_Vector z)
+{
+  return MVAPPEND(nvInvTestLocal)(x, z);
+}
+
+void MVAPPEND(N_VInv)(N_Vector x, N_Vector z) { MVAPPEND(nvInv)(x, z); }
+
+sunrealtype MVAPPEND(N_VL1NormLocal)(N_Vector x)
+{
+  return MVAPPEND(nvL1NormLocal)(x);
+}
+
+SUNErrCode MVAPPEND(N_VLinearCombination)(int nvec, sunrealtype* c, N_Vector* V,
+                                          N_Vector z)
+{
+  return MVAPPEND(nvLinearCombination)(nvec, c, V, z);
+}
+
+void MVAPPEND(N_VLinearSum)(sunrealtype a, N_Vector x, sunrealtype b,
+                            N_Vector y, N_Vector z)
+{
+  MVAPPEND(nvLinearSum)(a, x, b, y, z);
+}
+
+sunrealtype MVAPPEND(N_VMaxNormLocal)(N_Vector x)
+{
+  return MVAPPEND(nvMaxNormLocal)(x);
+}
+
+sunrealtype MVAPPEND(N_VMinLocal)(N_Vector x)
+{
+  return MVAPPEND(nvMinLocal)(x);
+}
+
+sunrealtype MVAPPEND(N_VMinQuotientLocal)(N_Vector num, N_Vector denom)
+{
+  return MVAPPEND(nvMinQuotientLocal)(num, denom);
+}
+
+void MVAPPEND(N_VPrintFile)(N_Vector v, FILE* outfile)
+{
+  MVAPPEND(nvPrintFile)(v, outfile);
+}
+
+void MVAPPEND(N_VPrint)(N_Vector v) { MVAPPEND(nvPrint)(v); }
+
+void MVAPPEND(N_VProd)(N_Vector x, N_Vector y, N_Vector z)
+{
+  MVAPPEND(nvProd)(x, y, z);
+}
+
+SUNErrCode MVAPPEND(N_VScaleAddMulti)(int nvec, sunrealtype* a, N_Vector x,
+                                      N_Vector* Y, N_Vector* Z)
+{
+  return MVAPPEND(nvScaleAddMulti)(nvec, a, x, Y, Z);
+}
+
+void MVAPPEND(N_VScale)(sunrealtype c, N_Vector x, N_Vector z)
+{
+  MVAPPEND(nvScale)(c, x, z);
+}
+
+sunrealtype MVAPPEND(N_VWL2Norm)(N_Vector x, N_Vector w)
+{
+  return MVAPPEND(nvWL2Norm)(x, w);
+}
+
+sunrealtype MVAPPEND(N_VWSqrSumLocal)(N_Vector x, N_Vector w)
+{
+  return MVAPPEND(nvWSqrSumLocal)(x, w);
+}
+
+sunrealtype MVAPPEND(N_VWSqrSumMaskLocal)(N_Vector x, N_Vector w, N_Vector id)
+{
+  return MVAPPEND(nvWSqrSumMaskLocal)(x, w, id);
+}
+
+SUNErrCode MVAPPEND(N_VWrmsNormMaskVectorArray)(int nvec, N_Vector* X,
+                                                N_Vector* W, N_Vector id,
+                                                sunrealtype* nrm)
+{
+  return MVAPPEND(nvWrmsNormMaskVectorArray)(nvec, X, W, id, nrm);
+}
+
+sunrealtype MVAPPEND(N_VWrmsNormMask)(N_Vector x, N_Vector w, N_Vector id)
+{
+  return MVAPPEND(nvWrmsNormMask)(x, w, id);
+}
+
+SUNErrCode MVAPPEND(N_VWrmsNormVectorArray)(int nvecs, N_Vector* X, N_Vector* W,
+                                            sunrealtype* nrm)
+{
+  return MVAPPEND(nvWrmsNormVectorArray)(nvecs, X, W, nrm);
+}
+
+sunrealtype MVAPPEND(N_VWrmsNorm)(N_Vector x, N_Vector w)
+{
+  return MVAPPEND(nvWrmsNorm)(x, w);
+}
+
+#ifdef MANYVECTOR_BUILD_WITH_MPI
+
+sunbooleantype MVAPPEND(N_VConstrMask)(N_Vector c, N_Vector x, N_Vector m)
+{
+  return MVAPPEND(nvConstrMask)(c, x, m);
+}
+
+SUNErrCode MVAPPEND(N_VDotProdMultiAllReduce)(int nvec_total, N_Vector x,
+                                              sunrealtype* sum)
+{
+  return MVAPPEND(nvDotProdMultiAllReduce)(nvec_total, x, sum);
+}
+
+sunrealtype MVAPPEND(N_VDotProd)(N_Vector x, N_Vector y)
+{
+  return MVAPPEND(nvDotProd)(x, y);
+}
+
+MPI_Comm MVAPPEND(N_VGetCommunicator)(N_Vector v)
+{
+  return MVAPPEND(nvGetCommunicator)(v);
+}
+
+sunbooleantype MVAPPEND(N_VInvTest)(N_Vector x, N_Vector z)
+{
+  return MVAPPEND(nvInvTest)(x, z);
+}
+
+sunrealtype MVAPPEND(N_VL1Norm)(N_Vector x) { return MVAPPEND(nvL1Norm)(x); }
+
+sunrealtype MVAPPEND(N_VMaxNorm)(N_Vector x) { return MVAPPEND(nvMaxNorm)(x); }
+
+sunrealtype MVAPPEND(N_VMinQuotient)(N_Vector num, N_Vector denom)
+{
+  return MVAPPEND(nvMinQuotient)(num, denom);
+}
+
+sunrealtype MVAPPEND(N_VMin)(N_Vector x) { return MVAPPEND(nvMin)(x); }
+
 #endif

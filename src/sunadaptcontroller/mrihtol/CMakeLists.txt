@@ -21,6 +21,7 @@ sundials_add_library(
   SOURCES sunadaptcontroller_mrihtol.c
   HEADERS
     ${SUNDIALS_SOURCE_DIR}/include/sunadaptcontroller/sunadaptcontroller_mrihtol.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunadaptcontroller/sunadaptcontroller_mrihtol_deprecated.h
   LINK_LIBRARIES PUBLIC sundials_core
   INCLUDE_SUBDIR sunadaptcontroller
   OBJECT_LIB_ONLY)

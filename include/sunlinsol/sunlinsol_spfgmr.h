@@ -93,30 +93,6 @@ SUNDIALS_EXPORT SUNErrCode SUNLinSol_SPFGMRSetGSType(SUNLinearSolver S,
                                                      int gstype);
 SUNDIALS_EXPORT SUNErrCode SUNLinSol_SPFGMRSetMaxRestarts(SUNLinearSolver S,
                                                           int maxrs);
-SUNDIALS_EXPORT SUNLinearSolver_Type SUNLinSolGetType_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNLinearSolver_ID SUNLinSolGetID_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolInitialize_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetATimes_SPFGMR(SUNLinearSolver S,
-                                                     void* A_data,
-                                                     SUNATimesFn ATimes);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetPreconditioner_SPFGMR(SUNLinearSolver S,
-                                                             void* P_data,
-                                                             SUNPSetupFn Pset,
-                                                             SUNPSolveFn Psol);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetScalingVectors_SPFGMR(SUNLinearSolver S,
-                                                             N_Vector s1,
-                                                             N_Vector s2);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolSetZeroGuess_SPFGMR(SUNLinearSolver S,
-                                                        sunbooleantype onoff);
-SUNDIALS_EXPORT int SUNLinSolSetup_SPFGMR(SUNLinearSolver S, SUNMatrix A);
-SUNDIALS_EXPORT int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNMatrix A,
-                                          N_Vector x, N_Vector b,
-                                          sunrealtype tol);
-SUNDIALS_EXPORT int SUNLinSolNumIters_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT sunrealtype SUNLinSolResNorm_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT N_Vector SUNLinSolResid_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT sunindextype SUNLinSolLastFlag_SPFGMR(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolFree_SPFGMR(SUNLinearSolver S);
 
 #ifdef __cplusplus
 }

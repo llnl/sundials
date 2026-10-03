@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
   if (check_flag(&flag, "compute_ans", 1)) { return 1; }
 
   printf("True solution:\n");
-  N_VPrint_Serial(ans);
+  N_VPrint(ans);
 
   /* ---------------------------------------------------------------------------
    * explicit test
@@ -254,7 +254,7 @@ int main(int argc, char* argv[])
 
   /* print solution */
   printf("Explicit solution:\n");
-  N_VPrint_Serial(y);
+  N_VPrint(y);
 
   /* check the solution error */
   flag = compute_error(y, ans, tmp, reltol, abstol);
@@ -326,7 +326,7 @@ int main(int argc, char* argv[])
 
   /* print solution */
   printf("Implicit solution:\n");
-  N_VPrint_Serial(y);
+  N_VPrint(y);
 
   /* check the solution error */
   flag = compute_error(y, ans, tmp, reltol, abstol);
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 
   /* print solution */
   printf("IMEX solution:\n");
-  N_VPrint_Serial(y);
+  N_VPrint(y);
 
 #if defined(SUNDIALS_EXTENDED_PRECISION)
   /* The 5th order case with extended precision tends to slightly under solve
