@@ -28,8 +28,7 @@
 
 namespace sundials {
 namespace impl {
-using BaseLinearSolver =
-  BaseObject<SUNLinearSolver_, SUNLinearSolver_Ops_>;
+using BaseLinearSolver = BaseObject<SUNLinearSolver_, SUNLinearSolver_Ops_>;
 } // namespace impl
 
 namespace experimental {

@@ -239,11 +239,11 @@ int SUNLinSolSetup_cuSolverSp_batchQR(SUNLinearSolver S, SUNMatrix A)
 
     /* Compute the workspace we will need */
     status = cusolverSpXcsrqrBufferInfoBatched(SUN_CUSOL_HANDLE(S), blockrows,
-                                                blockcols, blocknnz, mat_descr,
-                                                d_data, d_rowptr, d_colind,
-                                                nblock, SUN_CUSP_QRINFO(S),
-                                                &SUN_CUSP_INTERNAL_SIZE(S),
-                                                &SUN_CUSP_WORK_SIZE(S));
+                                               blockcols, blocknnz, mat_descr,
+                                               d_data, d_rowptr, d_colind,
+                                               nblock, SUN_CUSP_QRINFO(S),
+                                               &SUN_CUSP_INTERNAL_SIZE(S),
+                                               &SUN_CUSP_WORK_SIZE(S));
 
     if (!SUNDIALS_CUSOLVER_VERIFY(status))
     {
@@ -295,10 +295,9 @@ int SUNLinSolSolve_cuSolverSp_batchQR(SUNLinearSolver S, SUNMatrix A,
   mat_descr = SUNMatrix_cuSparse_MatDescr(A);
 
   status = cusolverSpXcsrqrsvBatched(SUN_CUSOL_HANDLE(S), blockrows, blockcols,
-                                      blocknnz, mat_descr, d_data, d_rowptr,
-                                      d_colind, device_b, device_x, nblock,
-                                      SUN_CUSP_QRINFO(S),
-                                      SUN_CUSP_QRWORKSPACE(S));
+                                     blocknnz, mat_descr, d_data, d_rowptr,
+                                     d_colind, device_b, device_x, nblock,
+                                     SUN_CUSP_QRINFO(S), SUN_CUSP_QRWORKSPACE(S));
 
   if (!SUNDIALS_CUSOLVER_VERIFY(status))
   {
