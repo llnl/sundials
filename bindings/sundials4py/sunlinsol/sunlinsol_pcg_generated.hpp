@@ -4,7 +4,7 @@
 // #endif
 //
 
-auto pyClass_SUNLinearSolverContent_PCG =
+auto pyClassSUNLinearSolverContent_PCG_ =
   nb::class_<SUNLinearSolverContent_PCG_>(m, "SUNLinearSolverContent_PCG_", "")
     .def(nb::init<>()) // implicit default constructor
   ;

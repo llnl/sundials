@@ -4,7 +4,7 @@
 // #endif
 //
 
-auto pyClass_SUNAdaptControllerContent_Soderlind =
+auto pyClassSUNAdaptControllerContent_Soderlind_ =
   nb::class_<SUNAdaptControllerContent_Soderlind_>(m, "SUNAdaptControllerContent_Soderlind_",
                                                    "")
     .def(nb::init<>()) // implicit default constructor
