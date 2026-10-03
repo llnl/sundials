@@ -26,12 +26,7 @@ endif()
 sundials_option(BENCHMARK_NVECTOR BOOL "NVector benchmarks are on" ON)
 
 # Disable some warnings for benchmarks
-if(SUNDIALS_ENABLE_ALL_WARNINGS)
-  set(CMAKE_C_FLAGS
-      "${CMAKE_C_FLAGS} -Wno-unused-parameter -Wno-unused-function")
-  set(CMAKE_CXX_FLAGS
-      "${CMAKE_CXX_FLAGS} -Wno-unused-parameter -Wno-unused-function")
-endif()
+sundials_disable_warnings(unused-parameter unused-function)
 
 # ----------------------------------------
 # Add specific benchmarks
