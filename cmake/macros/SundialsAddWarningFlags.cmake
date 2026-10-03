@@ -17,7 +17,7 @@
 SundialsAddWarningFlags
 -----------------------
 
-This module provides a command for adding compiler warning flags.
+This module provides commands for adding and disabling compiler warnings.
 
 Load this module with:
 
@@ -28,7 +28,7 @@ Load this module with:
 Commands
 ^^^^^^^^
 
-This module provides the following command:
+This module provides the following commands:
 
 .. cmake:command:: sundials_add_warning_flags
 
@@ -66,6 +66,26 @@ This module provides the following command:
      * Newer versions of CMake add these flags to targets natively.
 
      * This option is independent of :cmakeop:`SUNDIALS_ENABLE_ALL_WARNINGS`.
+
+.. cmake:command:: sundials_disable_warnings
+
+   Disable compiler warnings in the current directory.
+
+   .. code-block:: cmake
+
+      sundials_disable_warnings(<warning>...)
+
+   Appends flags to ``CMAKE_C_FLAGS`` and ``CMAKE_CXX_FLAGS`` that disable the
+   given warnings when :cmakeop:`SUNDIALS_ENABLE_ALL_WARNINGS` is enabled. The
+   flags apply to targets created afterwards in the calling directory and its
+   subdirectories.
+
+   The arguments are:
+
+   ``<warning>...``
+     The warnings to disable, using GCC-style names without the ``-W`` prefix
+     e.g., ``unused-parameter``. The equivalent ``/wd`` flags are used with
+     MSVC. Warnings without a known MSVC equivalent are not disabled with MSVC.
 #]=======================================================================]
 
 function(sundials_add_warning_flags lang)
@@ -197,4 +217,39 @@ function(sundials_add_warning_flags lang)
   set(SUNDIALS_${lang}_SWIG_WARNING_FLAGS
       "${_swig_flags}"
       PARENT_SCOPE)
+endfunction()
+
+# MSVC equivalents of GCC-style warning names used with
+# sundials_disable_warnings
+set(_SUNDIALS_MSVC_WARNING_unused-function 4505)
+set(_SUNDIALS_MSVC_WARNING_unused-parameter 4100)
+
+function(sundials_disable_warnings)
+  if(NOT SUNDIALS_ENABLE_ALL_WARNINGS)
+    return()
+  endif()
+
+  foreach(lang C CXX)
+    if(NOT CMAKE_${lang}_COMPILER_LOADED)
+      continue()
+    endif()
+
+    set(_flags)
+    foreach(_warning ${ARGN})
+      if(CMAKE_${lang}_COMPILER_ID STREQUAL "MSVC")
+        if(DEFINED _SUNDIALS_MSVC_WARNING_${_warning})
+          list(APPEND _flags /wd${_SUNDIALS_MSVC_WARNING_${_warning}})
+        endif()
+      else()
+        list(APPEND _flags -Wno-${_warning})
+      endif()
+    endforeach()
+
+    if(_flags)
+      list(JOIN _flags " " _flags)
+      set(CMAKE_${lang}_FLAGS
+          "${CMAKE_${lang}_FLAGS} ${_flags}"
+          PARENT_SCOPE)
+    endif()
+  endforeach()
 endfunction()
