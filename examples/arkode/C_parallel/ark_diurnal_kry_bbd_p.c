@@ -474,7 +474,7 @@ static void PrintOutput(void* arkode_mem, int my_pe, MPI_Comm comm, N_Vector u,
 static void PrintFinalStats(void* arkode_mem)
 {
   long int nst, nfe, nfi, nsetups, nni, ncfn, netf;
-  long int nli, npe, nps, ncfl, nfeLS;
+  long int nli, npe, nps, ncfl, nfeLS, ngevalsBBDP;
   int flag;
 
   flag = ARKodeGetNumSteps(arkode_mem, &nst);
