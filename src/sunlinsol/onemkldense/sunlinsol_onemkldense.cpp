@@ -24,7 +24,7 @@
 using namespace oneapi::mkl::lapack;
 
 // SUNDIALS public headers
-#include <sunlinsol/sunlinsol_onemkldense.h>
+#include <sunlinsol/sunlinsol_onemkldense_deprecated.h>
 #include <sunmatrix/sunmatrix_onemkldense.h>
 
 // SUNDIALS private headers
@@ -64,6 +64,28 @@ using namespace oneapi::mkl::lapack;
 #define LS_MEM_TYPE(S)   (LS_CONTENT(S)->mem_type)
 #define LS_MEM_HELPER(S) (LS_CONTENT(S)->mem_helper)
 #define LS_QUEUE(S)      (LS_CONTENT(S)->queue)
+
+// Functions attached to the N_Vector
+static SUNErrCode sunLinSolFree_OneMklDense(SUNLinearSolver S);
+
+static inline SUNLinearSolver_ID sunLinSolGetID_OneMklDense(SUNLinearSolver S)
+{
+  return SUNLINEARSOLVER_ONEMKLDENSE;
+}
+
+static inline SUNLinearSolver_Type sunLinSolGetType_OneMklDense(SUNLinearSolver S)
+{
+  return SUNLINEARSOLVER_DIRECT;
+}
+
+static SUNErrCode sunLinSolInitialize_OneMklDense(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_OneMklDense(SUNLinearSolver S);
+
+static int sunLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A,
+                                      N_Vector x, N_Vector b, sunrealtype tol);
 
 /* --------------------------------------------------------------------------
  * Constructors
@@ -133,13 +155,13 @@ SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix Amat,
   }
 
   // Attach operations
-  S->ops->gettype    = SUNLinSolGetType_OneMklDense;
-  S->ops->getid      = SUNLinSolGetID_OneMklDense;
-  S->ops->initialize = SUNLinSolInitialize_OneMklDense;
-  S->ops->setup      = SUNLinSolSetup_OneMklDense;
-  S->ops->solve      = SUNLinSolSolve_OneMklDense;
-  S->ops->lastflag   = SUNLinSolLastFlag_OneMklDense;
-  S->ops->free       = SUNLinSolFree_OneMklDense;
+  S->ops->gettype    = sunLinSolGetType_OneMklDense;
+  S->ops->getid      = sunLinSolGetID_OneMklDense;
+  S->ops->initialize = sunLinSolInitialize_OneMklDense;
+  S->ops->setup      = sunLinSolSetup_OneMklDense;
+  S->ops->solve      = sunLinSolSolve_OneMklDense;
+  S->ops->lastflag   = sunLinSolLastFlag_OneMklDense;
+  S->ops->free       = sunLinSolFree_OneMklDense;
 
   // Create content
   S->content = (SUNLinearSolverContent_OneMklDense)malloc(
@@ -267,7 +289,7 @@ SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix Amat,
  * Implementation of SUNLinearSolver operations
  * -------------------------------------------------------------------------- */
 
-SUNErrCode SUNLinSolInitialize_OneMklDense(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_OneMklDense(SUNLinearSolver S)
 {
   // All solver-specific memory has already been allocated
   if (!S)
@@ -280,7 +302,7 @@ SUNErrCode SUNLinSolInitialize_OneMklDense(SUNLinearSolver S)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A)
 {
   // Check for valid inputs
   if (!S)
@@ -438,7 +460,7 @@ int SUNLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                                N_Vector b, sunrealtype tol)
 {
   // Check for valid inputs
@@ -586,12 +608,12 @@ int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return SUN_SUCCESS;
 }
 
-sunindextype SUNLinSolLastFlag_OneMklDense(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_OneMklDense(SUNLinearSolver S)
 {
   return LS_LASTFLAG(S);
 }
 
-SUNErrCode SUNLinSolFree_OneMklDense(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_OneMklDense(SUNLinearSolver S)
 {
   // return if S is already free
   if (!S) { return SUN_SUCCESS; }
@@ -625,3 +647,35 @@ SUNErrCode SUNLinSolFree_OneMklDense(SUNLinearSolver S)
 
   return SUN_SUCCESS;
 }
+
+/* Deprecated concrete operation wrappers */
+
+extern "C" {
+
+SUNErrCode SUNLinSolFree_OneMklDense(SUNLinearSolver S)
+{
+  return sunLinSolFree_OneMklDense(S);
+}
+
+SUNErrCode SUNLinSolInitialize_OneMklDense(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_OneMklDense(S);
+}
+
+sunindextype SUNLinSolLastFlag_OneMklDense(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_OneMklDense(S);
+}
+
+int SUNLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_OneMklDense(S, A);
+}
+
+int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                               N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_OneMklDense(S, A, x, b, tol);
+}
+
+} // extern "C"

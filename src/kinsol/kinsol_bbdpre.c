@@ -363,7 +363,7 @@ static int KINBBDPrecSetup(N_Vector uu, N_Vector uscale,
   }
 
   /* Do LU factorization of P and return error flag */
-  retval = SUNLinSolSetup_Band(pdata->LS, pdata->PP);
+  retval = SUNLinSolSetup(pdata->LS, pdata->PP);
   return (retval);
 }
 

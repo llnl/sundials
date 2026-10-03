@@ -26,7 +26,7 @@
 
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_spgmr.h>
+#include <sunlinsol/sunlinsol_spgmr_deprecated.h>
 #include "sundials_logger_impl.h"
 
 #include "sundials_cli.h"
@@ -49,6 +49,40 @@
  * Un-exported implementation specific routines
  * ----------------------------------------------------------------------------
  */
+
+static SUNErrCode sunLinSolFree_SPGMR(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_SPGMR(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_SPGMR(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_SPGMR(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_SPGMR(SUNLinearSolver S);
+
+static int sunLinSolNumIters_SPGMR(SUNLinearSolver S);
+
+static sunrealtype sunLinSolResNorm_SPGMR(SUNLinearSolver S);
+
+static N_Vector sunLinSolResid_SPGMR(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolSetATimes_SPGMR(SUNLinearSolver S, void* A_data,
+                                           SUNATimesFn ATimes);
+
+static SUNErrCode sunLinSolSetPreconditioner_SPGMR(SUNLinearSolver S,
+                                                   void* P_data, SUNPSetupFn Pset,
+                                                   SUNPSolveFn Psol);
+
+static SUNErrCode sunLinSolSetScalingVectors_SPGMR(SUNLinearSolver S,
+                                                   N_Vector s1, N_Vector s2);
+
+static SUNErrCode sunLinSolSetZeroGuess_SPGMR(SUNLinearSolver S,
+                                              sunbooleantype onff);
+
+static int sunLinSolSetup_SPGMR(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_SPGMR(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                N_Vector b, sunrealtype tol);
 
 static SUNErrCode setFromCommandLine_SPGMR(SUNLinearSolver S, const char* LSid,
                                            int argc, char* argv[]);
@@ -94,21 +128,21 @@ SUNLinearSolver SUNLinSol_SPGMR(N_Vector y, int pretype, int maxl,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  S->ops->gettype           = SUNLinSolGetType_SPGMR;
-  S->ops->getid             = SUNLinSolGetID_SPGMR;
-  S->ops->setatimes         = SUNLinSolSetATimes_SPGMR;
+  S->ops->gettype           = sunLinSolGetType_SPGMR;
+  S->ops->getid             = sunLinSolGetID_SPGMR;
+  S->ops->setatimes         = sunLinSolSetATimes_SPGMR;
   S->ops->setoptions        = SUNLinSolSetOptions_SPGMR;
-  S->ops->setpreconditioner = SUNLinSolSetPreconditioner_SPGMR;
-  S->ops->setscalingvectors = SUNLinSolSetScalingVectors_SPGMR;
-  S->ops->setzeroguess      = SUNLinSolSetZeroGuess_SPGMR;
-  S->ops->initialize        = SUNLinSolInitialize_SPGMR;
-  S->ops->setup             = SUNLinSolSetup_SPGMR;
-  S->ops->solve             = SUNLinSolSolve_SPGMR;
-  S->ops->numiters          = SUNLinSolNumIters_SPGMR;
-  S->ops->resnorm           = SUNLinSolResNorm_SPGMR;
-  S->ops->resid             = SUNLinSolResid_SPGMR;
-  S->ops->lastflag          = SUNLinSolLastFlag_SPGMR;
-  S->ops->free              = SUNLinSolFree_SPGMR;
+  S->ops->setpreconditioner = sunLinSolSetPreconditioner_SPGMR;
+  S->ops->setscalingvectors = sunLinSolSetScalingVectors_SPGMR;
+  S->ops->setzeroguess      = sunLinSolSetZeroGuess_SPGMR;
+  S->ops->initialize        = sunLinSolInitialize_SPGMR;
+  S->ops->setup             = sunLinSolSetup_SPGMR;
+  S->ops->solve             = sunLinSolSolve_SPGMR;
+  S->ops->numiters          = sunLinSolNumIters_SPGMR;
+  S->ops->resnorm           = sunLinSolResNorm_SPGMR;
+  S->ops->resid             = sunLinSolResid_SPGMR;
+  S->ops->lastflag          = sunLinSolLastFlag_SPGMR;
+  S->ops->free              = sunLinSolFree_SPGMR;
 
   /* Create content */
   content = NULL;
@@ -298,17 +332,17 @@ SUNErrCode SUNLinSol_SPGMRSetMaxRestarts(SUNLinearSolver S, int maxrs)
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_SPGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_SPGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_ITERATIVE);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_SPGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_SPGMR(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_SPGMR);
 }
 
-SUNErrCode SUNLinSolInitialize_SPGMR(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_SPGMR(SUNLinearSolver S)
 {
   int k;
   SUNLinearSolverContent_SPGMR content;
@@ -391,7 +425,7 @@ SUNErrCode SUNLinSolInitialize_SPGMR(SUNLinearSolver S)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetATimes_SPGMR(SUNLinearSolver S, void* ATData,
+SUNErrCode sunLinSolSetATimes_SPGMR(SUNLinearSolver S, void* ATData,
                                     SUNATimesFn ATimes)
 {
   /* set function pointers to integrator-supplied ATimes routine
@@ -401,7 +435,7 @@ SUNErrCode SUNLinSolSetATimes_SPGMR(SUNLinearSolver S, void* ATData,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetPreconditioner_SPGMR(SUNLinearSolver S, void* PData,
+SUNErrCode sunLinSolSetPreconditioner_SPGMR(SUNLinearSolver S, void* PData,
                                             SUNPSetupFn Psetup,
                                             SUNPSolveFn Psolve)
 {
@@ -413,7 +447,7 @@ SUNErrCode SUNLinSolSetPreconditioner_SPGMR(SUNLinearSolver S, void* PData,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetScalingVectors_SPGMR(SUNLinearSolver S, N_Vector s1,
+SUNErrCode sunLinSolSetScalingVectors_SPGMR(SUNLinearSolver S, N_Vector s1,
                                             N_Vector s2)
 {
   /* set N_Vector pointers to integrator-supplied scaling vectors,
@@ -423,14 +457,14 @@ SUNErrCode SUNLinSolSetScalingVectors_SPGMR(SUNLinearSolver S, N_Vector s1,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetZeroGuess_SPGMR(SUNLinearSolver S, sunbooleantype onff)
+SUNErrCode sunLinSolSetZeroGuess_SPGMR(SUNLinearSolver S, sunbooleantype onff)
 {
   /* set flag indicating a zero initial guess */
   SPGMR_CONTENT(S)->zeroguess = onff;
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
+int sunLinSolSetup_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
 {
   SUNFunctionBegin(S->sunctx);
 
@@ -457,7 +491,7 @@ int SUNLinSolSetup_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
+int sunLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
                          N_Vector x, N_Vector b, sunrealtype delta)
 {
   SUNFunctionBegin(S->sunctx);
@@ -932,27 +966,27 @@ int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   return (LASTFLAG(S));
 }
 
-int SUNLinSolNumIters_SPGMR(SUNLinearSolver S)
+int sunLinSolNumIters_SPGMR(SUNLinearSolver S)
 {
   return (SPGMR_CONTENT(S)->numiters);
 }
 
-sunrealtype SUNLinSolResNorm_SPGMR(SUNLinearSolver S)
+sunrealtype sunLinSolResNorm_SPGMR(SUNLinearSolver S)
 {
   return (SPGMR_CONTENT(S)->resnorm);
 }
 
-N_Vector SUNLinSolResid_SPGMR(SUNLinearSolver S)
+N_Vector sunLinSolResid_SPGMR(SUNLinearSolver S)
 {
   return (SPGMR_CONTENT(S)->vtemp);
 }
 
-sunindextype SUNLinSolLastFlag_SPGMR(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_SPGMR(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_SPGMR(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_SPGMR(SUNLinearSolver S)
 {
   int k;
 
@@ -1018,4 +1052,80 @@ SUNErrCode SUNLinSolFree_SPGMR(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolFree_SPGMR(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolGetID_SPGMR(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolGetType_SPGMR(S);
+}
+
+SUNErrCode SUNLinSolInitialize_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_SPGMR(S);
+}
+
+sunindextype SUNLinSolLastFlag_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_SPGMR(S);
+}
+
+int SUNLinSolNumIters_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolNumIters_SPGMR(S);
+}
+
+sunrealtype SUNLinSolResNorm_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolResNorm_SPGMR(S);
+}
+
+N_Vector SUNLinSolResid_SPGMR(SUNLinearSolver S)
+{
+  return sunLinSolResid_SPGMR(S);
+}
+
+SUNErrCode SUNLinSolSetATimes_SPGMR(SUNLinearSolver S, void* A_data,
+                                    SUNATimesFn ATimes)
+{
+  return sunLinSolSetATimes_SPGMR(S, A_data, ATimes);
+}
+
+SUNErrCode SUNLinSolSetPreconditioner_SPGMR(SUNLinearSolver S, void* P_data,
+                                            SUNPSetupFn Pset, SUNPSolveFn Psol)
+{
+  return sunLinSolSetPreconditioner_SPGMR(S, P_data, Pset, Psol);
+}
+
+SUNErrCode SUNLinSolSetScalingVectors_SPGMR(SUNLinearSolver S, N_Vector s1,
+                                            N_Vector s2)
+{
+  return sunLinSolSetScalingVectors_SPGMR(S, s1, s2);
+}
+
+SUNErrCode SUNLinSolSetZeroGuess_SPGMR(SUNLinearSolver S, sunbooleantype onff)
+{
+  return sunLinSolSetZeroGuess_SPGMR(S, onff);
+}
+
+int SUNLinSolSetup_SPGMR(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_SPGMR(S, A);
+}
+
+int SUNLinSolSolve_SPGMR(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+                         sunrealtype tol)
+{
+  return sunLinSolSolve_SPGMR(S, A, x, b, tol);
 }

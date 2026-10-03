@@ -24,6 +24,7 @@ sundials_add_library(
   SOURCES sunlinsol_cusolversp_batchqr.cu
   HEADERS
     ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_cusolversp_batchqr.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_cusolversp_batchqr_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

@@ -72,28 +72,6 @@ provide macros to access its member variables. Instead, user should use the
 accessor functions:
 
 
-.. c:function:: sunrealtype* N_VGetHostArrayPointer_Hip(N_Vector v)
-
-   This function returns pointer to the vector data on the host.
-
-
-.. c:function:: sunrealtype* N_VGetDeviceArrayPointer_Hip(N_Vector v)
-
-   This function returns pointer to the vector data on the device.
-
-
-.. c:function:: void N_VSetHostArrayPointer_Hip(sunrealtype* h_vdata, N_Vector v)
-
-   This function sets the vector data pointer on the host. It does not free the
-   existing pointer.
-
-
-.. c:function:: void N_VSetDeviceArrayPointer_Hip(sunrealtype* d_vdata, N_Vector v)
-
-   This function sets the vector data pointer on the device. It does not free
-   the existing pointer.
-
-
 .. c:function:: sunbooleantype N_VIsManagedMemory_Hip(N_Vector v)
 
    This function returns a boolean flag indicating if the vector
@@ -104,11 +82,10 @@ The NVECTOR_HIP module defines implementations of all standard vector
 operations defined in :numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
 :numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`, except for
 :c:func:`N_VSetArrayPointer`.
-The names of vector operations are obtained from those in
-:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local` by appending the suffix ``_Hip``
-(e.g. ``N_VDestroy_Hip``).  The module NVECTOR_HIP provides the
-following additional user-callable routines:
+These operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
+:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`. The module
+NVECTOR_HIP provides the following additional user-callable routines:
 
 
 
@@ -188,16 +165,6 @@ The module NVECTOR_HIP also provides the following user-callable routines:
    This function copies vector data from the device to the host.
 
 
-.. c:function:: void N_VPrint_Hip(N_Vector v)
-
-   This function prints the content of a HIP vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Hip(N_Vector v, FILE *outfile)
-
-   This function prints the content of a HIP vector to ``outfile``.
-
-
 By default all fused and vector array operations are disabled in the NVECTOR_HIP
 module. The following additional user-callable routines are provided to
 enable or disable fused and vector array operations for a specific vector. To
@@ -270,9 +237,8 @@ options as the vector they are cloned from while vectors created with
 **Notes**
 
 * When there is a need to access components of an ``N_Vector_Hip``, ``v``,
-  it is recommended to use functions :c:func:`N_VGetDeviceArrayPointer_Hip()` or
-  :c:func:`N_VGetHostArrayPointer_Hip()`. However, when using managed memory,
-  the function :c:func:`N_VGetArrayPointer` may also be used.
+  it is recommended to use functions :c:func:`N_VGetDeviceArrayPointer()` or
+  :c:func:`N_VGetArrayPointer()`.
 
 * To maximize efficiency, vector operations in the NVECTOR_HIP implementation
   that have more than one ``N_Vector`` argument do not check for

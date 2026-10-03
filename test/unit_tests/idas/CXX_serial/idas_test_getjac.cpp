@@ -44,6 +44,7 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 // Include desired integrators, vectors, linear solvers, and nonlinear solvers
@@ -172,6 +173,9 @@ static int J(sunrealtype t, sunrealtype cj, N_Vector y, N_Vector yp,
 // Custom linear solver solve function
 // -----------------------------------------------------------------------------
 
+static decltype(&SUNLinSolSetup) denseSetup = nullptr;
+static decltype(&SUNLinSolSolve) denseSolve = nullptr;
+
 static int DenseSetupAndSolve(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                               N_Vector b, sunrealtype tol)
 {
@@ -183,11 +187,11 @@ static int DenseSetupAndSolve(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   if (flag) { return flag; }
 
   // Factor the matrix
-  flag = SUNLinSolSetup_Dense(S, Acpy);
+  flag = denseSetup(S, Acpy);
   if (flag) { return flag; }
 
   // Solve the system
-  flag = SUNLinSolSolve_Dense(S, A, x, b, tol);
+  flag = denseSolve(S, A, x, b, tol);
   if (flag) { return flag; }
 
   // Destroy matrix copy
@@ -289,8 +293,8 @@ int main(int argc, char* argv[])
   if (check_ptr(LS, "SUNLinSol_Dense")) { return 1; }
 
   // Disable the linear solver setup function and attach custom solve function
-  LS->ops->setup = nullptr;
-  LS->ops->solve = DenseSetupAndSolve;
+  denseSetup = std::exchange(LS->ops->setup, nullptr);
+  denseSolve = std::exchange(LS->ops->solve, DenseSetupAndSolve);
 
   flag = IDASetLinearSolver(ida_mem, LS, A);
   if (check_flag(flag, "IDASetLinearSolver")) { return 1; }

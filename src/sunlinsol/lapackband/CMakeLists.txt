@@ -30,7 +30,9 @@ endif()
 sundials_add_library(
   sundials_sunlinsollapackband
   SOURCES sunlinsol_lapackband.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_lapackband.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_lapackband.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_lapackband_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

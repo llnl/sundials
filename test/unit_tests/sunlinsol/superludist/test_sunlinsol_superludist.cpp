@@ -456,11 +456,11 @@ int main(int argc, char* argv[])
     fprintf(fp, "process %6d: \nA =\n", grid.iam);
     SUNMatrix_SLUNRloc_Print(A, fp);
     fprintf(fp, "process %6d: \nx (original) =\n", grid.iam);
-    N_VPrintFile_Parallel(y, fp);
+    N_VPrintFile(y, fp);
     fprintf(fp, "process %6d: \nb =\n", grid.iam);
-    N_VPrintFile_Parallel(b, fp);
+    N_VPrintFile(b, fp);
     fprintf(fp, "process %6d: \nx (computed)=\n", grid.iam);
-    N_VPrintFile_Parallel(x, fp);
+    N_VPrintFile(x, fp);
   }
 
   /* Free solver, matrix and vectors */
@@ -518,7 +518,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
-  local_length = N_VGetLocalLength_Parallel(X);
+  local_length = N_VGetLocalLength(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++)

@@ -42,6 +42,7 @@ sundials_add_library(
   sundials_nvecraja
   SOURCES nvector_raja.cpp
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_raja.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_raja_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES ${_sunmemlib}

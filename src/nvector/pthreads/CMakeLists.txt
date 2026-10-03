@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvecpthreads
   SOURCES nvector_pthreads.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_pthreads.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_pthreads_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES
