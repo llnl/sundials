@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -209,6 +225,20 @@
 #include "arkode/arkode_arkstep.h"
 
 
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 # ifndef strtoull
@@ -233,7 +263,7 @@ SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
   return result;
 }
 
-SWIGEXPORT void * _wrap_FARKStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double const *farg3, N_Vector farg4, void *farg5) {
+SWIGEXPORT void * _wrap_FARKStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double const *farg3, SwigClassWrapper const *farg4, void *farg5) {
   void * fresult ;
   ARKRhsFn arg1 = (ARKRhsFn) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -245,7 +275,8 @@ SWIGEXPORT void * _wrap_FARKStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double co
   arg1 = (ARKRhsFn)(farg1);
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "ARKStepCreate(ARKRhsFn,ARKRhsFn,sunrealtype,N_Vector,SUNContext)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (SUNContext)(farg5);
   result = (void *)ARKStepCreate(arg1,arg2,arg3,arg4,arg5);
   fresult = result;
@@ -253,7 +284,7 @@ SWIGEXPORT void * _wrap_FARKStepCreate(ARKRhsFn farg1, ARKRhsFn farg2, double co
 }
 
 
-SWIGEXPORT int _wrap_FARKStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FARKStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3, double const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -266,7 +297,8 @@ SWIGEXPORT int _wrap_FARKStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3,
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (ARKRhsFn)(farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "ARKStepReInit(void *,ARKRhsFn,ARKRhsFn,sunrealtype,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)ARKStepReInit(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -403,7 +435,7 @@ SWIGEXPORT int _wrap_FARKStepGetTimestepperStats(void *farg1, long *farg2, long 
 }
 
 
-SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2, SUNAdjRhsFn farg3, double const *farg4, N_Vector farg5, void *farg6, void *farg7) {
+SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2, SUNAdjRhsFn farg3, double const *farg4, SwigClassWrapper const *farg5, void *farg6, void *farg7) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNAdjRhsFn arg2 = (SUNAdjRhsFn) 0 ;
@@ -418,7 +450,8 @@ SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2
   arg2 = (SUNAdjRhsFn)(farg2);
   arg3 = (SUNAdjRhsFn)(farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "ARKStepCreateAdjointStepper(void *,SUNAdjRhsFn,SUNAdjRhsFn,sunrealtype,N_Vector,SUNContext,SUNAdjointStepper *)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   arg6 = (SUNContext)(farg6);
   arg7 = (SUNAdjointStepper *)(farg7);
   result = (int)ARKStepCreateAdjointStepper(arg1,arg2,arg3,arg4,arg5,arg6,arg7);

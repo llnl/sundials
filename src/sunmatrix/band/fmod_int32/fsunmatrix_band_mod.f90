@@ -28,6 +28,43 @@ module fsunmatrix_band_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNMatrixContent_Band_
+ type, public :: SUNMatrixContent_Band_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_M => swigf_SUNMatrixContent_Band__M_set
+  procedure :: get_M => swigf_SUNMatrixContent_Band__M_get
+  procedure :: set_N => swigf_SUNMatrixContent_Band__N_set
+  procedure :: get_N => swigf_SUNMatrixContent_Band__N_get
+  procedure :: set_ldim => swigf_SUNMatrixContent_Band__ldim_set
+  procedure :: get_ldim => swigf_SUNMatrixContent_Band__ldim_get
+  procedure :: set_mu => swigf_SUNMatrixContent_Band__mu_set
+  procedure :: get_mu => swigf_SUNMatrixContent_Band__mu_get
+  procedure :: set_ml => swigf_SUNMatrixContent_Band__ml_set
+  procedure :: get_ml => swigf_SUNMatrixContent_Band__ml_get
+  procedure :: set_s_mu => swigf_SUNMatrixContent_Band__s_mu_set
+  procedure :: get_s_mu => swigf_SUNMatrixContent_Band__s_mu_get
+  procedure :: set_data => swigf_SUNMatrixContent_Band__data_set
+  procedure :: get_data => swigf_SUNMatrixContent_Band__data_get
+  procedure :: set_ldata => swigf_SUNMatrixContent_Band__ldata_set
+  procedure :: get_ldata => swigf_SUNMatrixContent_Band__ldata_get
+  procedure :: set_cols => swigf_SUNMatrixContent_Band__cols_set
+  procedure :: get_cols => swigf_SUNMatrixContent_Band__cols_get
+  procedure :: release => swigf_release_SUNMatrixContent_Band_
+  procedure, private :: swigf_SUNMatrixContent_Band__op_assign__
+  generic :: assignment(=) => swigf_SUNMatrixContent_Band__op_assign__
+ end type SUNMatrixContent_Band_
+ interface SUNMatrixContent_Band_
+  module procedure swigf_create_SUNMatrixContent_Band_
+ end interface
  public :: FSUNBandMatrix
  public :: FSUNBandMatrixStorage
  public :: FSUNBandMatrix_Print
@@ -55,33 +92,212 @@ module fsunmatrix_band_mod
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNMatrixContent_Band__M_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__M_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__M_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__M_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__N_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__N_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__N_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__N_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__ldim_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ldim_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__ldim_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ldim_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__mu_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__mu_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__mu_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__mu_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__ml_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ml_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__ml_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ml_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__s_mu_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__s_mu_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__s_mu_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__s_mu_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__data_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__ldata_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ldata_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__ldata_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__ldata_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNMatrixContent_Band__cols_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__cols_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrixContent_Band__cols_get(farg1) &
+bind(C, name="_wrap_SUNMatrixContent_Band__cols_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNMatrixContent_Band_() &
+bind(C, name="_wrap_new_SUNMatrixContent_Band_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNMatrixContent_Band_(farg1) &
+bind(C, name="_wrap_delete_SUNMatrixContent_Band_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNMatrixContent_Band__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrixContent_Band__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNBandMatrix(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNBandMatrix") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 type(C_PTR), value :: farg4
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNBandMatrixStorage(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNBandMatrixStorage") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT32_T), intent(in) :: farg1
 integer(C_INT32_T), intent(in) :: farg2
 integer(C_INT32_T), intent(in) :: farg3
 integer(C_INT32_T), intent(in) :: farg4
 type(C_PTR), value :: farg5
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNBandMatrix_Print(farg1, farg2) &
 bind(C, name="_wrap_FSUNBandMatrix_Print")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
@@ -89,7 +305,8 @@ function swigc_FSUNBandMatrix_Rows(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_Rows") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -97,7 +314,8 @@ function swigc_FSUNBandMatrix_Columns(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_Columns") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -105,7 +323,8 @@ function swigc_FSUNBandMatrix_LowerBandwidth(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_LowerBandwidth") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -113,7 +332,8 @@ function swigc_FSUNBandMatrix_UpperBandwidth(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_UpperBandwidth") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -121,7 +341,8 @@ function swigc_FSUNBandMatrix_StoredUpperBandwidth(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_StoredUpperBandwidth") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -129,7 +350,8 @@ function swigc_FSUNBandMatrix_LDim(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_LDim") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -137,7 +359,8 @@ function swigc_FSUNBandMatrix_LData(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_LData") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -145,7 +368,8 @@ function swigc_FSUNBandMatrix_Cols(farg1) &
 bind(C, name="_wrap_FSUNBandMatrix_Cols") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR) :: fresult
 end function
 
@@ -153,7 +377,8 @@ function swigc_FSUNMatGetID_Band(farg1) &
 bind(C, name="_wrap_FSUNMatGetID_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -161,21 +386,24 @@ function swigc_FSUNMatClone_Band(farg1) &
 bind(C, name="_wrap_FSUNMatClone_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNMatDestroy_Band(farg1) &
 bind(C, name="_wrap_FSUNMatDestroy_Band")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNMatZero_Band(farg1) &
 bind(C, name="_wrap_FSUNMatZero_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -183,8 +411,9 @@ function swigc_FSUNMatCopy_Band(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatCopy_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -192,9 +421,10 @@ function swigc_FSUNMatScaleAdd_Band(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatScaleAdd_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -202,8 +432,9 @@ function swigc_FSUNMatScaleAddI_Band(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatScaleAddI_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -211,9 +442,10 @@ function swigc_FSUNMatMatvec_Band(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatMatvec_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -221,9 +453,10 @@ function swigc_FSUNMatHermitianTransposeVec_Band(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatHermitianTransposeVec_Band") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -254,15 +487,277 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNMatrixContent_Band__M_set(self, m)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: m
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = m
+call swigc_SUNMatrixContent_Band__M_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__M_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__M_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__N_set(self, n)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: n
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = n
+call swigc_SUNMatrixContent_Band__N_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__N_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__N_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__ldim_set(self, ldim)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: ldim
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ldim
+call swigc_SUNMatrixContent_Band__ldim_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__ldim_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__ldim_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__mu_set(self, mu)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: mu
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = mu
+call swigc_SUNMatrixContent_Band__mu_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__mu_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__mu_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__ml_set(self, ml)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: ml
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ml
+call swigc_SUNMatrixContent_Band__ml_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__ml_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__ml_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__s_mu_set(self, s_mu)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: s_mu
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = s_mu
+call swigc_SUNMatrixContent_Band__s_mu_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__s_mu_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__s_mu_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__data_set(self, data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+real(C_DOUBLE), dimension(*), target, intent(inout) :: data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(data(1))
+call swigc_SUNMatrixContent_Band__data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(:), pointer :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__data_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNMatrixContent_Band__ldata_set(self, ldata)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: ldata
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ldata
+call swigc_SUNMatrixContent_Band__ldata_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__ldata_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__ldata_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrixContent_Band__cols_set(self, cols)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(in) :: self
+type(C_PTR), target, intent(inout) :: cols
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(cols)
+call swigc_SUNMatrixContent_Band__cols_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrixContent_Band__cols_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), pointer :: swig_result
+class(SUNMatrixContent_Band_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrixContent_Band__cols_get(farg1)
+call c_f_pointer(fresult, swig_result)
+end function
+
+function swigf_create_SUNMatrixContent_Band_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNMatrixContent_Band_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNMatrixContent_Band_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNMatrixContent_Band_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNMatrixContent_Band_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNMatrixContent_Band__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrixContent_Band_), intent(inout) :: self
+type(SUNMatrixContent_Band_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNMatrixContent_Band__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNBandMatrix(n, mu, ml, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), pointer :: swig_result
+type(SUNMatrix_) :: swig_result
 integer(C_INT32_T), intent(in) :: n
 integer(C_INT32_T), intent(in) :: mu
 integer(C_INT32_T), intent(in) :: ml
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 integer(C_INT32_T) :: farg2 
 integer(C_INT32_T) :: farg3 
@@ -273,19 +768,19 @@ farg2 = mu
 farg3 = ml
 farg4 = sunctx
 fresult = swigc_FSUNBandMatrix(farg1, farg2, farg3, farg4)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNBandMatrixStorage(n, mu, ml, smu, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), pointer :: swig_result
+type(SUNMatrix_) :: swig_result
 integer(C_INT32_T), intent(in) :: n
 integer(C_INT32_T), intent(in) :: mu
 integer(C_INT32_T), intent(in) :: ml
 integer(C_INT32_T), intent(in) :: smu
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT32_T) :: farg1 
 integer(C_INT32_T) :: farg2 
 integer(C_INT32_T) :: farg3 
@@ -298,17 +793,17 @@ farg3 = ml
 farg4 = smu
 farg5 = sunctx
 fresult = swigc_FSUNBandMatrixStorage(farg1, farg2, farg3, farg4, farg5)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNBandMatrix_Print(a, outfile)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 type(C_PTR) :: outfile
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 farg2 = outfile
 call swigc_FSUNBandMatrix_Print(farg1, farg2)
 end subroutine
@@ -317,11 +812,11 @@ function FSUNBandMatrix_Rows(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_Rows(farg1)
 swig_result = fresult
 end function
@@ -330,11 +825,11 @@ function FSUNBandMatrix_Columns(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_Columns(farg1)
 swig_result = fresult
 end function
@@ -343,11 +838,11 @@ function FSUNBandMatrix_LowerBandwidth(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_LowerBandwidth(farg1)
 swig_result = fresult
 end function
@@ -356,11 +851,11 @@ function FSUNBandMatrix_UpperBandwidth(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_UpperBandwidth(farg1)
 swig_result = fresult
 end function
@@ -369,11 +864,11 @@ function FSUNBandMatrix_StoredUpperBandwidth(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_StoredUpperBandwidth(farg1)
 swig_result = fresult
 end function
@@ -382,11 +877,11 @@ function FSUNBandMatrix_LDim(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_LDim(farg1)
 swig_result = fresult
 end function
@@ -395,11 +890,11 @@ function FSUNBandMatrix_LData(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_LData(farg1)
 swig_result = fresult
 end function
@@ -408,11 +903,11 @@ function FSUNBandMatrix_Cols(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), pointer :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNBandMatrix_Cols(farg1)
 call c_f_pointer(fresult, swig_result)
 end function
@@ -421,11 +916,11 @@ function FSUNMatGetID_Band(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNMatrix_ID) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatGetID_Band(farg1)
 swig_result = fresult
 end function
@@ -433,22 +928,22 @@ end function
 function FSUNMatClone_Band(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), pointer :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SUNMatrix_) :: swig_result
+class(SUNMatrix_), intent(in) :: a
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatClone_Band(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNMatDestroy_Band(a)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: farg1 
+class(SUNMatrix_), intent(in) :: a
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 call swigc_FSUNMatDestroy_Band(farg1)
 end subroutine
 
@@ -456,11 +951,11 @@ function FSUNMatZero_Band(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatZero_Band(farg1)
 swig_result = fresult
 end function
@@ -469,14 +964,14 @@ function FSUNMatCopy_Band(a, b) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(SUNMatrix), target, intent(inout) :: b
+class(SUNMatrix_), intent(in) :: a
+class(SUNMatrix_), intent(in) :: b
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(a)
-farg2 = c_loc(b)
+farg1 = a%swigdata
+farg2 = b%swigdata
 fresult = swigc_FSUNMatCopy_Band(farg1, farg2)
 swig_result = fresult
 end function
@@ -486,16 +981,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 real(C_DOUBLE), intent(in) :: c
-type(SUNMatrix), target, intent(inout) :: a
-type(SUNMatrix), target, intent(inout) :: b
+class(SUNMatrix_), intent(in) :: a
+class(SUNMatrix_), intent(in) :: b
 integer(C_INT) :: fresult 
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c
-farg2 = c_loc(a)
-farg3 = c_loc(b)
+farg2 = a%swigdata
+farg3 = b%swigdata
 fresult = swigc_FSUNMatScaleAdd_Band(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -505,13 +1000,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 real(C_DOUBLE), intent(in) :: c
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c
-farg2 = c_loc(a)
+farg2 = a%swigdata
 fresult = swigc_FSUNMatScaleAddI_Band(farg1, farg2)
 swig_result = fresult
 end function
@@ -520,17 +1015,17 @@ function FSUNMatMatvec_Band(a, x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(SUNMatrix_), intent(in) :: a
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(a)
-farg2 = c_loc(x)
-farg3 = c_loc(y)
+farg1 = a%swigdata
+farg2 = x%swigdata
+farg3 = y%swigdata
 fresult = swigc_FSUNMatMatvec_Band(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -539,17 +1034,17 @@ function FSUNMatHermitianTransposeVec_Band(a, x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(SUNMatrix_), intent(in) :: a
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(a)
-farg2 = c_loc(x)
-farg3 = c_loc(y)
+farg1 = a%swigdata
+farg2 = x%swigdata
+farg3 = y%swigdata
 fresult = swigc_FSUNMatHermitianTransposeVec_Band(farg1, farg2, farg3)
 swig_result = fresult
 end function

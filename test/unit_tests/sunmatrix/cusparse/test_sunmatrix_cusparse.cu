@@ -439,8 +439,8 @@ int main(int argc, char* argv[])
     printf("ERROR: N_VNew_Cuda returned NULL\n");
     return (-1);
   }
-  x = N_VMake_Serial(N, N_VGetHostArrayPointer_Cuda(d_x), sunctx);
-  y = N_VMake_Serial(M, N_VGetHostArrayPointer_Cuda(d_y), sunctx);
+  x = N_VMake_Serial(N, N_VGetArrayPointer(d_x), sunctx);
+  y = N_VMake_Serial(M, N_VGetArrayPointer(d_y), sunctx);
   if (x == NULL || y == NULL)
   {
     printf("ERROR: N_VMake_Serial returned NULL\n");
@@ -505,9 +505,9 @@ int main(int argc, char* argv[])
     N_VCopyFromDevice_Cuda(d_x);
     N_VCopyFromDevice_Cuda(d_y);
     printf("\nx\n");
-    N_VPrint_Cuda(d_x);
+    N_VPrint(d_x);
     printf("\ny = Ax (reference)\n");
-    N_VPrint_Cuda(d_y);
+    N_VPrint(d_y);
   }
   else { printf("SUCCESS: SUNMatrix module passed all tests \n \n"); }
 
@@ -739,8 +739,8 @@ int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
   sunindextype i;
 
   /* get vector data */
-  xdata = N_VGetHostArrayPointer_Cuda(expected);
-  ydata = N_VGetHostArrayPointer_Cuda(computed);
+  xdata = N_VGetArrayPointer(expected);
+  ydata = N_VGetArrayPointer(computed);
 
   /* copy data to host */
   N_VCopyFromDevice_Cuda(expected);
@@ -748,8 +748,8 @@ int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
   cudaDeviceSynchronize();
 
   /* check data lengths */
-  xldata = N_VGetLength_Cuda(expected);
-  yldata = N_VGetLength_Cuda(computed);
+  xldata = N_VGetLength(expected);
+  yldata = N_VGetLength(computed);
 
   if (xldata != yldata)
   {

@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,175 +240,573 @@
 
 #include "sunnonlinsol/sunnonlinsol_newton.h"
 
-SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_Newton(N_Vector farg1, void *farg2) {
-  SUNNonlinearSolver fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  SUNContext arg2 = (SUNContext) 0 ;
-  SUNNonlinearSolver result;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__Sys_set(SwigClassWrapper const *farg1, SUNNonlinSolSysFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (SUNContext)(farg2);
-  result = (SUNNonlinearSolver)SUNNonlinSol_Newton(arg1,arg2);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::Sys", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolSysFn)(farg2);
+  if (arg1) (arg1)->Sys = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolSysFn _wrap_SUNNonlinearSolverContent_Newton__Sys_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolSysFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolSysFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::Sys", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolSysFn) ((arg1)->Sys);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_NewtonSens(int const *farg1, N_Vector farg2, void *farg3) {
-  SUNNonlinearSolver fresult ;
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__LSetup_set(SwigClassWrapper const *farg1, SUNNonlinSolLSetupFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolLSetupFn arg2 = (SUNNonlinSolLSetupFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::LSetup", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolLSetupFn)(farg2);
+  if (arg1) (arg1)->LSetup = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolLSetupFn _wrap_SUNNonlinearSolverContent_Newton__LSetup_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolLSetupFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolLSetupFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::LSetup", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolLSetupFn) ((arg1)->LSetup);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__LSolve_set(SwigClassWrapper const *farg1, SUNNonlinSolLSolveFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolLSolveFn arg2 = (SUNNonlinSolLSolveFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::LSolve", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolLSolveFn)(farg2);
+  if (arg1) (arg1)->LSolve = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolLSolveFn _wrap_SUNNonlinearSolverContent_Newton__LSolve_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolLSolveFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolLSolveFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::LSolve", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolLSolveFn) ((arg1)->LSolve);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__CTest_set(SwigClassWrapper const *farg1, SUNNonlinSolConvTestFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::CTest", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolConvTestFn)(farg2);
+  if (arg1) (arg1)->CTest = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolConvTestFn _wrap_SUNNonlinearSolverContent_Newton__CTest_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolConvTestFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolConvTestFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::CTest", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolConvTestFn) ((arg1)->CTest);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__norm_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolNormFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::norm_fn", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolNormFn)(farg2);
+  if (arg1) (arg1)->norm_fn = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolNormFn _wrap_SUNNonlinearSolverContent_Newton__norm_fn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolNormFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolNormFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::norm_fn", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolNormFn) ((arg1)->norm_fn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__norm_fn_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::norm_fn_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->norm_fn_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_Newton__norm_fn_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::norm_fn_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (void *) ((arg1)->norm_fn_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolGetUpdateNormFn farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::getupdatenorm_fn", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
+  if (arg1) (arg1)->getupdatenorm_fn = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolGetUpdateNormFn _wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolGetUpdateNormFn fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  SUNNonlinSolGetUpdateNormFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::getupdatenorm_fn", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (SUNNonlinSolGetUpdateNormFn) ((arg1)->getupdatenorm_fn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::getupdatenorm_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->getupdatenorm_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::getupdatenorm_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (void *) ((arg1)->getupdatenorm_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__delta_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::delta", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_Newton_::delta", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->delta = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_Newton__delta_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::delta", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->delta);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__jcur_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::jcur", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->jcur = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_Newton__jcur_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::jcur", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (int) ((arg1)->jcur);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__curiter_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::curiter", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->curiter = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_Newton__curiter_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::curiter", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (int) ((arg1)->curiter);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__maxiters_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::maxiters", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->maxiters = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_Newton__maxiters_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::maxiters", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (int) ((arg1)->maxiters);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__niters_set(SwigClassWrapper const *farg1, long const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  long arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::niters", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (long)(*farg2);
+  if (arg1) (arg1)->niters = arg2;
+}
+
+
+SWIGEXPORT long _wrap_SUNNonlinearSolverContent_Newton__niters_get(SwigClassWrapper const *farg1) {
+  long fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  long result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::niters", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (long) ((arg1)->niters);
+  fresult = (long)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__nconvfails_set(SwigClassWrapper const *farg1, long const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  long arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::nconvfails", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (long)(*farg2);
+  if (arg1) (arg1)->nconvfails = arg2;
+}
+
+
+SWIGEXPORT long _wrap_SUNNonlinearSolverContent_Newton__nconvfails_get(SwigClassWrapper const *farg1) {
+  long fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  long result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::nconvfails", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (long) ((arg1)->nconvfails);
+  fresult = (long)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__compute_stiffr_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::compute_stiffr", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->compute_stiffr = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_Newton__compute_stiffr_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::compute_stiffr", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (int) ((arg1)->compute_stiffr);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__stiffr_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::stiffr", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->stiffr = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNNonlinearSolverContent_Newton__stiffr_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::stiffr", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->stiffr);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__delnrm_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::delnrm", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->delnrm = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNNonlinearSolverContent_Newton__delnrm_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::delnrm", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->delnrm);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__ctest_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::ctest_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->ctest_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_Newton__ctest_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::ctest_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  result = (void *) ((arg1)->ctest_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNNonlinearSolverContent_Newton_() {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_Newton_ *result = 0 ;
+  
+  result = (struct SUNNonlinearSolverContent_Newton_ *)calloc(1, sizeof(struct SUNNonlinearSolverContent_Newton_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNNonlinearSolverContent_Newton_(SwigClassWrapper *farg1) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNNonlinearSolverContent_Newton_ *", "SUNNonlinearSolverContent_Newton_", "SUNNonlinearSolverContent_Newton_::~SUNNonlinearSolverContent_Newton_()", return );
+  arg1 = (struct SUNNonlinearSolverContent_Newton_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_Newton__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_Newton_ *arg1 = (struct SUNNonlinearSolverContent_Newton_ *) 0 ;
+  struct SUNNonlinearSolverContent_Newton_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNNonlinSol_Newton(SwigClassWrapper const *farg1, void *farg2) {
+  SwigClassWrapper fresult ;
+  N_Vector arg1 = (N_Vector) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  SUNNonlinearSolver result;
+  
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "SUNNonlinSol_Newton(N_Vector,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  result = (SUNNonlinearSolver)SUNNonlinSol_Newton(arg1,arg2);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNNonlinSol_NewtonSens(int const *farg1, SwigClassWrapper const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNContext arg3 = (SUNContext) 0 ;
   SUNNonlinearSolver result;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinSol_NewtonSens(int,N_Vector,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (SUNContext)(farg3);
   result = (SUNNonlinearSolver)SUNNonlinSol_NewtonSens(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetType_Newton(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinearSolver_Type result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNNonlinearSolver_Type)SUNNonlinSolGetType_Newton(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolInitialize_Newton(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNErrCode)SUNNonlinSolInitialize_Newton(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSolve_Newton(SUNNonlinearSolver farg1, N_Vector farg2, N_Vector farg3, N_Vector farg4, double const *farg5, int const *farg6, void *farg7) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  N_Vector arg4 = (N_Vector) 0 ;
-  sunrealtype arg5 ;
-  int arg6 ;
-  void *arg7 = (void *) 0 ;
-  int result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (sunrealtype)(*farg5);
-  arg6 = (int)(*farg6);
-  arg7 = (void *)(farg7);
-  result = (int)SUNNonlinSolSolve_Newton(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolFree_Newton(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNErrCode)SUNNonlinSolFree_Newton(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolSysFn)(farg2);
-  result = (SUNErrCode)SUNNonlinSolSetSysFn_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolLSetupFn farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolLSetupFn arg2 = (SUNNonlinSolLSetupFn) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolLSetupFn)(farg2);
-  result = (SUNErrCode)SUNNonlinSolSetLSetupFn_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetLSolveFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolLSolveFn farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolLSolveFn arg2 = (SUNNonlinSolLSolveFn) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolLSolveFn)(farg2);
-  result = (SUNErrCode)SUNNonlinSolSetLSolveFn_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolConvTestFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolConvTestFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetConvTestFn_Newton(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters_Newton(SUNNonlinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetComputeStiffnessRatio_Newton(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (int)(*farg2);
-  result = (SUNErrCode)SUNNonlinSolSetMaxIters_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver farg1, int const *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  int arg2 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver,int)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNNonlinSolSetComputeStiffnessRatio_Newton(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -387,87 +814,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSo
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn_Newton(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolNormFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetNormFn_Newton(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver farg1, long *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetNumIters_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter_Newton(SUNNonlinearSolver farg1, int *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  int *arg2 = (int *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (int *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetCurIter_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails_Newton(SUNNonlinearSolver farg1, long *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetNumConvFails_Newton(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver farg1, void *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_Newton(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolSysFn *arg2 = (SUNNonlinSolSysFn *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver,SUNNonlinSolSysFn *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolSysFn *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetSysFn_Newton(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -475,13 +829,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver farg1, void
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver farg1, double *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetStiffnessRatio_Newton(SwigClassWrapper const *farg1, double *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetStiffnessRatio_Newton(SUNNonlinearSolver,sunrealtype *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (sunrealtype *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetStiffnessRatio_Newton(arg1,arg2);
   fresult = (SUNErrCode)(result);

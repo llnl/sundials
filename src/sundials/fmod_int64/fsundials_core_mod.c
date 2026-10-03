@@ -199,6 +199,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -283,6 +312,52 @@ SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
 
 
 #include "sundials/sundials_nvector.h"
+
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
 
 
 #include "sundials/sundials_matrix.h"
@@ -978,110 +1053,1659 @@ SWIGEXPORT int _wrap_FSUNFileClose(void *farg1) {
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VNewEmpty(void *farg1) {
-  N_Vector fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  N_Vector result;
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetvectorid_set(SwigClassWrapper const *farg1, N_Vector_ID (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector_ID (*arg2)(N_Vector) = (N_Vector_ID (*)(N_Vector)) 0 ;
   
-  arg1 = (SUNContext)(farg1);
-  result = (N_Vector)N_VNewEmpty(arg1);
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetvectorid", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (N_Vector_ID (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetvectorid = arg2;
+}
+
+
+typedef N_Vector_ID (*N_Vector_Ops__nvgetvectorid_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetvectorid_get_swigrtype _wrap_N_Vector_Ops__nvgetvectorid_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetvectorid_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector_ID (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetvectorid", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (N_Vector_ID (*)(N_Vector)) ((arg1)->nvgetvectorid);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FN_VFreeEmpty(N_Vector farg1) {
+SWIGEXPORT void _wrap_N_Vector_Ops__nvclone_set(SwigClassWrapper const *farg1, N_Vector (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector (*arg2)(N_Vector) = (N_Vector (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvclone", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (N_Vector (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvclone = arg2;
+}
+
+
+typedef N_Vector (*N_Vector_Ops__nvclone_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvclone_get_swigrtype _wrap_N_Vector_Ops__nvclone_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvclone_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvclone", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (N_Vector (*)(N_Vector)) ((arg1)->nvclone);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvcloneempty_set(SwigClassWrapper const *farg1, N_Vector (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector (*arg2)(N_Vector) = (N_Vector (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvcloneempty", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (N_Vector (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvcloneempty = arg2;
+}
+
+
+typedef N_Vector (*N_Vector_Ops__nvcloneempty_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvcloneempty_get_swigrtype _wrap_N_Vector_Ops__nvcloneempty_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvcloneempty_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  N_Vector (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvcloneempty", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (N_Vector (*)(N_Vector)) ((arg1)->nvcloneempty);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdestroy_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector) = (void (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdestroy", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvdestroy = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvdestroy_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvdestroy_get_swigrtype _wrap_N_Vector_Ops__nvdestroy_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdestroy_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdestroy", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector)) ((arg1)->nvdestroy);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetarraypointer_set(SwigClassWrapper const *farg1, sunrealtype *(*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype *(*arg2)(N_Vector) = (sunrealtype *(*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetarraypointer", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype *(*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetarraypointer = arg2;
+}
+
+
+typedef sunrealtype *(*N_Vector_Ops__nvgetarraypointer_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetarraypointer_get_swigrtype _wrap_N_Vector_Ops__nvgetarraypointer_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetarraypointer_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype *(*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetarraypointer", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype *(*)(N_Vector)) ((arg1)->nvgetarraypointer);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetdevicearraypointer_set(SwigClassWrapper const *farg1, sunrealtype *(*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype *(*arg2)(N_Vector) = (sunrealtype *(*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetdevicearraypointer", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype *(*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetdevicearraypointer = arg2;
+}
+
+
+typedef sunrealtype *(*N_Vector_Ops__nvgetdevicearraypointer_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetdevicearraypointer_get_swigrtype _wrap_N_Vector_Ops__nvgetdevicearraypointer_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetdevicearraypointer_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype *(*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetdevicearraypointer", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype *(*)(N_Vector)) ((arg1)->nvgetdevicearraypointer);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvsetarraypointer_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype *,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype *,N_Vector) = (void (*)(sunrealtype *,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvsetarraypointer", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype *,N_Vector))(farg2);
+  if (arg1) (arg1)->nvsetarraypointer = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvsetarraypointer_get_swigrtype)(sunrealtype *,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvsetarraypointer_get_swigrtype _wrap_N_Vector_Ops__nvsetarraypointer_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvsetarraypointer_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype *,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvsetarraypointer", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype *,N_Vector)) ((arg1)->nvsetarraypointer);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvsetdevicearraypointer_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype *,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype *,N_Vector) = (void (*)(sunrealtype *,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvsetdevicearraypointer", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype *,N_Vector))(farg2);
+  if (arg1) (arg1)->nvsetdevicearraypointer = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvsetdevicearraypointer_get_swigrtype)(sunrealtype *,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvsetdevicearraypointer_get_swigrtype _wrap_N_Vector_Ops__nvsetdevicearraypointer_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvsetdevicearraypointer_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype *,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvsetdevicearraypointer", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype *,N_Vector)) ((arg1)->nvsetdevicearraypointer);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetcommunicator_set(SwigClassWrapper const *farg1, SUNComm (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNComm (*arg2)(N_Vector) = (SUNComm (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetcommunicator", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNComm (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetcommunicator = arg2;
+}
+
+
+typedef SUNComm (*N_Vector_Ops__nvgetcommunicator_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetcommunicator_get_swigrtype _wrap_N_Vector_Ops__nvgetcommunicator_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetcommunicator_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNComm (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetcommunicator", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNComm (*)(N_Vector)) ((arg1)->nvgetcommunicator);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetlength_set(SwigClassWrapper const *farg1, sunindextype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunindextype (*arg2)(N_Vector) = (sunindextype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetlength", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunindextype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetlength = arg2;
+}
+
+
+typedef sunindextype (*N_Vector_Ops__nvgetlength_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetlength_get_swigrtype _wrap_N_Vector_Ops__nvgetlength_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetlength_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunindextype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetlength", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunindextype (*)(N_Vector)) ((arg1)->nvgetlength);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvgetlocallength_set(SwigClassWrapper const *farg1, sunindextype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunindextype (*arg2)(N_Vector) = (sunindextype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetlocallength", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunindextype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvgetlocallength = arg2;
+}
+
+
+typedef sunindextype (*N_Vector_Ops__nvgetlocallength_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvgetlocallength_get_swigrtype _wrap_N_Vector_Ops__nvgetlocallength_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvgetlocallength_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunindextype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvgetlocallength", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunindextype (*)(N_Vector)) ((arg1)->nvgetlocallength);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvlinearsum_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector) = (void (*)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearsum", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvlinearsum = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvlinearsum_get_swigrtype)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvlinearsum_get_swigrtype _wrap_N_Vector_Ops__nvlinearsum_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvlinearsum_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearsum", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)) ((arg1)->nvlinearsum);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvconst_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype,N_Vector) = (void (*)(sunrealtype,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconst", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype,N_Vector))(farg2);
+  if (arg1) (arg1)->nvconst = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvconst_get_swigrtype)(sunrealtype,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvconst_get_swigrtype _wrap_N_Vector_Ops__nvconst_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvconst_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconst", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype,N_Vector)) ((arg1)->nvconst);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvprod_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,N_Vector,N_Vector) = (void (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprod", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvprod = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvprod_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvprod_get_swigrtype _wrap_N_Vector_Ops__nvprod_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvprod_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprod", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvprod);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdiv_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,N_Vector,N_Vector) = (void (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdiv", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvdiv = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvdiv_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvdiv_get_swigrtype _wrap_N_Vector_Ops__nvdiv_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdiv_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdiv", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvdiv);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvscale_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype,N_Vector,N_Vector) = (void (*)(sunrealtype,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscale", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvscale = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvscale_get_swigrtype)(sunrealtype,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvscale_get_swigrtype _wrap_N_Vector_Ops__nvscale_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvscale_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscale", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype,N_Vector,N_Vector)) ((arg1)->nvscale);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvabs_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,N_Vector) = (void (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvabs", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvabs = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvabs_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvabs_get_swigrtype _wrap_N_Vector_Ops__nvabs_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvabs_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvabs", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,N_Vector)) ((arg1)->nvabs);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvinv_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,N_Vector) = (void (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinv", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvinv = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvinv_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvinv_get_swigrtype _wrap_N_Vector_Ops__nvinv_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvinv_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinv", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,N_Vector)) ((arg1)->nvinv);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvaddconst_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,sunrealtype,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,sunrealtype,N_Vector) = (void (*)(N_Vector,sunrealtype,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvaddconst", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,sunrealtype,N_Vector))(farg2);
+  if (arg1) (arg1)->nvaddconst = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvaddconst_get_swigrtype)(N_Vector,sunrealtype,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvaddconst_get_swigrtype _wrap_N_Vector_Ops__nvaddconst_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvaddconst_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,sunrealtype,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvaddconst", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,sunrealtype,N_Vector)) ((arg1)->nvaddconst);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdotprod_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprod", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvdotprod = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvdotprod_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvdotprod_get_swigrtype _wrap_N_Vector_Ops__nvdotprod_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdotprod_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprod", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvdotprod);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvmaxnorm_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmaxnorm", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvmaxnorm = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvmaxnorm_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvmaxnorm_get_swigrtype _wrap_N_Vector_Ops__nvmaxnorm_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvmaxnorm_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmaxnorm", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvmaxnorm);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwrmsnorm_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnorm", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvwrmsnorm = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvwrmsnorm_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvwrmsnorm_get_swigrtype _wrap_N_Vector_Ops__nvwrmsnorm_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwrmsnorm_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnorm", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvwrmsnorm);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwrmsnormmask_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormmask", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvwrmsnormmask = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvwrmsnormmask_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvwrmsnormmask_get_swigrtype _wrap_N_Vector_Ops__nvwrmsnormmask_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwrmsnormmask_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormmask", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvwrmsnormmask);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvmin_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmin", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvmin = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvmin_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvmin_get_swigrtype _wrap_N_Vector_Ops__nvmin_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvmin_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmin", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvmin);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwl2norm_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwl2norm", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvwl2norm = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvwl2norm_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvwl2norm_get_swigrtype _wrap_N_Vector_Ops__nvwl2norm_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwl2norm_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwl2norm", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvwl2norm);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvl1norm_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvl1norm", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvl1norm = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvl1norm_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvl1norm_get_swigrtype _wrap_N_Vector_Ops__nvl1norm_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvl1norm_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvl1norm", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvl1norm);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvcompare_set(SwigClassWrapper const *farg1, void (*farg2)(sunrealtype,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(sunrealtype,N_Vector,N_Vector) = (void (*)(sunrealtype,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvcompare", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(sunrealtype,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvcompare = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvcompare_get_swigrtype)(sunrealtype,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvcompare_get_swigrtype _wrap_N_Vector_Ops__nvcompare_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvcompare_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(sunrealtype,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvcompare", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(sunrealtype,N_Vector,N_Vector)) ((arg1)->nvcompare);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvinvtest_set(SwigClassWrapper const *farg1, int (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*arg2)(N_Vector,N_Vector) = (int (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinvtest", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvinvtest = arg2;
+}
+
+
+typedef int (*N_Vector_Ops__nvinvtest_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvinvtest_get_swigrtype _wrap_N_Vector_Ops__nvinvtest_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvinvtest_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinvtest", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (int (*)(N_Vector,N_Vector)) ((arg1)->nvinvtest);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvconstrmask_set(SwigClassWrapper const *farg1, int (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*arg2)(N_Vector,N_Vector,N_Vector) = (int (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstrmask", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvconstrmask = arg2;
+}
+
+
+typedef int (*N_Vector_Ops__nvconstrmask_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvconstrmask_get_swigrtype _wrap_N_Vector_Ops__nvconstrmask_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvconstrmask_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstrmask", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (int (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvconstrmask);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvminquotient_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminquotient", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvminquotient = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvminquotient_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvminquotient_get_swigrtype _wrap_N_Vector_Ops__nvminquotient_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvminquotient_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminquotient", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvminquotient);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvlinearcombination_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,sunrealtype *,N_Vector *,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,sunrealtype *,N_Vector *,N_Vector) = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearcombination", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector))(farg2);
+  if (arg1) (arg1)->nvlinearcombination = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvlinearcombination_get_swigrtype)(int,sunrealtype *,N_Vector *,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvlinearcombination_get_swigrtype _wrap_N_Vector_Ops__nvlinearcombination_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvlinearcombination_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,sunrealtype *,N_Vector *,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearcombination", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector)) ((arg1)->nvlinearcombination);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvscaleaddmulti_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *) = (SUNErrCode (*)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscaleaddmulti", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *))(farg2);
+  if (arg1) (arg1)->nvscaleaddmulti = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvscaleaddmulti_get_swigrtype)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *);
+SWIGEXPORT N_Vector_Ops__nvscaleaddmulti_get_swigrtype _wrap_N_Vector_Ops__nvscaleaddmulti_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvscaleaddmulti_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscaleaddmulti", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *)) ((arg1)->nvscaleaddmulti);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdotprodmulti_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,N_Vector,N_Vector *,sunrealtype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,N_Vector,N_Vector *,sunrealtype *) = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmulti", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *))(farg2);
+  if (arg1) (arg1)->nvdotprodmulti = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvdotprodmulti_get_swigrtype)(int,N_Vector,N_Vector *,sunrealtype *);
+SWIGEXPORT N_Vector_Ops__nvdotprodmulti_get_swigrtype _wrap_N_Vector_Ops__nvdotprodmulti_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdotprodmulti_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,N_Vector,N_Vector *,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmulti", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *)) ((arg1)->nvdotprodmulti);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvlinearsumvectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *) = (SUNErrCode (*)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearsumvectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *))(farg2);
+  if (arg1) (arg1)->nvlinearsumvectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvlinearsumvectorarray_get_swigrtype)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *);
+SWIGEXPORT N_Vector_Ops__nvlinearsumvectorarray_get_swigrtype _wrap_N_Vector_Ops__nvlinearsumvectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvlinearsumvectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearsumvectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,sunrealtype,N_Vector *,sunrealtype,N_Vector *,N_Vector *)) ((arg1)->nvlinearsumvectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvscalevectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,sunrealtype *,N_Vector *,N_Vector *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,sunrealtype *,N_Vector *,N_Vector *) = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscalevectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector *))(farg2);
+  if (arg1) (arg1)->nvscalevectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvscalevectorarray_get_swigrtype)(int,sunrealtype *,N_Vector *,N_Vector *);
+SWIGEXPORT N_Vector_Ops__nvscalevectorarray_get_swigrtype _wrap_N_Vector_Ops__nvscalevectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvscalevectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,sunrealtype *,N_Vector *,N_Vector *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscalevectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,sunrealtype *,N_Vector *,N_Vector *)) ((arg1)->nvscalevectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvconstvectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,sunrealtype,N_Vector *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,sunrealtype,N_Vector *) = (SUNErrCode (*)(int,sunrealtype,N_Vector *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstvectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,sunrealtype,N_Vector *))(farg2);
+  if (arg1) (arg1)->nvconstvectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvconstvectorarray_get_swigrtype)(int,sunrealtype,N_Vector *);
+SWIGEXPORT N_Vector_Ops__nvconstvectorarray_get_swigrtype _wrap_N_Vector_Ops__nvconstvectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvconstvectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,sunrealtype,N_Vector *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstvectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,sunrealtype,N_Vector *)) ((arg1)->nvconstvectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwrmsnormvectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,N_Vector *,N_Vector *,sunrealtype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,N_Vector *,N_Vector *,sunrealtype *) = (SUNErrCode (*)(int,N_Vector *,N_Vector *,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormvectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,N_Vector *,N_Vector *,sunrealtype *))(farg2);
+  if (arg1) (arg1)->nvwrmsnormvectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvwrmsnormvectorarray_get_swigrtype)(int,N_Vector *,N_Vector *,sunrealtype *);
+SWIGEXPORT N_Vector_Ops__nvwrmsnormvectorarray_get_swigrtype _wrap_N_Vector_Ops__nvwrmsnormvectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwrmsnormvectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,N_Vector *,N_Vector *,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormvectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,N_Vector *,N_Vector *,sunrealtype *)) ((arg1)->nvwrmsnormvectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwrmsnormmaskvectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *) = (SUNErrCode (*)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormmaskvectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *))(farg2);
+  if (arg1) (arg1)->nvwrmsnormmaskvectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvwrmsnormmaskvectorarray_get_swigrtype)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *);
+SWIGEXPORT N_Vector_Ops__nvwrmsnormmaskvectorarray_get_swigrtype _wrap_N_Vector_Ops__nvwrmsnormmaskvectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwrmsnormmaskvectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwrmsnormmaskvectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *)) ((arg1)->nvwrmsnormmaskvectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvscaleaddmultivectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **) = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscaleaddmultivectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **))(farg2);
+  if (arg1) (arg1)->nvscaleaddmultivectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvscaleaddmultivectorarray_get_swigrtype)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **);
+SWIGEXPORT N_Vector_Ops__nvscaleaddmultivectorarray_get_swigrtype _wrap_N_Vector_Ops__nvscaleaddmultivectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvscaleaddmultivectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvscaleaddmultivectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector *,N_Vector **,N_Vector **)) ((arg1)->nvscaleaddmultivectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvlinearcombinationvectorarray_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,int,sunrealtype *,N_Vector **,N_Vector *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,int,sunrealtype *,N_Vector **,N_Vector *) = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector **,N_Vector *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearcombinationvectorarray", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector **,N_Vector *))(farg2);
+  if (arg1) (arg1)->nvlinearcombinationvectorarray = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvlinearcombinationvectorarray_get_swigrtype)(int,int,sunrealtype *,N_Vector **,N_Vector *);
+SWIGEXPORT N_Vector_Ops__nvlinearcombinationvectorarray_get_swigrtype _wrap_N_Vector_Ops__nvlinearcombinationvectorarray_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvlinearcombinationvectorarray_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,int,sunrealtype *,N_Vector **,N_Vector *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvlinearcombinationvectorarray", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,int,sunrealtype *,N_Vector **,N_Vector *)) ((arg1)->nvlinearcombinationvectorarray);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdotprodlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvdotprodlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvdotprodlocal_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvdotprodlocal_get_swigrtype _wrap_N_Vector_Ops__nvdotprodlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdotprodlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvdotprodlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvmaxnormlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmaxnormlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvmaxnormlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvmaxnormlocal_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvmaxnormlocal_get_swigrtype _wrap_N_Vector_Ops__nvmaxnormlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvmaxnormlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvmaxnormlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvmaxnormlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvminlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvminlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvminlocal_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvminlocal_get_swigrtype _wrap_N_Vector_Ops__nvminlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvminlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvminlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvl1normlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector) = (sunrealtype (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvl1normlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvl1normlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvl1normlocal_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvl1normlocal_get_swigrtype _wrap_N_Vector_Ops__nvl1normlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvl1normlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvl1normlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector)) ((arg1)->nvl1normlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvinvtestlocal_set(SwigClassWrapper const *farg1, int (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*arg2)(N_Vector,N_Vector) = (int (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinvtestlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvinvtestlocal = arg2;
+}
+
+
+typedef int (*N_Vector_Ops__nvinvtestlocal_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvinvtestlocal_get_swigrtype _wrap_N_Vector_Ops__nvinvtestlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvinvtestlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvinvtestlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (int (*)(N_Vector,N_Vector)) ((arg1)->nvinvtestlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvconstrmasklocal_set(SwigClassWrapper const *farg1, int (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*arg2)(N_Vector,N_Vector,N_Vector) = (int (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstrmasklocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvconstrmasklocal = arg2;
+}
+
+
+typedef int (*N_Vector_Ops__nvconstrmasklocal_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvconstrmasklocal_get_swigrtype _wrap_N_Vector_Ops__nvconstrmasklocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvconstrmasklocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  int (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvconstrmasklocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (int (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvconstrmasklocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvminquotientlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminquotientlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvminquotientlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvminquotientlocal_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvminquotientlocal_get_swigrtype _wrap_N_Vector_Ops__nvminquotientlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvminquotientlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvminquotientlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvminquotientlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwsqrsumlocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwsqrsumlocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvwsqrsumlocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvwsqrsumlocal_get_swigrtype)(N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvwsqrsumlocal_get_swigrtype _wrap_N_Vector_Ops__nvwsqrsumlocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwsqrsumlocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwsqrsumlocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector)) ((arg1)->nvwsqrsumlocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvwsqrsummasklocal_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(N_Vector,N_Vector,N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*arg2)(N_Vector,N_Vector,N_Vector) = (sunrealtype (*)(N_Vector,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwsqrsummasklocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(N_Vector,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->nvwsqrsummasklocal = arg2;
+}
+
+
+typedef sunrealtype (*N_Vector_Ops__nvwsqrsummasklocal_get_swigrtype)(N_Vector,N_Vector,N_Vector);
+SWIGEXPORT N_Vector_Ops__nvwsqrsummasklocal_get_swigrtype _wrap_N_Vector_Ops__nvwsqrsummasklocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvwsqrsummasklocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  sunrealtype (*result)(N_Vector,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvwsqrsummasklocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(N_Vector,N_Vector,N_Vector)) ((arg1)->nvwsqrsummasklocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdotprodmultilocal_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,N_Vector,N_Vector *,sunrealtype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,N_Vector,N_Vector *,sunrealtype *) = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmultilocal", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *))(farg2);
+  if (arg1) (arg1)->nvdotprodmultilocal = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvdotprodmultilocal_get_swigrtype)(int,N_Vector,N_Vector *,sunrealtype *);
+SWIGEXPORT N_Vector_Ops__nvdotprodmultilocal_get_swigrtype _wrap_N_Vector_Ops__nvdotprodmultilocal_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdotprodmultilocal_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,N_Vector,N_Vector *,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmultilocal", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,N_Vector,N_Vector *,sunrealtype *)) ((arg1)->nvdotprodmultilocal);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvdotprodmultiallreduce_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(int,N_Vector,sunrealtype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(int,N_Vector,sunrealtype *) = (SUNErrCode (*)(int,N_Vector,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmultiallreduce", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(int,N_Vector,sunrealtype *))(farg2);
+  if (arg1) (arg1)->nvdotprodmultiallreduce = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvdotprodmultiallreduce_get_swigrtype)(int,N_Vector,sunrealtype *);
+SWIGEXPORT N_Vector_Ops__nvdotprodmultiallreduce_get_swigrtype _wrap_N_Vector_Ops__nvdotprodmultiallreduce_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvdotprodmultiallreduce_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(int,N_Vector,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvdotprodmultiallreduce", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(int,N_Vector,sunrealtype *)) ((arg1)->nvdotprodmultiallreduce);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvbufsize_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(N_Vector,sunindextype *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(N_Vector,sunindextype *) = (SUNErrCode (*)(N_Vector,sunindextype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufsize", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(N_Vector,sunindextype *))(farg2);
+  if (arg1) (arg1)->nvbufsize = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvbufsize_get_swigrtype)(N_Vector,sunindextype *);
+SWIGEXPORT N_Vector_Ops__nvbufsize_get_swigrtype _wrap_N_Vector_Ops__nvbufsize_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvbufsize_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(N_Vector,sunindextype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufsize", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(N_Vector,sunindextype *)) ((arg1)->nvbufsize);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvbufpack_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(N_Vector,void *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(N_Vector,void *) = (SUNErrCode (*)(N_Vector,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufpack", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(N_Vector,void *))(farg2);
+  if (arg1) (arg1)->nvbufpack = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvbufpack_get_swigrtype)(N_Vector,void *);
+SWIGEXPORT N_Vector_Ops__nvbufpack_get_swigrtype _wrap_N_Vector_Ops__nvbufpack_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvbufpack_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(N_Vector,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufpack", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(N_Vector,void *)) ((arg1)->nvbufpack);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvbufunpack_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(N_Vector,void *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(N_Vector,void *) = (SUNErrCode (*)(N_Vector,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufunpack", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(N_Vector,void *))(farg2);
+  if (arg1) (arg1)->nvbufunpack = arg2;
+}
+
+
+typedef SUNErrCode (*N_Vector_Ops__nvbufunpack_get_swigrtype)(N_Vector,void *);
+SWIGEXPORT N_Vector_Ops__nvbufunpack_get_swigrtype _wrap_N_Vector_Ops__nvbufunpack_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvbufunpack_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  SUNErrCode (*result)(N_Vector,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvbufunpack", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(N_Vector,void *)) ((arg1)->nvbufunpack);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvprint_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector) = (void (*)(N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprint", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector))(farg2);
+  if (arg1) (arg1)->nvprint = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvprint_get_swigrtype)(N_Vector);
+SWIGEXPORT N_Vector_Ops__nvprint_get_swigrtype _wrap_N_Vector_Ops__nvprint_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvprint_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprint", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector)) ((arg1)->nvprint);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__nvprintfile_set(SwigClassWrapper const *farg1, void (*farg2)(N_Vector,FILE *)) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*arg2)(N_Vector,FILE *) = (void (*)(N_Vector,FILE *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprintfile", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(N_Vector,FILE *))(farg2);
+  if (arg1) (arg1)->nvprintfile = arg2;
+}
+
+
+typedef void (*N_Vector_Ops__nvprintfile_get_swigrtype)(N_Vector,FILE *);
+SWIGEXPORT N_Vector_Ops__nvprintfile_get_swigrtype _wrap_N_Vector_Ops__nvprintfile_get(SwigClassWrapper const *farg1) {
+  N_Vector_Ops__nvprintfile_get_swigrtype fresult ;
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  void (*result)(N_Vector,FILE *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::nvprintfile", return 0);
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  result = (void (*)(N_Vector,FILE *)) ((arg1)->nvprintfile);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_N_Vector_Ops_() {
+  SwigClassWrapper fresult ;
+  struct N_Vector_Ops_ *result = 0 ;
+  
+  result = (struct N_Vector_Ops_ *)calloc(1, sizeof(struct N_Vector_Ops_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_N_Vector_Ops_(SwigClassWrapper *farg1) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct N_Vector_Ops_ *", "N_Vector_Ops_", "N_Vector_Ops_::~N_Vector_Ops_()", return );
+  arg1 = (struct N_Vector_Ops_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_N_Vector_Ops__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct N_Vector_Ops_ *arg1 = (struct N_Vector_Ops_ *) 0 ;
+  struct N_Vector_Ops_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT void _wrap_N_Vector__content_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::content", return );
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->content = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_N_Vector__content_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::content", return 0);
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  result = (void *) ((arg1)->content);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector__ops_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  N_Vector_Ops arg2 = (N_Vector_Ops) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::ops", return );
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector_Ops", "N_Vector_Ops_", "N_Vector_::ops", return );
+  arg2 = (N_Vector_Ops)(farg2->cptr);
+  if (arg1) (arg1)->ops = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_N_Vector__ops_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  N_Vector_Ops result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::ops", return SwigClassWrapper_uninitialized());
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  result = (N_Vector_Ops) ((arg1)->ops);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_Vector__sunctx_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::sunctx", return );
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  if (arg1) (arg1)->sunctx = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_N_Vector__sunctx_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  SUNContext result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::sunctx", return 0);
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  result = (SUNContext) ((arg1)->sunctx);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_N_Vector_() {
+  SwigClassWrapper fresult ;
+  struct N_Vector_ *result = 0 ;
+  
+  result = (struct N_Vector_ *)calloc(1, sizeof(struct N_Vector_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_N_Vector_(SwigClassWrapper *farg1) {
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct N_Vector_ *", "N_Vector_", "N_Vector_::~N_Vector_()", return );
+  arg1 = (struct N_Vector_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_N_Vector__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct N_Vector_ *arg1 = (struct N_Vector_ *) 0 ;
+  struct N_Vector_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FN_VNewEmpty(void *farg1) {
+  SwigClassWrapper fresult ;
+  SUNContext arg1 = (SUNContext) 0 ;
+  N_Vector result;
+  
+  arg1 = (SUNContext)(farg1);
+  result = (N_Vector)N_VNewEmpty(arg1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FN_VFreeEmpty(SwigClassWrapper const *farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VFreeEmpty(N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
   N_VFreeEmpty(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FN_VCopyOps(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FN_VCopyOps(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VCopyOps(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VCopyOps(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (SUNErrCode)N_VCopyOps(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VGetVectorID(N_Vector farg1) {
+SWIGEXPORT int _wrap_FN_VGetVectorID(SwigClassWrapper const *farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector_ID result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetVectorID(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (N_Vector_ID)N_VGetVectorID(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VClone(N_Vector farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VClone(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VClone(N_Vector)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
   result = (N_Vector)N_VClone(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VCloneEmpty(N_Vector farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VCloneEmpty(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VCloneEmpty(N_Vector)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
   result = (N_Vector)N_VCloneEmpty(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FN_VDestroy(N_Vector farg1) {
+SWIGEXPORT void _wrap_FN_VDestroy(SwigClassWrapper const *farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VDestroy(N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
   N_VDestroy(arg1);
 }
 
 
-SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, SwigClassWrapper const *farg2) {
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VSetArrayPointer(sunrealtype *,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   N_VSetArrayPointer(arg1,arg2);
 }
 
 
-SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, SwigClassWrapper const *farg2) {
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VSetDeviceArrayPointer(sunrealtype *,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   N_VSetDeviceArrayPointer(arg1,arg2);
 }
 
 
-SWIGEXPORT int _wrap_FN_VGetCommunicator(N_Vector farg1) {
+SWIGEXPORT int _wrap_FN_VGetCommunicator(SwigClassWrapper const *farg1) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   SUNComm result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetCommunicator(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (SUNComm)N_VGetCommunicator(arg1);
 #if SUNDIALS_MPI_ENABLED
   int flag = 0;
@@ -1098,31 +2722,33 @@ SWIGEXPORT int _wrap_FN_VGetCommunicator(N_Vector farg1) {
 }
 
 
-SWIGEXPORT int64_t _wrap_FN_VGetLength(N_Vector farg1) {
+SWIGEXPORT int64_t _wrap_FN_VGetLength(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetLength(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = N_VGetLength(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int64_t _wrap_FN_VGetLocalLength(N_Vector farg1) {
+SWIGEXPORT int64_t _wrap_FN_VGetLocalLength(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetLocalLength(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = N_VGetLocalLength(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FN_VLinearSum(double const *farg1, N_Vector farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT void _wrap_FN_VLinearSum(double const *farg1, SwigClassWrapper const *farg2, double const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype arg3 ;
@@ -1130,243 +2756,282 @@ SWIGEXPORT void _wrap_FN_VLinearSum(double const *farg1, N_Vector farg2, double 
   N_Vector arg5 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VLinearSum(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "N_VLinearSum(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)", return );
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "N_VLinearSum(sunrealtype,N_Vector,sunrealtype,N_Vector,N_Vector)", return );
+  arg5 = (N_Vector)(farg5->cptr);
   N_VLinearSum(arg1,arg2,arg3,arg4,arg5);
 }
 
 
-SWIGEXPORT void _wrap_FN_VConst(double const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VConst(double const *farg1, SwigClassWrapper const *farg2) {
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VConst(sunrealtype,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   N_VConst(arg1,arg2);
 }
 
 
-SWIGEXPORT void _wrap_FN_VProd(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VProd(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VProd(N_Vector,N_Vector,N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VProd(N_Vector,N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VProd(N_Vector,N_Vector,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VProd(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT void _wrap_FN_VDiv(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VDiv(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VDiv(N_Vector,N_Vector,N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDiv(N_Vector,N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VDiv(N_Vector,N_Vector,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VDiv(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT void _wrap_FN_VScale(double const *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VScale(double const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VScale(sunrealtype,N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VScale(sunrealtype,N_Vector,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VScale(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT void _wrap_FN_VAbs(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VAbs(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VAbs(N_Vector,N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VAbs(N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   N_VAbs(arg1,arg2);
 }
 
 
-SWIGEXPORT void _wrap_FN_VInv(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VInv(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VInv(N_Vector,N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VInv(N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
   N_VInv(arg1,arg2);
 }
 
 
-SWIGEXPORT void _wrap_FN_VAddConst(N_Vector farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VAddConst(SwigClassWrapper const *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VAddConst(N_Vector,sunrealtype,N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VAddConst(N_Vector,sunrealtype,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VAddConst(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT double _wrap_FN_VDotProd(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VDotProd(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VDotProd(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDotProd(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VDotProd(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMaxNorm(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VMaxNorm(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMaxNorm(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VMaxNorm(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VWrmsNorm(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VWrmsNorm(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VWrmsNorm(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VWrmsNorm(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VWrmsNorm(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VWrmsNormMask(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT double _wrap_FN_VWrmsNormMask(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VWrmsNormMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VWrmsNormMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VWrmsNormMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (sunrealtype)N_VWrmsNormMask(arg1,arg2,arg3);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMin(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VMin(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMin(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VMin(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VWL2Norm(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VWL2Norm(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VWL2Norm(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VWL2Norm(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VWL2Norm(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VL1Norm(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VL1Norm(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VL1Norm(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VL1Norm(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FN_VCompare(double const *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VCompare(double const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   sunrealtype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VCompare(sunrealtype,N_Vector,N_Vector)", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VCompare(sunrealtype,N_Vector,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VCompare(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT int _wrap_FN_VInvTest(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FN_VInvTest(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VInvTest(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VInvTest(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)N_VInvTest(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VConstrMask(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FN_VConstrMask(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   int result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VConstrMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VConstrMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VConstrMask(N_Vector,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)N_VConstrMask(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMinQuotient(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VMinQuotient(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMinQuotient(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VMinQuotient(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VMinQuotient(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VLinearCombination(int const *farg1, double *farg2, void *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FN_VLinearCombination(int const *farg1, double *farg2, void *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   int arg1 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -1377,14 +3042,15 @@ SWIGEXPORT int _wrap_FN_VLinearCombination(int const *farg1, double *farg2, void
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (N_Vector *)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "N_VLinearCombination(int,sunrealtype *,N_Vector *,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (SUNErrCode)N_VLinearCombination(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VScaleAddMulti(int const *farg1, double *farg2, N_Vector farg3, void *farg4, void *farg5) {
+SWIGEXPORT int _wrap_FN_VScaleAddMulti(int const *farg1, double *farg2, SwigClassWrapper const *farg3, void *farg4, void *farg5) {
   int fresult ;
   int arg1 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -1395,7 +3061,8 @@ SWIGEXPORT int _wrap_FN_VScaleAddMulti(int const *farg1, double *farg2, N_Vector
   
   arg1 = (int)(*farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VScaleAddMulti(int,sunrealtype *,N_Vector,N_Vector *,N_Vector *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (N_Vector *)(farg4);
   arg5 = (N_Vector *)(farg5);
   result = (SUNErrCode)N_VScaleAddMulti(arg1,arg2,arg3,arg4,arg5);
@@ -1404,7 +3071,7 @@ SWIGEXPORT int _wrap_FN_VScaleAddMulti(int const *farg1, double *farg2, N_Vector
 }
 
 
-SWIGEXPORT int _wrap_FN_VDotProdMulti(int const *farg1, N_Vector farg2, void *farg3, double *farg4) {
+SWIGEXPORT int _wrap_FN_VDotProdMulti(int const *farg1, SwigClassWrapper const *farg2, void *farg3, double *farg4) {
   int fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -1413,7 +3080,8 @@ SWIGEXPORT int _wrap_FN_VDotProdMulti(int const *farg1, N_Vector farg2, void *fa
   SUNErrCode result;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDotProdMulti(int,N_Vector,N_Vector *,sunrealtype *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (N_Vector *)(farg3);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)N_VDotProdMulti(arg1,arg2,arg3,arg4);
@@ -1496,7 +3164,7 @@ SWIGEXPORT int _wrap_FN_VWrmsNormVectorArray(int const *farg1, void *farg2, void
 }
 
 
-SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray(int const *farg1, void *farg2, void *farg3, N_Vector farg4, double *farg5) {
+SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray(int const *farg1, void *farg2, void *farg3, SwigClassWrapper const *farg4, double *farg5) {
   int fresult ;
   int arg1 ;
   N_Vector *arg2 = (N_Vector *) 0 ;
@@ -1508,7 +3176,8 @@ SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray(int const *farg1, void *farg2, 
   arg1 = (int)(*farg1);
   arg2 = (N_Vector *)(farg2);
   arg3 = (N_Vector *)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "N_VWrmsNormMaskVectorArray(int,N_Vector *,N_Vector *,N_Vector,sunrealtype *)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (sunrealtype *)(farg5);
   result = (SUNErrCode)N_VWrmsNormMaskVectorArray(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
@@ -1516,131 +3185,148 @@ SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray(int const *farg1, void *farg2, 
 }
 
 
-SWIGEXPORT double _wrap_FN_VDotProdLocal(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VDotProdLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VDotProdLocal(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDotProdLocal(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VDotProdLocal(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMaxNormLocal(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VMaxNormLocal(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMaxNormLocal(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VMaxNormLocal(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMinLocal(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VMinLocal(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMinLocal(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VMinLocal(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VL1NormLocal(N_Vector farg1) {
+SWIGEXPORT double _wrap_FN_VL1NormLocal(SwigClassWrapper const *farg1) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VL1NormLocal(N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   result = (sunrealtype)N_VL1NormLocal(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VWSqrSumLocal(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VWSqrSumLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VWSqrSumLocal(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VWSqrSumLocal(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VWSqrSumLocal(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VWSqrSumMaskLocal(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT double _wrap_FN_VWSqrSumMaskLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VWSqrSumMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VWSqrSumMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VWSqrSumMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (sunrealtype)N_VWSqrSumMaskLocal(arg1,arg2,arg3);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VInvTestLocal(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FN_VInvTestLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VInvTestLocal(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VInvTestLocal(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)N_VInvTestLocal(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VConstrMaskLocal(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FN_VConstrMaskLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   int result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VConstrMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VConstrMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VConstrMaskLocal(N_Vector,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)N_VConstrMaskLocal(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FN_VMinQuotientLocal(N_Vector farg1, N_Vector farg2) {
+SWIGEXPORT double _wrap_FN_VMinQuotientLocal(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   double fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunrealtype result;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VMinQuotientLocal(N_Vector,N_Vector)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VMinQuotientLocal(N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (sunrealtype)N_VMinQuotientLocal(arg1,arg2);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VDotProdMultiLocal(int const *farg1, N_Vector farg2, void *farg3, double *farg4) {
+SWIGEXPORT int _wrap_FN_VDotProdMultiLocal(int const *farg1, SwigClassWrapper const *farg2, void *farg3, double *farg4) {
   int fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -1649,7 +3335,8 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiLocal(int const *farg1, N_Vector farg2, voi
   SUNErrCode result;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDotProdMultiLocal(int,N_Vector,N_Vector *,sunrealtype *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (N_Vector *)(farg3);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)N_VDotProdMultiLocal(arg1,arg2,arg3,arg4);
@@ -1658,7 +3345,7 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiLocal(int const *farg1, N_Vector farg2, voi
 }
 
 
-SWIGEXPORT int _wrap_FN_VDotProdMultiAllReduce(int const *farg1, N_Vector farg2, double *farg3) {
+SWIGEXPORT int _wrap_FN_VDotProdMultiAllReduce(int const *farg1, SwigClassWrapper const *farg2, double *farg3) {
   int fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -1666,7 +3353,8 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiAllReduce(int const *farg1, N_Vector farg2,
   SUNErrCode result;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VDotProdMultiAllReduce(int,N_Vector,sunrealtype *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (sunrealtype *)(farg3);
   result = (SUNErrCode)N_VDotProdMultiAllReduce(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
@@ -1674,13 +3362,14 @@ SWIGEXPORT int _wrap_FN_VDotProdMultiAllReduce(int const *farg1, N_Vector farg2,
 }
 
 
-SWIGEXPORT int _wrap_FN_VBufSize(N_Vector farg1, int64_t *farg2) {
+SWIGEXPORT int _wrap_FN_VBufSize(SwigClassWrapper const *farg1, int64_t *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   sunindextype *arg2 = (sunindextype *) 0 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VBufSize(N_Vector,sunindextype *)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (sunindextype *)(farg2);
   result = (SUNErrCode)N_VBufSize(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -1688,13 +3377,14 @@ SWIGEXPORT int _wrap_FN_VBufSize(N_Vector farg1, int64_t *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FN_VBufPack(N_Vector farg1, void *farg2) {
+SWIGEXPORT int _wrap_FN_VBufPack(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VBufPack(N_Vector,void *)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)N_VBufPack(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -1702,13 +3392,14 @@ SWIGEXPORT int _wrap_FN_VBufPack(N_Vector farg1, void *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FN_VBufUnpack(N_Vector farg1, void *farg2) {
+SWIGEXPORT int _wrap_FN_VBufUnpack(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   void *arg2 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VBufUnpack(N_Vector,void *)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (void *)(farg2);
   result = (SUNErrCode)N_VBufUnpack(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -1730,28 +3421,30 @@ SWIGEXPORT void * _wrap_FN_VNewVectorArray(int const *farg1, void *farg2) {
 }
 
 
-SWIGEXPORT void * _wrap_FN_VCloneEmptyVectorArray(int const *farg1, N_Vector farg2) {
+SWIGEXPORT void * _wrap_FN_VCloneEmptyVectorArray(int const *farg1, SwigClassWrapper const *farg2) {
   void * fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector *result = 0 ;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VCloneEmptyVectorArray(int,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (N_Vector *)N_VCloneEmptyVectorArray(arg1,arg2);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void * _wrap_FN_VCloneVectorArray(int const *farg1, N_Vector farg2) {
+SWIGEXPORT void * _wrap_FN_VCloneVectorArray(int const *farg1, SwigClassWrapper const *farg2) {
   void * fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector *result = 0 ;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VCloneVectorArray(int,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (N_Vector *)N_VCloneVectorArray(arg1,arg2);
   fresult = result;
   return fresult;
@@ -1768,8 +3461,8 @@ SWIGEXPORT void _wrap_FN_VDestroyVectorArray(void *farg1, int const *farg2) {
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VGetVecAtIndexVectorArray(void *farg1, int const *farg2) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VGetVecAtIndexVectorArray(void *farg1, int const *farg2) {
+  SwigClassWrapper fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   int arg2 ;
   N_Vector result;
@@ -1777,36 +3470,40 @@ SWIGEXPORT N_Vector _wrap_FN_VGetVecAtIndexVectorArray(void *farg1, int const *f
   arg1 = (N_Vector *)(farg1);
   arg2 = (int)(*farg2);
   result = (N_Vector)N_VGetVecAtIndexVectorArray(arg1,arg2);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FN_VSetVecAtIndexVectorArray(void *farg1, int const *farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VSetVecAtIndexVectorArray(void *farg1, int const *farg2, SwigClassWrapper const *farg3) {
   N_Vector *arg1 = (N_Vector *) 0 ;
   int arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "N_VSetVecAtIndexVectorArray(N_Vector *,int,N_Vector)", return );
+  arg3 = (N_Vector)(farg3->cptr);
   N_VSetVecAtIndexVectorArray(arg1,arg2,arg3);
 }
 
 
-SWIGEXPORT void _wrap_FN_VPrint(N_Vector farg1) {
+SWIGEXPORT void _wrap_FN_VPrint(SwigClassWrapper const *farg1) {
   N_Vector arg1 = (N_Vector) 0 ;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VPrint(N_Vector)", return );
+  arg1 = (N_Vector)(farg1->cptr);
   N_VPrint(arg1);
 }
 
 
-SWIGEXPORT void _wrap_FN_VPrintFile(N_Vector farg1, void *farg2) {
+SWIGEXPORT void _wrap_FN_VPrintFile(SwigClassWrapper const *farg1, void *farg2) {
   N_Vector arg1 = (N_Vector) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VPrintFile(N_Vector,FILE *)", return );
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (FILE *)(farg2);
   N_VPrintFile(arg1,arg2);
 }
@@ -1834,99 +3531,496 @@ SWIGEXPORT double * _wrap_FN_VGetDeviceArrayPointer(N_Vector farg1) {
   return fresult;
 }
 
-SWIGEXPORT SUNMatrix _wrap_FSUNMatNewEmpty(void *farg1) {
-  SUNMatrix fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  SUNMatrix result;
+SWIGEXPORT void _wrap_SUNMatrix_Ops__getid_set(SwigClassWrapper const *farg1, SUNMatrix_ID (*farg2)(SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNMatrix_ID (*arg2)(SUNMatrix) = (SUNMatrix_ID (*)(SUNMatrix)) 0 ;
   
-  arg1 = (SUNContext)(farg1);
-  result = (SUNMatrix)SUNMatNewEmpty(arg1);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::getid", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNMatrix_ID (*)(SUNMatrix))(farg2);
+  if (arg1) (arg1)->getid = arg2;
+}
+
+
+typedef SUNMatrix_ID (*SUNMatrix_Ops__getid_get_swigrtype)(SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__getid_get_swigrtype _wrap_SUNMatrix_Ops__getid_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__getid_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNMatrix_ID (*result)(SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::getid", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNMatrix_ID (*)(SUNMatrix)) ((arg1)->getid);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNMatFreeEmpty(SUNMatrix farg1) {
+SWIGEXPORT void _wrap_SUNMatrix_Ops__clone_set(SwigClassWrapper const *farg1, SUNMatrix (*farg2)(SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNMatrix (*arg2)(SUNMatrix) = (SUNMatrix (*)(SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::clone", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNMatrix (*)(SUNMatrix))(farg2);
+  if (arg1) (arg1)->clone = arg2;
+}
+
+
+typedef SUNMatrix (*SUNMatrix_Ops__clone_get_swigrtype)(SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__clone_get_swigrtype _wrap_SUNMatrix_Ops__clone_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__clone_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNMatrix (*result)(SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::clone", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNMatrix (*)(SUNMatrix)) ((arg1)->clone);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__destroy_set(SwigClassWrapper const *farg1, void (*farg2)(SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  void (*arg2)(SUNMatrix) = (void (*)(SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::destroy", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (void (*)(SUNMatrix))(farg2);
+  if (arg1) (arg1)->destroy = arg2;
+}
+
+
+typedef void (*SUNMatrix_Ops__destroy_get_swigrtype)(SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__destroy_get_swigrtype _wrap_SUNMatrix_Ops__destroy_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__destroy_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  void (*result)(SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::destroy", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (void (*)(SUNMatrix)) ((arg1)->destroy);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__zero_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNMatrix) = (SUNErrCode (*)(SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::zero", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNMatrix))(farg2);
+  if (arg1) (arg1)->zero = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__zero_get_swigrtype)(SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__zero_get_swigrtype _wrap_SUNMatrix_Ops__zero_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__zero_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::zero", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNMatrix)) ((arg1)->zero);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__copy_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNMatrix,SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNMatrix,SUNMatrix) = (SUNErrCode (*)(SUNMatrix,SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::copy", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNMatrix,SUNMatrix))(farg2);
+  if (arg1) (arg1)->copy = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__copy_get_swigrtype)(SUNMatrix,SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__copy_get_swigrtype _wrap_SUNMatrix_Ops__copy_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__copy_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNMatrix,SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::copy", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNMatrix,SUNMatrix)) ((arg1)->copy);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__scaleadd_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(sunrealtype,SUNMatrix,SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(sunrealtype,SUNMatrix,SUNMatrix) = (SUNErrCode (*)(sunrealtype,SUNMatrix,SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::scaleadd", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(sunrealtype,SUNMatrix,SUNMatrix))(farg2);
+  if (arg1) (arg1)->scaleadd = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__scaleadd_get_swigrtype)(sunrealtype,SUNMatrix,SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__scaleadd_get_swigrtype _wrap_SUNMatrix_Ops__scaleadd_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__scaleadd_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(sunrealtype,SUNMatrix,SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::scaleadd", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(sunrealtype,SUNMatrix,SUNMatrix)) ((arg1)->scaleadd);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__scaleaddi_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(sunrealtype,SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(sunrealtype,SUNMatrix) = (SUNErrCode (*)(sunrealtype,SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::scaleaddi", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(sunrealtype,SUNMatrix))(farg2);
+  if (arg1) (arg1)->scaleaddi = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__scaleaddi_get_swigrtype)(sunrealtype,SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__scaleaddi_get_swigrtype _wrap_SUNMatrix_Ops__scaleaddi_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__scaleaddi_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(sunrealtype,SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::scaleaddi", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(sunrealtype,SUNMatrix)) ((arg1)->scaleaddi);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__matvecsetup_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNMatrix)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNMatrix) = (SUNErrCode (*)(SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::matvecsetup", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNMatrix))(farg2);
+  if (arg1) (arg1)->matvecsetup = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__matvecsetup_get_swigrtype)(SUNMatrix);
+SWIGEXPORT SUNMatrix_Ops__matvecsetup_get_swigrtype _wrap_SUNMatrix_Ops__matvecsetup_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__matvecsetup_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::matvecsetup", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNMatrix)) ((arg1)->matvecsetup);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__matvec_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNMatrix,N_Vector,N_Vector)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNMatrix,N_Vector,N_Vector) = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::matvec", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->matvec = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__matvec_get_swigrtype)(SUNMatrix,N_Vector,N_Vector);
+SWIGEXPORT SUNMatrix_Ops__matvec_get_swigrtype _wrap_SUNMatrix_Ops__matvec_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__matvec_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNMatrix,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::matvec", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector)) ((arg1)->matvec);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__mathermitiantransposevec_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNMatrix,N_Vector,N_Vector)) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNMatrix,N_Vector,N_Vector) = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::mathermitiantransposevec", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->mathermitiantransposevec = arg2;
+}
+
+
+typedef SUNErrCode (*SUNMatrix_Ops__mathermitiantransposevec_get_swigrtype)(SUNMatrix,N_Vector,N_Vector);
+SWIGEXPORT SUNMatrix_Ops__mathermitiantransposevec_get_swigrtype _wrap_SUNMatrix_Ops__mathermitiantransposevec_get(SwigClassWrapper const *farg1) {
+  SUNMatrix_Ops__mathermitiantransposevec_get_swigrtype fresult ;
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNMatrix,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::mathermitiantransposevec", return 0);
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNMatrix,N_Vector,N_Vector)) ((arg1)->mathermitiantransposevec);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNMatrix_Ops_() {
+  SwigClassWrapper fresult ;
+  struct SUNMatrix_Ops_ *result = 0 ;
+  
+  result = (struct SUNMatrix_Ops_ *)calloc(1, sizeof(struct SUNMatrix_Ops_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNMatrix_Ops_(SwigClassWrapper *farg1) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNMatrix_Ops_ *", "SUNMatrix_Ops_", "SUNMatrix_Ops_::~SUNMatrix_Ops_()", return );
+  arg1 = (struct SUNMatrix_Ops_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix_Ops__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNMatrix_Ops_ *arg1 = (struct SUNMatrix_Ops_ *) 0 ;
+  struct SUNMatrix_Ops_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix__content_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::content", return );
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->content = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNMatrix__content_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::content", return 0);
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  result = (void *) ((arg1)->content);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix__ops_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  SUNMatrix_Ops arg2 = (SUNMatrix_Ops) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::ops", return );
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix_Ops", "SUNMatrix_Ops_", "SUNMatrix_::ops", return );
+  arg2 = (SUNMatrix_Ops)(farg2->cptr);
+  if (arg1) (arg1)->ops = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNMatrix__ops_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  SUNMatrix_Ops result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::ops", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  result = (SUNMatrix_Ops) ((arg1)->ops);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix__sunctx_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::sunctx", return );
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  if (arg1) (arg1)->sunctx = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNMatrix__sunctx_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  SUNContext result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::sunctx", return 0);
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  result = (SUNContext) ((arg1)->sunctx);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNMatrix_() {
+  SwigClassWrapper fresult ;
+  struct SUNMatrix_ *result = 0 ;
+  
+  result = (struct SUNMatrix_ *)calloc(1, sizeof(struct SUNMatrix_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNMatrix_(SwigClassWrapper *farg1) {
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNMatrix_ *", "SUNMatrix_", "SUNMatrix_::~SUNMatrix_()", return );
+  arg1 = (struct SUNMatrix_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNMatrix__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNMatrix_ *arg1 = (struct SUNMatrix_ *) 0 ;
+  struct SUNMatrix_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNMatNewEmpty(void *farg1) {
+  SwigClassWrapper fresult ;
+  SUNContext arg1 = (SUNContext) 0 ;
+  SUNMatrix result;
+  
+  arg1 = (SUNContext)(farg1);
+  result = (SUNMatrix)SUNMatNewEmpty(arg1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FSUNMatFreeEmpty(SwigClassWrapper const *farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatFreeEmpty(SUNMatrix)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   SUNMatFreeEmpty(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatCopyOps(SUNMatrix farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatCopyOps(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatCopyOps(SUNMatrix,SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatCopyOps(SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatCopyOps(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatGetID(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatGetID(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix_ID result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatGetID(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix_ID)SUNMatGetID(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT SUNMatrix _wrap_FSUNMatClone(SUNMatrix farg1) {
-  SUNMatrix fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNMatClone(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatClone(SUNMatrix)", return SwigClassWrapper_uninitialized());
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNMatrix)SUNMatClone(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNMatDestroy(SUNMatrix farg1) {
+SWIGEXPORT void _wrap_FSUNMatDestroy(SwigClassWrapper const *farg1) {
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatDestroy(SUNMatrix)", return );
+  arg1 = (SUNMatrix)(farg1->cptr);
   SUNMatDestroy(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatZero(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatZero(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatZero(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNErrCode)SUNMatZero(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatCopy(SUNMatrix farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatCopy(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatCopy(SUNMatrix,SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatCopy(SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatCopy(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAdd(double const *farg1, SUNMatrix farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FSUNMatScaleAdd(double const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
@@ -1934,66 +4028,76 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd(double const *farg1, SUNMatrix farg2, SUNMa
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAdd(sunrealtype,SUNMatrix,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (SUNErrCode)SUNMatScaleAdd(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAddI(double const *farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatScaleAddI(double const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   sunrealtype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
   arg1 = (sunrealtype)(*farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNMatScaleAddI(sunrealtype,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (SUNErrCode)SUNMatScaleAddI(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatMatvecSetup(SUNMatrix farg1) {
+SWIGEXPORT int _wrap_FSUNMatMatvecSetup(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatMatvecSetup(SUNMatrix)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
   result = (SUNErrCode)SUNMatMatvecSetup(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatMatvec(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatMatvec(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatMatvec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatMatvec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatMatvec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatMatvec(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec(SUNMatrix farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNMatHermitianTransposeVec(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNMatrix arg1 = (SUNMatrix) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNMatrix)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNMatrix", "SUNMatrix_", "SUNMatHermitianTransposeVec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNMatrix)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNMatHermitianTransposeVec(SUNMatrix,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNMatHermitianTransposeVec(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
@@ -2080,7 +4184,7 @@ SWIGEXPORT int _wrap_FSUNQRsol(int const *farg1, void *farg2, double *farg3, dou
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_MGS(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_MGS(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2092,7 +4196,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_MGS(void *farg1, double *farg2, N_Vector farg3, i
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_MGS(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2102,7 +4207,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_MGS(void *farg1, double *farg2, N_Vector farg3, i
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_ICWY(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_ICWY(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2114,7 +4219,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY(void *farg1, double *farg2, N_Vector farg3, 
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_ICWY(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2124,7 +4230,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY(void *farg1, double *farg2, N_Vector farg3, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_ICWY_SB(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_ICWY_SB(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2136,7 +4242,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY_SB(void *farg1, double *farg2, N_Vector farg
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_ICWY_SB(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2146,7 +4253,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_ICWY_SB(void *farg1, double *farg2, N_Vector farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_CGS2(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_CGS2(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2158,7 +4265,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_CGS2(void *farg1, double *farg2, N_Vector farg3, 
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_CGS2(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2168,7 +4276,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_CGS2(void *farg1, double *farg2, N_Vector farg3, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2180,7 +4288,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2(void *farg1, double *farg2, N_Vector farg3,
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_DCGS2(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2190,7 +4299,7 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2(void *farg1, double *farg2, N_Vector farg3,
 }
 
 
-SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2_SB(void *farg1, double *farg2, N_Vector farg3, int const *farg4, int const *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2_SB(void *farg1, double *farg2, SwigClassWrapper const *farg3, int const *farg4, int const *farg5, void *farg6) {
   int fresult ;
   N_Vector *arg1 = (N_Vector *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2202,7 +4311,8 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2_SB(void *farg1, double *farg2, N_Vector far
   
   arg1 = (N_Vector *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNQRAdd_DCGS2_SB(N_Vector *,sunrealtype *,N_Vector,int,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (int)(*farg4);
   arg5 = (int)(*farg5);
   arg6 = (void *)(farg6);
@@ -2212,58 +4322,598 @@ SWIGEXPORT int _wrap_FSUNQRAdd_DCGS2_SB(void *farg1, double *farg2, N_Vector far
 }
 
 
-SWIGEXPORT SUNLinearSolver _wrap_FSUNLinSolNewEmpty(void *farg1) {
-  SUNLinearSolver fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  SUNLinearSolver result;
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__gettype_set(SwigClassWrapper const *farg1, SUNLinearSolver_Type (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNLinearSolver_Type (*arg2)(SUNLinearSolver) = (SUNLinearSolver_Type (*)(SUNLinearSolver)) 0 ;
   
-  arg1 = (SUNContext)(farg1);
-  result = (SUNLinearSolver)SUNLinSolNewEmpty(arg1);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::gettype", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNLinearSolver_Type (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->gettype = arg2;
+}
+
+
+typedef SUNLinearSolver_Type (*SUNLinearSolver_Ops__gettype_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__gettype_get_swigrtype _wrap_SUNLinearSolver_Ops__gettype_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__gettype_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNLinearSolver_Type (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::gettype", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNLinearSolver_Type (*)(SUNLinearSolver)) ((arg1)->gettype);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNLinSolFreeEmpty(SUNLinearSolver farg1) {
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__getid_set(SwigClassWrapper const *farg1, SUNLinearSolver_ID (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNLinearSolver_ID (*arg2)(SUNLinearSolver) = (SUNLinearSolver_ID (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::getid", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNLinearSolver_ID (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->getid = arg2;
+}
+
+
+typedef SUNLinearSolver_ID (*SUNLinearSolver_Ops__getid_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__getid_get_swigrtype _wrap_SUNLinearSolver_Ops__getid_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__getid_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNLinearSolver_ID (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::getid", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNLinearSolver_ID (*)(SUNLinearSolver)) ((arg1)->getid);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setatimes_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver,void *,SUNATimesFn)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver,void *,SUNATimesFn) = (SUNErrCode (*)(SUNLinearSolver,void *,SUNATimesFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setatimes", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver,void *,SUNATimesFn))(farg2);
+  if (arg1) (arg1)->setatimes = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__setatimes_get_swigrtype)(SUNLinearSolver,void *,SUNATimesFn);
+SWIGEXPORT SUNLinearSolver_Ops__setatimes_get_swigrtype _wrap_SUNLinearSolver_Ops__setatimes_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setatimes_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver,void *,SUNATimesFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setatimes", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver,void *,SUNATimesFn)) ((arg1)->setatimes);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setpreconditioner_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn) = (SUNErrCode (*)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setpreconditioner", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn))(farg2);
+  if (arg1) (arg1)->setpreconditioner = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__setpreconditioner_get_swigrtype)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn);
+SWIGEXPORT SUNLinearSolver_Ops__setpreconditioner_get_swigrtype _wrap_SUNLinearSolver_Ops__setpreconditioner_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setpreconditioner_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setpreconditioner", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn)) ((arg1)->setpreconditioner);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setscalingvectors_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver,N_Vector,N_Vector)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver,N_Vector,N_Vector) = (SUNErrCode (*)(SUNLinearSolver,N_Vector,N_Vector)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setscalingvectors", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver,N_Vector,N_Vector))(farg2);
+  if (arg1) (arg1)->setscalingvectors = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__setscalingvectors_get_swigrtype)(SUNLinearSolver,N_Vector,N_Vector);
+SWIGEXPORT SUNLinearSolver_Ops__setscalingvectors_get_swigrtype _wrap_SUNLinearSolver_Ops__setscalingvectors_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setscalingvectors_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver,N_Vector,N_Vector) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setscalingvectors", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver,N_Vector,N_Vector)) ((arg1)->setscalingvectors);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setoptions_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver,char const *,char const *,int,char *[])) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver,char const *,char const *,int,char *[]) = (SUNErrCode (*)(SUNLinearSolver,char const *,char const *,int,char *[])) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setoptions", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver,char const *,char const *,int,char *[]))(farg2);
+  if (arg1) (arg1)->setoptions = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__setoptions_get_swigrtype)(SUNLinearSolver,char const *,char const *,int,char *[]);
+SWIGEXPORT SUNLinearSolver_Ops__setoptions_get_swigrtype _wrap_SUNLinearSolver_Ops__setoptions_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setoptions_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver,char const *,char const *,int,char *[]) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setoptions", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver,char const *,char const *,int,char *[])) ((arg1)->setoptions);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setzeroguess_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver,int)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver,int) = (SUNErrCode (*)(SUNLinearSolver,int)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setzeroguess", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver,int))(farg2);
+  if (arg1) (arg1)->setzeroguess = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__setzeroguess_get_swigrtype)(SUNLinearSolver,int);
+SWIGEXPORT SUNLinearSolver_Ops__setzeroguess_get_swigrtype _wrap_SUNLinearSolver_Ops__setzeroguess_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setzeroguess_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver,int) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setzeroguess", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver,int)) ((arg1)->setzeroguess);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__initialize_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver) = (SUNErrCode (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::initialize", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->initialize = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__initialize_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__initialize_get_swigrtype _wrap_SUNLinearSolver_Ops__initialize_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__initialize_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::initialize", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver)) ((arg1)->initialize);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__setup_set(SwigClassWrapper const *farg1, int (*farg2)(SUNLinearSolver,SUNMatrix)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*arg2)(SUNLinearSolver,SUNMatrix) = (int (*)(SUNLinearSolver,SUNMatrix)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setup", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(SUNLinearSolver,SUNMatrix))(farg2);
+  if (arg1) (arg1)->setup = arg2;
+}
+
+
+typedef int (*SUNLinearSolver_Ops__setup_get_swigrtype)(SUNLinearSolver,SUNMatrix);
+SWIGEXPORT SUNLinearSolver_Ops__setup_get_swigrtype _wrap_SUNLinearSolver_Ops__setup_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__setup_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*result)(SUNLinearSolver,SUNMatrix) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::setup", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (int (*)(SUNLinearSolver,SUNMatrix)) ((arg1)->setup);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__solve_set(SwigClassWrapper const *farg1, int (*farg2)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*arg2)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype) = (int (*)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::solve", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype))(farg2);
+  if (arg1) (arg1)->solve = arg2;
+}
+
+
+typedef int (*SUNLinearSolver_Ops__solve_get_swigrtype)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype);
+SWIGEXPORT SUNLinearSolver_Ops__solve_get_swigrtype _wrap_SUNLinearSolver_Ops__solve_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__solve_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*result)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::solve", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (int (*)(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)) ((arg1)->solve);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__numiters_set(SwigClassWrapper const *farg1, int (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*arg2)(SUNLinearSolver) = (int (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::numiters", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->numiters = arg2;
+}
+
+
+typedef int (*SUNLinearSolver_Ops__numiters_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__numiters_get_swigrtype _wrap_SUNLinearSolver_Ops__numiters_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__numiters_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  int (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::numiters", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (int (*)(SUNLinearSolver)) ((arg1)->numiters);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__resnorm_set(SwigClassWrapper const *farg1, sunrealtype (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  sunrealtype (*arg2)(SUNLinearSolver) = (sunrealtype (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::resnorm", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (sunrealtype (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->resnorm = arg2;
+}
+
+
+typedef sunrealtype (*SUNLinearSolver_Ops__resnorm_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__resnorm_get_swigrtype _wrap_SUNLinearSolver_Ops__resnorm_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__resnorm_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  sunrealtype (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::resnorm", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (sunrealtype (*)(SUNLinearSolver)) ((arg1)->resnorm);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__lastflag_set(SwigClassWrapper const *farg1, sunindextype (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  sunindextype (*arg2)(SUNLinearSolver) = (sunindextype (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::lastflag", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (sunindextype (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->lastflag = arg2;
+}
+
+
+typedef sunindextype (*SUNLinearSolver_Ops__lastflag_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__lastflag_get_swigrtype _wrap_SUNLinearSolver_Ops__lastflag_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__lastflag_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  sunindextype (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::lastflag", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (sunindextype (*)(SUNLinearSolver)) ((arg1)->lastflag);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__resid_set(SwigClassWrapper const *farg1, N_Vector (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  N_Vector (*arg2)(SUNLinearSolver) = (N_Vector (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::resid", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (N_Vector (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->resid = arg2;
+}
+
+
+typedef N_Vector (*SUNLinearSolver_Ops__resid_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__resid_get_swigrtype _wrap_SUNLinearSolver_Ops__resid_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__resid_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  N_Vector (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::resid", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (N_Vector (*)(SUNLinearSolver)) ((arg1)->resid);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__free_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNLinearSolver)) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNLinearSolver) = (SUNErrCode (*)(SUNLinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::free", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNLinearSolver))(farg2);
+  if (arg1) (arg1)->free = arg2;
+}
+
+
+typedef SUNErrCode (*SUNLinearSolver_Ops__free_get_swigrtype)(SUNLinearSolver);
+SWIGEXPORT SUNLinearSolver_Ops__free_get_swigrtype _wrap_SUNLinearSolver_Ops__free_get(SwigClassWrapper const *farg1) {
+  SUNLinearSolver_Ops__free_get_swigrtype fresult ;
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNLinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::free", return 0);
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNLinearSolver)) ((arg1)->free);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNLinearSolver_Ops_() {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolver_Ops_ *result = 0 ;
+  
+  result = (struct SUNLinearSolver_Ops_ *)calloc(1, sizeof(struct SUNLinearSolver_Ops_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNLinearSolver_Ops_(SwigClassWrapper *farg1) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNLinearSolver_Ops_ *", "SUNLinearSolver_Ops_", "SUNLinearSolver_Ops_::~SUNLinearSolver_Ops_()", return );
+  arg1 = (struct SUNLinearSolver_Ops_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver_Ops__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolver_Ops_ *arg1 = (struct SUNLinearSolver_Ops_ *) 0 ;
+  struct SUNLinearSolver_Ops_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver__content_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::content", return );
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->content = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolver__content_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::content", return 0);
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  result = (void *) ((arg1)->content);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver__python_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::python", return );
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->python = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolver__python_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::python", return 0);
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  result = (void *) ((arg1)->python);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver__ops_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  SUNLinearSolver_Ops arg2 = (SUNLinearSolver_Ops) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::ops", return );
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNLinearSolver_Ops", "SUNLinearSolver_Ops_", "SUNLinearSolver_::ops", return );
+  arg2 = (SUNLinearSolver_Ops)(farg2->cptr);
+  if (arg1) (arg1)->ops = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNLinearSolver__ops_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  SUNLinearSolver_Ops result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::ops", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  result = (SUNLinearSolver_Ops) ((arg1)->ops);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver__sunctx_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::sunctx", return );
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  if (arg1) (arg1)->sunctx = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNLinearSolver__sunctx_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  SUNContext result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::sunctx", return 0);
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  result = (SUNContext) ((arg1)->sunctx);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNLinearSolver_() {
+  SwigClassWrapper fresult ;
+  struct SUNLinearSolver_ *result = 0 ;
+  
+  result = (struct SUNLinearSolver_ *)calloc(1, sizeof(struct SUNLinearSolver_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNLinearSolver_(SwigClassWrapper *farg1) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNLinearSolver_ *", "SUNLinearSolver_", "SUNLinearSolver_::~SUNLinearSolver_()", return );
+  arg1 = (struct SUNLinearSolver_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNLinearSolver__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNLinearSolver_ *arg1 = (struct SUNLinearSolver_ *) 0 ;
+  struct SUNLinearSolver_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNLinSolNewEmpty(void *farg1) {
+  SwigClassWrapper fresult ;
+  SUNContext arg1 = (SUNContext) 0 ;
+  SUNLinearSolver result;
+  
+  arg1 = (SUNContext)(farg1);
+  result = (SUNLinearSolver)SUNLinSolNewEmpty(arg1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FSUNLinSolFreeEmpty(SwigClassWrapper const *farg1) {
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolFreeEmpty(SUNLinearSolver)", return );
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   SUNLinSolFreeEmpty(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolGetType(SUNLinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNLinSolGetType(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNLinearSolver_Type result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolGetType(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (SUNLinearSolver_Type)SUNLinSolGetType(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolGetID(SUNLinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNLinSolGetID(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNLinearSolver_ID result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolGetID(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (SUNLinearSolver_ID)SUNLinSolGetID(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSetATimes(SUNLinearSolver farg1, void *farg2, SUNATimesFn farg3) {
+SWIGEXPORT int _wrap_FSUNLinSolSetATimes(SwigClassWrapper const *farg1, void *farg2, SUNATimesFn farg3) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   void *arg2 = (void *) 0 ;
   SUNATimesFn arg3 = (SUNATimesFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSetATimes(SUNLinearSolver,void *,SUNATimesFn)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (void *)(farg2);
   arg3 = (SUNATimesFn)(farg3);
   result = (SUNErrCode)SUNLinSolSetATimes(arg1,arg2,arg3);
@@ -2272,7 +4922,7 @@ SWIGEXPORT int _wrap_FSUNLinSolSetATimes(SUNLinearSolver farg1, void *farg2, SUN
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSetPreconditioner(SUNLinearSolver farg1, void *farg2, SUNPSetupFn farg3, SUNPSolveFn farg4) {
+SWIGEXPORT int _wrap_FSUNLinSolSetPreconditioner(SwigClassWrapper const *farg1, void *farg2, SUNPSetupFn farg3, SUNPSolveFn farg4) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   void *arg2 = (void *) 0 ;
@@ -2280,7 +4930,8 @@ SWIGEXPORT int _wrap_FSUNLinSolSetPreconditioner(SUNLinearSolver farg1, void *fa
   SUNPSolveFn arg4 = (SUNPSolveFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSetPreconditioner(SUNLinearSolver,void *,SUNPSetupFn,SUNPSolveFn)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (void *)(farg2);
   arg3 = (SUNPSetupFn)(farg3);
   arg4 = (SUNPSolveFn)(farg4);
@@ -2290,29 +4941,33 @@ SWIGEXPORT int _wrap_FSUNLinSolSetPreconditioner(SUNLinearSolver farg1, void *fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSetScalingVectors(SUNLinearSolver farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNLinSolSetScalingVectors(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSetScalingVectors(SUNLinearSolver,N_Vector,N_Vector)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNLinSolSetScalingVectors(SUNLinearSolver,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNLinSolSetScalingVectors(SUNLinearSolver,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNLinSolSetScalingVectors(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSetZeroGuess(SUNLinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNLinSolSetZeroGuess(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSetZeroGuess(SUNLinearSolver,int)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNLinSolSetZeroGuess(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2320,33 +4975,36 @@ SWIGEXPORT int _wrap_FSUNLinSolSetZeroGuess(SUNLinearSolver farg1, int const *fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolInitialize(SUNLinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNLinSolInitialize(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolInitialize(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (SUNErrCode)SUNLinSolInitialize(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSetup(SUNLinearSolver farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNLinSolSetup(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   int result;
   
-  arg1 = (SUNLinearSolver)(farg1);
-  arg2 = (SUNMatrix)(farg2);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSetup(SUNLinearSolver,SUNMatrix)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNLinSolSetup(SUNLinearSolver,SUNMatrix)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
   result = (int)SUNLinSolSetup(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSolve(SUNLinearSolver farg1, SUNMatrix farg2, N_Vector farg3, N_Vector farg4, double const *farg5) {
+SWIGEXPORT int _wrap_FSUNLinSolSolve(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4, double const *farg5) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
@@ -2355,10 +5013,14 @@ SWIGEXPORT int _wrap_FSUNLinSolSolve(SUNLinearSolver farg1, SUNMatrix farg2, N_V
   sunrealtype arg5 ;
   int result;
   
-  arg1 = (SUNLinearSolver)(farg1);
-  arg2 = (SUNMatrix)(farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolSolve(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNMatrix", "SUNMatrix_", "SUNLinSolSolve(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)", return 0);
+  arg2 = (SUNMatrix)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNLinSolSolve(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "SUNLinSolSolve(SUNLinearSolver,SUNMatrix,N_Vector,N_Vector,sunrealtype)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (sunrealtype)(*farg5);
   result = (int)SUNLinSolSolve(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
@@ -2366,119 +5028,741 @@ SWIGEXPORT int _wrap_FSUNLinSolSolve(SUNLinearSolver farg1, SUNMatrix farg2, N_V
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolNumIters(SUNLinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNLinSolNumIters(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   int result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolNumIters(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (int)SUNLinSolNumIters(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT double _wrap_FSUNLinSolResNorm(SUNLinearSolver farg1) {
+SWIGEXPORT double _wrap_FSUNLinSolResNorm(SwigClassWrapper const *farg1) {
   double fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   sunrealtype result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolResNorm(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (sunrealtype)SUNLinSolResNorm(arg1);
   fresult = (sunrealtype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FSUNLinSolResid(SUNLinearSolver farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNLinSolResid(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   N_Vector result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolResid(SUNLinearSolver)", return SwigClassWrapper_uninitialized());
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (N_Vector)SUNLinSolResid(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int64_t _wrap_FSUNLinSolLastFlag(SUNLinearSolver farg1) {
+SWIGEXPORT int64_t _wrap_FSUNLinSolLastFlag(SwigClassWrapper const *farg1) {
   int64_t fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   sunindextype result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolLastFlag(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = SUNLinSolLastFlag(arg1);
   fresult = (sunindextype)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolFree(SUNLinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNLinSolFree(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNLinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNLinearSolver", "SUNLinearSolver_", "SUNLinSolFree(SUNLinearSolver)", return 0);
+  arg1 = (SUNLinearSolver)(farg1->cptr);
   result = (SUNErrCode)SUNLinSolFree(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSolNewEmpty(void *farg1) {
-  SUNNonlinearSolver fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  SUNNonlinearSolver result;
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__gettype_set(SwigClassWrapper const *farg1, SUNNonlinearSolver_Type (*farg2)(SUNNonlinearSolver)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNNonlinearSolver_Type (*arg2)(SUNNonlinearSolver) = (SUNNonlinearSolver_Type (*)(SUNNonlinearSolver)) 0 ;
   
-  arg1 = (SUNContext)(farg1);
-  result = (SUNNonlinearSolver)SUNNonlinSolNewEmpty(arg1);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::gettype", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNNonlinearSolver_Type (*)(SUNNonlinearSolver))(farg2);
+  if (arg1) (arg1)->gettype = arg2;
+}
+
+
+typedef SUNNonlinearSolver_Type (*SUNNonlinearSolver_Ops__gettype_get_swigrtype)(SUNNonlinearSolver);
+SWIGEXPORT SUNNonlinearSolver_Ops__gettype_get_swigrtype _wrap_SUNNonlinearSolver_Ops__gettype_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__gettype_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNNonlinearSolver_Type (*result)(SUNNonlinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::gettype", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNNonlinearSolver_Type (*)(SUNNonlinearSolver)) ((arg1)->gettype);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNNonlinSolFreeEmpty(SUNNonlinearSolver farg1) {
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__initialize_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver) = (SUNErrCode (*)(SUNNonlinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::initialize", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver))(farg2);
+  if (arg1) (arg1)->initialize = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__initialize_get_swigrtype)(SUNNonlinearSolver);
+SWIGEXPORT SUNNonlinearSolver_Ops__initialize_get_swigrtype _wrap_SUNNonlinearSolver_Ops__initialize_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__initialize_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::initialize", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver)) ((arg1)->initialize);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setup_set(SwigClassWrapper const *farg1, int (*farg2)(SUNNonlinearSolver,N_Vector,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  int (*arg2)(SUNNonlinearSolver,N_Vector,void *) = (int (*)(SUNNonlinearSolver,N_Vector,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setup", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(SUNNonlinearSolver,N_Vector,void *))(farg2);
+  if (arg1) (arg1)->setup = arg2;
+}
+
+
+typedef int (*SUNNonlinearSolver_Ops__setup_get_swigrtype)(SUNNonlinearSolver,N_Vector,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__setup_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setup_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setup_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  int (*result)(SUNNonlinearSolver,N_Vector,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setup", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (int (*)(SUNNonlinearSolver,N_Vector,void *)) ((arg1)->setup);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__solve_set(SwigClassWrapper const *farg1, int (*farg2)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  int (*arg2)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *) = (int (*)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::solve", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (int (*)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *))(farg2);
+  if (arg1) (arg1)->solve = arg2;
+}
+
+
+typedef int (*SUNNonlinearSolver_Ops__solve_get_swigrtype)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__solve_get_swigrtype _wrap_SUNNonlinearSolver_Ops__solve_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__solve_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  int (*result)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::solve", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (int (*)(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)) ((arg1)->solve);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__free_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver) = (SUNErrCode (*)(SUNNonlinearSolver)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::free", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver))(farg2);
+  if (arg1) (arg1)->free = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__free_get_swigrtype)(SUNNonlinearSolver);
+SWIGEXPORT SUNNonlinearSolver_Ops__free_get_swigrtype _wrap_SUNNonlinearSolver_Ops__free_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__free_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::free", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver)) ((arg1)->free);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setsysfn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolSysFn)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolSysFn) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setsysfn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn))(farg2);
+  if (arg1) (arg1)->setsysfn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setsysfn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolSysFn);
+SWIGEXPORT SUNNonlinearSolver_Ops__setsysfn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setsysfn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setsysfn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolSysFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setsysfn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn)) ((arg1)->setsysfn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setsysfns_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setsysfns", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn))(farg2);
+  if (arg1) (arg1)->setsysfns = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setsysfns_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn);
+SWIGEXPORT SUNNonlinearSolver_Ops__setsysfns_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setsysfns_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setsysfns_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setsysfns", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn)) ((arg1)->setsysfns);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setlsetupfn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolLSetupFn)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolLSetupFn) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSetupFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setlsetupfn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSetupFn))(farg2);
+  if (arg1) (arg1)->setlsetupfn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setlsetupfn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolLSetupFn);
+SWIGEXPORT SUNNonlinearSolver_Ops__setlsetupfn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setlsetupfn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setlsetupfn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolLSetupFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setlsetupfn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSetupFn)) ((arg1)->setlsetupfn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setlsolvefn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolLSolveFn)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolLSolveFn) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSolveFn)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setlsolvefn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSolveFn))(farg2);
+  if (arg1) (arg1)->setlsolvefn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setlsolvefn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolLSolveFn);
+SWIGEXPORT SUNNonlinearSolver_Ops__setlsolvefn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setlsolvefn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setlsolvefn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolLSolveFn) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setlsolvefn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolLSolveFn)) ((arg1)->setlsolvefn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setctestfn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setctestfn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *))(farg2);
+  if (arg1) (arg1)->setctestfn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setctestfn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__setctestfn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setctestfn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setctestfn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setctestfn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *)) ((arg1)->setctestfn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setnormfn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setnormfn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *))(farg2);
+  if (arg1) (arg1)->setnormfn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setnormfn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__setnormfn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setnormfn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setnormfn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setnormfn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolNormFn,void *)) ((arg1)->setnormfn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setgetupdatenormfn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setgetupdatenormfn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *))(farg2);
+  if (arg1) (arg1)->setgetupdatenormfn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setgetupdatenormfn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__setgetupdatenormfn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setgetupdatenormfn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setgetupdatenormfn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setgetupdatenormfn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *)) ((arg1)->setgetupdatenormfn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setgetconvratefn_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *) = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setgetconvratefn", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *))(farg2);
+  if (arg1) (arg1)->setgetconvratefn = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setgetconvratefn_get_swigrtype)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *);
+SWIGEXPORT SUNNonlinearSolver_Ops__setgetconvratefn_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setgetconvratefn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setgetconvratefn_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setgetconvratefn", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *)) ((arg1)->setgetconvratefn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setoptions_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,char const *,char const *,int,char *[])) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,char const *,char const *,int,char *[]) = (SUNErrCode (*)(SUNNonlinearSolver,char const *,char const *,int,char *[])) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setoptions", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,char const *,char const *,int,char *[]))(farg2);
+  if (arg1) (arg1)->setoptions = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setoptions_get_swigrtype)(SUNNonlinearSolver,char const *,char const *,int,char *[]);
+SWIGEXPORT SUNNonlinearSolver_Ops__setoptions_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setoptions_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setoptions_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,char const *,char const *,int,char *[]) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setoptions", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,char const *,char const *,int,char *[])) ((arg1)->setoptions);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__setmaxiters_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,int)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,int) = (SUNErrCode (*)(SUNNonlinearSolver,int)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setmaxiters", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,int))(farg2);
+  if (arg1) (arg1)->setmaxiters = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__setmaxiters_get_swigrtype)(SUNNonlinearSolver,int);
+SWIGEXPORT SUNNonlinearSolver_Ops__setmaxiters_get_swigrtype _wrap_SUNNonlinearSolver_Ops__setmaxiters_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__setmaxiters_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,int) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::setmaxiters", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,int)) ((arg1)->setmaxiters);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__getnumiters_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,long *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,long *) = (SUNErrCode (*)(SUNNonlinearSolver,long *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getnumiters", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,long *))(farg2);
+  if (arg1) (arg1)->getnumiters = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__getnumiters_get_swigrtype)(SUNNonlinearSolver,long *);
+SWIGEXPORT SUNNonlinearSolver_Ops__getnumiters_get_swigrtype _wrap_SUNNonlinearSolver_Ops__getnumiters_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__getnumiters_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,long *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getnumiters", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,long *)) ((arg1)->getnumiters);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__getcuriter_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,int *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,int *) = (SUNErrCode (*)(SUNNonlinearSolver,int *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getcuriter", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,int *))(farg2);
+  if (arg1) (arg1)->getcuriter = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__getcuriter_get_swigrtype)(SUNNonlinearSolver,int *);
+SWIGEXPORT SUNNonlinearSolver_Ops__getcuriter_get_swigrtype _wrap_SUNNonlinearSolver_Ops__getcuriter_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__getcuriter_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,int *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getcuriter", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,int *)) ((arg1)->getcuriter);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__getnumconvfails_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNNonlinearSolver,long *)) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNNonlinearSolver,long *) = (SUNErrCode (*)(SUNNonlinearSolver,long *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getnumconvfails", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNNonlinearSolver,long *))(farg2);
+  if (arg1) (arg1)->getnumconvfails = arg2;
+}
+
+
+typedef SUNErrCode (*SUNNonlinearSolver_Ops__getnumconvfails_get_swigrtype)(SUNNonlinearSolver,long *);
+SWIGEXPORT SUNNonlinearSolver_Ops__getnumconvfails_get_swigrtype _wrap_SUNNonlinearSolver_Ops__getnumconvfails_get(SwigClassWrapper const *farg1) {
+  SUNNonlinearSolver_Ops__getnumconvfails_get_swigrtype fresult ;
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNNonlinearSolver,long *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::getnumconvfails", return 0);
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNNonlinearSolver,long *)) ((arg1)->getnumconvfails);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNNonlinearSolver_Ops_() {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolver_Ops_ *result = 0 ;
+  
+  result = (struct SUNNonlinearSolver_Ops_ *)calloc(1, sizeof(struct SUNNonlinearSolver_Ops_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNNonlinearSolver_Ops_(SwigClassWrapper *farg1) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNNonlinearSolver_Ops_ *", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_Ops_::~SUNNonlinearSolver_Ops_()", return );
+  arg1 = (struct SUNNonlinearSolver_Ops_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver_Ops__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolver_Ops_ *arg1 = (struct SUNNonlinearSolver_Ops_ *) 0 ;
+  struct SUNNonlinearSolver_Ops_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver__content_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::content", return );
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->content = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolver__content_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::content", return 0);
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  result = (void *) ((arg1)->content);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver__python_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::python", return );
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->python = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolver__python_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::python", return 0);
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  result = (void *) ((arg1)->python);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver__ops_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  SUNNonlinearSolver_Ops arg2 = (SUNNonlinearSolver_Ops) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::ops", return );
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNNonlinearSolver_Ops", "SUNNonlinearSolver_Ops_", "SUNNonlinearSolver_::ops", return );
+  arg2 = (SUNNonlinearSolver_Ops)(farg2->cptr);
+  if (arg1) (arg1)->ops = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolver__ops_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  SUNNonlinearSolver_Ops result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::ops", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  result = (SUNNonlinearSolver_Ops) ((arg1)->ops);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver__sunctx_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::sunctx", return );
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  if (arg1) (arg1)->sunctx = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolver__sunctx_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  SUNContext result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::sunctx", return 0);
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  result = (SUNContext) ((arg1)->sunctx);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNNonlinearSolver_() {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolver_ *result = 0 ;
+  
+  result = (struct SUNNonlinearSolver_ *)calloc(1, sizeof(struct SUNNonlinearSolver_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNNonlinearSolver_(SwigClassWrapper *farg1) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNNonlinearSolver_ *", "SUNNonlinearSolver_", "SUNNonlinearSolver_::~SUNNonlinearSolver_()", return );
+  arg1 = (struct SUNNonlinearSolver_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolver__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolver_ *arg1 = (struct SUNNonlinearSolver_ *) 0 ;
+  struct SUNNonlinearSolver_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNNonlinSolNewEmpty(void *farg1) {
+  SwigClassWrapper fresult ;
+  SUNContext arg1 = (SUNContext) 0 ;
+  SUNNonlinearSolver result;
+  
+  arg1 = (SUNContext)(farg1);
+  result = (SUNNonlinearSolver)SUNNonlinSolNewEmpty(arg1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FSUNNonlinSolFreeEmpty(SwigClassWrapper const *farg1) {
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolFreeEmpty(SUNNonlinearSolver)", return );
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   SUNNonlinSolFreeEmpty(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetType(SUNNonlinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetType(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinearSolver_Type result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetType(SUNNonlinearSolver)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   result = (SUNNonlinearSolver_Type)SUNNonlinSolGetType(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolInitialize(SUNNonlinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNNonlinSolInitialize(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolInitialize(SUNNonlinearSolver)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   result = (SUNErrCode)SUNNonlinSolInitialize(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetup(SUNNonlinearSolver farg1, N_Vector farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetup(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   void *arg3 = (void *) 0 ;
   int result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetup(SUNNonlinearSolver,N_Vector,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinSolSetup(SUNNonlinearSolver,N_Vector,void *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (void *)(farg3);
   result = (int)SUNNonlinSolSetup(arg1,arg2,arg3);
   fresult = (int)(result);
@@ -2486,7 +5770,7 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetup(SUNNonlinearSolver farg1, N_Vector farg2
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSolve(SUNNonlinearSolver farg1, N_Vector farg2, N_Vector farg3, N_Vector farg4, double const *farg5, int const *farg6, void *farg7) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSolve(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4, double const *farg5, int const *farg6, void *farg7) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -2497,10 +5781,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSolve(SUNNonlinearSolver farg1, N_Vector farg2
   void *arg7 = (void *) 0 ;
   int result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSolve(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinSolSolve(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNNonlinSolSolve(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "SUNNonlinSolSolve(SUNNonlinearSolver,N_Vector,N_Vector,N_Vector,sunrealtype,int,void *)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (sunrealtype)(*farg5);
   arg6 = (int)(*farg6);
   arg7 = (void *)(farg7);
@@ -2510,25 +5798,27 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSolve(SUNNonlinearSolver farg1, N_Vector farg2
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolFree(SUNNonlinearSolver farg1) {
+SWIGEXPORT int _wrap_FSUNNonlinSolFree(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolFree(SUNNonlinearSolver)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   result = (SUNErrCode)SUNNonlinSolFree(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SwigClassWrapper const *farg1, SUNNonlinSolSysFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetSysFn(SUNNonlinearSolver,SUNNonlinSolSysFn)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolSysFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetSysFn(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2536,14 +5826,15 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn(SUNNonlinearSolver farg1, SUNNonlinSo
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2, SUNNonlinSolSysFn farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SwigClassWrapper const *farg1, SUNNonlinSolSysFn farg2, SUNNonlinSolSysFn farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   SUNNonlinSolSysFn arg3 = (SUNNonlinSolSysFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetSysFns(SUNNonlinearSolver,SUNNonlinSolSysFn,SUNNonlinSolSysFn)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolSysFn)(farg2);
   arg3 = (SUNNonlinSolSysFn)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetSysFns(arg1,arg2,arg3);
@@ -2552,13 +5843,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFns(SUNNonlinearSolver farg1, SUNNonlinS
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SUNNonlinearSolver farg1, SUNNonlinSolLSetupFn farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SwigClassWrapper const *farg1, SUNNonlinSolLSetupFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolLSetupFn arg2 = (SUNNonlinSolLSetupFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetLSetupFn(SUNNonlinearSolver,SUNNonlinSolLSetupFn)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolLSetupFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetLSetupFn(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2566,13 +5858,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetLSetupFn(SUNNonlinearSolver farg1, SUNNonli
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetLSolveFn(SUNNonlinearSolver farg1, SUNNonlinSolLSolveFn farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetLSolveFn(SwigClassWrapper const *farg1, SUNNonlinSolLSolveFn farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolLSolveFn arg2 = (SUNNonlinSolLSolveFn) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetLSolveFn(SUNNonlinearSolver,SUNNonlinSolLSolveFn)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolLSolveFn)(farg2);
   result = (SUNErrCode)SUNNonlinSolSetLSolveFn(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2580,14 +5873,15 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetLSolveFn(SUNNonlinearSolver farg1, SUNNonli
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNonlinSolConvTestFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SwigClassWrapper const *farg1, SUNNonlinSolConvTestFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetConvTestFn(SUNNonlinearSolver,SUNNonlinSolConvTestFn,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolConvTestFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetConvTestFn(arg1,arg2,arg3);
@@ -2596,14 +5890,15 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn(SUNNonlinearSolver farg1, SUNNon
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SwigClassWrapper const *farg1, SUNNonlinSolNormFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetNormFn(SUNNonlinearSolver,SUNNonlinSolNormFn,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolNormFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetNormFn(arg1,arg2,arg3);
@@ -2612,14 +5907,15 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn(SUNNonlinearSolver farg1, SUNNonlinS
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SwigClassWrapper const *farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver,SUNNonlinSolGetUpdateNormFn,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn(arg1,arg2,arg3);
@@ -2628,14 +5924,15 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn(SUNNonlinearSolver farg1, S
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver farg1, SUNNonlinSolGetConvRateFn farg2, void *farg3) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SwigClassWrapper const *farg1, SUNNonlinSolGetConvRateFn farg2, void *farg3) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolGetConvRateFn arg2 = (SUNNonlinSolGetConvRateFn) 0 ;
   void *arg3 = (void *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver,SUNNonlinSolGetConvRateFn,void *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolGetConvRateFn)(farg2);
   arg3 = (void *)(farg3);
   result = (SUNErrCode)SUNNonlinSolSetGetConvRateFn(arg1,arg2,arg3);
@@ -2644,13 +5941,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetGetConvRateFn(SUNNonlinearSolver farg1, SUN
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters(SUNNonlinearSolver farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetMaxIters(SUNNonlinearSolver,int)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)SUNNonlinSolSetMaxIters(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2658,13 +5956,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters(SUNNonlinearSolver farg1, int cons
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters(SUNNonlinearSolver farg1, long *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters(SwigClassWrapper const *farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetNumIters(SUNNonlinearSolver,long *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetNumIters(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2672,13 +5971,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters(SUNNonlinearSolver farg1, long *fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter(SUNNonlinearSolver farg1, int *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter(SwigClassWrapper const *farg1, int *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   int *arg2 = (int *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetCurIter(SUNNonlinearSolver,int *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (int *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetCurIter(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2686,13 +5986,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter(SUNNonlinearSolver farg1, int *farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SUNNonlinearSolver farg1, long *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SwigClassWrapper const *farg1, long *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   long *arg2 = (long *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetNumConvFails(SUNNonlinearSolver,long *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (long *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetNumConvFails(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2700,51 +6001,466 @@ SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails(SUNNonlinearSolver farg1, long
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_NewEmpty(void *farg1) {
-  SUNAdaptController fresult ;
-  SUNContext arg1 = (SUNContext) 0 ;
-  SUNAdaptController result;
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__gettype_set(SwigClassWrapper const *farg1, SUNAdaptController_Type (*farg2)(SUNAdaptController)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNAdaptController_Type (*arg2)(SUNAdaptController) = (SUNAdaptController_Type (*)(SUNAdaptController)) 0 ;
   
-  arg1 = (SUNContext)(farg1);
-  result = (SUNAdaptController)SUNAdaptController_NewEmpty(arg1);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::gettype", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNAdaptController_Type (*)(SUNAdaptController))(farg2);
+  if (arg1) (arg1)->gettype = arg2;
+}
+
+
+typedef SUNAdaptController_Type (*SUNAdaptController_Ops__gettype_get_swigrtype)(SUNAdaptController);
+SWIGEXPORT SUNAdaptController_Ops__gettype_get_swigrtype _wrap_SUNAdaptController_Ops__gettype_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__gettype_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNAdaptController_Type (*result)(SUNAdaptController) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::gettype", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNAdaptController_Type (*)(SUNAdaptController)) ((arg1)->gettype);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_FSUNAdaptController_DestroyEmpty(SUNAdaptController farg1) {
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__estimatestep_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *) = (SUNErrCode (*)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::estimatestep", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *))(farg2);
+  if (arg1) (arg1)->estimatestep = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__estimatestep_get_swigrtype)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *);
+SWIGEXPORT SUNAdaptController_Ops__estimatestep_get_swigrtype _wrap_SUNAdaptController_Ops__estimatestep_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__estimatestep_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::estimatestep", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *)) ((arg1)->estimatestep);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__estimatesteptol_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *) = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::estimatesteptol", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *))(farg2);
+  if (arg1) (arg1)->estimatesteptol = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__estimatesteptol_get_swigrtype)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *);
+SWIGEXPORT SUNAdaptController_Ops__estimatesteptol_get_swigrtype _wrap_SUNAdaptController_Ops__estimatesteptol_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__estimatesteptol_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::estimatesteptol", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *)) ((arg1)->estimatesteptol);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__destroy_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController) = (SUNErrCode (*)(SUNAdaptController)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::destroy", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController))(farg2);
+  if (arg1) (arg1)->destroy = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__destroy_get_swigrtype)(SUNAdaptController);
+SWIGEXPORT SUNAdaptController_Ops__destroy_get_swigrtype _wrap_SUNAdaptController_Ops__destroy_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__destroy_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::destroy", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController)) ((arg1)->destroy);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__reset_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController) = (SUNErrCode (*)(SUNAdaptController)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::reset", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController))(farg2);
+  if (arg1) (arg1)->reset = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__reset_get_swigrtype)(SUNAdaptController);
+SWIGEXPORT SUNAdaptController_Ops__reset_get_swigrtype _wrap_SUNAdaptController_Ops__reset_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__reset_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::reset", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController)) ((arg1)->reset);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__setoptions_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,char const *,char const *,int,char *[])) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,char const *,char const *,int,char *[]) = (SUNErrCode (*)(SUNAdaptController,char const *,char const *,int,char *[])) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::setoptions", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,char const *,char const *,int,char *[]))(farg2);
+  if (arg1) (arg1)->setoptions = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__setoptions_get_swigrtype)(SUNAdaptController,char const *,char const *,int,char *[]);
+SWIGEXPORT SUNAdaptController_Ops__setoptions_get_swigrtype _wrap_SUNAdaptController_Ops__setoptions_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__setoptions_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,char const *,char const *,int,char *[]) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::setoptions", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,char const *,char const *,int,char *[])) ((arg1)->setoptions);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__setdefaults_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController) = (SUNErrCode (*)(SUNAdaptController)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::setdefaults", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController))(farg2);
+  if (arg1) (arg1)->setdefaults = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__setdefaults_get_swigrtype)(SUNAdaptController);
+SWIGEXPORT SUNAdaptController_Ops__setdefaults_get_swigrtype _wrap_SUNAdaptController_Ops__setdefaults_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__setdefaults_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::setdefaults", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController)) ((arg1)->setdefaults);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__write_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,FILE *)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,FILE *) = (SUNErrCode (*)(SUNAdaptController,FILE *)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::write", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,FILE *))(farg2);
+  if (arg1) (arg1)->write = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__write_get_swigrtype)(SUNAdaptController,FILE *);
+SWIGEXPORT SUNAdaptController_Ops__write_get_swigrtype _wrap_SUNAdaptController_Ops__write_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__write_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,FILE *) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::write", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,FILE *)) ((arg1)->write);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__seterrorbias_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,sunrealtype)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,sunrealtype) = (SUNErrCode (*)(SUNAdaptController,sunrealtype)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::seterrorbias", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,sunrealtype))(farg2);
+  if (arg1) (arg1)->seterrorbias = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__seterrorbias_get_swigrtype)(SUNAdaptController,sunrealtype);
+SWIGEXPORT SUNAdaptController_Ops__seterrorbias_get_swigrtype _wrap_SUNAdaptController_Ops__seterrorbias_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__seterrorbias_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,sunrealtype) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::seterrorbias", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,sunrealtype)) ((arg1)->seterrorbias);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__updateh_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,sunrealtype,sunrealtype)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,sunrealtype,sunrealtype) = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::updateh", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype))(farg2);
+  if (arg1) (arg1)->updateh = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__updateh_get_swigrtype)(SUNAdaptController,sunrealtype,sunrealtype);
+SWIGEXPORT SUNAdaptController_Ops__updateh_get_swigrtype _wrap_SUNAdaptController_Ops__updateh_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__updateh_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,sunrealtype,sunrealtype) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::updateh", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype)) ((arg1)->updateh);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__updatemrihtol_set(SwigClassWrapper const *farg1, SUNErrCode (*farg2)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype)) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*arg2)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype) = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype)) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::updatemrihtol", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  arg2 = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype))(farg2);
+  if (arg1) (arg1)->updatemrihtol = arg2;
+}
+
+
+typedef SUNErrCode (*SUNAdaptController_Ops__updatemrihtol_get_swigrtype)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype);
+SWIGEXPORT SUNAdaptController_Ops__updatemrihtol_get_swigrtype _wrap_SUNAdaptController_Ops__updatemrihtol_get(SwigClassWrapper const *farg1) {
+  SUNAdaptController_Ops__updatemrihtol_get_swigrtype fresult ;
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  SUNErrCode (*result)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype) = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::updatemrihtol", return 0);
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  result = (SUNErrCode (*)(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype)) ((arg1)->updatemrihtol);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNAdaptController_Ops_() {
+  SwigClassWrapper fresult ;
+  struct SUNAdaptController_Ops_ *result = 0 ;
+  
+  result = (struct SUNAdaptController_Ops_ *)calloc(1, sizeof(struct SUNAdaptController_Ops_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNAdaptController_Ops_(SwigClassWrapper *farg1) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNAdaptController_Ops_ *", "SUNAdaptController_Ops_", "SUNAdaptController_Ops_::~SUNAdaptController_Ops_()", return );
+  arg1 = (struct SUNAdaptController_Ops_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController_Ops__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNAdaptController_Ops_ *arg1 = (struct SUNAdaptController_Ops_ *) 0 ;
+  struct SUNAdaptController_Ops_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController__content_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::content", return );
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->content = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNAdaptController__content_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::content", return 0);
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  result = (void *) ((arg1)->content);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController__ops_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  SUNAdaptController_Ops arg2 = (SUNAdaptController_Ops) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::ops", return );
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "SUNAdaptController_Ops", "SUNAdaptController_Ops_", "SUNAdaptController_::ops", return );
+  arg2 = (SUNAdaptController_Ops)(farg2->cptr);
+  if (arg1) (arg1)->ops = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNAdaptController__ops_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  SUNAdaptController_Ops result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::ops", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  result = (SUNAdaptController_Ops) ((arg1)->ops);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController__sunctx_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  SUNContext arg2 = (SUNContext) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::sunctx", return );
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  arg2 = (SUNContext)(farg2);
+  if (arg1) (arg1)->sunctx = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNAdaptController__sunctx_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  SUNContext result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::sunctx", return 0);
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  result = (SUNContext) ((arg1)->sunctx);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNAdaptController_() {
+  SwigClassWrapper fresult ;
+  struct SUNAdaptController_ *result = 0 ;
+  
+  result = (struct SUNAdaptController_ *)calloc(1, sizeof(struct SUNAdaptController_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNAdaptController_(SwigClassWrapper *farg1) {
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNAdaptController_ *", "SUNAdaptController_", "SUNAdaptController_::~SUNAdaptController_()", return );
+  arg1 = (struct SUNAdaptController_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptController__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNAdaptController_ *arg1 = (struct SUNAdaptController_ *) 0 ;
+  struct SUNAdaptController_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_NewEmpty(void *farg1) {
+  SwigClassWrapper fresult ;
+  SUNContext arg1 = (SUNContext) 0 ;
+  SUNAdaptController result;
+  
+  arg1 = (SUNContext)(farg1);
+  result = (SUNAdaptController)SUNAdaptController_NewEmpty(arg1);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FSUNAdaptController_DestroyEmpty(SwigClassWrapper const *farg1) {
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_DestroyEmpty(SUNAdaptController)", return );
+  arg1 = (SUNAdaptController)(farg1->cptr);
   SUNAdaptController_DestroyEmpty(arg1);
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_GetType(SUNAdaptController farg1) {
+SWIGEXPORT int _wrap_FSUNAdaptController_GetType(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNAdaptController_Type result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_GetType(SUNAdaptController)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   result = (SUNAdaptController_Type)SUNAdaptController_GetType(arg1);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Destroy(SUNAdaptController farg1) {
+SWIGEXPORT int _wrap_FSUNAdaptController_Destroy(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_Destroy(SUNAdaptController)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   result = (SUNErrCode)SUNAdaptController_Destroy(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep(SUNAdaptController farg1, double const *farg2, int const *farg3, double const *farg4, double *farg5) {
+SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep(SwigClassWrapper const *farg1, double const *farg2, int const *farg3, double const *farg4, double *farg5) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -2753,7 +6469,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep(SUNAdaptController farg1, 
   sunrealtype *arg5 = (sunrealtype *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_EstimateStep(SUNAdaptController,sunrealtype,int,sunrealtype,sunrealtype *)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
   arg4 = (sunrealtype)(*farg4);
@@ -2764,7 +6481,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep(SUNAdaptController farg1, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStepTol(SUNAdaptController farg1, double const *farg2, double const *farg3, int const *farg4, double const *farg5, double const *farg6, double *farg7, double *farg8) {
+SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStepTol(SwigClassWrapper const *farg1, double const *farg2, double const *farg3, int const *farg4, double const *farg5, double const *farg6, double *farg7, double *farg8) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -2776,7 +6493,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStepTol(SUNAdaptController farg
   sunrealtype *arg8 = (sunrealtype *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_EstimateStepTol(SUNAdaptController,sunrealtype,sunrealtype,int,sunrealtype,sunrealtype,sunrealtype *,sunrealtype *)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (int)(*farg4);
@@ -2790,37 +6508,40 @@ SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStepTol(SUNAdaptController farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Reset(SUNAdaptController farg1) {
+SWIGEXPORT int _wrap_FSUNAdaptController_Reset(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_Reset(SUNAdaptController)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   result = (SUNErrCode)SUNAdaptController_Reset(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetDefaults(SUNAdaptController farg1) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetDefaults(SwigClassWrapper const *farg1) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetDefaults(SUNAdaptController)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   result = (SUNErrCode)SUNAdaptController_SetDefaults(arg1);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Write(SUNAdaptController farg1, void *farg2) {
+SWIGEXPORT int _wrap_FSUNAdaptController_Write(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   FILE *arg2 = (FILE *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_Write(SUNAdaptController,FILE *)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (FILE *)(farg2);
   result = (SUNErrCode)SUNAdaptController_Write(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2828,13 +6549,14 @@ SWIGEXPORT int _wrap_FSUNAdaptController_Write(SUNAdaptController farg1, void *f
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetErrorBias(SUNAdaptController farg1, double const *farg2) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetErrorBias(SwigClassWrapper const *farg1, double const *farg2) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetErrorBias(SUNAdaptController,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNAdaptController_SetErrorBias(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -2842,14 +6564,15 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetErrorBias(SUNAdaptController farg1, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH(SUNAdaptController farg1, double const *farg2, double const *farg3) {
+SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH(SwigClassWrapper const *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   sunrealtype arg3 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_UpdateH(SUNAdaptController,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   result = (SUNErrCode)SUNAdaptController_UpdateH(arg1,arg2,arg3);
@@ -2858,7 +6581,7 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH(SUNAdaptController farg1, doubl
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol(SUNAdaptController farg1, double const *farg2, double const *farg3, double const *farg4, double const *farg5) {
+SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol(SwigClassWrapper const *farg1, double const *farg2, double const *farg3, double const *farg4, double const *farg5) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -2867,7 +6590,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol(SUNAdaptController farg1,
   sunrealtype arg5 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_UpdateMRIHTol(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
@@ -2904,7 +6628,7 @@ SWIGEXPORT int _wrap_FSUNStepper_Destroy(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FSUNStepper_Evolve(void *farg1, double const *farg2, N_Vector farg3, double *farg4) {
+SWIGEXPORT int _wrap_FSUNStepper_Evolve(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double *farg4) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
@@ -2914,7 +6638,8 @@ SWIGEXPORT int _wrap_FSUNStepper_Evolve(void *farg1, double const *farg2, N_Vect
   
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNStepper_Evolve(SUNStepper,sunrealtype,N_Vector,sunrealtype *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)SUNStepper_Evolve(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
@@ -2922,7 +6647,7 @@ SWIGEXPORT int _wrap_FSUNStepper_Evolve(void *farg1, double const *farg2, N_Vect
 }
 
 
-SWIGEXPORT int _wrap_FSUNStepper_OneStep(void *farg1, double const *farg2, N_Vector farg3, double *farg4) {
+SWIGEXPORT int _wrap_FSUNStepper_OneStep(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double *farg4) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
@@ -2932,7 +6657,8 @@ SWIGEXPORT int _wrap_FSUNStepper_OneStep(void *farg1, double const *farg2, N_Vec
   
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNStepper_OneStep(SUNStepper,sunrealtype,N_Vector,sunrealtype *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)SUNStepper_OneStep(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
@@ -2940,7 +6666,7 @@ SWIGEXPORT int _wrap_FSUNStepper_OneStep(void *farg1, double const *farg2, N_Vec
 }
 
 
-SWIGEXPORT int _wrap_FSUNStepper_FullRhs(void *farg1, double const *farg2, N_Vector farg3, N_Vector farg4, int const *farg5) {
+SWIGEXPORT int _wrap_FSUNStepper_FullRhs(void *farg1, double const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4, int const *farg5) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
@@ -2951,8 +6677,10 @@ SWIGEXPORT int _wrap_FSUNStepper_FullRhs(void *farg1, double const *farg2, N_Vec
   
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNStepper_FullRhs(SUNStepper,sunrealtype,N_Vector,N_Vector,SUNFullRhsMode)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "SUNStepper_FullRhs(SUNStepper,sunrealtype,N_Vector,N_Vector,SUNFullRhsMode)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (SUNFullRhsMode)(*farg5);
   result = (SUNErrCode)SUNStepper_FullRhs(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
@@ -2960,7 +6688,7 @@ SWIGEXPORT int _wrap_FSUNStepper_FullRhs(void *farg1, double const *farg2, N_Vec
 }
 
 
-SWIGEXPORT int _wrap_FSUNStepper_ReInit(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNStepper_ReInit(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
@@ -2969,14 +6697,15 @@ SWIGEXPORT int _wrap_FSUNStepper_ReInit(void *farg1, double const *farg2, N_Vect
   
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNStepper_ReInit(SUNStepper,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNStepper_ReInit(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNStepper_Reset(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNStepper_Reset(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   sunrealtype arg2 ;
@@ -2985,7 +6714,8 @@ SWIGEXPORT int _wrap_FSUNStepper_Reset(void *farg1, double const *farg2, N_Vecto
   
   arg1 = (SUNStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNStepper_Reset(SUNStepper,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNStepper_Reset(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
@@ -3648,7 +7378,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_NeedsSaving(void *farg1, long c
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector(void *farg1, long const *farg2, long const *farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector(void *farg1, long const *farg2, long const *farg3, double const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   suncountertype arg2 ;
@@ -3661,7 +7391,8 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector(void *farg1, long 
   arg2 = (suncountertype)(*farg2);
   arg3 = (suncountertype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "SUNAdjointCheckpointScheme_InsertVector(SUNAdjointCheckpointScheme,suncountertype,suncountertype,sunrealtype,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_InsertVector(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
   return fresult;
@@ -3716,7 +7447,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_EnableDense(void *farg1, int co
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, void *farg3, int const *farg4, long const *farg5, double const *farg6, N_Vector farg7, void *farg8, void *farg9, void *farg10) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, void *farg3, int const *farg4, long const *farg5, double const *farg6, SwigClassWrapper const *farg7, void *farg8, void *farg9, void *farg10) {
   int fresult ;
   SUNStepper arg1 = (SUNStepper) 0 ;
   int arg2 ;
@@ -3736,7 +7467,8 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, vo
   arg4 = (int)(*farg4);
   arg5 = (suncountertype)(*farg5);
   arg6 = (sunrealtype)(*farg6);
-  arg7 = (N_Vector)(farg7);
+  SWIG_check_mutable(*farg7, "N_Vector", "N_Vector_", "SUNAdjointStepper_Create(SUNStepper,int,SUNStepper,int,suncountertype,sunrealtype,N_Vector,SUNAdjointCheckpointScheme,SUNContext,SUNAdjointStepper *)", return 0);
+  arg7 = (N_Vector)(farg7->cptr);
   arg8 = (SUNAdjointCheckpointScheme)(farg8);
   arg9 = (SUNContext)(farg9);
   arg10 = (SUNAdjointStepper *)(farg10);
@@ -3746,7 +7478,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Create(void *farg1, int const *farg2, vo
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2, N_Vector farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   sunrealtype arg2 ;
@@ -3757,16 +7489,18 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_ReInit(void *farg1, double const *farg2,
   
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNAdjointStepper_ReInit(SUNAdjointStepper,sunrealtype,N_Vector,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "SUNAdjointStepper_ReInit(SUNAdjointStepper,sunrealtype,N_Vector,sunrealtype,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (SUNErrCode)SUNAdjointStepper_ReInit(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_Evolve(void *farg1, double const *farg2, N_Vector farg3, double *farg4) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_Evolve(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double *farg4) {
   int fresult ;
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   sunrealtype arg2 ;
@@ -3776,7 +7510,8 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Evolve(void *farg1, double const *farg2,
   
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNAdjointStepper_Evolve(SUNAdjointStepper,sunrealtype,N_Vector,sunrealtype *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)SUNAdjointStepper_Evolve(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
@@ -3784,7 +7519,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_Evolve(void *farg1, double const *farg2,
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_OneStep(void *farg1, double const *farg2, N_Vector farg3, double *farg4) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_OneStep(void *farg1, double const *farg2, SwigClassWrapper const *farg3, double *farg4) {
   int fresult ;
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   sunrealtype arg2 ;
@@ -3794,7 +7529,8 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_OneStep(void *farg1, double const *farg2
   
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNAdjointStepper_OneStep(SUNAdjointStepper,sunrealtype,N_Vector,sunrealtype *)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (sunrealtype *)(farg4);
   result = (SUNErrCode)SUNAdjointStepper_OneStep(arg1,arg2,arg3,arg4);
   fresult = (SUNErrCode)(result);
@@ -3802,7 +7538,7 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_OneStep(void *farg1, double const *farg2
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointStepper_RecomputeFwd(void *farg1, long const *farg2, double const *farg3, N_Vector farg4, double const *farg5) {
+SWIGEXPORT int _wrap_FSUNAdjointStepper_RecomputeFwd(void *farg1, long const *farg2, double const *farg3, SwigClassWrapper const *farg4, double const *farg5) {
   int fresult ;
   SUNAdjointStepper arg1 = (SUNAdjointStepper) 0 ;
   suncountertype arg2 ;
@@ -3814,7 +7550,8 @@ SWIGEXPORT int _wrap_FSUNAdjointStepper_RecomputeFwd(void *farg1, long const *fa
   arg1 = (SUNAdjointStepper)(farg1);
   arg2 = (suncountertype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "SUNAdjointStepper_RecomputeFwd(SUNAdjointStepper,suncountertype,sunrealtype,N_Vector,sunrealtype)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (sunrealtype)(*farg5);
   result = (SUNErrCode)SUNAdjointStepper_RecomputeFwd(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
@@ -3944,7 +7681,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs(SUNDomEigEstimator farg1, void *
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   sunrealtype arg2 ;
@@ -3953,7 +7690,8 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstim
   
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNDomEigEstimator_SetRhsLinearizationPoint(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
@@ -4002,14 +7740,15 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRelTol(SUNDomEigEstimator farg1, dou
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNDomEigEstimator)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNDomEigEstimator_SetInitialGuess(SUNDomEigEstimator,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (SUNErrCode)SUNDomEigEstimator_SetInitialGuess(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;

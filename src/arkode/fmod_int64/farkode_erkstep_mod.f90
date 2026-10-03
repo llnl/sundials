@@ -38,6 +38,14 @@ module farkode_erkstep_mod
  integer(C_INT), parameter, public :: ERKSTEP_DEFAULT_7 = ARKODE_VERNER_10_6_7
  integer(C_INT), parameter, public :: ERKSTEP_DEFAULT_8 = ARKODE_VERNER_13_7_8
  integer(C_INT), parameter, public :: ERKSTEP_DEFAULT_9 = ARKODE_VERNER_16_8_9
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FERKStepCreate
  public :: FERKStepReInit
  public :: FERKStepSetTable
@@ -57,9 +65,10 @@ function swigc_FERKStepCreate(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FERKStepCreate") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_FUNPTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR) :: fresult
 end function
@@ -68,10 +77,11 @@ function swigc_FERKStepReInit(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FERKStepReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -129,10 +139,11 @@ function swigc_FERKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, f
 bind(C, name="_wrap_FERKStepCreateAdjointStepper") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 type(C_PTR), value :: farg5
 type(C_PTR), value :: farg6
 integer(C_INT) :: fresult
@@ -149,17 +160,17 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 type(C_FUNPTR), intent(in), value :: f
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_FUNPTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = f
 farg2 = t0
-farg3 = c_loc(y0)
+farg3 = y0%swigdata
 farg4 = sunctx
 fresult = swigc_FERKStepCreate(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -172,17 +183,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: f
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = arkode_mem
 farg2 = f
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 fresult = swigc_FERKStepReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -305,21 +316,21 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: adj_f
 real(C_DOUBLE), intent(in) :: tf
-type(N_Vector), target, intent(inout) :: sf
+class(N_Vector_), intent(in) :: sf
 type(C_PTR) :: sunctx
 type(C_PTR), target, intent(inout) :: adj_stepper_ptr
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 type(C_PTR) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = arkode_mem
 farg2 = adj_f
 farg3 = tf
-farg4 = c_loc(sf)
+farg4 = sf%swigdata
 farg5 = sunctx
 farg6 = c_loc(adj_stepper_ptr)
 fresult = swigc_FERKStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6)

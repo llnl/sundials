@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_lapackdense.h>
+#include <sunlinsol/sunlinsol_lapackdense_deprecated.h>
 
 #include "sundials_lapack_defs.h"
 #include "sundials_macros.h"
@@ -51,6 +51,27 @@
   ((SUNLinearSolverContent_LapackDense)(S->content))
 #define PIVOTS(S)   (LAPACKDENSE_CONTENT(S)->pivots)
 #define LASTFLAG(S) (LAPACKDENSE_CONTENT(S)->last_flag)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_LapackDense(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_LapackDense(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_LapackDense(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_LapackDense(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_LapackDense(SUNLinearSolver S);
+
+static int sunLinSolSetup_LapackDense(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A,
+                                      N_Vector x, N_Vector b, sunrealtype tol);
 
 /*
  * -----------------------------------------------------------------
@@ -89,13 +110,13 @@ SUNLinearSolver SUNLinSol_LapackDense(N_Vector y, SUNMatrix A, SUNContext sunctx
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_LapackDense;
-  S->ops->getid      = SUNLinSolGetID_LapackDense;
-  S->ops->initialize = SUNLinSolInitialize_LapackDense;
-  S->ops->setup      = SUNLinSolSetup_LapackDense;
-  S->ops->solve      = SUNLinSolSolve_LapackDense;
-  S->ops->lastflag   = SUNLinSolLastFlag_LapackDense;
-  S->ops->free       = SUNLinSolFree_LapackDense;
+  S->ops->gettype    = sunLinSolGetType_LapackDense;
+  S->ops->getid      = sunLinSolGetID_LapackDense;
+  S->ops->initialize = sunLinSolInitialize_LapackDense;
+  S->ops->setup      = sunLinSolSetup_LapackDense;
+  S->ops->solve      = sunLinSolSolve_LapackDense;
+  S->ops->lastflag   = sunLinSolLastFlag_LapackDense;
+  S->ops->free       = sunLinSolFree_LapackDense;
 
   /* Create content */
   content = NULL;
@@ -131,25 +152,25 @@ SUNLinearSolver SUNLinSol_LapackDense(N_Vector y, SUNMatrix A, SUNContext sunctx
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_LapackDense(
+SUNLinearSolver_Type sunLinSolGetType_LapackDense(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_LapackDense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_LapackDense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_LAPACKDENSE);
 }
 
-SUNErrCode SUNLinSolInitialize_LapackDense(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_LapackDense(SUNLinearSolver S)
 {
   /* all solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_LapackDense(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_LapackDense(SUNLinearSolver S, SUNMatrix A)
 {
   sunindextype n, ier;
 
@@ -173,7 +194,7 @@ int SUNLinSolSetup_LapackDense(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                                N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   sunindextype n, one, ier;
@@ -208,12 +229,12 @@ int SUNLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return SUN_SUCCESS;
 }
 
-sunindextype SUNLinSolLastFlag_LapackDense(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_LapackDense(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_LapackDense(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_LapackDense(SUNLinearSolver S)
 {
   /* return if S is already free */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -237,4 +258,42 @@ SUNErrCode SUNLinSolFree_LapackDense(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_LapackDense(SUNLinearSolver S)
+{
+  return sunLinSolFree_LapackDense(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_LapackDense(SUNLinearSolver S)
+{
+  return sunLinSolGetID_LapackDense(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_LapackDense(SUNLinearSolver S)
+{
+  return sunLinSolGetType_LapackDense(S);
+}
+
+SUNErrCode SUNLinSolInitialize_LapackDense(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_LapackDense(S);
+}
+
+sunindextype SUNLinSolLastFlag_LapackDense(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_LapackDense(S);
+}
+
+int SUNLinSolSetup_LapackDense(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_LapackDense(S, A);
+}
+
+int SUNLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                               N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_LapackDense(S, A, x, b, tol);
 }

@@ -66,6 +66,14 @@ module fida_mod
  integer(C_INT), parameter, public :: IDA_TOO_CLOSE = -60_C_INT
  integer(C_INT), parameter, public :: IDA_UNRECOGNIZED_ERROR = -99_C_INT
  public :: FIDACreate
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FIDAInit
  public :: FIDAReInit
  public :: FIDASStolerances
@@ -198,11 +206,12 @@ function swigc_FIDAInit(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FIDAInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg4
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -210,10 +219,11 @@ function swigc_FIDAReInit(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FIDAReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg3
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -231,9 +241,10 @@ function swigc_FIDASVtolerances(farg1, farg2, farg3) &
 bind(C, name="_wrap_FIDASVtolerances") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -421,8 +432,9 @@ function swigc_FIDASetId(farg1, farg2) &
 bind(C, name="_wrap_FIDASetId") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -430,8 +442,9 @@ function swigc_FIDASetConstraints(farg1, farg2) &
 bind(C, name="_wrap_FIDASetConstraints") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -539,8 +552,9 @@ function swigc_FIDASetNonlinearSolver(farg1, farg2) &
 bind(C, name="_wrap_FIDASetNonlinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -575,11 +589,12 @@ function swigc_FIDASolve(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FIDASolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg4
+type(SwigClassWrapper) :: farg5
 integer(C_INT), intent(in) :: farg6
 integer(C_INT) :: fresult
 end function
@@ -588,9 +603,10 @@ function swigc_FIDAComputeY(farg1, farg2, farg3) &
 bind(C, name="_wrap_FIDAComputeY") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -598,9 +614,10 @@ function swigc_FIDAComputeYp(farg1, farg2, farg3) &
 bind(C, name="_wrap_FIDAComputeYp") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -608,10 +625,11 @@ function swigc_FIDAGetDky(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FIDAGetDky") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -664,9 +682,10 @@ function swigc_FIDAGetConsistentIC(farg1, farg2, farg3) &
 bind(C, name="_wrap_FIDAGetConsistentIC") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -764,8 +783,9 @@ function swigc_FIDAGetErrWeights(farg1, farg2) &
 bind(C, name="_wrap_FIDAGetErrWeights") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -773,8 +793,9 @@ function swigc_FIDAGetEstLocalErrors(farg1, farg2) &
 bind(C, name="_wrap_FIDAGetEstLocalErrors") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -973,9 +994,10 @@ function swigc_FIDASetLinearSolver(farg1, farg2, farg3) &
 bind(C, name="_wrap_FIDASetLinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1195,20 +1217,20 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 type(C_FUNPTR), intent(in), value :: res
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: yy0
-type(N_Vector), target, intent(inout) :: yp0
+class(N_Vector_), intent(in) :: yy0
+class(N_Vector_), intent(in) :: yp0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg4 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = ida_mem
 farg2 = res
 farg3 = t0
-farg4 = c_loc(yy0)
-farg5 = c_loc(yp0)
+farg4 = yy0%swigdata
+farg5 = yp0%swigdata
 fresult = swigc_FIDAInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
@@ -1219,18 +1241,18 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: yy0
-type(N_Vector), target, intent(inout) :: yp0
+class(N_Vector_), intent(in) :: yy0
+class(N_Vector_), intent(in) :: yp0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg3 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = ida_mem
 farg2 = t0
-farg3 = c_loc(yy0)
-farg4 = c_loc(yp0)
+farg3 = yy0%swigdata
+farg4 = yp0%swigdata
 fresult = swigc_FIDAReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -1260,15 +1282,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: reltol
-type(N_Vector), target, intent(inout) :: abstol
+class(N_Vector_), intent(in) :: abstol
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = ida_mem
 farg2 = reltol
-farg3 = c_loc(abstol)
+farg3 = abstol%swigdata
 fresult = swigc_FIDASVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -1598,13 +1620,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: id
+class(N_Vector_), intent(in) :: id
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(id)
+farg2 = id%swigdata
 fresult = swigc_FIDASetId(farg1, farg2)
 swig_result = fresult
 end function
@@ -1614,13 +1636,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: constraints
+class(N_Vector_), intent(in) :: constraints
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(constraints)
+farg2 = constraints%swigdata
 fresult = swigc_FIDASetConstraints(farg1, farg2)
 swig_result = fresult
 end function
@@ -1809,13 +1831,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(nls)
+farg2 = nls%swigdata
 fresult = swigc_FIDASetNonlinearSolver(farg1, farg2)
 swig_result = fresult
 end function
@@ -1875,22 +1897,22 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: tout
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
-type(N_Vector), target, intent(inout) :: yret
-type(N_Vector), target, intent(inout) :: ypret
+class(N_Vector_), intent(in) :: yret
+class(N_Vector_), intent(in) :: ypret
 integer(C_INT), intent(in) :: itask
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
 type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg4 
+type(SwigClassWrapper) :: farg5 
 integer(C_INT) :: farg6 
 
 farg1 = ida_mem
 farg2 = tout
 farg3 = c_loc(tret(1))
-farg4 = c_loc(yret)
-farg5 = c_loc(ypret)
+farg4 = yret%swigdata
+farg5 = ypret%swigdata
 farg6 = itask
 fresult = swigc_FIDASolve(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
@@ -1901,16 +1923,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: ycor
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: ycor
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = ida_mem
-farg2 = c_loc(ycor)
-farg3 = c_loc(y)
+farg2 = ycor%swigdata
+farg3 = y%swigdata
 fresult = swigc_FIDAComputeY(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -1920,16 +1942,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: ycor
-type(N_Vector), target, intent(inout) :: yp
+class(N_Vector_), intent(in) :: ycor
+class(N_Vector_), intent(in) :: yp
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = ida_mem
-farg2 = c_loc(ycor)
-farg3 = c_loc(yp)
+farg2 = ycor%swigdata
+farg3 = yp%swigdata
 fresult = swigc_FIDAComputeYp(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -1941,17 +1963,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(N_Vector), target, intent(inout) :: dky
+class(N_Vector_), intent(in) :: dky
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
 integer(C_INT) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = ida_mem
 farg2 = t
 farg3 = k
-farg4 = c_loc(dky)
+farg4 = dky%swigdata
 fresult = swigc_FIDAGetDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -2041,16 +2063,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: yy0_mod
-type(N_Vector), target, intent(inout) :: yp0_mod
+class(N_Vector_), intent(in) :: yy0_mod
+class(N_Vector_), intent(in) :: yp0_mod
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = ida_mem
-farg2 = c_loc(yy0_mod)
-farg3 = c_loc(yp0_mod)
+farg2 = yy0_mod%swigdata
+farg3 = yp0_mod%swigdata
 fresult = swigc_FIDAGetConsistentIC(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -2220,13 +2242,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: eweight
+class(N_Vector_), intent(in) :: eweight
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(eweight)
+farg2 = eweight%swigdata
 fresult = swigc_FIDAGetErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -2236,13 +2258,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(N_Vector), target, intent(inout) :: ele
+class(N_Vector_), intent(in) :: ele
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = ida_mem
-farg2 = c_loc(ele)
+farg2 = ele%swigdata
 fresult = swigc_FIDAGetEstLocalErrors(farg1, farg2)
 swig_result = fresult
 end function
@@ -2626,16 +2648,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: ida_mem
-type(SUNLinearSolver), target, intent(inout) :: ls
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: ls
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = ida_mem
-farg2 = c_loc(ls)
-farg3 = c_loc(a)
+farg2 = ls%swigdata
+farg3 = a%swigdata
 fresult = swigc_FIDASetLinearSolver(farg1, farg2, farg3)
 swig_result = fresult
 end function

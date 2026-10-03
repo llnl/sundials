@@ -58,9 +58,9 @@ contains
 
     x => FN_VMake_MPIManyVector(comm, int(nsubvecs, myindextype), subvecs, sunctx)
     call FN_VConst(ONE, x)
-    y => FN_VClone_MPIManyVector(x)
+    y => FN_VClone(x)
     call FN_VConst(ONE, y)
-    z => FN_VClone_MPIManyVector(x)
+    z => FN_VClone(x)
     call FN_VConst(ONE, z)
 
     xvecs = FN_VCloneVectorArray(nv, x)
@@ -70,42 +70,42 @@ contains
     !===== Test =====
 
     ! test generic vector functions
-    ival = FN_VGetVectorID_MPIManyVector(x)
+    ival = FN_VGetVectorID(x)
     ival = FN_VGetCommunicator(x)
-    ival = FN_VGetLength_MPIManyVector(x)
+    ival = FN_VGetLength(x)
 
     ! test standard vector operations
-    call FN_VLinearSum_MPIManyVector(ONE, x, ONE, y, z)
-    call FN_VConst_MPIManyVector(ONE, z)
-    call FN_VProd_MPIManyVector(x, y, z)
-    call FN_VDiv_MPIManyVector(x, y, z)
-    call FN_VScale_MPIManyVector(ONE, x, y)
-    call FN_VAbs_MPIManyVector(x, y)
-    call FN_VInv_MPIManyVector(x, z)
-    call FN_VAddConst_MPIManyVector(x, ONE, z)
-    rval = FN_VDotProdLocal_MPIManyVector(x, y)
-    rval = FN_VMaxNormLocal_MPIManyVector(x)
-    rval = FN_VWrmsNorm_MPIManyVector(x, y)
-    rval = FN_VWrmsNormMask_MPIManyVector(x, y, z)
-    rval = FN_VMinLocal_MPIManyVector(x)
-    rval = FN_VWL2Norm_MPIManyVector(x, y)
-    rval = FN_VL1NormLocal_MPIManyVector(x)
-    call FN_VCompare_MPIManyVector(ONE, x, y)
-    ival = FN_VInvTestLocal_MPIManyVector(x, y)
-    ival = FN_VConstrMaskLocal_MPIManyVector(z, x, y)
-    rval = FN_VMinQuotientLocal_MPIManyVector(x, y)
+    call FN_VLinearSum(ONE, x, ONE, y, z)
+    call FN_VConst(ONE, z)
+    call FN_VProd(x, y, z)
+    call FN_VDiv(x, y, z)
+    call FN_VScale(ONE, x, y)
+    call FN_VAbs(x, y)
+    call FN_VInv(x, z)
+    call FN_VAddConst(x, ONE, z)
+    rval = FN_VDotProdLocal(x, y)
+    rval = FN_VMaxNormLocal(x)
+    rval = FN_VWrmsNorm(x, y)
+    rval = FN_VWrmsNormMask(x, y, z)
+    rval = FN_VMinLocal(x)
+    rval = FN_VWL2Norm(x, y)
+    rval = FN_VL1NormLocal(x)
+    call FN_VCompare(ONE, x, y)
+    ival = FN_VInvTestLocal(x, y)
+    ival = FN_VConstrMaskLocal(z, x, y)
+    rval = FN_VMinQuotientLocal(x, y)
 
     ! test fused vector operations
-    ival = FN_VLinearCombination_MPIManyVector(int(nv, 4), nvarr, xvecs, x)
-    ival = FN_VScaleAddMulti_MPIManyVector(int(nv, 4), nvarr, x, xvecs, zvecs)
-    ival = FN_VDotProdMulti_MPIManyVector(int(nv, 4), x, xvecs, nvarr)
+    ival = FN_VLinearCombination(int(nv, 4), nvarr, xvecs, x)
+    ival = FN_VScaleAddMulti(int(nv, 4), nvarr, x, xvecs, zvecs)
+    ival = FN_VDotProdMulti(int(nv, 4), x, xvecs, nvarr)
 
     ! test vector array operations
-    ival = FN_VLinearSumVectorArray_MPIManyVector(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
-    ival = FN_VScaleVectorArray_MPIManyVector(int(nv, 4), nvarr, xvecs, zvecs)
-    ival = FN_VConstVectorArray_MPIManyVector(int(nv, 4), ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_MPIManyVector(int(nv, 4), xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_MPIManyVector(int(nv, 4), xvecs, xvecs, x, nvarr)
+    ival = FN_VLinearSumVectorArray(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
+    ival = FN_VScaleVectorArray(int(nv, 4), nvarr, xvecs, zvecs)
+    ival = FN_VConstVectorArray(int(nv, 4), ONE, xvecs)
+    ival = FN_VWrmsNormVectorArray(int(nv, 4), xvecs, xvecs, nvarr)
+    ival = FN_VWrmsNormMaskVectorArray(int(nv, 4), xvecs, xvecs, x, nvarr)
 
     ! test the MPIManyVector specific operations
     ival = FN_VGetNumSubvectors_MPIManyVector(x)
@@ -119,9 +119,9 @@ contains
     call FN_VDestroy(tmp)
     tmp => FN_VGetVecAtIndexVectorArray(subvecs, 1)
     call FN_VDestroy(tmp)
-    call FN_VDestroy_MPIManyVector(x)
-    call FN_VDestroy_MPIManyVector(y)
-    call FN_VDestroy_MPIManyVector(z)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
+    call FN_VDestroy(z)
     call FN_VDestroyVectorArray(xvecs, nv)
     call FN_VDestroyVectorArray(zvecs, nv)
 
@@ -167,7 +167,7 @@ contains
     call FN_VDestroy(tmp)
     tmp => FN_VGetVecAtIndexVectorArray(subvecs, 1)
     call FN_VDestroy(tmp)
-    call FN_VDestroy_MPIManyVector(x)
+    call FN_VDestroy(x)
 
   end function unit_tests
 

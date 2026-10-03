@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -209,6 +225,20 @@
 #include "kinsol/kinsol.h"
 #include "kinsol/kinsol_bbdpre.h"
 #include "kinsol/kinsol_ls.h"
+
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
 
 
 #include <stdlib.h>
@@ -250,7 +280,7 @@ SWIGEXPORT void * _wrap_FKINCreate(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FKINInit(void *farg1, KINSysFn farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FKINInit(void *farg1, KINSysFn farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   KINSysFn arg2 = (KINSysFn) 0 ;
@@ -259,14 +289,15 @@ SWIGEXPORT int _wrap_FKINInit(void *farg1, KINSysFn farg2, N_Vector farg3) {
   
   arg1 = (void *)(farg1);
   arg2 = (KINSysFn)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "KINInit(void *,KINSysFn,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)KINInit(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FKINSol(void *farg1, N_Vector farg2, int const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FKINSol(void *farg1, SwigClassWrapper const *farg2, int const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -276,10 +307,13 @@ SWIGEXPORT int _wrap_FKINSol(void *farg1, N_Vector farg2, int const *farg3, N_Ve
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "KINSol(void *,N_Vector,int,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "KINSol(void *,N_Vector,int,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "KINSol(void *,N_Vector,int,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)KINSol(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -640,14 +674,15 @@ SWIGEXPORT int _wrap_FKINSetScaledStepTol(void *farg1, double const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FKINSetConstraints(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FKINSetConstraints(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "KINSetConstraints(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)KINSetConstraints(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -859,7 +894,7 @@ SWIGEXPORT int _wrap_FKINBBDPrecGetNumGfnEvals(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FKINSetLinearSolver(void *farg1, SUNLinearSolver farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FKINSetLinearSolver(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNLinearSolver arg2 = (SUNLinearSolver) 0 ;
@@ -867,8 +902,10 @@ SWIGEXPORT int _wrap_FKINSetLinearSolver(void *farg1, SUNLinearSolver farg2, SUN
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNLinearSolver)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNLinearSolver", "SUNLinearSolver_", "KINSetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg2 = (SUNLinearSolver)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "KINSetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (int)KINSetLinearSolver(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;

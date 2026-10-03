@@ -156,8 +156,8 @@ int main(int argc, char* argv[])
   }
   else
   {
-    N_Vector vabstol = N_VClone_Hip(u);
-    if (check_retval(&vabstol, "N_VClone_Hip", 0)) { return (1); }
+    N_Vector vabstol = N_VClone(u);
+    if (check_retval(&vabstol, "N_VClone", 0)) { return (1); }
     N_VConst(abstol, vabstol);
     retval = CVodeSVtolerances(cvode_mem, reltol, vabstol);
     if (check_retval(&retval, "CVodeSVtolerances", 1)) { return (1); }
@@ -212,7 +212,7 @@ static void SetIC(N_Vector u, sunrealtype dx)
   sunrealtype* udata;
 
   /* Set pointer to data array and get local length of u. */
-  udata = N_VGetHostArrayPointer_Hip(u);
+  udata = N_VGetArrayPointer(u);
   N     = N_VGetLength(u);
 
   /* Load initial profile into u vector */
@@ -310,8 +310,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   UserData data;
   hipError_t cuerr;
 
-  udata  = N_VGetDeviceArrayPointer_Hip(u);
-  dudata = N_VGetDeviceArrayPointer_Hip(udot);
+  udata  = N_VGetDeviceArrayPointer(u);
+  dudata = N_VGetDeviceArrayPointer(udot);
 
   /* Extract needed problem constants from data */
   data  = (UserData)user_data;

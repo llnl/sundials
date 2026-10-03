@@ -61,13 +61,6 @@ module fsunadaptcontroller_mrihtol_mod
  public :: FSUNAdaptController_SetParams_MRIHTol
  public :: FSUNAdaptController_GetSlowController_MRIHTol
  public :: FSUNAdaptController_GetFastController_MRIHTol
- public :: FSUNAdaptController_GetType_MRIHTol
- public :: FSUNAdaptController_EstimateStepTol_MRIHTol
- public :: FSUNAdaptController_Reset_MRIHTol
- public :: FSUNAdaptController_SetDefaults_MRIHTol
- public :: FSUNAdaptController_Write_MRIHTol
- public :: FSUNAdaptController_SetErrorBias_MRIHTol
- public :: FSUNAdaptController_UpdateMRIHTol_MRIHTol
 
 ! WRAPPER DECLARATIONS
 interface
@@ -76,7 +69,7 @@ bind(C, name="_wrap_SUNAdaptControllerContent_MRIHTol__HControl_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNAdaptControllerContent_MRIHTol__HControl_get(farg1) &
@@ -85,7 +78,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNAdaptControllerContent_MRIHTol__TolControl_set(farg1, farg2) &
@@ -93,7 +86,7 @@ bind(C, name="_wrap_SUNAdaptControllerContent_MRIHTol__TolControl_set")
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_SUNAdaptControllerContent_MRIHTol__TolControl_get(farg1) &
@@ -102,7 +95,7 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_SUNAdaptControllerContent_MRIHTol__inner_max_relch_set(farg1, farg2) &
@@ -183,17 +176,19 @@ function swigc_FSUNAdaptController_MRIHTol(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNAdaptController_MRIHTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNAdaptController_SetParams_MRIHTol(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNAdaptController_SetParams_MRIHTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
@@ -204,7 +199,8 @@ function swigc_FSUNAdaptController_GetSlowController_MRIHTol(farg1, farg2) &
 bind(C, name="_wrap_FSUNAdaptController_GetSlowController_MRIHTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -213,77 +209,9 @@ function swigc_FSUNAdaptController_GetFastController_MRIHTol(farg1, farg2) &
 bind(C, name="_wrap_FSUNAdaptController_GetFastController_MRIHTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_GetType_MRIHTol(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_GetType_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_EstimateStepTol_MRIHTol(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8) &
-bind(C, name="_wrap_FSUNAdaptController_EstimateStepTol_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-real(C_DOUBLE), intent(in) :: farg3
-integer(C_INT), intent(in) :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-real(C_DOUBLE), intent(in) :: farg6
-type(C_PTR), value :: farg7
-type(C_PTR), value :: farg8
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Reset_MRIHTol(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_Reset_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetDefaults_MRIHTol(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_SetDefaults_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Write_MRIHTol(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_Write_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetErrorBias_MRIHTol(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_SetErrorBias_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_UpdateMRIHTol_MRIHTol(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNAdaptController_UpdateMRIHTol_MRIHTol") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-real(C_DOUBLE), intent(in) :: farg3
-real(C_DOUBLE), intent(in) :: farg4
-real(C_DOUBLE), intent(in) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -295,51 +223,51 @@ contains
 subroutine swigf_SUNAdaptControllerContent_MRIHTol__HControl_set(self, hcontrol)
 use, intrinsic :: ISO_C_BINDING
 class(SUNAdaptControllerContent_MRIHTol_), intent(in) :: self
-type(SUNAdaptController), target, intent(inout) :: hcontrol
+class(SUNAdaptController_), intent(in) :: hcontrol
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(hcontrol)
+farg2 = hcontrol%swigdata
 call swigc_SUNAdaptControllerContent_MRIHTol__HControl_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNAdaptControllerContent_MRIHTol__HControl_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), pointer :: swig_result
+type(SUNAdaptController_) :: swig_result
 class(SUNAdaptControllerContent_MRIHTol_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNAdaptControllerContent_MRIHTol__HControl_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNAdaptControllerContent_MRIHTol__TolControl_set(self, tolcontrol)
 use, intrinsic :: ISO_C_BINDING
 class(SUNAdaptControllerContent_MRIHTol_), intent(in) :: self
-type(SUNAdaptController), target, intent(inout) :: tolcontrol
+class(SUNAdaptController_), intent(in) :: tolcontrol
 type(SwigClassWrapper) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = self%swigdata
-farg2 = c_loc(tolcontrol)
+farg2 = tolcontrol%swigdata
 call swigc_SUNAdaptControllerContent_MRIHTol__TolControl_set(farg1, farg2)
 end subroutine
 
 function swigf_SUNAdaptControllerContent_MRIHTol__TolControl_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), pointer :: swig_result
+type(SUNAdaptController_) :: swig_result
 class(SUNAdaptControllerContent_MRIHTol_), intent(in) :: self
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(SwigClassWrapper) :: farg1 
 
 farg1 = self%swigdata
 fresult = swigc_SUNAdaptControllerContent_MRIHTol__TolControl_get(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine swigf_SUNAdaptControllerContent_MRIHTol__inner_max_relch_set(self, inner_max_relch)
@@ -457,37 +385,37 @@ end subroutine
 function FSUNAdaptController_MRIHTol(hcontrol, tolcontrol, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), pointer :: swig_result
-type(SUNAdaptController), target, intent(inout) :: hcontrol
-type(SUNAdaptController), target, intent(inout) :: tolcontrol
+type(SUNAdaptController_) :: swig_result
+class(SUNAdaptController_), intent(in) :: hcontrol
+class(SUNAdaptController_), intent(in) :: tolcontrol
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(hcontrol)
-farg2 = c_loc(tolcontrol)
+farg1 = hcontrol%swigdata
+farg2 = tolcontrol%swigdata
 farg3 = sunctx
 fresult = swigc_FSUNAdaptController_MRIHTol(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNAdaptController_SetParams_MRIHTol(c, inner_max_relch, inner_min_tolfac, inner_max_tolfac) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: inner_max_relch
 real(C_DOUBLE), intent(in) :: inner_min_tolfac
 real(C_DOUBLE), intent(in) :: inner_max_tolfac
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 real(C_DOUBLE) :: farg3 
 real(C_DOUBLE) :: farg4 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = inner_max_relch
 farg3 = inner_min_tolfac
 farg4 = inner_max_tolfac
@@ -499,13 +427,13 @@ function FSUNAdaptController_GetSlowController_MRIHTol(c, cslow) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 type(C_PTR), target, intent(inout) :: cslow
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = c_loc(cslow)
 fresult = swigc_FSUNAdaptController_GetSlowController_MRIHTol(farg1, farg2)
 swig_result = fresult
@@ -515,145 +443,15 @@ function FSUNAdaptController_GetFastController_MRIHTol(c, cfast) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 type(C_PTR), target, intent(inout) :: cfast
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = c_loc(cfast)
 fresult = swigc_FSUNAdaptController_GetFastController_MRIHTol(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_GetType_MRIHTol(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNAdaptController_Type) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_GetType_MRIHTol(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_EstimateStepTol_MRIHTol(c, h, tolfac, p, dsm, dsm5, hnew, tolfacnew) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-real(C_DOUBLE), intent(in) :: tolfac
-integer(C_INT), intent(in) :: p
-real(C_DOUBLE), intent(in) :: dsm
-real(C_DOUBLE), intent(in) :: dsm5
-real(C_DOUBLE), dimension(*), target, intent(inout) :: hnew
-real(C_DOUBLE), dimension(*), target, intent(inout) :: tolfacnew
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-real(C_DOUBLE) :: farg3 
-integer(C_INT) :: farg4 
-real(C_DOUBLE) :: farg5 
-real(C_DOUBLE) :: farg6 
-type(C_PTR) :: farg7 
-type(C_PTR) :: farg8 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = tolfac
-farg4 = p
-farg5 = dsm
-farg6 = dsm5
-farg7 = c_loc(hnew(1))
-farg8 = c_loc(tolfacnew(1))
-fresult = swigc_FSUNAdaptController_EstimateStepTol_MRIHTol(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Reset_MRIHTol(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_Reset_MRIHTol(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetDefaults_MRIHTol(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_SetDefaults_MRIHTol(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Write_MRIHTol(c, fptr) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-type(C_PTR) :: fptr
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = fptr
-fresult = swigc_FSUNAdaptController_Write_MRIHTol(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetErrorBias_MRIHTol(c, bias) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: bias
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = bias
-fresult = swigc_FSUNAdaptController_SetErrorBias_MRIHTol(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_UpdateMRIHTol_MRIHTol(c, h, tolfac, dsm, dsm4) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-real(C_DOUBLE), intent(in) :: tolfac
-real(C_DOUBLE), intent(in) :: dsm
-real(C_DOUBLE), intent(in) :: dsm4
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-real(C_DOUBLE) :: farg3 
-real(C_DOUBLE) :: farg4 
-real(C_DOUBLE) :: farg5 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = tolfac
-farg4 = dsm
-farg5 = dsm4
-fresult = swigc_FSUNAdaptController_UpdateMRIHTol_MRIHTol(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
 

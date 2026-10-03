@@ -28,99 +28,224 @@ module fsunadaptcontroller_imexgus_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNAdaptControllerContent_ImExGus_
+ type, public :: SUNAdaptControllerContent_ImExGus_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_k1i => swigf_SUNAdaptControllerContent_ImExGus__k1i_set
+  procedure :: get_k1i => swigf_SUNAdaptControllerContent_ImExGus__k1i_get
+  procedure :: set_k2i => swigf_SUNAdaptControllerContent_ImExGus__k2i_set
+  procedure :: get_k2i => swigf_SUNAdaptControllerContent_ImExGus__k2i_get
+  procedure :: set_k1e => swigf_SUNAdaptControllerContent_ImExGus__k1e_set
+  procedure :: get_k1e => swigf_SUNAdaptControllerContent_ImExGus__k1e_get
+  procedure :: set_k2e => swigf_SUNAdaptControllerContent_ImExGus__k2e_set
+  procedure :: get_k2e => swigf_SUNAdaptControllerContent_ImExGus__k2e_get
+  procedure :: set_bias => swigf_SUNAdaptControllerContent_ImExGus__bias_set
+  procedure :: get_bias => swigf_SUNAdaptControllerContent_ImExGus__bias_get
+  procedure :: set_ep => swigf_SUNAdaptControllerContent_ImExGus__ep_set
+  procedure :: get_ep => swigf_SUNAdaptControllerContent_ImExGus__ep_get
+  procedure :: set_hp => swigf_SUNAdaptControllerContent_ImExGus__hp_set
+  procedure :: get_hp => swigf_SUNAdaptControllerContent_ImExGus__hp_get
+  procedure :: set_firststep => swigf_SUNAdaptControllerContent_ImExGus__firststep_set
+  procedure :: get_firststep => swigf_SUNAdaptControllerContent_ImExGus__firststep_get
+  procedure :: release => swigf_release_SUNAdaptControllerContent_ImExGus_
+  procedure, private :: swigf_SUNAdaptControllerContent_ImExGus__op_assign__
+  generic :: assignment(=) => swigf_SUNAdaptControllerContent_ImExGus__op_assign__
+ end type SUNAdaptControllerContent_ImExGus_
+ interface SUNAdaptControllerContent_ImExGus_
+  module procedure swigf_create_SUNAdaptControllerContent_ImExGus_
+ end interface
  public :: FSUNAdaptController_ImExGus
  public :: FSUNAdaptController_SetParams_ImExGus
- public :: FSUNAdaptController_GetType_ImExGus
- public :: FSUNAdaptController_EstimateStep_ImExGus
- public :: FSUNAdaptController_Reset_ImExGus
- public :: FSUNAdaptController_SetDefaults_ImExGus
- public :: FSUNAdaptController_Write_ImExGus
- public :: FSUNAdaptController_SetErrorBias_ImExGus
- public :: FSUNAdaptController_UpdateH_ImExGus
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNAdaptControllerContent_ImExGus__k1i_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k1i_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__k1i_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k1i_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__k2i_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k2i_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__k2i_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k2i_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__k1e_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k1e_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__k1e_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k1e_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__k2e_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k2e_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__k2e_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__k2e_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__bias_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__bias_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__bias_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__bias_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__ep_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__ep_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__ep_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__ep_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__hp_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__hp_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__hp_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__hp_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__firststep_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__firststep_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNAdaptControllerContent_ImExGus__firststep_get(farg1) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__firststep_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+function swigc_new_SUNAdaptControllerContent_ImExGus_() &
+bind(C, name="_wrap_new_SUNAdaptControllerContent_ImExGus_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNAdaptControllerContent_ImExGus_(farg1) &
+bind(C, name="_wrap_delete_SUNAdaptControllerContent_ImExGus_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNAdaptControllerContent_ImExGus__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptControllerContent_ImExGus__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNAdaptController_ImExGus(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_ImExGus") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNAdaptController_SetParams_ImExGus(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNAdaptController_SetParams_ImExGus") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_GetType_ImExGus(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_GetType_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_EstimateStep_ImExGus(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNAdaptController_EstimateStep_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT), intent(in) :: farg3
-real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Reset_ImExGus(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_Reset_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetDefaults_ImExGus(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_SetDefaults_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Write_ImExGus(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_Write_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetErrorBias_ImExGus(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_SetErrorBias_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_UpdateH_ImExGus(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNAdaptController_UpdateH_ImExGus") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-real(C_DOUBLE), intent(in) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -129,156 +254,278 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNAdaptControllerContent_ImExGus__k1i_set(self, k1i)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: k1i
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = k1i
+call swigc_SUNAdaptControllerContent_ImExGus__k1i_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__k1i_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__k1i_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__k2i_set(self, k2i)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: k2i
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = k2i
+call swigc_SUNAdaptControllerContent_ImExGus__k2i_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__k2i_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__k2i_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__k1e_set(self, k1e)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: k1e
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = k1e
+call swigc_SUNAdaptControllerContent_ImExGus__k1e_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__k1e_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__k1e_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__k2e_set(self, k2e)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: k2e
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = k2e
+call swigc_SUNAdaptControllerContent_ImExGus__k2e_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__k2e_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__k2e_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__bias_set(self, bias)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: bias
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = bias
+call swigc_SUNAdaptControllerContent_ImExGus__bias_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__bias_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__bias_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__ep_set(self, ep)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: ep
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ep
+call swigc_SUNAdaptControllerContent_ImExGus__ep_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__ep_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__ep_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__hp_set(self, hp)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: hp
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = hp
+call swigc_SUNAdaptControllerContent_ImExGus__hp_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__hp_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__hp_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__firststep_set(self, firststep)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+integer(C_INT), intent(in) :: firststep
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = firststep
+call swigc_SUNAdaptControllerContent_ImExGus__firststep_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptControllerContent_ImExGus__firststep_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNAdaptControllerContent_ImExGus_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptControllerContent_ImExGus__firststep_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNAdaptControllerContent_ImExGus_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNAdaptControllerContent_ImExGus_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNAdaptControllerContent_ImExGus_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNAdaptControllerContent_ImExGus_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNAdaptControllerContent_ImExGus_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNAdaptControllerContent_ImExGus__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptControllerContent_ImExGus_), intent(inout) :: self
+type(SUNAdaptControllerContent_ImExGus_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNAdaptControllerContent_ImExGus__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNAdaptController_ImExGus(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), pointer :: swig_result
+type(SUNAdaptController_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FSUNAdaptController_ImExGus(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNAdaptController_SetParams_ImExGus(c, k1e, k2e, k1i, k2i) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: k1e
 real(C_DOUBLE), intent(in) :: k2e
 real(C_DOUBLE), intent(in) :: k1i
 real(C_DOUBLE), intent(in) :: k2i
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 real(C_DOUBLE) :: farg3 
 real(C_DOUBLE) :: farg4 
 real(C_DOUBLE) :: farg5 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = k1e
 farg3 = k2e
 farg4 = k1i
 farg5 = k2i
 fresult = swigc_FSUNAdaptController_SetParams_ImExGus(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_GetType_ImExGus(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNAdaptController_Type) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_GetType_ImExGus(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_EstimateStep_ImExGus(c, h, p, dsm, hnew) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-integer(C_INT), intent(in) :: p
-real(C_DOUBLE), intent(in) :: dsm
-real(C_DOUBLE), dimension(*), target, intent(inout) :: hnew
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-integer(C_INT) :: farg3 
-real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = p
-farg4 = dsm
-farg5 = c_loc(hnew(1))
-fresult = swigc_FSUNAdaptController_EstimateStep_ImExGus(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Reset_ImExGus(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_Reset_ImExGus(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetDefaults_ImExGus(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_SetDefaults_ImExGus(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Write_ImExGus(c, fptr) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-type(C_PTR) :: fptr
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = fptr
-fresult = swigc_FSUNAdaptController_Write_ImExGus(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetErrorBias_ImExGus(c, bias) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: bias
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = bias
-fresult = swigc_FSUNAdaptController_SetErrorBias_ImExGus(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_UpdateH_ImExGus(c, h, dsm) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-real(C_DOUBLE), intent(in) :: dsm
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-real(C_DOUBLE) :: farg3 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = dsm
-fresult = swigc_FSUNAdaptController_UpdateH_ImExGus(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

@@ -450,10 +450,11 @@ function swigc_FMRIStepCreate(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FMRIStepCreate") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_FUNPTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 type(C_PTR), value :: farg5
 type(C_PTR), value :: farg6
 type(C_PTR) :: fresult
@@ -463,11 +464,12 @@ function swigc_FMRIStepReInit(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FMRIStepReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -475,11 +477,12 @@ function swigc_FMRIStepCreateExtSTS(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FMRIStepCreateExtSTS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_FUNPTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 type(C_PTR), value :: farg6
 type(C_PTR) :: fresult
 end function
@@ -488,12 +491,13 @@ function swigc_FMRIStepReInitExtSTS(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FMRIStepReInitExtSTS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 type(C_FUNPTR), value :: farg4
 real(C_DOUBLE), intent(in) :: farg5
-type(C_PTR), value :: farg6
+type(SwigClassWrapper) :: farg6
 integer(C_INT) :: fresult
 end function
 
@@ -662,9 +666,10 @@ function swigc_FMRIStepInnerStepper_AddForcing(farg1, farg2, farg3) &
 bind(C, name="_wrap_FMRIStepInnerStepper_AddForcing") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1127,21 +1132,21 @@ type(C_PTR) :: swig_result
 type(C_FUNPTR), intent(in), value :: fse
 type(C_FUNPTR), intent(in), value :: fsi
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: stepper
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_FUNPTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 type(C_PTR) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = fse
 farg2 = fsi
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 farg5 = stepper
 farg6 = sunctx
 fresult = swigc_FMRIStepCreate(farg1, farg2, farg3, farg4, farg5, farg6)
@@ -1156,19 +1161,19 @@ type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: fse
 type(C_FUNPTR), intent(in), value :: fsi
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = arkode_mem
 farg2 = fse
 farg3 = fsi
 farg4 = t0
-farg5 = c_loc(y0)
+farg5 = y0%swigdata
 fresult = swigc_FMRIStepReInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
@@ -1181,21 +1186,21 @@ type(C_FUNPTR), intent(in), value :: fd
 type(C_FUNPTR), intent(in), value :: fe
 type(C_FUNPTR), intent(in), value :: fi
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_FUNPTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = fd
 farg2 = fe
 farg3 = fi
 farg4 = t0
-farg5 = c_loc(y0)
+farg5 = y0%swigdata
 farg6 = sunctx
 fresult = swigc_FMRIStepCreateExtSTS(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
@@ -1210,21 +1215,21 @@ type(C_FUNPTR), intent(in), value :: fd
 type(C_FUNPTR), intent(in), value :: fe
 type(C_FUNPTR), intent(in), value :: fi
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 type(C_FUNPTR) :: farg4 
 real(C_DOUBLE) :: farg5 
-type(C_PTR) :: farg6 
+type(SwigClassWrapper) :: farg6 
 
 farg1 = arkode_mem
 farg2 = fd
 farg3 = fe
 farg4 = fi
 farg5 = t0
-farg6 = c_loc(y0)
+farg6 = y0%swigdata
 fresult = swigc_FMRIStepReInitExtSTS(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
 end function
@@ -1520,15 +1525,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: f
+class(N_Vector_), intent(in) :: f
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = stepper
 farg2 = t
-farg3 = c_loc(f)
+farg3 = f%swigdata
 fresult = swigc_FMRIStepInnerStepper_AddForcing(farg1, farg2, farg3)
 swig_result = fresult
 end function

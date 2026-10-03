@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,19 +240,399 @@
 
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_Soderlind(void *farg1) {
-  SUNAdaptController fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__k1_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k1", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->k1 = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__k1_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k1", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->k1);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__k2_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k2", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->k2 = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__k2_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k2", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->k2);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__k3_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k3", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->k3 = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__k3_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k3", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->k3);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__k4_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k4", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->k4 = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__k4_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k4", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->k4);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__k5_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k5", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->k5 = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__k5_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::k5", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->k5);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__bias_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::bias", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->bias = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__bias_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::bias", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->bias);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__ep_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::ep", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->ep = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__ep_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::ep", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->ep);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__epp_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::epp", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->epp = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__epp_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::epp", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->epp);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__hp_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::hp", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->hp = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__hp_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::hp", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->hp);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__hpp_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::hpp", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->hpp = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNAdaptControllerContent_Soderlind__hpp_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::hpp", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->hpp);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__firststeps_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::firststeps", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->firststeps = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNAdaptControllerContent_Soderlind__firststeps_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::firststeps", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (int) ((arg1)->firststeps);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__historysize_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::historysize", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->historysize = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNAdaptControllerContent_Soderlind__historysize_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::historysize", return 0);
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  result = (int) ((arg1)->historysize);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNAdaptControllerContent_Soderlind_() {
+  SwigClassWrapper fresult ;
+  struct SUNAdaptControllerContent_Soderlind_ *result = 0 ;
+  
+  result = (struct SUNAdaptControllerContent_Soderlind_ *)calloc(1, sizeof(struct SUNAdaptControllerContent_Soderlind_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNAdaptControllerContent_Soderlind_(SwigClassWrapper *farg1) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNAdaptControllerContent_Soderlind_ *", "SUNAdaptControllerContent_Soderlind_", "SUNAdaptControllerContent_Soderlind_::~SUNAdaptControllerContent_Soderlind_()", return );
+  arg1 = (struct SUNAdaptControllerContent_Soderlind_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNAdaptControllerContent_Soderlind__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNAdaptControllerContent_Soderlind_ *arg1 = (struct SUNAdaptControllerContent_Soderlind_ *) 0 ;
+  struct SUNAdaptControllerContent_Soderlind_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_Soderlind(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_Soderlind(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_Soderlind(SUNAdaptController farg1, double const *farg2, double const *farg3, double const *farg4, double const *farg5, double const *farg6) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_Soderlind(SwigClassWrapper const *farg1, double const *farg2, double const *farg3, double const *farg4, double const *farg5, double const *farg6) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -233,7 +642,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_Soderlind(SUNAdaptController 
   sunrealtype arg6 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_Soderlind(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
@@ -245,119 +655,20 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_Soderlind(SUNAdaptController 
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_GetType_Soderlind(SUNAdaptController farg1) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  SUNAdaptController_Type result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  result = (SUNAdaptController_Type)SUNAdaptController_GetType_Soderlind(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_EstimateStep_Soderlind(SUNAdaptController farg1, double const *farg2, int const *farg3, double const *farg4, double *farg5) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  sunrealtype arg2 ;
-  int arg3 ;
-  sunrealtype arg4 ;
-  sunrealtype *arg5 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (int)(*farg3);
-  arg4 = (sunrealtype)(*farg4);
-  arg5 = (sunrealtype *)(farg5);
-  result = (SUNErrCode)SUNAdaptController_EstimateStep_Soderlind(arg1,arg2,arg3,arg4,arg5);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_Reset_Soderlind(SUNAdaptController farg1) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  result = (SUNErrCode)SUNAdaptController_Reset_Soderlind(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_SetDefaults_Soderlind(SUNAdaptController farg1) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  result = (SUNErrCode)SUNAdaptController_SetDefaults_Soderlind(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_Write_Soderlind(SUNAdaptController farg1, void *farg2) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (FILE *)(farg2);
-  result = (SUNErrCode)SUNAdaptController_Write_Soderlind(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController farg1, double const *farg2) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  sunrealtype arg2 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  result = (SUNErrCode)SUNAdaptController_SetErrorBias_Soderlind(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH_Soderlind(SUNAdaptController farg1, double const *farg2, double const *farg3) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  sunrealtype arg2 ;
-  sunrealtype arg3 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (sunrealtype)(*farg3);
-  result = (SUNErrCode)SUNAdaptController_UpdateH_Soderlind(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_PID(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_PID(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_PID(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PID(SUNAdaptController farg1, double const *farg2, double const *farg3, double const *farg4) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PID(SwigClassWrapper const *farg1, double const *farg2, double const *farg3, double const *farg4) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
@@ -365,7 +676,8 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PID(SUNAdaptController farg1,
   sunrealtype arg4 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_PID(SUNAdaptController,sunrealtype,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
@@ -375,26 +687,28 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PID(SUNAdaptController farg1,
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_PI(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_PI(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_PI(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PI(SUNAdaptController farg1, double const *farg2, double const *farg3) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PI(SwigClassWrapper const *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   sunrealtype arg3 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_PI(SUNAdaptController,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   result = (SUNErrCode)SUNAdaptController_SetParams_PI(arg1,arg2,arg3);
@@ -403,25 +717,27 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_PI(SUNAdaptController farg1, 
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_I(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_I(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_I(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_I(SUNAdaptController farg1, double const *farg2) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_I(SwigClassWrapper const *farg1, double const *farg2) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_I(SUNAdaptController,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNAdaptController_SetParams_I(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -429,26 +745,28 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_I(SUNAdaptController farg1, d
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_ExpGus(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_ExpGus(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_ExpGus(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ExpGus(SUNAdaptController farg1, double const *farg2, double const *farg3) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ExpGus(SwigClassWrapper const *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   sunrealtype arg3 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_ExpGus(SUNAdaptController,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   result = (SUNErrCode)SUNAdaptController_SetParams_ExpGus(arg1,arg2,arg3);
@@ -457,26 +775,28 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ExpGus(SUNAdaptController far
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_ImpGus(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_ImpGus(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_ImpGus(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ImpGus(SUNAdaptController farg1, double const *farg2, double const *farg3) {
+SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ImpGus(SwigClassWrapper const *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   SUNAdaptController arg1 = (SUNAdaptController) 0 ;
   sunrealtype arg2 ;
   sunrealtype arg3 ;
   SUNErrCode result;
   
-  arg1 = (SUNAdaptController)(farg1);
+  SWIG_check_mutable(*farg1, "SUNAdaptController", "SUNAdaptController_", "SUNAdaptController_SetParams_ImpGus(SUNAdaptController,sunrealtype,sunrealtype)", return 0);
+  arg1 = (SUNAdaptController)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype)(*farg3);
   result = (SUNErrCode)SUNAdaptController_SetParams_ImpGus(arg1,arg2,arg3);
@@ -485,50 +805,54 @@ SWIGEXPORT int _wrap_FSUNAdaptController_SetParams_ImpGus(SUNAdaptController far
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_H0211(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_H0211(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_H0211(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_H0321(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_H0321(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_H0321(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_H211(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_H211(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_H211(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_H312(void *farg1) {
-  SUNAdaptController fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FSUNAdaptController_H312(void *farg1) {
+  SwigClassWrapper fresult ;
   SUNContext arg1 = (SUNContext) 0 ;
   SUNAdaptController result;
   
   arg1 = (SUNContext)(farg1);
   result = (SUNAdaptController)SUNAdaptController_H312(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 

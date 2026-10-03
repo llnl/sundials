@@ -25,6 +25,7 @@ sundials_add_library(
   sundials_sunlinsolspbcgs
   SOURCES sunlinsol_spbcgs.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_spbcgs.h
+          ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_spbcgs_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

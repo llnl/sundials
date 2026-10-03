@@ -67,11 +67,10 @@ data.  Usage examples of NVECTOR_PARHYP are provided in the
 ``cvAdvDiff_non_ph.c`` example programs for CVODE and the
 ``ark_diurnal_kry_ph.c`` example program for ARKODE.
 
-The names of parhyp methods are obtained from those in
-:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local` by appending the suffix ``_ParHyp``
-(e.g. ``N_VDestroy_ParHyp``).  The module NVECTOR_PARHYP provides the
-following additional user-callable routines:
+These operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
+:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`. The module
+NVECTOR_PARHYP provides the following additional user-callable routines:
 
 
 .. c:function:: N_Vector N_VNewEmpty_ParHyp(MPI_Comm comm, sunindextype local_length, sunindextype global_length, SUNContext sunctx)
@@ -89,16 +88,6 @@ following additional user-callable routines:
 .. c:function:: hypre_ParVector *N_VGetVector_ParHyp(N_Vector v)
 
    This function returns a pointer to the underlying HYPRE vector.
-
-
-.. c:function:: void N_VPrint_ParHyp(N_Vector v)
-
-   This function prints the local content of a parhyp vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_ParHyp(N_Vector v, FILE *outfile)
-
-   This function prints the local content of a parhyp vector to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_PARHYP

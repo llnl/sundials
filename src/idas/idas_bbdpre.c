@@ -435,7 +435,7 @@ static int IDABBDPrecSetup(sunrealtype tt, N_Vector yy, N_Vector yp,
   if (retval > 0) { return (1); }
 
   /* Do LU factorization of matrix and return error flag */
-  retval = SUNLinSolSetup_Band(pdata->LS, pdata->PP);
+  retval = SUNLinSolSetup(pdata->LS, pdata->PP);
   return (retval);
 }
 

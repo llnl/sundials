@@ -158,11 +158,10 @@ NVECTOR_PTHREADS functions
 The NVECTOR_PTHREADS module defines Pthreads implementations of all vector
 operations listed in :numref:`NVectors.Ops`,
 :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local`.  Their names
-are obtained from those in those sections by appending the suffix
-``_Pthreads`` (e.g. N_VDestroy_Pthreads).  All the standard vector
-operations listed in :numref:`NVectors.Ops` are callable via
-the Fortran 2003 interface by prepending an `F' (e.g. ``FN_VDestroy_Pthreads``).
+:numref:`NVectors.Ops.Local`. These operations are invoked through the generic
+functions in those sections. The standard operations are callable through the
+Fortran 2003 interface by prepending an ``F`` to the generic function name
+(e.g., ``FN_VDestroy``).
 The module NVECTOR_PTHREADS provides the following additional
 user-callable routines:
 
@@ -185,16 +184,6 @@ user-callable routines:
    user-provided data array, *v_data*.
 
    (This function does *not* allocate memory for ``v_data`` itself.)
-
-
-.. c:function:: void N_VPrint_Pthreads(N_Vector v)
-
-   This function prints the content of a Pthreads vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Pthreads(N_Vector v, FILE *outfile)
-
-   This function prints the content of a Pthreads vector to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_PTHREADS

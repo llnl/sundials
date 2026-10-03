@@ -28,184 +28,426 @@ module fsunnonlinsol_newton_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNNonlinearSolverContent_Newton_
+ type, public :: SUNNonlinearSolverContent_Newton_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_Sys => swigf_SUNNonlinearSolverContent_Newton__Sys_set
+  procedure :: get_Sys => swigf_SUNNonlinearSolverContent_Newton__Sys_get
+  procedure :: set_LSetup => swigf_SUNNonlinearSolverContent_Newton__LSetup_set
+  procedure :: get_LSetup => swigf_SUNNonlinearSolverContent_Newton__LSetup_get
+  procedure :: set_LSolve => swigf_SUNNonlinearSolverContent_Newton__LSolve_set
+  procedure :: get_LSolve => swigf_SUNNonlinearSolverContent_Newton__LSolve_get
+  procedure :: set_CTest => swigf_SUNNonlinearSolverContent_Newton__CTest_set
+  procedure :: get_CTest => swigf_SUNNonlinearSolverContent_Newton__CTest_get
+  procedure :: set_norm_fn => swigf_SUNNonlinearSolverContent_Newton__norm_fn_set
+  procedure :: get_norm_fn => swigf_SUNNonlinearSolverContent_Newton__norm_fn_get
+  procedure :: set_norm_fn_data => swigf_SUNNonlinearSolverContent_Newton__norm_fn_data_set
+  procedure :: get_norm_fn_data => swigf_SUNNonlinearSolverContent_Newton__norm_fn_data_get
+  procedure :: set_getupdatenorm_fn => swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set
+  procedure :: get_getupdatenorm_fn => swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get
+  procedure :: set_getupdatenorm_data => swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set
+  procedure :: get_getupdatenorm_data => swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get
+  procedure :: set_delta => swigf_SUNNonlinearSolverContent_Newton__delta_set
+  procedure :: get_delta => swigf_SUNNonlinearSolverContent_Newton__delta_get
+  procedure :: set_jcur => swigf_SUNNonlinearSolverContent_Newton__jcur_set
+  procedure :: get_jcur => swigf_SUNNonlinearSolverContent_Newton__jcur_get
+  procedure :: set_curiter => swigf_SUNNonlinearSolverContent_Newton__curiter_set
+  procedure :: get_curiter => swigf_SUNNonlinearSolverContent_Newton__curiter_get
+  procedure :: set_maxiters => swigf_SUNNonlinearSolverContent_Newton__maxiters_set
+  procedure :: get_maxiters => swigf_SUNNonlinearSolverContent_Newton__maxiters_get
+  procedure :: set_niters => swigf_SUNNonlinearSolverContent_Newton__niters_set
+  procedure :: get_niters => swigf_SUNNonlinearSolverContent_Newton__niters_get
+  procedure :: set_nconvfails => swigf_SUNNonlinearSolverContent_Newton__nconvfails_set
+  procedure :: get_nconvfails => swigf_SUNNonlinearSolverContent_Newton__nconvfails_get
+  procedure :: set_compute_stiffr => swigf_SUNNonlinearSolverContent_Newton__compute_stiffr_set
+  procedure :: get_compute_stiffr => swigf_SUNNonlinearSolverContent_Newton__compute_stiffr_get
+  procedure :: set_stiffr => swigf_SUNNonlinearSolverContent_Newton__stiffr_set
+  procedure :: get_stiffr => swigf_SUNNonlinearSolverContent_Newton__stiffr_get
+  procedure :: set_delnrm => swigf_SUNNonlinearSolverContent_Newton__delnrm_set
+  procedure :: get_delnrm => swigf_SUNNonlinearSolverContent_Newton__delnrm_get
+  procedure :: set_ctest_data => swigf_SUNNonlinearSolverContent_Newton__ctest_data_set
+  procedure :: get_ctest_data => swigf_SUNNonlinearSolverContent_Newton__ctest_data_get
+  procedure :: release => swigf_release_SUNNonlinearSolverContent_Newton_
+  procedure, private :: swigf_SUNNonlinearSolverContent_Newton__op_assign__
+  generic :: assignment(=) => swigf_SUNNonlinearSolverContent_Newton__op_assign__
+ end type SUNNonlinearSolverContent_Newton_
+ interface SUNNonlinearSolverContent_Newton_
+  module procedure swigf_create_SUNNonlinearSolverContent_Newton_
+ end interface
  public :: FSUNNonlinSol_Newton
  public :: FSUNNonlinSol_NewtonSens
- public :: FSUNNonlinSolGetType_Newton
- public :: FSUNNonlinSolInitialize_Newton
- public :: FSUNNonlinSolSolve_Newton
- public :: FSUNNonlinSolFree_Newton
- public :: FSUNNonlinSolSetSysFn_Newton
- public :: FSUNNonlinSolSetLSetupFn_Newton
- public :: FSUNNonlinSolSetLSolveFn_Newton
- public :: FSUNNonlinSolSetConvTestFn_Newton
- public :: FSUNNonlinSolSetMaxIters_Newton
  public :: FSUNNonlinSolSetComputeStiffnessRatio_Newton
- public :: FSUNNonlinSolSetGetUpdateNormFn_Newton
- public :: FSUNNonlinSolSetNormFn_Newton
- public :: FSUNNonlinSolGetNumIters_Newton
- public :: FSUNNonlinSolGetCurIter_Newton
- public :: FSUNNonlinSolGetNumConvFails_Newton
  public :: FSUNNonlinSolGetSysFn_Newton
  public :: FSUNNonlinSolGetStiffnessRatio_Newton
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNNonlinearSolverContent_Newton__Sys_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__Sys_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__Sys_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__Sys_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__LSetup_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__LSetup_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__LSetup_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__LSetup_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__LSolve_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__LSolve_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__LSolve_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__LSolve_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__CTest_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__CTest_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__CTest_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__CTest_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__norm_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__norm_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__norm_fn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__norm_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__norm_fn_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__norm_fn_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__norm_fn_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__norm_fn_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__delta_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__delta_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__delta_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__delta_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__jcur_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__jcur_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__jcur_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__jcur_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__curiter_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__curiter_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__curiter_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__curiter_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__maxiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__maxiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__maxiters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__maxiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__niters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__niters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__niters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__niters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__nconvfails_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__nconvfails_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__nconvfails_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__nconvfails_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__compute_stiffr_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__compute_stiffr_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__compute_stiffr_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__compute_stiffr_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__stiffr_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__stiffr_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__stiffr_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__stiffr_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__delnrm_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__delnrm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__delnrm_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__delnrm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__ctest_data_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__ctest_data_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolverContent_Newton__ctest_data_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__ctest_data_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNNonlinearSolverContent_Newton_() &
+bind(C, name="_wrap_new_SUNNonlinearSolverContent_Newton_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNNonlinearSolverContent_Newton_(farg1) &
+bind(C, name="_wrap_delete_SUNNonlinearSolverContent_Newton_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNNonlinearSolverContent_Newton__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolverContent_Newton__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNNonlinSol_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSol_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNNonlinSol_NewtonSens(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSol_NewtonSens") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetType_Newton(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolGetType_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolInitialize_Newton(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolInitialize_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSolve_Newton(farg1, farg2, farg3, farg4, farg5, farg6, farg7) &
-bind(C, name="_wrap_FSUNNonlinSolSolve_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT), intent(in) :: farg6
-type(C_PTR), value :: farg7
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolFree_Newton(farg1) &
-bind(C, name="_wrap_FSUNNonlinSolFree_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetSysFn_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetSysFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetLSetupFn_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetLSetupFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetLSolveFn_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetLSolveFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetConvTestFn_Newton(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetConvTestFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetMaxIters_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolSetMaxIters_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT), intent(in) :: farg2
-integer(C_INT) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNNonlinSolSetComputeStiffnessRatio_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetComputeStiffnessRatio_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetGetUpdateNormFn_Newton(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolSetNormFn_Newton(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNNonlinSolSetNormFn_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetNumIters_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetNumIters_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetCurIter_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetCurIter_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNNonlinSolGetNumConvFails_Newton(farg1, farg2) &
-bind(C, name="_wrap_FSUNNonlinSolGetNumConvFails_Newton") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -213,7 +455,8 @@ function swigc_FSUNNonlinSolGetSysFn_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetSysFn_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -222,7 +465,8 @@ function swigc_FSUNNonlinSolGetStiffnessRatio_Newton(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetStiffnessRatio_Newton") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -232,293 +476,541 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
+subroutine swigf_SUNNonlinearSolverContent_Newton__Sys_set(self, sys)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: sys
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sys
+call swigc_SUNNonlinearSolverContent_Newton__Sys_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__Sys_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__Sys_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__LSetup_set(self, lsetup)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: lsetup
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = lsetup
+call swigc_SUNNonlinearSolverContent_Newton__LSetup_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__LSetup_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__LSetup_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__LSolve_set(self, lsolve)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: lsolve
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = lsolve
+call swigc_SUNNonlinearSolverContent_Newton__LSolve_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__LSolve_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__LSolve_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__CTest_set(self, ctest)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: ctest
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ctest
+call swigc_SUNNonlinearSolverContent_Newton__CTest_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__CTest_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__CTest_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__norm_fn_set(self, norm_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: norm_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = norm_fn
+call swigc_SUNNonlinearSolverContent_Newton__norm_fn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__norm_fn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__norm_fn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__norm_fn_data_set(self, norm_fn_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: norm_fn_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = norm_fn_data
+call swigc_SUNNonlinearSolverContent_Newton__norm_fn_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__norm_fn_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__norm_fn_data_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set(self, getupdatenorm_fn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getupdatenorm_fn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getupdatenorm_fn
+call swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_fn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set(self, getupdatenorm_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: getupdatenorm_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getupdatenorm_data
+call swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__getupdatenorm_data_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__delta_set(self, delta)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+class(N_Vector_), intent(in) :: delta
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = delta%swigdata
+call swigc_SUNNonlinearSolverContent_Newton__delta_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__delta_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__delta_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__jcur_set(self, jcur)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT), intent(in) :: jcur
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = jcur
+call swigc_SUNNonlinearSolverContent_Newton__jcur_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__jcur_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__jcur_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__curiter_set(self, curiter)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT), intent(in) :: curiter
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = curiter
+call swigc_SUNNonlinearSolverContent_Newton__curiter_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__curiter_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__curiter_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__maxiters_set(self, maxiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT), intent(in) :: maxiters
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = maxiters
+call swigc_SUNNonlinearSolverContent_Newton__maxiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__maxiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__maxiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__niters_set(self, niters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_LONG), intent(in) :: niters
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = niters
+call swigc_SUNNonlinearSolverContent_Newton__niters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__niters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__niters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__nconvfails_set(self, nconvfails)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_LONG), intent(in) :: nconvfails
+type(SwigClassWrapper) :: farg1 
+integer(C_LONG) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nconvfails
+call swigc_SUNNonlinearSolverContent_Newton__nconvfails_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__nconvfails_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_LONG) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_LONG) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__nconvfails_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__compute_stiffr_set(self, compute_stiffr)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT), intent(in) :: compute_stiffr
+type(SwigClassWrapper) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = self%swigdata
+farg2 = compute_stiffr
+call swigc_SUNNonlinearSolverContent_Newton__compute_stiffr_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__compute_stiffr_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+integer(C_INT) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__compute_stiffr_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__stiffr_set(self, stiffr)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: stiffr
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = stiffr
+call swigc_SUNNonlinearSolverContent_Newton__stiffr_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__stiffr_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__stiffr_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__delnrm_set(self, delnrm)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: delnrm
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = delnrm
+call swigc_SUNNonlinearSolverContent_Newton__delnrm_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__delnrm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__delnrm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__ctest_data_set(self, ctest_data)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: ctest_data
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ctest_data
+call swigc_SUNNonlinearSolverContent_Newton__ctest_data_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolverContent_Newton__ctest_data_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolverContent_Newton_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolverContent_Newton__ctest_data_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNNonlinearSolverContent_Newton_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNNonlinearSolverContent_Newton_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNNonlinearSolverContent_Newton_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNNonlinearSolverContent_Newton_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNNonlinearSolverContent_Newton_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNNonlinearSolverContent_Newton__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolverContent_Newton_), intent(inout) :: self
+type(SUNNonlinearSolverContent_Newton_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNNonlinearSolverContent_Newton__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNNonlinSol_Newton(y, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
+type(SUNNonlinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(y)
+farg1 = y%swigdata
 farg2 = sunctx
 fresult = swigc_FSUNNonlinSol_Newton(farg1, farg2)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNNonlinSol_NewtonSens(count, y, sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
+type(SUNNonlinearSolver_) :: swig_result
 integer(C_INT), intent(in) :: count
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: y
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = count
-farg2 = c_loc(y)
+farg2 = y%swigdata
 farg3 = sunctx
 fresult = swigc_FSUNNonlinSol_NewtonSens(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
-end function
-
-function FSUNNonlinSolGetType_Newton(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNNonlinearSolver_Type) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolGetType_Newton(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolInitialize_Newton(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolInitialize_Newton(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSolve_Newton(nls, y0, y, w, tol, calllsetup, mem) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(N_Vector), target, intent(inout) :: y0
-type(N_Vector), target, intent(inout) :: y
-type(N_Vector), target, intent(inout) :: w
-real(C_DOUBLE), intent(in) :: tol
-integer(C_INT), intent(in) :: calllsetup
-type(C_PTR) :: mem
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-real(C_DOUBLE) :: farg5 
-integer(C_INT) :: farg6 
-type(C_PTR) :: farg7 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(y0)
-farg3 = c_loc(y)
-farg4 = c_loc(w)
-farg5 = tol
-farg6 = calllsetup
-farg7 = mem
-fresult = swigc_FSUNNonlinSolSolve_Newton(farg1, farg2, farg3, farg4, farg5, farg6, farg7)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolFree_Newton(nls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(nls)
-fresult = swigc_FSUNNonlinSolFree_Newton(farg1)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetSysFn_Newton(nls, sysfn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: sysfn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = sysfn
-fresult = swigc_FSUNNonlinSolSetSysFn_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetLSetupFn_Newton(nls, lsetupfn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: lsetupfn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = lsetupfn
-fresult = swigc_FSUNNonlinSolSetLSetupFn_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetLSolveFn_Newton(nls, lsolvefn) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: lsolvefn
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = lsolvefn
-fresult = swigc_FSUNNonlinSolSetLSolveFn_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetConvTestFn_Newton(nls, ctestfn, ctest_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: ctestfn
-type(C_PTR) :: ctest_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = ctestfn
-farg3 = ctest_data
-fresult = swigc_FSUNNonlinSolSetConvTestFn_Newton(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetMaxIters_Newton(nls, maxiters) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT), intent(in) :: maxiters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-integer(C_INT) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = maxiters
-fresult = swigc_FSUNNonlinSolSetMaxIters_Newton(farg1, farg2)
-swig_result = fresult
+swig_result%swigdata = fresult
 end function
 
 function FSUNNonlinSolSetComputeStiffnessRatio_Newton(nls, onoff) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT), intent(in) :: onoff
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = onoff
 fresult = swigc_FSUNNonlinSolSetComputeStiffnessRatio_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetGetUpdateNormFn_Newton(nls, getupdatenormfn, getupdatenorm_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: getupdatenormfn
-type(C_PTR) :: getupdatenorm_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = getupdatenormfn
-farg3 = getupdatenorm_data
-fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn_Newton(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolSetNormFn_Newton(nls, normfn, norm_fn_data) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_FUNPTR), intent(in), value :: normfn
-type(C_PTR) :: norm_fn_data
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(nls)
-farg2 = normfn
-farg3 = norm_fn_data
-fresult = swigc_FSUNNonlinSolSetNormFn_Newton(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetNumIters_Newton(nls, niters) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_LONG), dimension(*), target, intent(inout) :: niters
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(niters(1))
-fresult = swigc_FSUNNonlinSolGetNumIters_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetCurIter_Newton(nls, iter) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_INT), dimension(*), target, intent(inout) :: iter
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(iter(1))
-fresult = swigc_FSUNNonlinSolGetCurIter_Newton(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNNonlinSolGetNumConvFails_Newton(nls, nconvfails) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-integer(C_LONG), dimension(*), target, intent(inout) :: nconvfails
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(nls)
-farg2 = c_loc(nconvfails(1))
-fresult = swigc_FSUNNonlinSolGetNumConvFails_Newton(farg1, farg2)
 swig_result = fresult
 end function
 
@@ -526,13 +1018,13 @@ function FSUNNonlinSolGetSysFn_Newton(nls, sysfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), target, intent(inout) :: sysfn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(sysfn)
 fresult = swigc_FSUNNonlinSolGetSysFn_Newton(farg1, farg2)
 swig_result = fresult
@@ -542,13 +1034,13 @@ function FSUNNonlinSolGetStiffnessRatio_Newton(nls, stiffr) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 real(C_DOUBLE), dimension(*), target, intent(inout) :: stiffr
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(stiffr(1))
 fresult = swigc_FSUNNonlinSolGetStiffnessRatio_Newton(farg1, farg2)
 swig_result = fresult

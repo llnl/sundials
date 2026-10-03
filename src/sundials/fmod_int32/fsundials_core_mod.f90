@@ -198,71 +198,154 @@ module fsundials_core_mod
     SUNDIALS_NVEC_PETSC, SUNDIALS_NVEC_CUDA, SUNDIALS_NVEC_HIP, SUNDIALS_NVEC_SYCL, SUNDIALS_NVEC_RAJA, SUNDIALS_NVEC_KOKKOS, &
     SUNDIALS_NVEC_OPENMPDEV, SUNDIALS_NVEC_TRILINOS, SUNDIALS_NVEC_MANYVECTOR, SUNDIALS_NVEC_MPIMANYVECTOR, &
     SUNDIALS_NVEC_MPIPLUSX, SUNDIALS_NVEC_CUSTOM
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  ! struct struct N_Vector_Ops_
- type, bind(C), public :: N_Vector_Ops
-  type(C_FUNPTR), public :: nvgetvectorid
-  type(C_FUNPTR), public :: nvclone
-  type(C_FUNPTR), public :: nvcloneempty
-  type(C_FUNPTR), public :: nvdestroy
-  type(C_FUNPTR), public :: nvgetarraypointer
-  type(C_FUNPTR), public :: nvgetdevicearraypointer
-  type(C_FUNPTR), public :: nvsetarraypointer
-  type(C_FUNPTR), public :: nvsetdevicearraypointer
-  type(C_FUNPTR), public :: nvgetcommunicator
-  type(C_FUNPTR), public :: nvgetlength
-  type(C_FUNPTR), public :: nvgetlocallength
-  type(C_FUNPTR), public :: nvlinearsum
-  type(C_FUNPTR), public :: nvconst
-  type(C_FUNPTR), public :: nvprod
-  type(C_FUNPTR), public :: nvdiv
-  type(C_FUNPTR), public :: nvscale
-  type(C_FUNPTR), public :: nvabs
-  type(C_FUNPTR), public :: nvinv
-  type(C_FUNPTR), public :: nvaddconst
-  type(C_FUNPTR), public :: nvdotprod
-  type(C_FUNPTR), public :: nvmaxnorm
-  type(C_FUNPTR), public :: nvwrmsnorm
-  type(C_FUNPTR), public :: nvwrmsnormmask
-  type(C_FUNPTR), public :: nvmin
-  type(C_FUNPTR), public :: nvwl2norm
-  type(C_FUNPTR), public :: nvl1norm
-  type(C_FUNPTR), public :: nvcompare
-  type(C_FUNPTR), public :: nvinvtest
-  type(C_FUNPTR), public :: nvconstrmask
-  type(C_FUNPTR), public :: nvminquotient
-  type(C_FUNPTR), public :: nvlinearcombination
-  type(C_FUNPTR), public :: nvscaleaddmulti
-  type(C_FUNPTR), public :: nvdotprodmulti
-  type(C_FUNPTR), public :: nvlinearsumvectorarray
-  type(C_FUNPTR), public :: nvscalevectorarray
-  type(C_FUNPTR), public :: nvconstvectorarray
-  type(C_FUNPTR), public :: nvwrmsnormvectorarray
-  type(C_FUNPTR), public :: nvwrmsnormmaskvectorarray
-  type(C_FUNPTR), public :: nvscaleaddmultivectorarray
-  type(C_FUNPTR), public :: nvlinearcombinationvectorarray
-  type(C_FUNPTR), public :: nvdotprodlocal
-  type(C_FUNPTR), public :: nvmaxnormlocal
-  type(C_FUNPTR), public :: nvminlocal
-  type(C_FUNPTR), public :: nvl1normlocal
-  type(C_FUNPTR), public :: nvinvtestlocal
-  type(C_FUNPTR), public :: nvconstrmasklocal
-  type(C_FUNPTR), public :: nvminquotientlocal
-  type(C_FUNPTR), public :: nvwsqrsumlocal
-  type(C_FUNPTR), public :: nvwsqrsummasklocal
-  type(C_FUNPTR), public :: nvdotprodmultilocal
-  type(C_FUNPTR), public :: nvdotprodmultiallreduce
-  type(C_FUNPTR), public :: nvbufsize
-  type(C_FUNPTR), public :: nvbufpack
-  type(C_FUNPTR), public :: nvbufunpack
-  type(C_FUNPTR), public :: nvprint
-  type(C_FUNPTR), public :: nvprintfile
- end type N_Vector_Ops
+ type, public :: N_Vector_Ops_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_nvgetvectorid => swigf_N_Vector_Ops__nvgetvectorid_set
+  procedure :: get_nvgetvectorid => swigf_N_Vector_Ops__nvgetvectorid_get
+  procedure :: set_nvclone => swigf_N_Vector_Ops__nvclone_set
+  procedure :: get_nvclone => swigf_N_Vector_Ops__nvclone_get
+  procedure :: set_nvcloneempty => swigf_N_Vector_Ops__nvcloneempty_set
+  procedure :: get_nvcloneempty => swigf_N_Vector_Ops__nvcloneempty_get
+  procedure :: set_nvdestroy => swigf_N_Vector_Ops__nvdestroy_set
+  procedure :: get_nvdestroy => swigf_N_Vector_Ops__nvdestroy_get
+  procedure :: set_nvgetarraypointer => swigf_N_Vector_Ops__nvgetarraypointer_set
+  procedure :: get_nvgetarraypointer => swigf_N_Vector_Ops__nvgetarraypointer_get
+  procedure :: set_nvgetdevicearraypointer => swigf_N_Vector_Ops__nvgetdevicearraypointer_set
+  procedure :: get_nvgetdevicearraypointer => swigf_N_Vector_Ops__nvgetdevicearraypointer_get
+  procedure :: set_nvsetarraypointer => swigf_N_Vector_Ops__nvsetarraypointer_set
+  procedure :: get_nvsetarraypointer => swigf_N_Vector_Ops__nvsetarraypointer_get
+  procedure :: set_nvsetdevicearraypointer => swigf_N_Vector_Ops__nvsetdevicearraypointer_set
+  procedure :: get_nvsetdevicearraypointer => swigf_N_Vector_Ops__nvsetdevicearraypointer_get
+  procedure :: set_nvgetcommunicator => swigf_N_Vector_Ops__nvgetcommunicator_set
+  procedure :: get_nvgetcommunicator => swigf_N_Vector_Ops__nvgetcommunicator_get
+  procedure :: set_nvgetlength => swigf_N_Vector_Ops__nvgetlength_set
+  procedure :: get_nvgetlength => swigf_N_Vector_Ops__nvgetlength_get
+  procedure :: set_nvgetlocallength => swigf_N_Vector_Ops__nvgetlocallength_set
+  procedure :: get_nvgetlocallength => swigf_N_Vector_Ops__nvgetlocallength_get
+  procedure :: set_nvlinearsum => swigf_N_Vector_Ops__nvlinearsum_set
+  procedure :: get_nvlinearsum => swigf_N_Vector_Ops__nvlinearsum_get
+  procedure :: set_nvconst => swigf_N_Vector_Ops__nvconst_set
+  procedure :: get_nvconst => swigf_N_Vector_Ops__nvconst_get
+  procedure :: set_nvprod => swigf_N_Vector_Ops__nvprod_set
+  procedure :: get_nvprod => swigf_N_Vector_Ops__nvprod_get
+  procedure :: set_nvdiv => swigf_N_Vector_Ops__nvdiv_set
+  procedure :: get_nvdiv => swigf_N_Vector_Ops__nvdiv_get
+  procedure :: set_nvscale => swigf_N_Vector_Ops__nvscale_set
+  procedure :: get_nvscale => swigf_N_Vector_Ops__nvscale_get
+  procedure :: set_nvabs => swigf_N_Vector_Ops__nvabs_set
+  procedure :: get_nvabs => swigf_N_Vector_Ops__nvabs_get
+  procedure :: set_nvinv => swigf_N_Vector_Ops__nvinv_set
+  procedure :: get_nvinv => swigf_N_Vector_Ops__nvinv_get
+  procedure :: set_nvaddconst => swigf_N_Vector_Ops__nvaddconst_set
+  procedure :: get_nvaddconst => swigf_N_Vector_Ops__nvaddconst_get
+  procedure :: set_nvdotprod => swigf_N_Vector_Ops__nvdotprod_set
+  procedure :: get_nvdotprod => swigf_N_Vector_Ops__nvdotprod_get
+  procedure :: set_nvmaxnorm => swigf_N_Vector_Ops__nvmaxnorm_set
+  procedure :: get_nvmaxnorm => swigf_N_Vector_Ops__nvmaxnorm_get
+  procedure :: set_nvwrmsnorm => swigf_N_Vector_Ops__nvwrmsnorm_set
+  procedure :: get_nvwrmsnorm => swigf_N_Vector_Ops__nvwrmsnorm_get
+  procedure :: set_nvwrmsnormmask => swigf_N_Vector_Ops__nvwrmsnormmask_set
+  procedure :: get_nvwrmsnormmask => swigf_N_Vector_Ops__nvwrmsnormmask_get
+  procedure :: set_nvmin => swigf_N_Vector_Ops__nvmin_set
+  procedure :: get_nvmin => swigf_N_Vector_Ops__nvmin_get
+  procedure :: set_nvwl2norm => swigf_N_Vector_Ops__nvwl2norm_set
+  procedure :: get_nvwl2norm => swigf_N_Vector_Ops__nvwl2norm_get
+  procedure :: set_nvl1norm => swigf_N_Vector_Ops__nvl1norm_set
+  procedure :: get_nvl1norm => swigf_N_Vector_Ops__nvl1norm_get
+  procedure :: set_nvcompare => swigf_N_Vector_Ops__nvcompare_set
+  procedure :: get_nvcompare => swigf_N_Vector_Ops__nvcompare_get
+  procedure :: set_nvinvtest => swigf_N_Vector_Ops__nvinvtest_set
+  procedure :: get_nvinvtest => swigf_N_Vector_Ops__nvinvtest_get
+  procedure :: set_nvconstrmask => swigf_N_Vector_Ops__nvconstrmask_set
+  procedure :: get_nvconstrmask => swigf_N_Vector_Ops__nvconstrmask_get
+  procedure :: set_nvminquotient => swigf_N_Vector_Ops__nvminquotient_set
+  procedure :: get_nvminquotient => swigf_N_Vector_Ops__nvminquotient_get
+  procedure :: set_nvlinearcombination => swigf_N_Vector_Ops__nvlinearcombination_set
+  procedure :: get_nvlinearcombination => swigf_N_Vector_Ops__nvlinearcombination_get
+  procedure :: set_nvscaleaddmulti => swigf_N_Vector_Ops__nvscaleaddmulti_set
+  procedure :: get_nvscaleaddmulti => swigf_N_Vector_Ops__nvscaleaddmulti_get
+  procedure :: set_nvdotprodmulti => swigf_N_Vector_Ops__nvdotprodmulti_set
+  procedure :: get_nvdotprodmulti => swigf_N_Vector_Ops__nvdotprodmulti_get
+  procedure :: set_nvlinearsumvectorarray => swigf_N_Vector_Ops__nvlinearsumvectorarray_set
+  procedure :: get_nvlinearsumvectorarray => swigf_N_Vector_Ops__nvlinearsumvectorarray_get
+  procedure :: set_nvscalevectorarray => swigf_N_Vector_Ops__nvscalevectorarray_set
+  procedure :: get_nvscalevectorarray => swigf_N_Vector_Ops__nvscalevectorarray_get
+  procedure :: set_nvconstvectorarray => swigf_N_Vector_Ops__nvconstvectorarray_set
+  procedure :: get_nvconstvectorarray => swigf_N_Vector_Ops__nvconstvectorarray_get
+  procedure :: set_nvwrmsnormvectorarray => swigf_N_Vector_Ops__nvwrmsnormvectorarray_set
+  procedure :: get_nvwrmsnormvectorarray => swigf_N_Vector_Ops__nvwrmsnormvectorarray_get
+  procedure :: set_nvwrmsnormmaskvectorarray => swigf_N_Vector_Ops__nvwrmsnormmaskvectorarray_set
+  procedure :: get_nvwrmsnormmaskvectorarray => swigf_N_Vector_Ops__nvwrmsnormmaskvectorarray_get
+  procedure :: set_nvscaleaddmultivectorarray => swigf_N_Vector_Ops__nvscaleaddmultivectorarray_set
+  procedure :: get_nvscaleaddmultivectorarray => swigf_N_Vector_Ops__nvscaleaddmultivectorarray_get
+  procedure :: set_nvlinearcombinationvectorarray => swigf_N_Vector_Ops__nvlinearcombinationvectorarray_set
+  procedure :: get_nvlinearcombinationvectorarray => swigf_N_Vector_Ops__nvlinearcombinationvectorarray_get
+  procedure :: set_nvdotprodlocal => swigf_N_Vector_Ops__nvdotprodlocal_set
+  procedure :: get_nvdotprodlocal => swigf_N_Vector_Ops__nvdotprodlocal_get
+  procedure :: set_nvmaxnormlocal => swigf_N_Vector_Ops__nvmaxnormlocal_set
+  procedure :: get_nvmaxnormlocal => swigf_N_Vector_Ops__nvmaxnormlocal_get
+  procedure :: set_nvminlocal => swigf_N_Vector_Ops__nvminlocal_set
+  procedure :: get_nvminlocal => swigf_N_Vector_Ops__nvminlocal_get
+  procedure :: set_nvl1normlocal => swigf_N_Vector_Ops__nvl1normlocal_set
+  procedure :: get_nvl1normlocal => swigf_N_Vector_Ops__nvl1normlocal_get
+  procedure :: set_nvinvtestlocal => swigf_N_Vector_Ops__nvinvtestlocal_set
+  procedure :: get_nvinvtestlocal => swigf_N_Vector_Ops__nvinvtestlocal_get
+  procedure :: set_nvconstrmasklocal => swigf_N_Vector_Ops__nvconstrmasklocal_set
+  procedure :: get_nvconstrmasklocal => swigf_N_Vector_Ops__nvconstrmasklocal_get
+  procedure :: set_nvminquotientlocal => swigf_N_Vector_Ops__nvminquotientlocal_set
+  procedure :: get_nvminquotientlocal => swigf_N_Vector_Ops__nvminquotientlocal_get
+  procedure :: set_nvwsqrsumlocal => swigf_N_Vector_Ops__nvwsqrsumlocal_set
+  procedure :: get_nvwsqrsumlocal => swigf_N_Vector_Ops__nvwsqrsumlocal_get
+  procedure :: set_nvwsqrsummasklocal => swigf_N_Vector_Ops__nvwsqrsummasklocal_set
+  procedure :: get_nvwsqrsummasklocal => swigf_N_Vector_Ops__nvwsqrsummasklocal_get
+  procedure :: set_nvdotprodmultilocal => swigf_N_Vector_Ops__nvdotprodmultilocal_set
+  procedure :: get_nvdotprodmultilocal => swigf_N_Vector_Ops__nvdotprodmultilocal_get
+  procedure :: set_nvdotprodmultiallreduce => swigf_N_Vector_Ops__nvdotprodmultiallreduce_set
+  procedure :: get_nvdotprodmultiallreduce => swigf_N_Vector_Ops__nvdotprodmultiallreduce_get
+  procedure :: set_nvbufsize => swigf_N_Vector_Ops__nvbufsize_set
+  procedure :: get_nvbufsize => swigf_N_Vector_Ops__nvbufsize_get
+  procedure :: set_nvbufpack => swigf_N_Vector_Ops__nvbufpack_set
+  procedure :: get_nvbufpack => swigf_N_Vector_Ops__nvbufpack_get
+  procedure :: set_nvbufunpack => swigf_N_Vector_Ops__nvbufunpack_set
+  procedure :: get_nvbufunpack => swigf_N_Vector_Ops__nvbufunpack_get
+  procedure :: set_nvprint => swigf_N_Vector_Ops__nvprint_set
+  procedure :: get_nvprint => swigf_N_Vector_Ops__nvprint_get
+  procedure :: set_nvprintfile => swigf_N_Vector_Ops__nvprintfile_set
+  procedure :: get_nvprintfile => swigf_N_Vector_Ops__nvprintfile_get
+  procedure :: release => swigf_release_N_Vector_Ops_
+  procedure, private :: swigf_N_Vector_Ops__op_assign__
+  generic :: assignment(=) => swigf_N_Vector_Ops__op_assign__
+ end type N_Vector_Ops_
+ interface N_Vector_Ops_
+  module procedure swigf_create_N_Vector_Ops_
+ end interface
  ! struct struct N_Vector_
- type, bind(C), public :: N_Vector
-  type(C_PTR), public :: content
-  type(C_PTR), public :: ops
-  type(C_PTR), public :: sunctx
- end type N_Vector
+ type, public :: N_Vector_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_content => swigf_N_Vector__content_set
+  procedure :: get_content => swigf_N_Vector__content_get
+  procedure :: set_ops => swigf_N_Vector__ops_set
+  procedure :: get_ops => swigf_N_Vector__ops_get
+  procedure :: set_sunctx => swigf_N_Vector__sunctx_set
+  procedure :: get_sunctx => swigf_N_Vector__sunctx_get
+  procedure :: release => swigf_release_N_Vector_
+  procedure, private :: swigf_N_Vector__op_assign__
+  generic :: assignment(=) => swigf_N_Vector__op_assign__
+ end type N_Vector_
+ interface N_Vector_
+  module procedure swigf_create_N_Vector_
+ end interface
  public :: FN_VNewEmpty
  public :: FN_VFreeEmpty
  public :: FN_VCopyOps
@@ -346,24 +429,53 @@ module fsundials_core_mod
  public :: SUNMATRIX_DENSE, SUNMATRIX_MAGMADENSE, SUNMATRIX_ONEMKLDENSE, SUNMATRIX_BAND, SUNMATRIX_SPARSE, SUNMATRIX_SLUNRLOC, &
     SUNMATRIX_CUSPARSE, SUNMATRIX_GINKGO, SUNMATRIX_GINKGOBATCH, SUNMATRIX_KOKKOSDENSE, SUNMATRIX_CUSTOM
  ! struct struct SUNMatrix_Ops_
- type, bind(C), public :: SUNMatrix_Ops
-  type(C_FUNPTR), public :: getid
-  type(C_FUNPTR), public :: clone
-  type(C_FUNPTR), public :: destroy
-  type(C_FUNPTR), public :: zero
-  type(C_FUNPTR), public :: copy
-  type(C_FUNPTR), public :: scaleadd
-  type(C_FUNPTR), public :: scaleaddi
-  type(C_FUNPTR), public :: matvecsetup
-  type(C_FUNPTR), public :: matvec
-  type(C_FUNPTR), public :: mathermitiantransposevec
- end type SUNMatrix_Ops
+ type, public :: SUNMatrix_Ops_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_getid => swigf_SUNMatrix_Ops__getid_set
+  procedure :: get_getid => swigf_SUNMatrix_Ops__getid_get
+  procedure :: set_clone => swigf_SUNMatrix_Ops__clone_set
+  procedure :: get_clone => swigf_SUNMatrix_Ops__clone_get
+  procedure :: set_destroy => swigf_SUNMatrix_Ops__destroy_set
+  procedure :: get_destroy => swigf_SUNMatrix_Ops__destroy_get
+  procedure :: set_zero => swigf_SUNMatrix_Ops__zero_set
+  procedure :: get_zero => swigf_SUNMatrix_Ops__zero_get
+  procedure :: set_copy => swigf_SUNMatrix_Ops__copy_set
+  procedure :: get_copy => swigf_SUNMatrix_Ops__copy_get
+  procedure :: set_scaleadd => swigf_SUNMatrix_Ops__scaleadd_set
+  procedure :: get_scaleadd => swigf_SUNMatrix_Ops__scaleadd_get
+  procedure :: set_scaleaddi => swigf_SUNMatrix_Ops__scaleaddi_set
+  procedure :: get_scaleaddi => swigf_SUNMatrix_Ops__scaleaddi_get
+  procedure :: set_matvecsetup => swigf_SUNMatrix_Ops__matvecsetup_set
+  procedure :: get_matvecsetup => swigf_SUNMatrix_Ops__matvecsetup_get
+  procedure :: set_matvec => swigf_SUNMatrix_Ops__matvec_set
+  procedure :: get_matvec => swigf_SUNMatrix_Ops__matvec_get
+  procedure :: set_mathermitiantransposevec => swigf_SUNMatrix_Ops__mathermitiantransposevec_set
+  procedure :: get_mathermitiantransposevec => swigf_SUNMatrix_Ops__mathermitiantransposevec_get
+  procedure :: release => swigf_release_SUNMatrix_Ops_
+  procedure, private :: swigf_SUNMatrix_Ops__op_assign__
+  generic :: assignment(=) => swigf_SUNMatrix_Ops__op_assign__
+ end type SUNMatrix_Ops_
+ interface SUNMatrix_Ops_
+  module procedure swigf_create_SUNMatrix_Ops_
+ end interface
  ! struct struct SUNMatrix_
- type, bind(C), public :: SUNMatrix
-  type(C_PTR), public :: content
-  type(C_PTR), public :: ops
-  type(C_PTR), public :: sunctx
- end type SUNMatrix
+ type, public :: SUNMatrix_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_content => swigf_SUNMatrix__content_set
+  procedure :: get_content => swigf_SUNMatrix__content_get
+  procedure :: set_ops => swigf_SUNMatrix__ops_set
+  procedure :: get_ops => swigf_SUNMatrix__ops_get
+  procedure :: set_sunctx => swigf_SUNMatrix__sunctx_set
+  procedure :: get_sunctx => swigf_SUNMatrix__sunctx_get
+  procedure :: release => swigf_release_SUNMatrix_
+  procedure, private :: swigf_SUNMatrix__op_assign__
+  generic :: assignment(=) => swigf_SUNMatrix__op_assign__
+ end type SUNMatrix_
+ interface SUNMatrix_
+  module procedure swigf_create_SUNMatrix_
+ end interface
  public :: FSUNMatNewEmpty
  public :: FSUNMatFreeEmpty
  public :: FSUNMatCopyOps
@@ -442,30 +554,65 @@ module fsundials_core_mod
     SUNLINEARSOLVER_MAGMADENSE, SUNLINEARSOLVER_ONEMKLDENSE, SUNLINEARSOLVER_GINKGO, SUNLINEARSOLVER_GINKGOBATCH, &
     SUNLINEARSOLVER_KOKKOSDENSE, SUNLINEARSOLVER_CUSTOM
  ! struct struct SUNLinearSolver_Ops_
- type, bind(C), public :: SUNLinearSolver_Ops
-  type(C_FUNPTR), public :: gettype
-  type(C_FUNPTR), public :: getid
-  type(C_FUNPTR), public :: setatimes
-  type(C_FUNPTR), public :: setpreconditioner
-  type(C_FUNPTR), public :: setscalingvectors
-  type(C_FUNPTR), public :: setoptions
-  type(C_FUNPTR), public :: setzeroguess
-  type(C_FUNPTR), public :: initialize
-  type(C_FUNPTR), public :: setup
-  type(C_FUNPTR), public :: solve
-  type(C_FUNPTR), public :: numiters
-  type(C_FUNPTR), public :: resnorm
-  type(C_FUNPTR), public :: lastflag
-  type(C_FUNPTR), public :: resid
-  type(C_FUNPTR), public :: free
- end type SUNLinearSolver_Ops
+ type, public :: SUNLinearSolver_Ops_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_gettype => swigf_SUNLinearSolver_Ops__gettype_set
+  procedure :: get_gettype => swigf_SUNLinearSolver_Ops__gettype_get
+  procedure :: set_getid => swigf_SUNLinearSolver_Ops__getid_set
+  procedure :: get_getid => swigf_SUNLinearSolver_Ops__getid_get
+  procedure :: set_setatimes => swigf_SUNLinearSolver_Ops__setatimes_set
+  procedure :: get_setatimes => swigf_SUNLinearSolver_Ops__setatimes_get
+  procedure :: set_setpreconditioner => swigf_SUNLinearSolver_Ops__setpreconditioner_set
+  procedure :: get_setpreconditioner => swigf_SUNLinearSolver_Ops__setpreconditioner_get
+  procedure :: set_setscalingvectors => swigf_SUNLinearSolver_Ops__setscalingvectors_set
+  procedure :: get_setscalingvectors => swigf_SUNLinearSolver_Ops__setscalingvectors_get
+  procedure :: set_setoptions => swigf_SUNLinearSolver_Ops__setoptions_set
+  procedure :: get_setoptions => swigf_SUNLinearSolver_Ops__setoptions_get
+  procedure :: set_setzeroguess => swigf_SUNLinearSolver_Ops__setzeroguess_set
+  procedure :: get_setzeroguess => swigf_SUNLinearSolver_Ops__setzeroguess_get
+  procedure :: set_initialize => swigf_SUNLinearSolver_Ops__initialize_set
+  procedure :: get_initialize => swigf_SUNLinearSolver_Ops__initialize_get
+  procedure :: set_setup => swigf_SUNLinearSolver_Ops__setup_set
+  procedure :: get_setup => swigf_SUNLinearSolver_Ops__setup_get
+  procedure :: set_solve => swigf_SUNLinearSolver_Ops__solve_set
+  procedure :: get_solve => swigf_SUNLinearSolver_Ops__solve_get
+  procedure :: set_numiters => swigf_SUNLinearSolver_Ops__numiters_set
+  procedure :: get_numiters => swigf_SUNLinearSolver_Ops__numiters_get
+  procedure :: set_resnorm => swigf_SUNLinearSolver_Ops__resnorm_set
+  procedure :: get_resnorm => swigf_SUNLinearSolver_Ops__resnorm_get
+  procedure :: set_lastflag => swigf_SUNLinearSolver_Ops__lastflag_set
+  procedure :: get_lastflag => swigf_SUNLinearSolver_Ops__lastflag_get
+  procedure :: set_resid => swigf_SUNLinearSolver_Ops__resid_set
+  procedure :: get_resid => swigf_SUNLinearSolver_Ops__resid_get
+  procedure :: set_free => swigf_SUNLinearSolver_Ops__free_set
+  procedure :: get_free => swigf_SUNLinearSolver_Ops__free_get
+  procedure :: release => swigf_release_SUNLinearSolver_Ops_
+  procedure, private :: swigf_SUNLinearSolver_Ops__op_assign__
+  generic :: assignment(=) => swigf_SUNLinearSolver_Ops__op_assign__
+ end type SUNLinearSolver_Ops_
+ interface SUNLinearSolver_Ops_
+  module procedure swigf_create_SUNLinearSolver_Ops_
+ end interface
  ! struct struct SUNLinearSolver_
- type, bind(C), public :: SUNLinearSolver
-  type(C_PTR), public :: content
-  type(C_PTR), public :: python
-  type(C_PTR), public :: ops
-  type(C_PTR), public :: sunctx
- end type SUNLinearSolver
+ type, public :: SUNLinearSolver_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_content => swigf_SUNLinearSolver__content_set
+  procedure :: get_content => swigf_SUNLinearSolver__content_get
+  procedure :: set_python => swigf_SUNLinearSolver__python_set
+  procedure :: get_python => swigf_SUNLinearSolver__python_get
+  procedure :: set_ops => swigf_SUNLinearSolver__ops_set
+  procedure :: get_ops => swigf_SUNLinearSolver__ops_get
+  procedure :: set_sunctx => swigf_SUNLinearSolver__sunctx_set
+  procedure :: get_sunctx => swigf_SUNLinearSolver__sunctx_get
+  procedure :: release => swigf_release_SUNLinearSolver_
+  procedure, private :: swigf_SUNLinearSolver__op_assign__
+  generic :: assignment(=) => swigf_SUNLinearSolver__op_assign__
+ end type SUNLinearSolver_
+ interface SUNLinearSolver_
+  module procedure swigf_create_SUNLinearSolver_
+ end interface
  public :: FSUNLinSolNewEmpty
  public :: FSUNLinSolFreeEmpty
  public :: FSUNLinSolGetType
@@ -507,33 +654,71 @@ module fsundials_core_mod
  integer, parameter, public :: SUNNonlinearSolver_Type = kind(SUNNONLINEARSOLVER_ROOTFIND)
  public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
  ! struct struct SUNNonlinearSolver_Ops_
- type, bind(C), public :: SUNNonlinearSolver_Ops
-  type(C_FUNPTR), public :: gettype
-  type(C_FUNPTR), public :: initialize
-  type(C_FUNPTR), public :: setup
-  type(C_FUNPTR), public :: solve
-  type(C_FUNPTR), public :: free
-  type(C_FUNPTR), public :: setsysfn
-  type(C_FUNPTR), public :: setsysfns
-  type(C_FUNPTR), public :: setlsetupfn
-  type(C_FUNPTR), public :: setlsolvefn
-  type(C_FUNPTR), public :: setctestfn
-  type(C_FUNPTR), public :: setnormfn
-  type(C_FUNPTR), public :: setgetupdatenormfn
-  type(C_FUNPTR), public :: setgetconvratefn
-  type(C_FUNPTR), public :: setoptions
-  type(C_FUNPTR), public :: setmaxiters
-  type(C_FUNPTR), public :: getnumiters
-  type(C_FUNPTR), public :: getcuriter
-  type(C_FUNPTR), public :: getnumconvfails
- end type SUNNonlinearSolver_Ops
+ type, public :: SUNNonlinearSolver_Ops_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_gettype => swigf_SUNNonlinearSolver_Ops__gettype_set
+  procedure :: get_gettype => swigf_SUNNonlinearSolver_Ops__gettype_get
+  procedure :: set_initialize => swigf_SUNNonlinearSolver_Ops__initialize_set
+  procedure :: get_initialize => swigf_SUNNonlinearSolver_Ops__initialize_get
+  procedure :: set_setup => swigf_SUNNonlinearSolver_Ops__setup_set
+  procedure :: get_setup => swigf_SUNNonlinearSolver_Ops__setup_get
+  procedure :: set_solve => swigf_SUNNonlinearSolver_Ops__solve_set
+  procedure :: get_solve => swigf_SUNNonlinearSolver_Ops__solve_get
+  procedure :: set_free => swigf_SUNNonlinearSolver_Ops__free_set
+  procedure :: get_free => swigf_SUNNonlinearSolver_Ops__free_get
+  procedure :: set_setsysfn => swigf_SUNNonlinearSolver_Ops__setsysfn_set
+  procedure :: get_setsysfn => swigf_SUNNonlinearSolver_Ops__setsysfn_get
+  procedure :: set_setsysfns => swigf_SUNNonlinearSolver_Ops__setsysfns_set
+  procedure :: get_setsysfns => swigf_SUNNonlinearSolver_Ops__setsysfns_get
+  procedure :: set_setlsetupfn => swigf_SUNNonlinearSolver_Ops__setlsetupfn_set
+  procedure :: get_setlsetupfn => swigf_SUNNonlinearSolver_Ops__setlsetupfn_get
+  procedure :: set_setlsolvefn => swigf_SUNNonlinearSolver_Ops__setlsolvefn_set
+  procedure :: get_setlsolvefn => swigf_SUNNonlinearSolver_Ops__setlsolvefn_get
+  procedure :: set_setctestfn => swigf_SUNNonlinearSolver_Ops__setctestfn_set
+  procedure :: get_setctestfn => swigf_SUNNonlinearSolver_Ops__setctestfn_get
+  procedure :: set_setnormfn => swigf_SUNNonlinearSolver_Ops__setnormfn_set
+  procedure :: get_setnormfn => swigf_SUNNonlinearSolver_Ops__setnormfn_get
+  procedure :: set_setgetupdatenormfn => swigf_SUNNonlinearSolver_Ops__setgetupdatenormfn_set
+  procedure :: get_setgetupdatenormfn => swigf_SUNNonlinearSolver_Ops__setgetupdatenormfn_get
+  procedure :: set_setgetconvratefn => swigf_SUNNonlinearSolver_Ops__setgetconvratefn_set
+  procedure :: get_setgetconvratefn => swigf_SUNNonlinearSolver_Ops__setgetconvratefn_get
+  procedure :: set_setoptions => swigf_SUNNonlinearSolver_Ops__setoptions_set
+  procedure :: get_setoptions => swigf_SUNNonlinearSolver_Ops__setoptions_get
+  procedure :: set_setmaxiters => swigf_SUNNonlinearSolver_Ops__setmaxiters_set
+  procedure :: get_setmaxiters => swigf_SUNNonlinearSolver_Ops__setmaxiters_get
+  procedure :: set_getnumiters => swigf_SUNNonlinearSolver_Ops__getnumiters_set
+  procedure :: get_getnumiters => swigf_SUNNonlinearSolver_Ops__getnumiters_get
+  procedure :: set_getcuriter => swigf_SUNNonlinearSolver_Ops__getcuriter_set
+  procedure :: get_getcuriter => swigf_SUNNonlinearSolver_Ops__getcuriter_get
+  procedure :: set_getnumconvfails => swigf_SUNNonlinearSolver_Ops__getnumconvfails_set
+  procedure :: get_getnumconvfails => swigf_SUNNonlinearSolver_Ops__getnumconvfails_get
+  procedure :: release => swigf_release_SUNNonlinearSolver_Ops_
+  procedure, private :: swigf_SUNNonlinearSolver_Ops__op_assign__
+  generic :: assignment(=) => swigf_SUNNonlinearSolver_Ops__op_assign__
+ end type SUNNonlinearSolver_Ops_
+ interface SUNNonlinearSolver_Ops_
+  module procedure swigf_create_SUNNonlinearSolver_Ops_
+ end interface
  ! struct struct SUNNonlinearSolver_
- type, bind(C), public :: SUNNonlinearSolver
-  type(C_PTR), public :: content
-  type(C_PTR), public :: python
-  type(C_PTR), public :: ops
-  type(C_PTR), public :: sunctx
- end type SUNNonlinearSolver
+ type, public :: SUNNonlinearSolver_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_content => swigf_SUNNonlinearSolver__content_set
+  procedure :: get_content => swigf_SUNNonlinearSolver__content_get
+  procedure :: set_python => swigf_SUNNonlinearSolver__python_set
+  procedure :: get_python => swigf_SUNNonlinearSolver__python_get
+  procedure :: set_ops => swigf_SUNNonlinearSolver__ops_set
+  procedure :: get_ops => swigf_SUNNonlinearSolver__ops_get
+  procedure :: set_sunctx => swigf_SUNNonlinearSolver__sunctx_set
+  procedure :: get_sunctx => swigf_SUNNonlinearSolver__sunctx_get
+  procedure :: release => swigf_release_SUNNonlinearSolver_
+  procedure, private :: swigf_SUNNonlinearSolver__op_assign__
+  generic :: assignment(=) => swigf_SUNNonlinearSolver__op_assign__
+ end type SUNNonlinearSolver_
+ interface SUNNonlinearSolver_
+  module procedure swigf_create_SUNNonlinearSolver_
+ end interface
  public :: FSUNNonlinSolNewEmpty
  public :: FSUNNonlinSolFreeEmpty
  public :: FSUNNonlinSolGetType
@@ -565,25 +750,55 @@ module fsundials_core_mod
  integer, parameter, public :: SUNAdaptController_Type = kind(SUN_ADAPTCONTROLLER_NONE)
  public :: SUN_ADAPTCONTROLLER_NONE, SUN_ADAPTCONTROLLER_H, SUN_ADAPTCONTROLLER_MRI_H_TOL
  ! struct struct SUNAdaptController_Ops_
- type, bind(C), public :: SUNAdaptController_Ops
-  type(C_FUNPTR), public :: gettype
-  type(C_FUNPTR), public :: estimatestep
-  type(C_FUNPTR), public :: estimatesteptol
-  type(C_FUNPTR), public :: destroy
-  type(C_FUNPTR), public :: reset
-  type(C_FUNPTR), public :: setoptions
-  type(C_FUNPTR), public :: setdefaults
-  type(C_FUNPTR), public :: write
-  type(C_FUNPTR), public :: seterrorbias
-  type(C_FUNPTR), public :: updateh
-  type(C_FUNPTR), public :: updatemrihtol
- end type SUNAdaptController_Ops
+ type, public :: SUNAdaptController_Ops_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_gettype => swigf_SUNAdaptController_Ops__gettype_set
+  procedure :: get_gettype => swigf_SUNAdaptController_Ops__gettype_get
+  procedure :: set_estimatestep => swigf_SUNAdaptController_Ops__estimatestep_set
+  procedure :: get_estimatestep => swigf_SUNAdaptController_Ops__estimatestep_get
+  procedure :: set_estimatesteptol => swigf_SUNAdaptController_Ops__estimatesteptol_set
+  procedure :: get_estimatesteptol => swigf_SUNAdaptController_Ops__estimatesteptol_get
+  procedure :: set_destroy => swigf_SUNAdaptController_Ops__destroy_set
+  procedure :: get_destroy => swigf_SUNAdaptController_Ops__destroy_get
+  procedure :: set_reset => swigf_SUNAdaptController_Ops__reset_set
+  procedure :: get_reset => swigf_SUNAdaptController_Ops__reset_get
+  procedure :: set_setoptions => swigf_SUNAdaptController_Ops__setoptions_set
+  procedure :: get_setoptions => swigf_SUNAdaptController_Ops__setoptions_get
+  procedure :: set_setdefaults => swigf_SUNAdaptController_Ops__setdefaults_set
+  procedure :: get_setdefaults => swigf_SUNAdaptController_Ops__setdefaults_get
+  procedure :: set_write => swigf_SUNAdaptController_Ops__write_set
+  procedure :: get_write => swigf_SUNAdaptController_Ops__write_get
+  procedure :: set_seterrorbias => swigf_SUNAdaptController_Ops__seterrorbias_set
+  procedure :: get_seterrorbias => swigf_SUNAdaptController_Ops__seterrorbias_get
+  procedure :: set_updateh => swigf_SUNAdaptController_Ops__updateh_set
+  procedure :: get_updateh => swigf_SUNAdaptController_Ops__updateh_get
+  procedure :: set_updatemrihtol => swigf_SUNAdaptController_Ops__updatemrihtol_set
+  procedure :: get_updatemrihtol => swigf_SUNAdaptController_Ops__updatemrihtol_get
+  procedure :: release => swigf_release_SUNAdaptController_Ops_
+  procedure, private :: swigf_SUNAdaptController_Ops__op_assign__
+  generic :: assignment(=) => swigf_SUNAdaptController_Ops__op_assign__
+ end type SUNAdaptController_Ops_
+ interface SUNAdaptController_Ops_
+  module procedure swigf_create_SUNAdaptController_Ops_
+ end interface
  ! struct struct SUNAdaptController_
- type, bind(C), public :: SUNAdaptController
-  type(C_PTR), public :: content
-  type(C_PTR), public :: ops
-  type(C_PTR), public :: sunctx
- end type SUNAdaptController
+ type, public :: SUNAdaptController_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_content => swigf_SUNAdaptController__content_set
+  procedure :: get_content => swigf_SUNAdaptController__content_get
+  procedure :: set_ops => swigf_SUNAdaptController__ops_set
+  procedure :: get_ops => swigf_SUNAdaptController__ops_get
+  procedure :: set_sunctx => swigf_SUNAdaptController__sunctx_set
+  procedure :: get_sunctx => swigf_SUNAdaptController__sunctx_get
+  procedure :: release => swigf_release_SUNAdaptController_
+  procedure, private :: swigf_SUNAdaptController__op_assign__
+  generic :: assignment(=) => swigf_SUNAdaptController__op_assign__
+ end type SUNAdaptController_
+ interface SUNAdaptController_
+  module procedure swigf_create_SUNAdaptController_
+ end interface
  public :: FSUNAdaptController_NewEmpty
  public :: FSUNAdaptController_DestroyEmpty
  public :: FSUNAdaptController_GetType
@@ -1161,26 +1376,1078 @@ type(C_PTR), value :: farg1
 integer(C_INT) :: fresult
 end function
 
+subroutine swigc_N_Vector_Ops__nvgetvectorid_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetvectorid_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetvectorid_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetvectorid_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvclone_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvclone_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvclone_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvclone_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvcloneempty_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvcloneempty_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvcloneempty_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvcloneempty_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdestroy_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdestroy_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdestroy_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdestroy_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvgetarraypointer_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetarraypointer_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetarraypointer_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetarraypointer_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvgetdevicearraypointer_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetdevicearraypointer_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetdevicearraypointer_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetdevicearraypointer_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvsetarraypointer_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvsetarraypointer_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvsetarraypointer_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvsetarraypointer_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvsetdevicearraypointer_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvsetdevicearraypointer_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvsetdevicearraypointer_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvsetdevicearraypointer_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvgetcommunicator_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetcommunicator_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetcommunicator_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetcommunicator_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvgetlength_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetlength_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetlength_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetlength_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvgetlocallength_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetlocallength_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvgetlocallength_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvgetlocallength_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvlinearsum_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearsum_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvlinearsum_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearsum_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvconst_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvconst_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvconst_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvconst_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvprod_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvprod_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvprod_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvprod_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdiv_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdiv_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdiv_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdiv_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvscale_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvscale_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvscale_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvscale_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvabs_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvabs_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvabs_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvabs_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvinv_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvinv_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvinv_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvinv_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvaddconst_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvaddconst_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvaddconst_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvaddconst_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdotprod_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprod_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdotprod_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprod_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvmaxnorm_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvmaxnorm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvmaxnorm_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvmaxnorm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwrmsnorm_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnorm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwrmsnorm_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnorm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwrmsnormmask_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormmask_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwrmsnormmask_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormmask_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvmin_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvmin_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvmin_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvmin_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwl2norm_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwl2norm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwl2norm_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwl2norm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvl1norm_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvl1norm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvl1norm_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvl1norm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvcompare_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvcompare_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvcompare_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvcompare_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvinvtest_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvinvtest_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvinvtest_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvinvtest_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvconstrmask_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstrmask_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvconstrmask_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstrmask_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvminquotient_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvminquotient_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvminquotient_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvminquotient_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvlinearcombination_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearcombination_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvlinearcombination_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearcombination_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvscaleaddmulti_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvscaleaddmulti_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvscaleaddmulti_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvscaleaddmulti_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdotprodmulti_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmulti_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdotprodmulti_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmulti_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvlinearsumvectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearsumvectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvlinearsumvectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearsumvectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvscalevectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvscalevectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvscalevectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvscalevectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvconstvectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstvectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvconstvectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstvectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwrmsnormvectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormvectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwrmsnormvectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormvectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwrmsnormmaskvectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormmaskvectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwrmsnormmaskvectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwrmsnormmaskvectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvscaleaddmultivectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvscaleaddmultivectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvscaleaddmultivectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvscaleaddmultivectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvlinearcombinationvectorarray_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearcombinationvectorarray_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvlinearcombinationvectorarray_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvlinearcombinationvectorarray_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdotprodlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdotprodlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvmaxnormlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvmaxnormlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvmaxnormlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvmaxnormlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvminlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvminlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvminlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvminlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvl1normlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvl1normlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvl1normlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvl1normlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvinvtestlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvinvtestlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvinvtestlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvinvtestlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvconstrmasklocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstrmasklocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvconstrmasklocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvconstrmasklocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvminquotientlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvminquotientlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvminquotientlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvminquotientlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwsqrsumlocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwsqrsumlocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwsqrsumlocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwsqrsumlocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvwsqrsummasklocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvwsqrsummasklocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvwsqrsummasklocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvwsqrsummasklocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdotprodmultilocal_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmultilocal_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdotprodmultilocal_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmultilocal_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvdotprodmultiallreduce_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmultiallreduce_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvdotprodmultiallreduce_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvdotprodmultiallreduce_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvbufsize_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufsize_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvbufsize_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufsize_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvbufpack_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufpack_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvbufpack_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufpack_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvbufunpack_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufunpack_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvbufunpack_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvbufunpack_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvprint_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvprint_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvprint_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvprint_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_N_Vector_Ops__nvprintfile_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__nvprintfile_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector_Ops__nvprintfile_get(farg1) &
+bind(C, name="_wrap_N_Vector_Ops__nvprintfile_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_N_Vector_Ops_() &
+bind(C, name="_wrap_new_N_Vector_Ops_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_N_Vector_Ops_(farg1) &
+bind(C, name="_wrap_delete_N_Vector_Ops_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_N_Vector_Ops__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_N_Vector_Ops__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+subroutine swigc_N_Vector__content_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector__content_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector__content_get(farg1) &
+bind(C, name="_wrap_N_Vector__content_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_N_Vector__ops_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector__ops_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_N_Vector__ops_get(farg1) &
+bind(C, name="_wrap_N_Vector__ops_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_N_Vector__sunctx_set(farg1, farg2) &
+bind(C, name="_wrap_N_Vector__sunctx_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_N_Vector__sunctx_get(farg1) &
+bind(C, name="_wrap_N_Vector__sunctx_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_N_Vector_() &
+bind(C, name="_wrap_new_N_Vector_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_N_Vector_(farg1) &
+bind(C, name="_wrap_delete_N_Vector_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_N_Vector__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_N_Vector__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FN_VNewEmpty(farg1) &
 bind(C, name="_wrap_FN_VNewEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FN_VFreeEmpty(farg1) &
 bind(C, name="_wrap_FN_VFreeEmpty")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FN_VCopyOps(farg1, farg2) &
 bind(C, name="_wrap_FN_VCopyOps") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1188,7 +2455,8 @@ function swigc_FN_VGetVectorID(farg1) &
 bind(C, name="_wrap_FN_VGetVectorID") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1196,43 +2464,49 @@ function swigc_FN_VClone(farg1) &
 bind(C, name="_wrap_FN_VClone") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FN_VCloneEmpty(farg1) &
 bind(C, name="_wrap_FN_VCloneEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FN_VDestroy(farg1) &
 bind(C, name="_wrap_FN_VDestroy")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 subroutine swigc_FN_VSetArrayPointer(farg1, farg2) &
 bind(C, name="_wrap_FN_VSetArrayPointer")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 subroutine swigc_FN_VSetDeviceArrayPointer(farg1, farg2) &
 bind(C, name="_wrap_FN_VSetDeviceArrayPointer")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 function swigc_FN_VGetCommunicator(farg1) &
 bind(C, name="_wrap_FN_VGetCommunicator") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1240,7 +2514,8 @@ function swigc_FN_VGetLength(farg1) &
 bind(C, name="_wrap_FN_VGetLength") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -1248,79 +2523,89 @@ function swigc_FN_VGetLocalLength(farg1) &
 bind(C, name="_wrap_FN_VGetLocalLength") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
 subroutine swigc_FN_VLinearSum(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FN_VLinearSum")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg4
+type(SwigClassWrapper) :: farg5
 end subroutine
 
 subroutine swigc_FN_VConst(farg1, farg2) &
 bind(C, name="_wrap_FN_VConst")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 subroutine swigc_FN_VProd(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VProd")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 subroutine swigc_FN_VDiv(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VDiv")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 subroutine swigc_FN_VScale(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VScale")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 subroutine swigc_FN_VAbs(farg1, farg2) &
 bind(C, name="_wrap_FN_VAbs")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 subroutine swigc_FN_VInv(farg1, farg2) &
 bind(C, name="_wrap_FN_VInv")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 end subroutine
 
 subroutine swigc_FN_VAddConst(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VAddConst")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 function swigc_FN_VDotProd(farg1, farg2) &
 bind(C, name="_wrap_FN_VDotProd") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1328,7 +2613,8 @@ function swigc_FN_VMaxNorm(farg1) &
 bind(C, name="_wrap_FN_VMaxNorm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1336,8 +2622,9 @@ function swigc_FN_VWrmsNorm(farg1, farg2) &
 bind(C, name="_wrap_FN_VWrmsNorm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1345,9 +2632,10 @@ function swigc_FN_VWrmsNormMask(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VWrmsNormMask") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1355,7 +2643,8 @@ function swigc_FN_VMin(farg1) &
 bind(C, name="_wrap_FN_VMin") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1363,8 +2652,9 @@ function swigc_FN_VWL2Norm(farg1, farg2) &
 bind(C, name="_wrap_FN_VWL2Norm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1372,24 +2662,27 @@ function swigc_FN_VL1Norm(farg1) &
 bind(C, name="_wrap_FN_VL1Norm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
 subroutine swigc_FN_VCompare(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VCompare")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 function swigc_FN_VInvTest(farg1, farg2) &
 bind(C, name="_wrap_FN_VInvTest") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1397,9 +2690,10 @@ function swigc_FN_VConstrMask(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VConstrMask") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1407,8 +2701,9 @@ function swigc_FN_VMinQuotient(farg1, farg2) &
 bind(C, name="_wrap_FN_VMinQuotient") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1416,10 +2711,11 @@ function swigc_FN_VLinearCombination(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VLinearCombination") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -1427,9 +2723,10 @@ function swigc_FN_VScaleAddMulti(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FN_VScaleAddMulti") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR), value :: farg5
 integer(C_INT) :: fresult
@@ -1439,8 +2736,9 @@ function swigc_FN_VDotProdMulti(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VDotProdMulti") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
@@ -1495,10 +2793,11 @@ function swigc_FN_VWrmsNormMaskVectorArray(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FN_VWrmsNormMaskVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 type(C_PTR), value :: farg5
 integer(C_INT) :: fresult
 end function
@@ -1507,8 +2806,9 @@ function swigc_FN_VDotProdLocal(farg1, farg2) &
 bind(C, name="_wrap_FN_VDotProdLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1516,7 +2816,8 @@ function swigc_FN_VMaxNormLocal(farg1) &
 bind(C, name="_wrap_FN_VMaxNormLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1524,7 +2825,8 @@ function swigc_FN_VMinLocal(farg1) &
 bind(C, name="_wrap_FN_VMinLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1532,7 +2834,8 @@ function swigc_FN_VL1NormLocal(farg1) &
 bind(C, name="_wrap_FN_VL1NormLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1540,8 +2843,9 @@ function swigc_FN_VWSqrSumLocal(farg1, farg2) &
 bind(C, name="_wrap_FN_VWSqrSumLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1549,9 +2853,10 @@ function swigc_FN_VWSqrSumMaskLocal(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VWSqrSumMaskLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1559,8 +2864,9 @@ function swigc_FN_VInvTestLocal(farg1, farg2) &
 bind(C, name="_wrap_FN_VInvTestLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1568,9 +2874,10 @@ function swigc_FN_VConstrMaskLocal(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VConstrMaskLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1578,8 +2885,9 @@ function swigc_FN_VMinQuotientLocal(farg1, farg2) &
 bind(C, name="_wrap_FN_VMinQuotientLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE) :: fresult
 end function
 
@@ -1587,8 +2895,9 @@ function swigc_FN_VDotProdMultiLocal(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FN_VDotProdMultiLocal") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
@@ -1598,8 +2907,9 @@ function swigc_FN_VDotProdMultiAllReduce(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VDotProdMultiAllReduce") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
@@ -1608,7 +2918,8 @@ function swigc_FN_VBufSize(farg1, farg2) &
 bind(C, name="_wrap_FN_VBufSize") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -1617,7 +2928,8 @@ function swigc_FN_VBufPack(farg1, farg2) &
 bind(C, name="_wrap_FN_VBufPack") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -1626,7 +2938,8 @@ function swigc_FN_VBufUnpack(farg1, farg2) &
 bind(C, name="_wrap_FN_VBufUnpack") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -1644,8 +2957,9 @@ function swigc_FN_VCloneEmptyVectorArray(farg1, farg2) &
 bind(C, name="_wrap_FN_VCloneEmptyVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR) :: fresult
 end function
 
@@ -1653,8 +2967,9 @@ function swigc_FN_VCloneVectorArray(farg1, farg2) &
 bind(C, name="_wrap_FN_VCloneVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 integer(C_INT), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 type(C_PTR) :: fresult
 end function
 
@@ -1669,29 +2984,33 @@ function swigc_FN_VGetVecAtIndexVectorArray(farg1, farg2) &
 bind(C, name="_wrap_FN_VGetVecAtIndexVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_INT), intent(in) :: farg2
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FN_VSetVecAtIndexVectorArray(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VSetVecAtIndexVectorArray")
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_INT), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 end subroutine
 
 subroutine swigc_FN_VPrint(farg1) &
 bind(C, name="_wrap_FN_VPrint")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 subroutine swigc_FN_VPrintFile(farg1, farg2) &
 bind(C, name="_wrap_FN_VPrintFile")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
@@ -1712,26 +3031,296 @@ type(C_PTR), value :: farg1
 type(C_PTR) :: fresult
 end function
 
+subroutine swigc_SUNMatrix_Ops__getid_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__getid_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__getid_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__getid_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__clone_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__clone_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__clone_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__clone_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__destroy_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__destroy_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__destroy_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__destroy_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__zero_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__zero_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__zero_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__zero_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__copy_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__copy_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__copy_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__copy_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__scaleadd_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__scaleadd_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__scaleadd_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__scaleadd_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__scaleaddi_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__scaleaddi_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__scaleaddi_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__scaleaddi_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__matvecsetup_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__matvecsetup_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__matvecsetup_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__matvecsetup_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__matvec_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__matvec_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__matvec_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__matvec_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix_Ops__mathermitiantransposevec_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__mathermitiantransposevec_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix_Ops__mathermitiantransposevec_get(farg1) &
+bind(C, name="_wrap_SUNMatrix_Ops__mathermitiantransposevec_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_SUNMatrix_Ops_() &
+bind(C, name="_wrap_new_SUNMatrix_Ops_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNMatrix_Ops_(farg1) &
+bind(C, name="_wrap_delete_SUNMatrix_Ops_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNMatrix_Ops__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix_Ops__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+subroutine swigc_SUNMatrix__content_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix__content_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix__content_get(farg1) &
+bind(C, name="_wrap_SUNMatrix__content_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNMatrix__ops_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix__ops_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNMatrix__ops_get(farg1) &
+bind(C, name="_wrap_SUNMatrix__ops_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNMatrix__sunctx_set(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix__sunctx_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNMatrix__sunctx_get(farg1) &
+bind(C, name="_wrap_SUNMatrix__sunctx_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNMatrix_() &
+bind(C, name="_wrap_new_SUNMatrix_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNMatrix_(farg1) &
+bind(C, name="_wrap_delete_SUNMatrix_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNMatrix__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNMatrix__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNMatNewEmpty(farg1) &
 bind(C, name="_wrap_FSUNMatNewEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNMatFreeEmpty(farg1) &
 bind(C, name="_wrap_FSUNMatFreeEmpty")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNMatCopyOps(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatCopyOps") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1739,7 +3328,8 @@ function swigc_FSUNMatGetID(farg1) &
 bind(C, name="_wrap_FSUNMatGetID") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1747,21 +3337,24 @@ function swigc_FSUNMatClone(farg1) &
 bind(C, name="_wrap_FSUNMatClone") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNMatDestroy(farg1) &
 bind(C, name="_wrap_FSUNMatDestroy")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNMatZero(farg1) &
 bind(C, name="_wrap_FSUNMatZero") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1769,8 +3362,9 @@ function swigc_FSUNMatCopy(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatCopy") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1778,9 +3372,10 @@ function swigc_FSUNMatScaleAdd(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatScaleAdd") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1788,8 +3383,9 @@ function swigc_FSUNMatScaleAddI(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatScaleAddI") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 real(C_DOUBLE), intent(in) :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1797,7 +3393,8 @@ function swigc_FSUNMatMatvecSetup(farg1) &
 bind(C, name="_wrap_FSUNMatMatvecSetup") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1805,9 +3402,10 @@ function swigc_FSUNMatMatvec(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatMatvec") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1815,9 +3413,10 @@ function swigc_FSUNMatHermitianTransposeVec(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatHermitianTransposeVec") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1873,9 +3472,10 @@ function swigc_FSUNQRAdd_MGS(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_MGS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
@@ -1886,9 +3486,10 @@ function swigc_FSUNQRAdd_ICWY(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_ICWY") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
@@ -1899,9 +3500,10 @@ function swigc_FSUNQRAdd_ICWY_SB(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_ICWY_SB") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
@@ -1912,9 +3514,10 @@ function swigc_FSUNQRAdd_CGS2(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_CGS2") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
@@ -1925,9 +3528,10 @@ function swigc_FSUNQRAdd_DCGS2(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_DCGS2") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
@@ -1938,34 +3542,407 @@ function swigc_FSUNQRAdd_DCGS2_SB(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FSUNQRAdd_DCGS2_SB") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT), intent(in) :: farg5
 type(C_PTR), value :: farg6
 integer(C_INT) :: fresult
 end function
 
+subroutine swigc_SUNLinearSolver_Ops__gettype_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__gettype_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__gettype_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__gettype_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__getid_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__getid_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__getid_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__getid_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setatimes_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setatimes_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setatimes_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setatimes_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setpreconditioner_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setpreconditioner_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setpreconditioner_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setpreconditioner_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setscalingvectors_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setscalingvectors_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setscalingvectors_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setscalingvectors_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setoptions_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setoptions_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setoptions_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setoptions_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setzeroguess_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setzeroguess_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setzeroguess_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setzeroguess_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__initialize_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__initialize_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__initialize_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__initialize_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__setup_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setup_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__setup_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__setup_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__solve_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__solve_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__solve_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__solve_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__numiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__numiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__numiters_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__numiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__resnorm_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__resnorm_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__resnorm_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__resnorm_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__lastflag_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__lastflag_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__lastflag_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__lastflag_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__resid_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__resid_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__resid_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__resid_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver_Ops__free_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__free_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver_Ops__free_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__free_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_SUNLinearSolver_Ops_() &
+bind(C, name="_wrap_new_SUNLinearSolver_Ops_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNLinearSolver_Ops_(farg1) &
+bind(C, name="_wrap_delete_SUNLinearSolver_Ops_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNLinearSolver_Ops__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver_Ops__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+subroutine swigc_SUNLinearSolver__content_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver__content_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver__content_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver__content_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver__python_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver__python_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver__python_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver__python_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver__ops_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver__ops_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver__ops_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver__ops_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolver__sunctx_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver__sunctx_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolver__sunctx_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolver__sunctx_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNLinearSolver_() &
+bind(C, name="_wrap_new_SUNLinearSolver_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNLinearSolver_(farg1) &
+bind(C, name="_wrap_delete_SUNLinearSolver_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNLinearSolver__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolver__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNLinSolNewEmpty(farg1) &
 bind(C, name="_wrap_FSUNLinSolNewEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNLinSolFreeEmpty(farg1) &
 bind(C, name="_wrap_FSUNLinSolFreeEmpty")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNLinSolGetType(farg1) &
 bind(C, name="_wrap_FSUNLinSolGetType") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1973,7 +3950,8 @@ function swigc_FSUNLinSolGetID(farg1) &
 bind(C, name="_wrap_FSUNLinSolGetID") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -1981,7 +3959,8 @@ function swigc_FSUNLinSolSetATimes(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNLinSolSetATimes") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
@@ -1991,7 +3970,8 @@ function swigc_FSUNLinSolSetPreconditioner(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNLinSolSetPreconditioner") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 type(C_FUNPTR), value :: farg4
@@ -2002,9 +3982,10 @@ function swigc_FSUNLinSolSetScalingVectors(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNLinSolSetScalingVectors") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2012,7 +3993,8 @@ function swigc_FSUNLinSolSetZeroGuess(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSolSetZeroGuess") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2021,7 +4003,8 @@ function swigc_FSUNLinSolInitialize(farg1) &
 bind(C, name="_wrap_FSUNLinSolInitialize") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2029,8 +4012,9 @@ function swigc_FSUNLinSolSetup(farg1, farg2) &
 bind(C, name="_wrap_FSUNLinSolSetup") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -2038,10 +4022,11 @@ function swigc_FSUNLinSolSolve(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNLinSolSolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
+type(SwigClassWrapper) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
 integer(C_INT) :: fresult
 end function
@@ -2050,7 +4035,8 @@ function swigc_FSUNLinSolNumIters(farg1) &
 bind(C, name="_wrap_FSUNLinSolNumIters") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2058,7 +4044,8 @@ function swigc_FSUNLinSolResNorm(farg1) &
 bind(C, name="_wrap_FSUNLinSolResNorm") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE) :: fresult
 end function
 
@@ -2066,15 +4053,17 @@ function swigc_FSUNLinSolResid(farg1) &
 bind(C, name="_wrap_FSUNLinSolResid") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
 end function
 
 function swigc_FSUNLinSolLastFlag(farg1) &
 bind(C, name="_wrap_FSUNLinSolLastFlag") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT32_T) :: fresult
 end function
 
@@ -2082,29 +4071,453 @@ function swigc_FSUNLinSolFree(farg1) &
 bind(C, name="_wrap_FSUNLinSolFree") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__gettype_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__gettype_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__gettype_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__gettype_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__initialize_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__initialize_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__initialize_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__initialize_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setup_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setup_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setup_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setup_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__solve_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__solve_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__solve_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__solve_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__free_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__free_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__free_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__free_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setsysfn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setsysfn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setsysfn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setsysfn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setsysfns_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setsysfns_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setsysfns_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setsysfns_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setlsetupfn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setlsetupfn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setlsetupfn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setlsetupfn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setlsolvefn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setlsolvefn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setlsolvefn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setlsolvefn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setctestfn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setctestfn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setctestfn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setctestfn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setnormfn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setnormfn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setnormfn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setnormfn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setgetupdatenormfn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setgetupdatenormfn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setgetupdatenormfn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setgetupdatenormfn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setgetconvratefn_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setgetconvratefn_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setgetconvratefn_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setgetconvratefn_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setoptions_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setoptions_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setoptions_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setoptions_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__setmaxiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setmaxiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__setmaxiters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__setmaxiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__getnumiters_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getnumiters_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__getnumiters_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getnumiters_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__getcuriter_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getcuriter_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__getcuriter_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getcuriter_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver_Ops__getnumconvfails_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getnumconvfails_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver_Ops__getnumconvfails_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__getnumconvfails_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_SUNNonlinearSolver_Ops_() &
+bind(C, name="_wrap_new_SUNNonlinearSolver_Ops_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNNonlinearSolver_Ops_(farg1) &
+bind(C, name="_wrap_delete_SUNNonlinearSolver_Ops_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNNonlinearSolver_Ops__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver_Ops__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+subroutine swigc_SUNNonlinearSolver__content_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver__content_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver__content_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver__content_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver__python_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver__python_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver__python_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver__python_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver__ops_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver__ops_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver__ops_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver__ops_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNNonlinearSolver__sunctx_set(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver__sunctx_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNNonlinearSolver__sunctx_get(farg1) &
+bind(C, name="_wrap_SUNNonlinearSolver__sunctx_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNNonlinearSolver_() &
+bind(C, name="_wrap_new_SUNNonlinearSolver_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNNonlinearSolver_(farg1) &
+bind(C, name="_wrap_delete_SUNNonlinearSolver_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNNonlinearSolver__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNNonlinearSolver__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
 
 function swigc_FSUNNonlinSolNewEmpty(farg1) &
 bind(C, name="_wrap_FSUNNonlinSolNewEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNNonlinSolFreeEmpty(farg1) &
 bind(C, name="_wrap_FSUNNonlinSolFreeEmpty")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNNonlinSolGetType(farg1) &
 bind(C, name="_wrap_FSUNNonlinSolGetType") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2112,7 +4525,8 @@ function swigc_FSUNNonlinSolInitialize(farg1) &
 bind(C, name="_wrap_FSUNNonlinSolInitialize") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2120,8 +4534,9 @@ function swigc_FSUNNonlinSolSetup(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetup") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
@@ -2130,10 +4545,11 @@ function swigc_FSUNNonlinSolSolve(farg1, farg2, farg3, farg4, farg5, farg6, farg
 bind(C, name="_wrap_FSUNNonlinSolSolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
+type(SwigClassWrapper) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
 integer(C_INT), intent(in) :: farg6
 type(C_PTR), value :: farg7
@@ -2144,7 +4560,8 @@ function swigc_FSUNNonlinSolFree(farg1) &
 bind(C, name="_wrap_FSUNNonlinSolFree") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2152,7 +4569,8 @@ function swigc_FSUNNonlinSolSetSysFn(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetSysFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2161,7 +4579,8 @@ function swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetSysFns") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_FUNPTR), value :: farg3
 integer(C_INT) :: fresult
@@ -2171,7 +4590,8 @@ function swigc_FSUNNonlinSolSetLSetupFn(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetLSetupFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2180,7 +4600,8 @@ function swigc_FSUNNonlinSolSetLSolveFn(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetLSolveFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2189,7 +4610,8 @@ function swigc_FSUNNonlinSolSetConvTestFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetConvTestFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -2199,7 +4621,8 @@ function swigc_FSUNNonlinSolSetNormFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetNormFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -2209,7 +4632,8 @@ function swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetGetUpdateNormFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -2219,7 +4643,8 @@ function swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNNonlinSolSetGetConvRateFn") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_FUNPTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -2229,7 +4654,8 @@ function swigc_FSUNNonlinSolSetMaxIters(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolSetMaxIters") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2238,7 +4664,8 @@ function swigc_FSUNNonlinSolGetNumIters(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumIters") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2247,7 +4674,8 @@ function swigc_FSUNNonlinSolGetCurIter(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetCurIter") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2256,30 +4684,318 @@ function swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2) &
 bind(C, name="_wrap_FSUNNonlinSolGetNumConvFails") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
+
+subroutine swigc_SUNAdaptController_Ops__gettype_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__gettype_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__gettype_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__gettype_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__estimatestep_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__estimatestep_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__estimatestep_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__estimatestep_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__estimatesteptol_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__estimatesteptol_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__estimatesteptol_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__estimatesteptol_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__destroy_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__destroy_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__destroy_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__destroy_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__reset_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__reset_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__reset_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__reset_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__setoptions_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__setoptions_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__setoptions_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__setoptions_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__setdefaults_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__setdefaults_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__setdefaults_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__setdefaults_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__write_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__write_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__write_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__write_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__seterrorbias_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__seterrorbias_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__seterrorbias_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__seterrorbias_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__updateh_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__updateh_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__updateh_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__updateh_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController_Ops__updatemrihtol_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__updatemrihtol_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController_Ops__updatemrihtol_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController_Ops__updatemrihtol_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_FUNPTR) :: fresult
+end function
+
+function swigc_new_SUNAdaptController_Ops_() &
+bind(C, name="_wrap_new_SUNAdaptController_Ops_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNAdaptController_Ops_(farg1) &
+bind(C, name="_wrap_delete_SUNAdaptController_Ops_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNAdaptController_Ops__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController_Ops__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+subroutine swigc_SUNAdaptController__content_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController__content_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController__content_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController__content_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController__ops_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController__ops_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
+function swigc_SUNAdaptController__ops_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController__ops_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_SUNAdaptController__sunctx_set(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController__sunctx_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNAdaptController__sunctx_get(farg1) &
+bind(C, name="_wrap_SUNAdaptController__sunctx_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+function swigc_new_SUNAdaptController_() &
+bind(C, name="_wrap_new_SUNAdaptController_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNAdaptController_(farg1) &
+bind(C, name="_wrap_delete_SUNAdaptController_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNAdaptController__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNAdaptController__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
 
 function swigc_FSUNAdaptController_NewEmpty(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_NewEmpty") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 subroutine swigc_FSUNAdaptController_DestroyEmpty(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_DestroyEmpty")
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 end subroutine
 
 function swigc_FSUNAdaptController_GetType(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_GetType") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2287,7 +5003,8 @@ function swigc_FSUNAdaptController_Destroy(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_Destroy") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2295,7 +5012,8 @@ function swigc_FSUNAdaptController_EstimateStep(farg1, farg2, farg3, farg4, farg
 bind(C, name="_wrap_FSUNAdaptController_EstimateStep") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
@@ -2307,7 +5025,8 @@ function swigc_FSUNAdaptController_EstimateStepTol(farg1, farg2, farg3, farg4, f
 bind(C, name="_wrap_FSUNAdaptController_EstimateStepTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 integer(C_INT), intent(in) :: farg4
@@ -2322,7 +5041,8 @@ function swigc_FSUNAdaptController_Reset(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_Reset") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2330,7 +5050,8 @@ function swigc_FSUNAdaptController_SetDefaults(farg1) &
 bind(C, name="_wrap_FSUNAdaptController_SetDefaults") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 integer(C_INT) :: fresult
 end function
 
@@ -2338,7 +5059,8 @@ function swigc_FSUNAdaptController_Write(farg1, farg2) &
 bind(C, name="_wrap_FSUNAdaptController_Write") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2347,7 +5069,8 @@ function swigc_FSUNAdaptController_SetErrorBias(farg1, farg2) &
 bind(C, name="_wrap_FSUNAdaptController_SetErrorBias") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
@@ -2356,7 +5079,8 @@ function swigc_FSUNAdaptController_UpdateH(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNAdaptController_UpdateH") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 integer(C_INT) :: fresult
@@ -2366,7 +5090,8 @@ function swigc_FSUNAdaptController_UpdateMRIHTol(farg1, farg2, farg3, farg4, far
 bind(C, name="_wrap_FSUNAdaptController_UpdateMRIHTol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
@@ -2395,9 +5120,10 @@ function swigc_FSUNStepper_Evolve(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNStepper_Evolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
@@ -2406,9 +5132,10 @@ function swigc_FSUNStepper_OneStep(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNStepper_OneStep") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
@@ -2417,10 +5144,11 @@ function swigc_FSUNStepper_FullRhs(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNStepper_FullRhs") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg3
+type(SwigClassWrapper) :: farg4
 integer(C_INT), intent(in) :: farg5
 integer(C_INT) :: fresult
 end function
@@ -2429,9 +5157,10 @@ function swigc_FSUNStepper_ReInit(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNStepper_ReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2439,9 +5168,10 @@ function swigc_FSUNStepper_Reset(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNStepper_Reset") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2865,11 +5595,12 @@ function swigc_FSUNAdjointCheckpointScheme_InsertVector(farg1, farg2, farg3, far
 bind(C, name="_wrap_FSUNAdjointCheckpointScheme_InsertVector") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_LONG), intent(in) :: farg2
 integer(C_LONG), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -2907,13 +5638,14 @@ function swigc_FSUNAdjointStepper_Create(farg1, farg2, farg3, farg4, farg5, farg
 bind(C, name="_wrap_FSUNAdjointStepper_Create") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_INT), intent(in) :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_LONG), intent(in) :: farg5
 real(C_DOUBLE), intent(in) :: farg6
-type(C_PTR), value :: farg7
+type(SwigClassWrapper) :: farg7
 type(C_PTR), value :: farg8
 type(C_PTR), value :: farg9
 type(C_PTR), value :: farg10
@@ -2924,11 +5656,12 @@ function swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSUNAdjointStepper_ReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -2936,9 +5669,10 @@ function swigc_FSUNAdjointStepper_Evolve(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNAdjointStepper_Evolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
@@ -2947,9 +5681,10 @@ function swigc_FSUNAdjointStepper_OneStep(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FSUNAdjointStepper_OneStep") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT) :: fresult
 end function
@@ -2958,10 +5693,11 @@ function swigc_FSUNAdjointStepper_RecomputeFwd(farg1, farg2, farg3, farg4, farg5
 bind(C, name="_wrap_FSUNAdjointStepper_RecomputeFwd") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_LONG), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
 integer(C_INT) :: fresult
 end function
@@ -3049,9 +5785,10 @@ function swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3)
 bind(C, name="_wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -3086,8 +5823,9 @@ function swigc_FSUNDomEigEstimator_SetInitialGuess(farg1, farg2) &
 bind(C, name="_wrap_FSUNDomEigEstimator_SetInitialGuess") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -3942,25 +6680,1574 @@ fresult = swigc_FSUNFileClose(farg1)
 swig_result = fresult
 end function
 
+subroutine swigf_N_Vector_Ops__nvgetvectorid_set(self, nvgetvectorid)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetvectorid
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetvectorid
+call swigc_N_Vector_Ops__nvgetvectorid_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetvectorid_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetvectorid_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvclone_set(self, nvclone)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvclone
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvclone
+call swigc_N_Vector_Ops__nvclone_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvclone_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvclone_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvcloneempty_set(self, nvcloneempty)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvcloneempty
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvcloneempty
+call swigc_N_Vector_Ops__nvcloneempty_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvcloneempty_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvcloneempty_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdestroy_set(self, nvdestroy)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdestroy
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdestroy
+call swigc_N_Vector_Ops__nvdestroy_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdestroy_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdestroy_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvgetarraypointer_set(self, nvgetarraypointer)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetarraypointer
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetarraypointer
+call swigc_N_Vector_Ops__nvgetarraypointer_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetarraypointer_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetarraypointer_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvgetdevicearraypointer_set(self, nvgetdevicearraypointer)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetdevicearraypointer
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetdevicearraypointer
+call swigc_N_Vector_Ops__nvgetdevicearraypointer_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetdevicearraypointer_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetdevicearraypointer_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvsetarraypointer_set(self, nvsetarraypointer)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvsetarraypointer
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvsetarraypointer
+call swigc_N_Vector_Ops__nvsetarraypointer_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvsetarraypointer_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvsetarraypointer_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvsetdevicearraypointer_set(self, nvsetdevicearraypointer)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvsetdevicearraypointer
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvsetdevicearraypointer
+call swigc_N_Vector_Ops__nvsetdevicearraypointer_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvsetdevicearraypointer_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvsetdevicearraypointer_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvgetcommunicator_set(self, nvgetcommunicator)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetcommunicator
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetcommunicator
+call swigc_N_Vector_Ops__nvgetcommunicator_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetcommunicator_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetcommunicator_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvgetlength_set(self, nvgetlength)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetlength
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetlength
+call swigc_N_Vector_Ops__nvgetlength_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetlength_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetlength_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvgetlocallength_set(self, nvgetlocallength)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvgetlocallength
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvgetlocallength
+call swigc_N_Vector_Ops__nvgetlocallength_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvgetlocallength_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvgetlocallength_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvlinearsum_set(self, nvlinearsum)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvlinearsum
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvlinearsum
+call swigc_N_Vector_Ops__nvlinearsum_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvlinearsum_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvlinearsum_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvconst_set(self, nvconst)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvconst
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvconst
+call swigc_N_Vector_Ops__nvconst_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvconst_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvconst_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvprod_set(self, nvprod)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvprod
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvprod
+call swigc_N_Vector_Ops__nvprod_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvprod_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvprod_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdiv_set(self, nvdiv)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdiv
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdiv
+call swigc_N_Vector_Ops__nvdiv_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdiv_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdiv_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvscale_set(self, nvscale)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvscale
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvscale
+call swigc_N_Vector_Ops__nvscale_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvscale_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvscale_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvabs_set(self, nvabs)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvabs
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvabs
+call swigc_N_Vector_Ops__nvabs_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvabs_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvabs_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvinv_set(self, nvinv)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvinv
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvinv
+call swigc_N_Vector_Ops__nvinv_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvinv_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvinv_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvaddconst_set(self, nvaddconst)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvaddconst
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvaddconst
+call swigc_N_Vector_Ops__nvaddconst_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvaddconst_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvaddconst_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdotprod_set(self, nvdotprod)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdotprod
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdotprod
+call swigc_N_Vector_Ops__nvdotprod_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdotprod_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdotprod_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvmaxnorm_set(self, nvmaxnorm)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvmaxnorm
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvmaxnorm
+call swigc_N_Vector_Ops__nvmaxnorm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvmaxnorm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvmaxnorm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwrmsnorm_set(self, nvwrmsnorm)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwrmsnorm
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwrmsnorm
+call swigc_N_Vector_Ops__nvwrmsnorm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwrmsnorm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwrmsnorm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwrmsnormmask_set(self, nvwrmsnormmask)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwrmsnormmask
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwrmsnormmask
+call swigc_N_Vector_Ops__nvwrmsnormmask_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwrmsnormmask_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwrmsnormmask_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvmin_set(self, nvmin)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvmin
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvmin
+call swigc_N_Vector_Ops__nvmin_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvmin_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvmin_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwl2norm_set(self, nvwl2norm)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwl2norm
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwl2norm
+call swigc_N_Vector_Ops__nvwl2norm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwl2norm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwl2norm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvl1norm_set(self, nvl1norm)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvl1norm
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvl1norm
+call swigc_N_Vector_Ops__nvl1norm_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvl1norm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvl1norm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvcompare_set(self, nvcompare)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvcompare
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvcompare
+call swigc_N_Vector_Ops__nvcompare_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvcompare_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvcompare_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvinvtest_set(self, nvinvtest)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvinvtest
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvinvtest
+call swigc_N_Vector_Ops__nvinvtest_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvinvtest_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvinvtest_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvconstrmask_set(self, nvconstrmask)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvconstrmask
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvconstrmask
+call swigc_N_Vector_Ops__nvconstrmask_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvconstrmask_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvconstrmask_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvminquotient_set(self, nvminquotient)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvminquotient
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvminquotient
+call swigc_N_Vector_Ops__nvminquotient_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvminquotient_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvminquotient_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvlinearcombination_set(self, nvlinearcombination)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvlinearcombination
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvlinearcombination
+call swigc_N_Vector_Ops__nvlinearcombination_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvlinearcombination_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvlinearcombination_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvscaleaddmulti_set(self, nvscaleaddmulti)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvscaleaddmulti
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvscaleaddmulti
+call swigc_N_Vector_Ops__nvscaleaddmulti_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvscaleaddmulti_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvscaleaddmulti_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdotprodmulti_set(self, nvdotprodmulti)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdotprodmulti
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdotprodmulti
+call swigc_N_Vector_Ops__nvdotprodmulti_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdotprodmulti_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdotprodmulti_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvlinearsumvectorarray_set(self, nvlinearsumvectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvlinearsumvectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvlinearsumvectorarray
+call swigc_N_Vector_Ops__nvlinearsumvectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvlinearsumvectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvlinearsumvectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvscalevectorarray_set(self, nvscalevectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvscalevectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvscalevectorarray
+call swigc_N_Vector_Ops__nvscalevectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvscalevectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvscalevectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvconstvectorarray_set(self, nvconstvectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvconstvectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvconstvectorarray
+call swigc_N_Vector_Ops__nvconstvectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvconstvectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvconstvectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwrmsnormvectorarray_set(self, nvwrmsnormvectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwrmsnormvectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwrmsnormvectorarray
+call swigc_N_Vector_Ops__nvwrmsnormvectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwrmsnormvectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwrmsnormvectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwrmsnormmaskvectorarray_set(self, nvwrmsnormmaskvectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwrmsnormmaskvectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwrmsnormmaskvectorarray
+call swigc_N_Vector_Ops__nvwrmsnormmaskvectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwrmsnormmaskvectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwrmsnormmaskvectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvscaleaddmultivectorarray_set(self, nvscaleaddmultivectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvscaleaddmultivectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvscaleaddmultivectorarray
+call swigc_N_Vector_Ops__nvscaleaddmultivectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvscaleaddmultivectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvscaleaddmultivectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvlinearcombinationvectorarray_set(self, nvlinearcombinationvectorarray)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvlinearcombinationvectorarray
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvlinearcombinationvectorarray
+call swigc_N_Vector_Ops__nvlinearcombinationvectorarray_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvlinearcombinationvectorarray_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvlinearcombinationvectorarray_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdotprodlocal_set(self, nvdotprodlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdotprodlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdotprodlocal
+call swigc_N_Vector_Ops__nvdotprodlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdotprodlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdotprodlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvmaxnormlocal_set(self, nvmaxnormlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvmaxnormlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvmaxnormlocal
+call swigc_N_Vector_Ops__nvmaxnormlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvmaxnormlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvmaxnormlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvminlocal_set(self, nvminlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvminlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvminlocal
+call swigc_N_Vector_Ops__nvminlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvminlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvminlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvl1normlocal_set(self, nvl1normlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvl1normlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvl1normlocal
+call swigc_N_Vector_Ops__nvl1normlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvl1normlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvl1normlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvinvtestlocal_set(self, nvinvtestlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvinvtestlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvinvtestlocal
+call swigc_N_Vector_Ops__nvinvtestlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvinvtestlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvinvtestlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvconstrmasklocal_set(self, nvconstrmasklocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvconstrmasklocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvconstrmasklocal
+call swigc_N_Vector_Ops__nvconstrmasklocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvconstrmasklocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvconstrmasklocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvminquotientlocal_set(self, nvminquotientlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvminquotientlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvminquotientlocal
+call swigc_N_Vector_Ops__nvminquotientlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvminquotientlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvminquotientlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwsqrsumlocal_set(self, nvwsqrsumlocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwsqrsumlocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwsqrsumlocal
+call swigc_N_Vector_Ops__nvwsqrsumlocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwsqrsumlocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwsqrsumlocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvwsqrsummasklocal_set(self, nvwsqrsummasklocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvwsqrsummasklocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvwsqrsummasklocal
+call swigc_N_Vector_Ops__nvwsqrsummasklocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvwsqrsummasklocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvwsqrsummasklocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdotprodmultilocal_set(self, nvdotprodmultilocal)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdotprodmultilocal
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdotprodmultilocal
+call swigc_N_Vector_Ops__nvdotprodmultilocal_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdotprodmultilocal_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdotprodmultilocal_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvdotprodmultiallreduce_set(self, nvdotprodmultiallreduce)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvdotprodmultiallreduce
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvdotprodmultiallreduce
+call swigc_N_Vector_Ops__nvdotprodmultiallreduce_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvdotprodmultiallreduce_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvdotprodmultiallreduce_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvbufsize_set(self, nvbufsize)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvbufsize
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvbufsize
+call swigc_N_Vector_Ops__nvbufsize_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvbufsize_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvbufsize_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvbufpack_set(self, nvbufpack)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvbufpack
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvbufpack
+call swigc_N_Vector_Ops__nvbufpack_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvbufpack_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvbufpack_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvbufunpack_set(self, nvbufunpack)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvbufunpack
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvbufunpack
+call swigc_N_Vector_Ops__nvbufunpack_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvbufunpack_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvbufunpack_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvprint_set(self, nvprint)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvprint
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvprint
+call swigc_N_Vector_Ops__nvprint_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvprint_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvprint_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector_Ops__nvprintfile_set(self, nvprintfile)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: nvprintfile
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = nvprintfile
+call swigc_N_Vector_Ops__nvprintfile_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector_Ops__nvprintfile_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(N_Vector_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector_Ops__nvprintfile_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_N_Vector_Ops_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_Ops_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_N_Vector_Ops_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_N_Vector_Ops_(self)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_N_Vector_Ops_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_Vector_Ops__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_Ops_), intent(inout) :: self
+type(N_Vector_Ops_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_N_Vector_Ops__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_Vector__content_set(self, content)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_), intent(in) :: self
+type(C_PTR) :: content
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = content
+call swigc_N_Vector__content_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector__content_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(N_Vector_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector__content_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_N_Vector__ops_set(self, ops)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_), intent(in) :: self
+class(N_Vector_Ops_), intent(in) :: ops
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ops%swigdata
+call swigc_N_Vector__ops_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector__ops_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_Ops_) :: swig_result
+class(N_Vector_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector__ops_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_N_Vector__sunctx_set(self, sunctx)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_), intent(in) :: self
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sunctx
+call swigc_N_Vector__sunctx_set(farg1, farg2)
+end subroutine
+
+function swigf_N_Vector__sunctx_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(N_Vector_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_N_Vector__sunctx_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_N_Vector_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(N_Vector_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_N_Vector_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_N_Vector_(self)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_N_Vector_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_N_Vector__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(N_Vector_), intent(inout) :: self
+type(N_Vector_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_N_Vector__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FN_VNewEmpty(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FN_VNewEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FN_VFreeEmpty(v)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-type(C_PTR) :: farg1 
+class(N_Vector_), intent(in) :: v
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 call swigc_FN_VFreeEmpty(farg1)
 end subroutine
 
@@ -3968,14 +8255,14 @@ function FN_VCopyOps(w, v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: w
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: w
+class(N_Vector_), intent(in) :: v
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(w)
-farg2 = c_loc(v)
+farg1 = w%swigdata
+farg2 = v%swigdata
 fresult = swigc_FN_VCopyOps(farg1, farg2)
 swig_result = fresult
 end function
@@ -3984,11 +8271,11 @@ function FN_VGetVectorID(w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(N_Vector_ID) :: swig_result
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: w
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(w)
+farg1 = w%swigdata
 fresult = swigc_FN_VGetVectorID(farg1)
 swig_result = fresult
 end function
@@ -3996,59 +8283,59 @@ end function
 function FN_VClone(w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: w
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(N_Vector_) :: swig_result
+class(N_Vector_), intent(in) :: w
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(w)
+farg1 = w%swigdata
 fresult = swigc_FN_VClone(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FN_VCloneEmpty(w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: w
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(N_Vector_) :: swig_result
+class(N_Vector_), intent(in) :: w
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(w)
+farg1 = w%swigdata
 fresult = swigc_FN_VCloneEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FN_VDestroy(v)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-type(C_PTR) :: farg1 
+class(N_Vector_), intent(in) :: v
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 call swigc_FN_VDestroy(farg1)
 end subroutine
 
 subroutine FN_VSetArrayPointer(v_data_1d, v)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c_loc(v_data_1d(1))
-farg2 = c_loc(v)
+farg2 = v%swigdata
 call swigc_FN_VSetArrayPointer(farg1, farg2)
 end subroutine
 
 subroutine FN_VSetDeviceArrayPointer(d_vdata_1d, v)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), dimension(*), target, intent(inout) :: d_vdata_1d
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c_loc(d_vdata_1d(1))
-farg2 = c_loc(v)
+farg2 = v%swigdata
 call swigc_FN_VSetDeviceArrayPointer(farg1, farg2)
 end subroutine
 
@@ -4056,11 +8343,11 @@ function FN_VGetCommunicator(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 fresult = swigc_FN_VGetCommunicator(farg1)
 swig_result = int(fresult)
 end function
@@ -4069,11 +8356,11 @@ function FN_VGetLength(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 fresult = swigc_FN_VGetLength(farg1)
 swig_result = fresult
 end function
@@ -4082,11 +8369,11 @@ function FN_VGetLocalLength(v) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 fresult = swigc_FN_VGetLocalLength(farg1)
 swig_result = fresult
 end function
@@ -4094,117 +8381,117 @@ end function
 subroutine FN_VLinearSum(a, x, b, y, z)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), intent(in) :: a
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE), intent(in) :: b
-type(N_Vector), target, intent(inout) :: y
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: y
+class(N_Vector_), intent(in) :: z
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg4 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = a
-farg2 = c_loc(x)
+farg2 = x%swigdata
 farg3 = b
-farg4 = c_loc(y)
-farg5 = c_loc(z)
+farg4 = y%swigdata
+farg5 = z%swigdata
 call swigc_FN_VLinearSum(farg1, farg2, farg3, farg4, farg5)
 end subroutine
 
 subroutine FN_VConst(c, z)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), intent(in) :: c
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: z
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c
-farg2 = c_loc(z)
+farg2 = z%swigdata
 call swigc_FN_VConst(farg1, farg2)
 end subroutine
 
 subroutine FN_VProd(x, y, z)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
-type(N_Vector), target, intent(inout) :: z
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
+class(N_Vector_), intent(in) :: z
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(x)
-farg2 = c_loc(y)
-farg3 = c_loc(z)
+farg1 = x%swigdata
+farg2 = y%swigdata
+farg3 = z%swigdata
 call swigc_FN_VProd(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VDiv(x, y, z)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
-type(N_Vector), target, intent(inout) :: z
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
+class(N_Vector_), intent(in) :: z
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(x)
-farg2 = c_loc(y)
-farg3 = c_loc(z)
+farg1 = x%swigdata
+farg2 = y%swigdata
+farg3 = z%swigdata
 call swigc_FN_VDiv(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VScale(c, x, z)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), intent(in) :: c
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c
-farg2 = c_loc(x)
-farg3 = c_loc(z)
+farg2 = x%swigdata
+farg3 = z%swigdata
 call swigc_FN_VScale(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VAbs(x, z)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(z)
+farg1 = x%swigdata
+farg2 = z%swigdata
 call swigc_FN_VAbs(farg1, farg2)
 end subroutine
 
 subroutine FN_VInv(x, z)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(z)
+farg1 = x%swigdata
+farg2 = z%swigdata
 call swigc_FN_VInv(farg1, farg2)
 end subroutine
 
 subroutine FN_VAddConst(x, b, z)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE), intent(in) :: b
-type(N_Vector), target, intent(inout) :: z
-type(C_PTR) :: farg1 
+class(N_Vector_), intent(in) :: z
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 farg2 = b
-farg3 = c_loc(z)
+farg3 = z%swigdata
 call swigc_FN_VAddConst(farg1, farg2, farg3)
 end subroutine
 
@@ -4212,14 +8499,14 @@ function FN_VDotProd(x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(y)
+farg1 = x%swigdata
+farg2 = y%swigdata
 fresult = swigc_FN_VDotProd(farg1, farg2)
 swig_result = fresult
 end function
@@ -4228,11 +8515,11 @@ function FN_VMaxNorm(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VMaxNorm(farg1)
 swig_result = fresult
 end function
@@ -4241,14 +8528,14 @@ function FN_VWrmsNorm(x, w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: w
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(w)
+farg1 = x%swigdata
+farg2 = w%swigdata
 fresult = swigc_FN_VWrmsNorm(farg1, farg2)
 swig_result = fresult
 end function
@@ -4257,17 +8544,17 @@ function FN_VWrmsNormMask(x, w, id) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: w
-type(N_Vector), target, intent(inout) :: id
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: w
+class(N_Vector_), intent(in) :: id
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(x)
-farg2 = c_loc(w)
-farg3 = c_loc(id)
+farg1 = x%swigdata
+farg2 = w%swigdata
+farg3 = id%swigdata
 fresult = swigc_FN_VWrmsNormMask(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4276,11 +8563,11 @@ function FN_VMin(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VMin(farg1)
 swig_result = fresult
 end function
@@ -4289,14 +8576,14 @@ function FN_VWL2Norm(x, w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: w
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(w)
+farg1 = x%swigdata
+farg2 = w%swigdata
 fresult = swigc_FN_VWL2Norm(farg1, farg2)
 swig_result = fresult
 end function
@@ -4305,11 +8592,11 @@ function FN_VL1Norm(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VL1Norm(farg1)
 swig_result = fresult
 end function
@@ -4317,15 +8604,15 @@ end function
 subroutine FN_VCompare(c, x, z)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE), intent(in) :: c
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c
-farg2 = c_loc(x)
-farg3 = c_loc(z)
+farg2 = x%swigdata
+farg3 = z%swigdata
 call swigc_FN_VCompare(farg1, farg2, farg3)
 end subroutine
 
@@ -4333,14 +8620,14 @@ function FN_VInvTest(x, z) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(z)
+farg1 = x%swigdata
+farg2 = z%swigdata
 fresult = swigc_FN_VInvTest(farg1, farg2)
 swig_result = fresult
 end function
@@ -4349,17 +8636,17 @@ function FN_VConstrMask(c, x, m) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: c
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: m
+class(N_Vector_), intent(in) :: c
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: m
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(c)
-farg2 = c_loc(x)
-farg3 = c_loc(m)
+farg1 = c%swigdata
+farg2 = x%swigdata
+farg3 = m%swigdata
 fresult = swigc_FN_VConstrMask(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4368,14 +8655,14 @@ function FN_VMinQuotient(num, denom) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: num
-type(N_Vector), target, intent(inout) :: denom
+class(N_Vector_), intent(in) :: num
+class(N_Vector_), intent(in) :: denom
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(num)
-farg2 = c_loc(denom)
+farg1 = num%swigdata
+farg2 = denom%swigdata
 fresult = swigc_FN_VMinQuotient(farg1, farg2)
 swig_result = fresult
 end function
@@ -4387,17 +8674,17 @@ integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
 real(C_DOUBLE), dimension(*), target, intent(inout) :: c_1d
 type(C_PTR) :: x_1d
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: z
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = nvec
 farg2 = c_loc(c_1d(1))
 farg3 = x_1d
-farg4 = c_loc(z)
+farg4 = z%swigdata
 fresult = swigc_FN_VLinearCombination(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -4408,19 +8695,19 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
 real(C_DOUBLE), dimension(*), target, intent(inout) :: a_1d
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: y_1d
 type(C_PTR) :: z_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 type(C_PTR) :: farg5 
 
 farg1 = nvec
 farg2 = c_loc(a_1d(1))
-farg3 = c_loc(x)
+farg3 = x%swigdata
 farg4 = y_1d
 farg5 = z_1d
 fresult = swigc_FN_VScaleAddMulti(farg1, farg2, farg3, farg4, farg5)
@@ -4432,17 +8719,17 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: y_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: dotprods_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = nvec
-farg2 = c_loc(x)
+farg2 = x%swigdata
 farg3 = y_1d
 farg4 = c_loc(dotprods_1d(1))
 fresult = swigc_FN_VDotProdMulti(farg1, farg2, farg3, farg4)
@@ -4547,19 +8834,19 @@ integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
 type(C_PTR) :: x_1d
 type(C_PTR) :: w_1d
-type(N_Vector), target, intent(inout) :: id
+class(N_Vector_), intent(in) :: id
 real(C_DOUBLE), dimension(*), target, intent(inout) :: nrm_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 type(C_PTR) :: farg5 
 
 farg1 = nvec
 farg2 = x_1d
 farg3 = w_1d
-farg4 = c_loc(id)
+farg4 = id%swigdata
 farg5 = c_loc(nrm_1d(1))
 fresult = swigc_FN_VWrmsNormMaskVectorArray(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -4569,14 +8856,14 @@ function FN_VDotProdLocal(x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(y)
+farg1 = x%swigdata
+farg2 = y%swigdata
 fresult = swigc_FN_VDotProdLocal(farg1, farg2)
 swig_result = fresult
 end function
@@ -4585,11 +8872,11 @@ function FN_VMaxNormLocal(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VMaxNormLocal(farg1)
 swig_result = fresult
 end function
@@ -4598,11 +8885,11 @@ function FN_VMinLocal(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VMinLocal(farg1)
 swig_result = fresult
 end function
@@ -4611,11 +8898,11 @@ function FN_VL1NormLocal(x) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 fresult = swigc_FN_VL1NormLocal(farg1)
 swig_result = fresult
 end function
@@ -4624,14 +8911,14 @@ function FN_VWSqrSumLocal(x, w) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: w
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(w)
+farg1 = x%swigdata
+farg2 = w%swigdata
 fresult = swigc_FN_VWSqrSumLocal(farg1, farg2)
 swig_result = fresult
 end function
@@ -4640,17 +8927,17 @@ function FN_VWSqrSumMaskLocal(x, w, id) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: w
-type(N_Vector), target, intent(inout) :: id
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: w
+class(N_Vector_), intent(in) :: id
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(x)
-farg2 = c_loc(w)
-farg3 = c_loc(id)
+farg1 = x%swigdata
+farg2 = w%swigdata
+farg3 = id%swigdata
 fresult = swigc_FN_VWSqrSumMaskLocal(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4659,14 +8946,14 @@ function FN_VInvTestLocal(x, z) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: z
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(x)
-farg2 = c_loc(z)
+farg1 = x%swigdata
+farg2 = z%swigdata
 fresult = swigc_FN_VInvTestLocal(farg1, farg2)
 swig_result = fresult
 end function
@@ -4675,17 +8962,17 @@ function FN_VConstrMaskLocal(c, x, m) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: c
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: m
+class(N_Vector_), intent(in) :: c
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: m
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(c)
-farg2 = c_loc(x)
-farg3 = c_loc(m)
+farg1 = c%swigdata
+farg2 = x%swigdata
+farg3 = m%swigdata
 fresult = swigc_FN_VConstrMaskLocal(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -4694,14 +8981,14 @@ function FN_VMinQuotientLocal(num, denom) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(N_Vector), target, intent(inout) :: num
-type(N_Vector), target, intent(inout) :: denom
+class(N_Vector_), intent(in) :: num
+class(N_Vector_), intent(in) :: denom
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(num)
-farg2 = c_loc(denom)
+farg1 = num%swigdata
+farg2 = denom%swigdata
 fresult = swigc_FN_VMinQuotientLocal(farg1, farg2)
 swig_result = fresult
 end function
@@ -4711,17 +8998,17 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: y_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: dotprods_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = nvec
-farg2 = c_loc(x)
+farg2 = x%swigdata
 farg3 = y_1d
 farg4 = c_loc(dotprods_1d(1))
 fresult = swigc_FN_VDotProdMultiLocal(farg1, farg2, farg3, farg4)
@@ -4733,15 +9020,15 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec_total
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 real(C_DOUBLE), dimension(*), target, intent(inout) :: sum_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = nvec_total
-farg2 = c_loc(x)
+farg2 = x%swigdata
 farg3 = c_loc(sum_1d(1))
 fresult = swigc_FN_VDotProdMultiAllReduce(farg1, farg2, farg3)
 swig_result = fresult
@@ -4751,13 +9038,13 @@ function FN_VBufSize(x, size) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 integer(C_INT32_T), dimension(*), target, intent(inout) :: size
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 farg2 = c_loc(size(1))
 fresult = swigc_FN_VBufSize(farg1, farg2)
 swig_result = fresult
@@ -4767,13 +9054,13 @@ function FN_VBufPack(x, buf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: buf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 farg2 = buf
 fresult = swigc_FN_VBufPack(farg1, farg2)
 swig_result = fresult
@@ -4783,13 +9070,13 @@ function FN_VBufUnpack(x, buf) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(N_Vector), target, intent(inout) :: x
+class(N_Vector_), intent(in) :: x
 type(C_PTR) :: buf
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(x)
+farg1 = x%swigdata
 farg2 = buf
 fresult = swigc_FN_VBufUnpack(farg1, farg2)
 swig_result = fresult
@@ -4816,13 +9103,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 integer(C_INT), intent(in) :: count
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: w
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = count
-farg2 = c_loc(w)
+farg2 = w%swigdata
 fresult = swigc_FN_VCloneEmptyVectorArray(farg1, farg2)
 swig_result = fresult
 end function
@@ -4832,13 +9119,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 integer(C_INT), intent(in) :: count
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: w
 type(C_PTR) :: fresult 
 integer(C_INT) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = count
-farg2 = c_loc(w)
+farg2 = w%swigdata
 fresult = swigc_FN_VCloneVectorArray(farg1, farg2)
 swig_result = fresult
 end function
@@ -4858,51 +9145,51 @@ end subroutine
 function FN_VGetVecAtIndexVectorArray(vs_1d, index) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
+type(N_Vector_) :: swig_result
 type(C_PTR) :: vs_1d
 integer(C_INT), intent(in) :: index
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
 
 farg1 = vs_1d
 farg2 = index
 fresult = swigc_FN_VGetVecAtIndexVectorArray(farg1, farg2)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FN_VSetVecAtIndexVectorArray(vs_1d, index, w)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: vs_1d
 integer(C_INT), intent(in) :: index
-type(N_Vector), target, intent(inout) :: w
+class(N_Vector_), intent(in) :: w
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = vs_1d
 farg2 = index
-farg3 = c_loc(w)
+farg3 = w%swigdata
 call swigc_FN_VSetVecAtIndexVectorArray(farg1, farg2, farg3)
 end subroutine
 
 subroutine FN_VPrint(v)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-type(C_PTR) :: farg1 
+class(N_Vector_), intent(in) :: v
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 call swigc_FN_VPrint(farg1)
 end subroutine
 
 subroutine FN_VPrintFile(v, outfile)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 type(C_PTR) :: outfile
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(v)
+farg1 = v%swigdata
 farg2 = outfile
 call swigc_FN_VPrintFile(farg1, farg2)
 end subroutine
@@ -4934,25 +9221,424 @@ fresult = swigc_FN_VGetDeviceArrayPointer(farg1)
 call c_f_pointer(fresult, swig_result, [FN_VGetLocalLength(v)])
 end function
 
+subroutine swigf_SUNMatrix_Ops__getid_set(self, getid)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getid
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getid
+call swigc_SUNMatrix_Ops__getid_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__getid_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__getid_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__clone_set(self, clone)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: clone
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = clone
+call swigc_SUNMatrix_Ops__clone_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__clone_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__clone_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__destroy_set(self, destroy)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: destroy
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = destroy
+call swigc_SUNMatrix_Ops__destroy_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__destroy_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__destroy_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__zero_set(self, zero)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: zero
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = zero
+call swigc_SUNMatrix_Ops__zero_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__zero_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__zero_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__copy_set(self, copy)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: copy
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = copy
+call swigc_SUNMatrix_Ops__copy_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__copy_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__copy_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__scaleadd_set(self, scaleadd)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: scaleadd
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = scaleadd
+call swigc_SUNMatrix_Ops__scaleadd_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__scaleadd_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__scaleadd_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__scaleaddi_set(self, scaleaddi)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: scaleaddi
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = scaleaddi
+call swigc_SUNMatrix_Ops__scaleaddi_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__scaleaddi_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__scaleaddi_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__matvecsetup_set(self, matvecsetup)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: matvecsetup
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = matvecsetup
+call swigc_SUNMatrix_Ops__matvecsetup_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__matvecsetup_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__matvecsetup_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__matvec_set(self, matvec)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: matvec
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = matvec
+call swigc_SUNMatrix_Ops__matvec_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__matvec_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__matvec_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix_Ops__mathermitiantransposevec_set(self, mathermitiantransposevec)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: mathermitiantransposevec
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = mathermitiantransposevec
+call swigc_SUNMatrix_Ops__mathermitiantransposevec_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix_Ops__mathermitiantransposevec_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNMatrix_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix_Ops__mathermitiantransposevec_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNMatrix_Ops_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNMatrix_Ops_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNMatrix_Ops_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNMatrix_Ops_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNMatrix_Ops_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNMatrix_Ops__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_Ops_), intent(inout) :: self
+type(SUNMatrix_Ops_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNMatrix_Ops__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNMatrix__content_set(self, content)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_), intent(in) :: self
+type(C_PTR) :: content
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = content
+call swigc_SUNMatrix__content_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix__content_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNMatrix_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix__content_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNMatrix__ops_set(self, ops)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_), intent(in) :: self
+class(SUNMatrix_Ops_), intent(in) :: ops
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ops%swigdata
+call swigc_SUNMatrix__ops_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix__ops_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SUNMatrix_Ops_) :: swig_result
+class(SUNMatrix_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix__ops_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNMatrix__sunctx_set(self, sunctx)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_), intent(in) :: self
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sunctx
+call swigc_SUNMatrix__sunctx_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNMatrix__sunctx_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNMatrix_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNMatrix__sunctx_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNMatrix_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNMatrix_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNMatrix_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNMatrix_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNMatrix_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNMatrix__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNMatrix_), intent(inout) :: self
+type(SUNMatrix_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNMatrix__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNMatNewEmpty(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), pointer :: swig_result
+type(SUNMatrix_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FSUNMatNewEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNMatFreeEmpty(a)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: farg1 
+class(SUNMatrix_), intent(in) :: a
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 call swigc_FSUNMatFreeEmpty(farg1)
 end subroutine
 
@@ -4960,14 +9646,14 @@ function FSUNMatCopyOps(a, b) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(SUNMatrix), target, intent(inout) :: b
+class(SUNMatrix_), intent(in) :: a
+class(SUNMatrix_), intent(in) :: b
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(a)
-farg2 = c_loc(b)
+farg1 = a%swigdata
+farg2 = b%swigdata
 fresult = swigc_FSUNMatCopyOps(farg1, farg2)
 swig_result = fresult
 end function
@@ -4976,11 +9662,11 @@ function FSUNMatGetID(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNMatrix_ID) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatGetID(farg1)
 swig_result = fresult
 end function
@@ -4988,22 +9674,22 @@ end function
 function FSUNMatClone(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), pointer :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(SUNMatrix_) :: swig_result
+class(SUNMatrix_), intent(in) :: a
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatClone(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNMatDestroy(a)
 use, intrinsic :: ISO_C_BINDING
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: farg1 
+class(SUNMatrix_), intent(in) :: a
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 call swigc_FSUNMatDestroy(farg1)
 end subroutine
 
@@ -5011,11 +9697,11 @@ function FSUNMatZero(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatZero(farg1)
 swig_result = fresult
 end function
@@ -5024,14 +9710,14 @@ function FSUNMatCopy(a, b) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(SUNMatrix), target, intent(inout) :: b
+class(SUNMatrix_), intent(in) :: a
+class(SUNMatrix_), intent(in) :: b
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(a)
-farg2 = c_loc(b)
+farg1 = a%swigdata
+farg2 = b%swigdata
 fresult = swigc_FSUNMatCopy(farg1, farg2)
 swig_result = fresult
 end function
@@ -5041,16 +9727,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 real(C_DOUBLE), intent(in) :: c
-type(SUNMatrix), target, intent(inout) :: a
-type(SUNMatrix), target, intent(inout) :: b
+class(SUNMatrix_), intent(in) :: a
+class(SUNMatrix_), intent(in) :: b
 integer(C_INT) :: fresult 
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c
-farg2 = c_loc(a)
-farg3 = c_loc(b)
+farg2 = a%swigdata
+farg3 = b%swigdata
 fresult = swigc_FSUNMatScaleAdd(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5060,13 +9746,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 real(C_DOUBLE), intent(in) :: c
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 real(C_DOUBLE) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c
-farg2 = c_loc(a)
+farg2 = a%swigdata
 fresult = swigc_FSUNMatScaleAddI(farg1, farg2)
 swig_result = fresult
 end function
@@ -5075,11 +9761,11 @@ function FSUNMatMatvecSetup(a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(a)
+farg1 = a%swigdata
 fresult = swigc_FSUNMatMatvecSetup(farg1)
 swig_result = fresult
 end function
@@ -5088,17 +9774,17 @@ function FSUNMatMatvec(a, x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(SUNMatrix_), intent(in) :: a
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(a)
-farg2 = c_loc(x)
-farg3 = c_loc(y)
+farg1 = a%swigdata
+farg2 = x%swigdata
+farg3 = y%swigdata
 fresult = swigc_FSUNMatMatvec(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5107,17 +9793,17 @@ function FSUNMatHermitianTransposeVec(a, x, y) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: y
+class(SUNMatrix_), intent(in) :: a
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: y
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(a)
-farg2 = c_loc(x)
-farg3 = c_loc(y)
+farg1 = a%swigdata
+farg2 = x%swigdata
+farg3 = y%swigdata
 fresult = swigc_FSUNMatHermitianTransposeVec(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5228,21 +9914,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5256,21 +9942,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5284,21 +9970,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5312,21 +9998,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5340,21 +10026,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5368,21 +10054,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
 real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
-type(N_Vector), target, intent(inout) :: df
+class(N_Vector_), intent(in) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
 type(C_PTR) :: qrdata
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 integer(C_INT) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = q_1d
 farg2 = c_loc(r_1d(1))
-farg3 = c_loc(df)
+farg3 = df%swigdata
 farg4 = m
 farg5 = mmax
 farg6 = qrdata
@@ -5390,25 +10076,574 @@ fresult = swigc_FSUNQRAdd_DCGS2_SB(farg1, farg2, farg3, farg4, farg5, farg6)
 swig_result = fresult
 end function
 
+subroutine swigf_SUNLinearSolver_Ops__gettype_set(self, gettype)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: gettype
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gettype
+call swigc_SUNLinearSolver_Ops__gettype_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__gettype_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__gettype_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__getid_set(self, getid)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getid
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getid
+call swigc_SUNLinearSolver_Ops__getid_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__getid_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__getid_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setatimes_set(self, setatimes)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setatimes
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setatimes
+call swigc_SUNLinearSolver_Ops__setatimes_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setatimes_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setatimes_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setpreconditioner_set(self, setpreconditioner)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setpreconditioner
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setpreconditioner
+call swigc_SUNLinearSolver_Ops__setpreconditioner_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setpreconditioner_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setpreconditioner_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setscalingvectors_set(self, setscalingvectors)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setscalingvectors
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setscalingvectors
+call swigc_SUNLinearSolver_Ops__setscalingvectors_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setscalingvectors_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setscalingvectors_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setoptions_set(self, setoptions)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setoptions
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setoptions
+call swigc_SUNLinearSolver_Ops__setoptions_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setoptions_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setoptions_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setzeroguess_set(self, setzeroguess)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setzeroguess
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setzeroguess
+call swigc_SUNLinearSolver_Ops__setzeroguess_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setzeroguess_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setzeroguess_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__initialize_set(self, initialize)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: initialize
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = initialize
+call swigc_SUNLinearSolver_Ops__initialize_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__initialize_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__initialize_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__setup_set(self, setup)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setup
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setup
+call swigc_SUNLinearSolver_Ops__setup_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__setup_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__setup_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__solve_set(self, solve)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: solve
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = solve
+call swigc_SUNLinearSolver_Ops__solve_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__solve_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__solve_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__numiters_set(self, numiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: numiters
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = numiters
+call swigc_SUNLinearSolver_Ops__numiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__numiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__numiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__resnorm_set(self, resnorm)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: resnorm
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = resnorm
+call swigc_SUNLinearSolver_Ops__resnorm_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__resnorm_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__resnorm_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__lastflag_set(self, lastflag)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: lastflag
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = lastflag
+call swigc_SUNLinearSolver_Ops__lastflag_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__lastflag_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__lastflag_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__resid_set(self, resid)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: resid
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = resid
+call swigc_SUNLinearSolver_Ops__resid_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__resid_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__resid_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver_Ops__free_set(self, free)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: free
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = free
+call swigc_SUNLinearSolver_Ops__free_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver_Ops__free_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNLinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver_Ops__free_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNLinearSolver_Ops_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolver_Ops_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNLinearSolver_Ops_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNLinearSolver_Ops_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNLinearSolver_Ops_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolver_Ops__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_Ops_), intent(inout) :: self
+type(SUNLinearSolver_Ops_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNLinearSolver_Ops__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolver__content_set(self, content)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: content
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = content
+call swigc_SUNLinearSolver__content_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver__content_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver__content_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver__python_set(self, python)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: python
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = python
+call swigc_SUNLinearSolver__python_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver__python_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver__python_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNLinearSolver__ops_set(self, ops)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(in) :: self
+class(SUNLinearSolver_Ops_), intent(in) :: ops
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ops%swigdata
+call swigc_SUNLinearSolver__ops_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver__ops_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolver_Ops_) :: swig_result
+class(SUNLinearSolver_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver__ops_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNLinearSolver__sunctx_set(self, sunctx)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sunctx
+call swigc_SUNLinearSolver__sunctx_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolver__sunctx_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNLinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolver__sunctx_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNLinearSolver_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolver_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNLinearSolver_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNLinearSolver_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNLinearSolver_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolver__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolver_), intent(inout) :: self
+type(SUNLinearSolver_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNLinearSolver__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNLinSolNewEmpty(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNLinearSolver), pointer :: swig_result
+type(SUNLinearSolver_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FSUNLinSolNewEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNLinSolFreeEmpty(s)
 use, intrinsic :: ISO_C_BINDING
-type(SUNLinearSolver), target, intent(inout) :: s
-type(C_PTR) :: farg1 
+class(SUNLinearSolver_), intent(in) :: s
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 call swigc_FSUNLinSolFreeEmpty(farg1)
 end subroutine
 
@@ -5416,11 +10651,11 @@ function FSUNLinSolGetType(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNLinearSolver_Type) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolGetType(farg1)
 swig_result = fresult
 end function
@@ -5429,11 +10664,11 @@ function FSUNLinSolGetID(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNLinearSolver_ID) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolGetID(farg1)
 swig_result = fresult
 end function
@@ -5442,15 +10677,15 @@ function FSUNLinSolSetATimes(s, a_data, atimes) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 type(C_PTR) :: a_data
 type(C_FUNPTR), intent(in), value :: atimes
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = a_data
 farg3 = atimes
 fresult = swigc_FSUNLinSolSetATimes(farg1, farg2, farg3)
@@ -5461,17 +10696,17 @@ function FSUNLinSolSetPreconditioner(s, p_data, pset, psol) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 type(C_PTR) :: p_data
 type(C_FUNPTR), intent(in), value :: pset
 type(C_FUNPTR), intent(in), value :: psol
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 type(C_FUNPTR) :: farg4 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = p_data
 farg3 = pset
 farg4 = psol
@@ -5483,17 +10718,17 @@ function FSUNLinSolSetScalingVectors(s, s1, s2) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(N_Vector), target, intent(inout) :: s1
-type(N_Vector), target, intent(inout) :: s2
+class(SUNLinearSolver_), intent(in) :: s
+class(N_Vector_), intent(in) :: s1
+class(N_Vector_), intent(in) :: s2
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
-farg1 = c_loc(s)
-farg2 = c_loc(s1)
-farg3 = c_loc(s2)
+farg1 = s%swigdata
+farg2 = s1%swigdata
+farg3 = s2%swigdata
 fresult = swigc_FSUNLinSolSetScalingVectors(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5502,13 +10737,13 @@ function FSUNLinSolSetZeroGuess(s, onoff) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT), intent(in) :: onoff
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 farg2 = onoff
 fresult = swigc_FSUNLinSolSetZeroGuess(farg1, farg2)
 swig_result = fresult
@@ -5518,11 +10753,11 @@ function FSUNLinSolInitialize(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolInitialize(farg1)
 swig_result = fresult
 end function
@@ -5531,14 +10766,14 @@ function FSUNLinSolSetup(s, a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: s
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 
-farg1 = c_loc(s)
-farg2 = c_loc(a)
+farg1 = s%swigdata
+farg2 = a%swigdata
 fresult = swigc_FSUNLinSolSetup(farg1, farg2)
 swig_result = fresult
 end function
@@ -5547,22 +10782,22 @@ function FSUNLinSolSolve(s, a, x, b, tol) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: b
+class(SUNLinearSolver_), intent(in) :: s
+class(SUNMatrix_), intent(in) :: a
+class(N_Vector_), intent(in) :: x
+class(N_Vector_), intent(in) :: b
 real(C_DOUBLE), intent(in) :: tol
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
+type(SwigClassWrapper) :: farg4 
 real(C_DOUBLE) :: farg5 
 
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-farg3 = c_loc(x)
-farg4 = c_loc(b)
+farg1 = s%swigdata
+farg2 = a%swigdata
+farg3 = x%swigdata
+farg4 = b%swigdata
 farg5 = tol
 fresult = swigc_FSUNLinSolSolve(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -5572,11 +10807,11 @@ function FSUNLinSolNumIters(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolNumIters(farg1)
 swig_result = fresult
 end function
@@ -5585,11 +10820,11 @@ function FSUNLinSolResNorm(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 real(C_DOUBLE) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 real(C_DOUBLE) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolResNorm(farg1)
 swig_result = fresult
 end function
@@ -5597,25 +10832,25 @@ end function
 function FSUNLinSolResid(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(N_Vector), pointer :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
+type(N_Vector_) :: swig_result
+class(SUNLinearSolver_), intent(in) :: s
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolResid(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 function FSUNLinSolLastFlag(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolLastFlag(farg1)
 swig_result = fresult
 end function
@@ -5624,34 +10859,658 @@ function FSUNLinSolFree(s) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolver_), intent(in) :: s
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
+farg1 = s%swigdata
 fresult = swigc_FSUNLinSolFree(farg1)
 swig_result = fresult
 end function
 
+subroutine swigf_SUNNonlinearSolver_Ops__gettype_set(self, gettype)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: gettype
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gettype
+call swigc_SUNNonlinearSolver_Ops__gettype_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__gettype_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__gettype_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__initialize_set(self, initialize)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: initialize
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = initialize
+call swigc_SUNNonlinearSolver_Ops__initialize_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__initialize_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__initialize_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setup_set(self, setup)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setup
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setup
+call swigc_SUNNonlinearSolver_Ops__setup_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setup_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setup_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__solve_set(self, solve)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: solve
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = solve
+call swigc_SUNNonlinearSolver_Ops__solve_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__solve_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__solve_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__free_set(self, free)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: free
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = free
+call swigc_SUNNonlinearSolver_Ops__free_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__free_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__free_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setsysfn_set(self, setsysfn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setsysfn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setsysfn
+call swigc_SUNNonlinearSolver_Ops__setsysfn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setsysfn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setsysfn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setsysfns_set(self, setsysfns)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setsysfns
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setsysfns
+call swigc_SUNNonlinearSolver_Ops__setsysfns_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setsysfns_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setsysfns_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setlsetupfn_set(self, setlsetupfn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setlsetupfn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setlsetupfn
+call swigc_SUNNonlinearSolver_Ops__setlsetupfn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setlsetupfn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setlsetupfn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setlsolvefn_set(self, setlsolvefn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setlsolvefn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setlsolvefn
+call swigc_SUNNonlinearSolver_Ops__setlsolvefn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setlsolvefn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setlsolvefn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setctestfn_set(self, setctestfn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setctestfn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setctestfn
+call swigc_SUNNonlinearSolver_Ops__setctestfn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setctestfn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setctestfn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setnormfn_set(self, setnormfn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setnormfn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setnormfn
+call swigc_SUNNonlinearSolver_Ops__setnormfn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setnormfn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setnormfn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setgetupdatenormfn_set(self, setgetupdatenormfn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setgetupdatenormfn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setgetupdatenormfn
+call swigc_SUNNonlinearSolver_Ops__setgetupdatenormfn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setgetupdatenormfn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setgetupdatenormfn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setgetconvratefn_set(self, setgetconvratefn)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setgetconvratefn
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setgetconvratefn
+call swigc_SUNNonlinearSolver_Ops__setgetconvratefn_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setgetconvratefn_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setgetconvratefn_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setoptions_set(self, setoptions)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setoptions
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setoptions
+call swigc_SUNNonlinearSolver_Ops__setoptions_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setoptions_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setoptions_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__setmaxiters_set(self, setmaxiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setmaxiters
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setmaxiters
+call swigc_SUNNonlinearSolver_Ops__setmaxiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__setmaxiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__setmaxiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__getnumiters_set(self, getnumiters)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getnumiters
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getnumiters
+call swigc_SUNNonlinearSolver_Ops__getnumiters_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__getnumiters_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__getnumiters_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__getcuriter_set(self, getcuriter)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getcuriter
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getcuriter
+call swigc_SUNNonlinearSolver_Ops__getcuriter_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__getcuriter_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__getcuriter_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver_Ops__getnumconvfails_set(self, getnumconvfails)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: getnumconvfails
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = getnumconvfails
+call swigc_SUNNonlinearSolver_Ops__getnumconvfails_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver_Ops__getnumconvfails_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNNonlinearSolver_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver_Ops__getnumconvfails_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNNonlinearSolver_Ops_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNNonlinearSolver_Ops_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNNonlinearSolver_Ops_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNNonlinearSolver_Ops_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNNonlinearSolver_Ops_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNNonlinearSolver_Ops__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_Ops_), intent(inout) :: self
+type(SUNNonlinearSolver_Ops_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNNonlinearSolver_Ops__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNNonlinearSolver__content_set(self, content)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: content
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = content
+call swigc_SUNNonlinearSolver__content_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver__content_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver__content_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver__python_set(self, python)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: python
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = python
+call swigc_SUNNonlinearSolver__python_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver__python_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver__python_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver__ops_set(self, ops)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(in) :: self
+class(SUNNonlinearSolver_Ops_), intent(in) :: ops
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ops%swigdata
+call swigc_SUNNonlinearSolver__ops_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver__ops_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SUNNonlinearSolver_Ops_) :: swig_result
+class(SUNNonlinearSolver_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver__ops_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNNonlinearSolver__sunctx_set(self, sunctx)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sunctx
+call swigc_SUNNonlinearSolver__sunctx_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNNonlinearSolver__sunctx_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNNonlinearSolver_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNNonlinearSolver__sunctx_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNNonlinearSolver_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNNonlinearSolver_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNNonlinearSolver_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNNonlinearSolver_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNNonlinearSolver_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNNonlinearSolver__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNNonlinearSolver_), intent(inout) :: self
+type(SUNNonlinearSolver_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNNonlinearSolver__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNNonlinSolNewEmpty(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), pointer :: swig_result
+type(SUNNonlinearSolver_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FSUNNonlinSolNewEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNNonlinSolFreeEmpty(nls)
 use, intrinsic :: ISO_C_BINDING
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(C_PTR) :: farg1 
+class(SUNNonlinearSolver_), intent(in) :: nls
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 call swigc_FSUNNonlinSolFreeEmpty(farg1)
 end subroutine
 
@@ -5659,11 +11518,11 @@ function FSUNNonlinSolGetType(nls) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNNonlinearSolver_Type) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 fresult = swigc_FSUNNonlinSolGetType(farg1)
 swig_result = fresult
 end function
@@ -5672,11 +11531,11 @@ function FSUNNonlinSolInitialize(nls) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 fresult = swigc_FSUNNonlinSolInitialize(farg1)
 swig_result = fresult
 end function
@@ -5685,16 +11544,16 @@ function FSUNNonlinSolSetup(nls, y, mem) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(N_Vector), target, intent(inout) :: y
+class(SUNNonlinearSolver_), intent(in) :: nls
+class(N_Vector_), intent(in) :: y
 type(C_PTR) :: mem
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
-farg2 = c_loc(y)
+farg1 = nls%swigdata
+farg2 = y%swigdata
 farg3 = mem
 fresult = swigc_FSUNNonlinSolSetup(farg1, farg2, farg3)
 swig_result = fresult
@@ -5704,26 +11563,26 @@ function FSUNNonlinSolSolve(nls, y0, y, w, tol, calllsetup, mem) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
-type(N_Vector), target, intent(inout) :: y0
-type(N_Vector), target, intent(inout) :: y
-type(N_Vector), target, intent(inout) :: w
+class(SUNNonlinearSolver_), intent(in) :: nls
+class(N_Vector_), intent(in) :: y0
+class(N_Vector_), intent(in) :: y
+class(N_Vector_), intent(in) :: w
 real(C_DOUBLE), intent(in) :: tol
 integer(C_INT), intent(in) :: calllsetup
 type(C_PTR) :: mem
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
+type(SwigClassWrapper) :: farg4 
 real(C_DOUBLE) :: farg5 
 integer(C_INT) :: farg6 
 type(C_PTR) :: farg7 
 
-farg1 = c_loc(nls)
-farg2 = c_loc(y0)
-farg3 = c_loc(y)
-farg4 = c_loc(w)
+farg1 = nls%swigdata
+farg2 = y0%swigdata
+farg3 = y%swigdata
+farg4 = w%swigdata
 farg5 = tol
 farg6 = calllsetup
 farg7 = mem
@@ -5735,11 +11594,11 @@ function FSUNNonlinSolFree(nls) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 fresult = swigc_FSUNNonlinSolFree(farg1)
 swig_result = fresult
 end function
@@ -5748,13 +11607,13 @@ function FSUNNonlinSolSetSysFn(nls, sysfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: sysfn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = sysfn
 fresult = swigc_FSUNNonlinSolSetSysFn(farg1, farg2)
 swig_result = fresult
@@ -5764,15 +11623,15 @@ function FSUNNonlinSolSetSysFns(nls, root_fn, fixed_point_fn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: root_fn
 type(C_FUNPTR), intent(in), value :: fixed_point_fn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_FUNPTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = root_fn
 farg3 = fixed_point_fn
 fresult = swigc_FSUNNonlinSolSetSysFns(farg1, farg2, farg3)
@@ -5783,13 +11642,13 @@ function FSUNNonlinSolSetLSetupFn(nls, setupfn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: setupfn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = setupfn
 fresult = swigc_FSUNNonlinSolSetLSetupFn(farg1, farg2)
 swig_result = fresult
@@ -5799,13 +11658,13 @@ function FSUNNonlinSolSetLSolveFn(nls, solvefn) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: solvefn
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = solvefn
 fresult = swigc_FSUNNonlinSolSetLSolveFn(farg1, farg2)
 swig_result = fresult
@@ -5815,15 +11674,15 @@ function FSUNNonlinSolSetConvTestFn(nls, ctestfn, ctest_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: ctestfn
 type(C_PTR) :: ctest_data
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = ctestfn
 farg3 = ctest_data
 fresult = swigc_FSUNNonlinSolSetConvTestFn(farg1, farg2, farg3)
@@ -5834,15 +11693,15 @@ function FSUNNonlinSolSetNormFn(nls, normfn, norm_fn_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: normfn
 type(C_PTR) :: norm_fn_data
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = normfn
 farg3 = norm_fn_data
 fresult = swigc_FSUNNonlinSolSetNormFn(farg1, farg2, farg3)
@@ -5853,15 +11712,15 @@ function FSUNNonlinSolSetGetUpdateNormFn(nls, getupdatenormfn, getupdatenorm_dat
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: getupdatenormfn
 type(C_PTR) :: getupdatenorm_data
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = getupdatenormfn
 farg3 = getupdatenorm_data
 fresult = swigc_FSUNNonlinSolSetGetUpdateNormFn(farg1, farg2, farg3)
@@ -5872,15 +11731,15 @@ function FSUNNonlinSolSetGetConvRateFn(nls, getconvratefn, getconvrate_data) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 type(C_FUNPTR), intent(in), value :: getconvratefn
 type(C_PTR) :: getconvrate_data
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_FUNPTR) :: farg2 
 type(C_PTR) :: farg3 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = getconvratefn
 farg3 = getconvrate_data
 fresult = swigc_FSUNNonlinSolSetGetConvRateFn(farg1, farg2, farg3)
@@ -5891,13 +11750,13 @@ function FSUNNonlinSolSetMaxIters(nls, maxiters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT), intent(in) :: maxiters
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 integer(C_INT) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = maxiters
 fresult = swigc_FSUNNonlinSolSetMaxIters(farg1, farg2)
 swig_result = fresult
@@ -5907,13 +11766,13 @@ function FSUNNonlinSolGetNumIters(nls, niters) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_LONG), dimension(*), target, intent(inout) :: niters
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(niters(1))
 fresult = swigc_FSUNNonlinSolGetNumIters(farg1, farg2)
 swig_result = fresult
@@ -5923,13 +11782,13 @@ function FSUNNonlinSolGetCurIter(nls, iter) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT), dimension(*), target, intent(inout) :: iter
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(iter(1))
 fresult = swigc_FSUNNonlinSolGetCurIter(farg1, farg2)
 swig_result = fresult
@@ -5939,37 +11798,461 @@ function FSUNNonlinSolGetNumConvFails(nls, nconvfails) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_LONG), dimension(*), target, intent(inout) :: nconvfails
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(nls)
+farg1 = nls%swigdata
 farg2 = c_loc(nconvfails(1))
 fresult = swigc_FSUNNonlinSolGetNumConvFails(farg1, farg2)
 swig_result = fresult
 end function
 
+subroutine swigf_SUNAdaptController_Ops__gettype_set(self, gettype)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: gettype
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = gettype
+call swigc_SUNAdaptController_Ops__gettype_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__gettype_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__gettype_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__estimatestep_set(self, estimatestep)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: estimatestep
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = estimatestep
+call swigc_SUNAdaptController_Ops__estimatestep_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__estimatestep_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__estimatestep_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__estimatesteptol_set(self, estimatesteptol)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: estimatesteptol
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = estimatesteptol
+call swigc_SUNAdaptController_Ops__estimatesteptol_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__estimatesteptol_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__estimatesteptol_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__destroy_set(self, destroy)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: destroy
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = destroy
+call swigc_SUNAdaptController_Ops__destroy_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__destroy_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__destroy_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__reset_set(self, reset)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: reset
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = reset
+call swigc_SUNAdaptController_Ops__reset_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__reset_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__reset_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__setoptions_set(self, setoptions)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setoptions
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setoptions
+call swigc_SUNAdaptController_Ops__setoptions_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__setoptions_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__setoptions_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__setdefaults_set(self, setdefaults)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: setdefaults
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = setdefaults
+call swigc_SUNAdaptController_Ops__setdefaults_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__setdefaults_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__setdefaults_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__write_set(self, write)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: write
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = write
+call swigc_SUNAdaptController_Ops__write_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__write_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__write_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__seterrorbias_set(self, seterrorbias)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: seterrorbias
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = seterrorbias
+call swigc_SUNAdaptController_Ops__seterrorbias_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__seterrorbias_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__seterrorbias_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__updateh_set(self, updateh)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: updateh
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = updateh
+call swigc_SUNAdaptController_Ops__updateh_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__updateh_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__updateh_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController_Ops__updatemrihtol_set(self, updatemrihtol)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR), intent(in), value :: updatemrihtol
+type(SwigClassWrapper) :: farg1 
+type(C_FUNPTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = updatemrihtol
+call swigc_SUNAdaptController_Ops__updatemrihtol_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController_Ops__updatemrihtol_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_FUNPTR) :: swig_result
+class(SUNAdaptController_Ops_), intent(in) :: self
+type(C_FUNPTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController_Ops__updatemrihtol_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNAdaptController_Ops_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNAdaptController_Ops_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNAdaptController_Ops_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNAdaptController_Ops_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNAdaptController_Ops_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNAdaptController_Ops__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_Ops_), intent(inout) :: self
+type(SUNAdaptController_Ops_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNAdaptController_Ops__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNAdaptController__content_set(self, content)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_), intent(in) :: self
+type(C_PTR) :: content
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = content
+call swigc_SUNAdaptController__content_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController__content_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNAdaptController_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController__content_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNAdaptController__ops_set(self, ops)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_), intent(in) :: self
+class(SUNAdaptController_Ops_), intent(in) :: ops
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = ops%swigdata
+call swigc_SUNAdaptController__ops_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController__ops_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SUNAdaptController_Ops_) :: swig_result
+class(SUNAdaptController_), intent(in) :: self
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController__ops_get(farg1)
+swig_result%swigdata = fresult
+end function
+
+subroutine swigf_SUNAdaptController__sunctx_set(self, sunctx)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_), intent(in) :: self
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = sunctx
+call swigc_SUNAdaptController__sunctx_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNAdaptController__sunctx_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: swig_result
+class(SUNAdaptController_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNAdaptController__sunctx_get(farg1)
+swig_result = fresult
+end function
+
+function swigf_create_SUNAdaptController_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNAdaptController_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNAdaptController_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNAdaptController_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNAdaptController_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNAdaptController__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNAdaptController_), intent(inout) :: self
+type(SUNAdaptController_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNAdaptController__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
 function FSUNAdaptController_NewEmpty(sunctx) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), pointer :: swig_result
+type(SUNAdaptController_) :: swig_result
 type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: fresult 
 type(C_PTR) :: farg1 
 
 farg1 = sunctx
 fresult = swigc_FSUNAdaptController_NewEmpty(farg1)
-call c_f_pointer(fresult, swig_result)
+swig_result%swigdata = fresult
 end function
 
 subroutine FSUNAdaptController_DestroyEmpty(c)
 use, intrinsic :: ISO_C_BINDING
-type(SUNAdaptController), target, intent(inout) :: c
-type(C_PTR) :: farg1 
+class(SUNAdaptController_), intent(in) :: c
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 call swigc_FSUNAdaptController_DestroyEmpty(farg1)
 end subroutine
 
@@ -5977,11 +12260,11 @@ function FSUNAdaptController_GetType(c) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(SUNAdaptController_Type) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 fresult = swigc_FSUNAdaptController_GetType(farg1)
 swig_result = fresult
 end function
@@ -5990,11 +12273,11 @@ function FSUNAdaptController_Destroy(c) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 fresult = swigc_FSUNAdaptController_Destroy(farg1)
 swig_result = fresult
 end function
@@ -6003,19 +12286,19 @@ function FSUNAdaptController_EstimateStep(c, h, p, dsm, hnew) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: h
 integer(C_INT), intent(in) :: p
 real(C_DOUBLE), intent(in) :: dsm
 real(C_DOUBLE), dimension(*), target, intent(inout) :: hnew
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 integer(C_INT) :: farg3 
 real(C_DOUBLE) :: farg4 
 type(C_PTR) :: farg5 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = h
 farg3 = p
 farg4 = dsm
@@ -6028,7 +12311,7 @@ function FSUNAdaptController_EstimateStepTol(c, h, tolfac, p, dsm, dsm5, hnew, t
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: h
 real(C_DOUBLE), intent(in) :: tolfac
 integer(C_INT), intent(in) :: p
@@ -6037,7 +12320,7 @@ real(C_DOUBLE), intent(in) :: dsm5
 real(C_DOUBLE), dimension(*), target, intent(inout) :: hnew
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tolfacnew
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 real(C_DOUBLE) :: farg3 
 integer(C_INT) :: farg4 
@@ -6046,7 +12329,7 @@ real(C_DOUBLE) :: farg6
 type(C_PTR) :: farg7 
 type(C_PTR) :: farg8 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = h
 farg3 = tolfac
 farg4 = p
@@ -6062,11 +12345,11 @@ function FSUNAdaptController_Reset(c) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 fresult = swigc_FSUNAdaptController_Reset(farg1)
 swig_result = fresult
 end function
@@ -6075,11 +12358,11 @@ function FSUNAdaptController_SetDefaults(c) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 fresult = swigc_FSUNAdaptController_SetDefaults(farg1)
 swig_result = fresult
 end function
@@ -6088,13 +12371,13 @@ function FSUNAdaptController_Write(c, fptr) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 type(C_PTR) :: fptr
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = fptr
 fresult = swigc_FSUNAdaptController_Write(farg1, farg2)
 swig_result = fresult
@@ -6104,13 +12387,13 @@ function FSUNAdaptController_SetErrorBias(c, bias) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: bias
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = bias
 fresult = swigc_FSUNAdaptController_SetErrorBias(farg1, farg2)
 swig_result = fresult
@@ -6120,15 +12403,15 @@ function FSUNAdaptController_UpdateH(c, h, dsm) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: h
 real(C_DOUBLE), intent(in) :: dsm
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 real(C_DOUBLE) :: farg3 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = h
 farg3 = dsm
 fresult = swigc_FSUNAdaptController_UpdateH(farg1, farg2, farg3)
@@ -6139,19 +12422,19 @@ function FSUNAdaptController_UpdateMRIHTol(c, h, tolfac, dsm, dsm4) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 real(C_DOUBLE), intent(in) :: h
 real(C_DOUBLE), intent(in) :: tolfac
 real(C_DOUBLE), intent(in) :: dsm
 real(C_DOUBLE), intent(in) :: dsm4
 integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 real(C_DOUBLE) :: farg2 
 real(C_DOUBLE) :: farg3 
 real(C_DOUBLE) :: farg4 
 real(C_DOUBLE) :: farg5 
 
-farg1 = c_loc(c)
+farg1 = c%swigdata
 farg2 = h
 farg3 = tolfac
 farg4 = dsm
@@ -6195,17 +12478,17 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: vret
+class(N_Vector_), intent(in) :: vret
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = stepper
 farg2 = tout
-farg3 = c_loc(vret)
+farg3 = vret%swigdata
 farg4 = c_loc(tret(1))
 fresult = swigc_FSUNStepper_Evolve(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -6217,17 +12500,17 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: vret
+class(N_Vector_), intent(in) :: vret
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = stepper
 farg2 = tout
-farg3 = c_loc(vret)
+farg3 = vret%swigdata
 farg4 = c_loc(tret(1))
 fresult = swigc_FSUNStepper_OneStep(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -6239,20 +12522,20 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: v
-type(N_Vector), target, intent(inout) :: f
+class(N_Vector_), intent(in) :: v
+class(N_Vector_), intent(in) :: f
 integer(SUNFullRhsMode), intent(in) :: mode
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg3 
+type(SwigClassWrapper) :: farg4 
 integer(C_INT) :: farg5 
 
 farg1 = stepper
 farg2 = t
-farg3 = c_loc(v)
-farg4 = c_loc(f)
+farg3 = v%swigdata
+farg4 = f%swigdata
 farg5 = mode
 fresult = swigc_FSUNStepper_FullRhs(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -6264,15 +12547,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: v0
+class(N_Vector_), intent(in) :: v0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = stepper
 farg2 = t0
-farg3 = c_loc(v0)
+farg3 = v0%swigdata
 fresult = swigc_FSUNStepper_ReInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -6283,15 +12566,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: stepper
 real(C_DOUBLE), intent(in) :: tr
-type(N_Vector), target, intent(inout) :: vr
+class(N_Vector_), intent(in) :: vr
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = stepper
 farg2 = tr
-farg3 = c_loc(vr)
+farg3 = vr%swigdata
 fresult = swigc_FSUNStepper_Reset(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -7069,19 +13352,19 @@ type(C_PTR) :: check_scheme
 integer(C_LONG), intent(in) :: step_num
 integer(C_LONG), intent(in) :: stage_num
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: state
+class(N_Vector_), intent(in) :: state
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_LONG) :: farg2 
 integer(C_LONG) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = check_scheme
 farg2 = step_num
 farg3 = stage_num
 farg4 = t
-farg5 = c_loc(state)
+farg5 = state%swigdata
 fresult = swigc_FSUNAdjointCheckpointScheme_InsertVector(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
@@ -7154,7 +13437,7 @@ type(C_PTR) :: adj_sunstepper
 integer(C_INT), intent(in) :: own_adj
 integer(C_LONG), intent(in) :: final_step_idx
 real(C_DOUBLE), intent(in) :: tf
-type(N_Vector), target, intent(inout) :: sf
+class(N_Vector_), intent(in) :: sf
 type(C_PTR) :: checkpoint_scheme
 type(C_PTR) :: sunctx
 type(C_PTR), target, intent(inout) :: adj_stepper
@@ -7165,7 +13448,7 @@ type(C_PTR) :: farg3
 integer(C_INT) :: farg4 
 integer(C_LONG) :: farg5 
 real(C_DOUBLE) :: farg6 
-type(C_PTR) :: farg7 
+type(SwigClassWrapper) :: farg7 
 type(C_PTR) :: farg8 
 type(C_PTR) :: farg9 
 type(C_PTR) :: farg10 
@@ -7176,7 +13459,7 @@ farg3 = adj_sunstepper
 farg4 = own_adj
 farg5 = final_step_idx
 farg6 = tf
-farg7 = c_loc(sf)
+farg7 = sf%swigdata
 farg8 = checkpoint_scheme
 farg9 = sunctx
 farg10 = c_loc(adj_stepper)
@@ -7190,21 +13473,21 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: adj
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 real(C_DOUBLE), intent(in) :: tf
-type(N_Vector), target, intent(inout) :: sf
+class(N_Vector_), intent(in) :: sf
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = adj
 farg2 = t0
-farg3 = c_loc(y0)
+farg3 = y0%swigdata
 farg4 = tf
-farg5 = c_loc(sf)
+farg5 = sf%swigdata
 fresult = swigc_FSUNAdjointStepper_ReInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
@@ -7215,17 +13498,17 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: adj_stepper
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: sens
+class(N_Vector_), intent(in) :: sens
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = adj_stepper
 farg2 = tout
-farg3 = c_loc(sens)
+farg3 = sens%swigdata
 farg4 = c_loc(tret(1))
 fresult = swigc_FSUNAdjointStepper_Evolve(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -7237,17 +13520,17 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: adj_stepper
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: sens
+class(N_Vector_), intent(in) :: sens
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = adj_stepper
 farg2 = tout
-farg3 = c_loc(sens)
+farg3 = sens%swigdata
 farg4 = c_loc(tret(1))
 fresult = swigc_FSUNAdjointStepper_OneStep(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -7260,19 +13543,19 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: adj_stepper
 integer(C_LONG), intent(in) :: start_idx
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 real(C_DOUBLE), intent(in) :: tf
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_LONG) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 real(C_DOUBLE) :: farg5 
 
 farg1 = adj_stepper
 farg2 = start_idx
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 farg5 = tf
 fresult = swigc_FSUNAdjointStepper_RecomputeFwd(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -7424,15 +13707,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNDomEigEstimator), target, intent(inout) :: dee
 real(C_DOUBLE), intent(in) :: t
-type(N_Vector), target, intent(inout) :: v
+class(N_Vector_), intent(in) :: v
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = c_loc(dee)
 farg2 = t
-farg3 = c_loc(v)
+farg3 = v%swigdata
 fresult = swigc_FSUNDomEigEstimator_SetRhsLinearizationPoint(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -7490,13 +13773,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(SUNDomEigEstimator), target, intent(inout) :: dee
-type(N_Vector), target, intent(inout) :: q
+class(N_Vector_), intent(in) :: q
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = c_loc(dee)
-farg2 = c_loc(q)
+farg2 = q%swigdata
 fresult = swigc_FSUNDomEigEstimator_SetInitialGuess(farg1, farg2)
 swig_result = fresult
 end function

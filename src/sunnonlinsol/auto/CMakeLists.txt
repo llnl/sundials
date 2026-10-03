@@ -19,7 +19,9 @@
 sundials_add_library(
   sundials_sunnonlinsolauto
   SOURCES sunnonlinsol_auto.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_auto.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_auto.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_auto_deprecated.h
   INCLUDE_SUBDIR sunnonlinsol
   LINK_LIBRARIES PUBLIC sundials_core sundials_sunnonlinsolnewton
                  sundials_sunnonlinsolfixedpoint

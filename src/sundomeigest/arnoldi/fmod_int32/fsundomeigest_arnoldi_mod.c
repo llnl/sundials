@@ -372,74 +372,80 @@ SWIGEXPORT void * _wrap_SUNDomEigEstimatorContent_Arnoldi__V_get(SwigClassWrappe
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return );
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return );
+  arg2 = (N_Vector)(farg2->cptr);
   if (arg1) (arg1)->rhs_linY = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_get(SwigClassWrapper const *farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_SUNDomEigEstimatorContent_Arnoldi__rhs_linY_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::rhs_linY", return SwigClassWrapper_uninitialized());
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
   result = (N_Vector) ((arg1)->rhs_linY);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::Fy", return );
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNDomEigEstimatorContent_Arnoldi_::Fy", return );
+  arg2 = (N_Vector)(farg2->cptr);
   if (arg1) (arg1)->Fy = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_get(SwigClassWrapper const *farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_SUNDomEigEstimatorContent_Arnoldi__Fy_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::Fy", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::Fy", return SwigClassWrapper_uninitialized());
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
   result = (N_Vector) ((arg1)->Fy);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__work_set(SwigClassWrapper const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__work_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
   SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::work", return );
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNDomEigEstimatorContent_Arnoldi_::work", return );
+  arg2 = (N_Vector)(farg2->cptr);
   if (arg1) (arg1)->work = arg2;
 }
 
 
-SWIGEXPORT N_Vector _wrap_SUNDomEigEstimatorContent_Arnoldi__work_get(SwigClassWrapper const *farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_SUNDomEigEstimatorContent_Arnoldi__work_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   N_Vector result;
   
-  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::work", return 0);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Arnoldi_ *", "SUNDomEigEstimatorContent_Arnoldi_", "SUNDomEigEstimatorContent_Arnoldi_::work", return SwigClassWrapper_uninitialized());
   arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *)(farg1->cptr);
   result = (N_Vector) ((arg1)->work);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
@@ -883,14 +889,15 @@ SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__op_assign__(SwigClassWr
 }
 
 
-SWIGEXPORT SUNDomEigEstimator _wrap_FSUNDomEigEstimator_Arnoldi(N_Vector farg1, int const *farg2, void *farg3) {
+SWIGEXPORT SUNDomEigEstimator _wrap_FSUNDomEigEstimator_Arnoldi(SwigClassWrapper const *farg1, int const *farg2, void *farg3) {
   SUNDomEigEstimator fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNContext arg3 = (SUNContext) 0 ;
   SUNDomEigEstimator result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "SUNDomEigEstimator_Arnoldi(N_Vector,int,SUNContext)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   arg3 = (SUNContext)(farg3);
   result = (SUNDomEigEstimator)SUNDomEigEstimator_Arnoldi(arg1,arg2,arg3);
@@ -931,7 +938,7 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator farg1
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(SUNDomEigEstimator farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(SUNDomEigEstimator farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   sunrealtype arg2 ;
@@ -940,7 +947,8 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(SUNDom
   
   arg1 = (SUNDomEigEstimator)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(SUNDomEigEstimator,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (SUNErrCode)SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);
   return fresult;
@@ -975,14 +983,15 @@ SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetRelTol_Arnoldi(SUNDomEigEstimator fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FSUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   SUNDomEigEstimator arg1 = (SUNDomEigEstimator) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNErrCode result;
   
   arg1 = (SUNDomEigEstimator)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNDomEigEstimator_SetInitialGuess_Arnoldi(SUNDomEigEstimator,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (SUNErrCode)SUNDomEigEstimator_SetInitialGuess_Arnoldi(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;

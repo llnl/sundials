@@ -32,6 +32,7 @@ sundials_add_library(
   sundials_nvecpetsc
   SOURCES nvector_petsc.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_petsc.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_petsc_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

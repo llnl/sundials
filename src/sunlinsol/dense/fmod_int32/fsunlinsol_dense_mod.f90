@@ -28,86 +28,118 @@ module fsunlinsol_dense_mod
  private
 
  ! DECLARATION CONSTRUCTS
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
+ ! struct struct SUNLinearSolverContent_Dense_
+ type, public :: SUNLinearSolverContent_Dense_
+  type(SwigClassWrapper), public :: swigdata
+ contains
+  procedure :: set_N => swigf_SUNLinearSolverContent_Dense__N_set
+  procedure :: get_N => swigf_SUNLinearSolverContent_Dense__N_get
+  procedure :: set_pivots => swigf_SUNLinearSolverContent_Dense__pivots_set
+  procedure :: get_pivots => swigf_SUNLinearSolverContent_Dense__pivots_get
+  procedure :: set_last_flag => swigf_SUNLinearSolverContent_Dense__last_flag_set
+  procedure :: get_last_flag => swigf_SUNLinearSolverContent_Dense__last_flag_get
+  procedure :: release => swigf_release_SUNLinearSolverContent_Dense_
+  procedure, private :: swigf_SUNLinearSolverContent_Dense__op_assign__
+  generic :: assignment(=) => swigf_SUNLinearSolverContent_Dense__op_assign__
+ end type SUNLinearSolverContent_Dense_
+ interface SUNLinearSolverContent_Dense_
+  module procedure swigf_create_SUNLinearSolverContent_Dense_
+ end interface
  public :: FSUNLinSol_Dense
- public :: FSUNLinSolGetType_Dense
- public :: FSUNLinSolGetID_Dense
- public :: FSUNLinSolInitialize_Dense
- public :: FSUNLinSolSetup_Dense
- public :: FSUNLinSolSolve_Dense
- public :: FSUNLinSolLastFlag_Dense
- public :: FSUNLinSolFree_Dense
 
 ! WRAPPER DECLARATIONS
 interface
+subroutine swigc_SUNLinearSolverContent_Dense__N_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__N_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_Dense__N_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__N_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_Dense__pivots_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__pivots_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_Dense__pivots_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__pivots_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(C_PTR) :: fresult
+end function
+
+subroutine swigc_SUNLinearSolverContent_Dense__last_flag_set(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__last_flag_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNLinearSolverContent_Dense__last_flag_get(farg1) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__last_flag_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+integer(C_INT32_T) :: fresult
+end function
+
+function swigc_new_SUNLinearSolverContent_Dense_() &
+bind(C, name="_wrap_new_SUNLinearSolverContent_Dense_") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: fresult
+end function
+
+subroutine swigc_delete_SUNLinearSolverContent_Dense_(farg1) &
+bind(C, name="_wrap_delete_SUNLinearSolverContent_Dense_")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+end subroutine
+
+subroutine swigc_SUNLinearSolverContent_Dense__op_assign__(farg1, farg2) &
+bind(C, name="_wrap_SUNLinearSolverContent_Dense__op_assign__")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper), intent(inout) :: farg1
+type(SwigClassWrapper) :: farg2
+end subroutine
+
 function swigc_FSUNLinSol_Dense(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNLinSol_Dense") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+type(SwigClassWrapper) :: farg2
 type(C_PTR), value :: farg3
-type(C_PTR) :: fresult
-end function
-
-function swigc_FSUNLinSolGetType_Dense(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetType_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolGetID_Dense(farg1) &
-bind(C, name="_wrap_FSUNLinSolGetID_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolInitialize_Dense(farg1) &
-bind(C, name="_wrap_FSUNLinSolInitialize_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSetup_Dense(farg1, farg2) &
-bind(C, name="_wrap_FSUNLinSolSetup_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolSolve_Dense(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNLinSolSolve_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-type(C_PTR), value :: farg4
-real(C_DOUBLE), intent(in) :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNLinSolLastFlag_Dense(farg1) &
-bind(C, name="_wrap_FSUNLinSolLastFlag_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT32_T) :: fresult
-end function
-
-function swigc_FSUNLinSolFree_Dense(farg1) &
-bind(C, name="_wrap_FSUNLinSolFree_Dense") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
+type(SwigClassWrapper) :: fresult
 end function
 
 end interface
@@ -115,129 +147,135 @@ end interface
 
 contains
  ! MODULE SUBPROGRAMS
-function FSUNLinSol_Dense(y, a, sunctx) &
-result(swig_result)
+subroutine swigf_SUNLinearSolverContent_Dense__N_set(self, n)
 use, intrinsic :: ISO_C_BINDING
-type(SUNLinearSolver), pointer :: swig_result
-type(N_Vector), target, intent(inout) :: y
-type(SUNMatrix), target, intent(inout) :: a
-type(C_PTR) :: sunctx
-type(C_PTR) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: n
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
 
-farg1 = c_loc(y)
-farg2 = c_loc(a)
-farg3 = sunctx
-fresult = swigc_FSUNLinSol_Dense(farg1, farg2, farg3)
-call c_f_pointer(fresult, swig_result)
-end function
+farg1 = self%swigdata
+farg2 = n
+call swigc_SUNLinearSolverContent_Dense__N_set(farg1, farg2)
+end subroutine
 
-function FSUNLinSolGetType_Dense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_Type) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetType_Dense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolGetID_Dense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNLinearSolver_ID) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolGetID_Dense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolInitialize_Dense(s) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolInitialize_Dense(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolSetup_Dense(s, a) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-fresult = swigc_FSUNLinSolSetup_Dense(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNLinSolSolve_Dense(s, a, x, b, tol) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-type(SUNMatrix), target, intent(inout) :: a
-type(N_Vector), target, intent(inout) :: x
-type(N_Vector), target, intent(inout) :: b
-real(C_DOUBLE), intent(in) :: tol
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-type(C_PTR) :: farg4 
-real(C_DOUBLE) :: farg5 
-
-farg1 = c_loc(s)
-farg2 = c_loc(a)
-farg3 = c_loc(x)
-farg4 = c_loc(b)
-farg5 = tol
-fresult = swigc_FSUNLinSolSolve_Dense(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNLinSolLastFlag_Dense(s) &
+function swigf_SUNLinearSolverContent_Dense__N_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT32_T) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
 integer(C_INT32_T) :: fresult 
-type(C_PTR) :: farg1 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolLastFlag_Dense(farg1)
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_Dense__N_get(farg1)
 swig_result = fresult
 end function
 
-function FSUNLinSolFree_Dense(s) &
+subroutine swigf_SUNLinearSolverContent_Dense__pivots_set(self, pivots)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
+integer(C_INT32_T), dimension(*), target, intent(inout) :: pivots
+type(SwigClassWrapper) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = self%swigdata
+farg2 = c_loc(pivots(1))
+call swigc_SUNLinearSolverContent_Dense__pivots_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_Dense__pivots_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
+integer(C_INT32_T), dimension(:), pointer :: swig_result
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
+type(C_PTR) :: fresult 
+type(SwigClassWrapper) :: farg1 
 
-farg1 = c_loc(s)
-fresult = swigc_FSUNLinSolFree_Dense(farg1)
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_Dense__pivots_get(farg1)
+call c_f_pointer(fresult, swig_result, [1])
+end function
+
+subroutine swigf_SUNLinearSolverContent_Dense__last_flag_set(self, last_flag)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
+integer(C_INT32_T), intent(in) :: last_flag
+type(SwigClassWrapper) :: farg1 
+integer(C_INT32_T) :: farg2 
+
+farg1 = self%swigdata
+farg2 = last_flag
+call swigc_SUNLinearSolverContent_Dense__last_flag_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNLinearSolverContent_Dense__last_flag_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT32_T) :: swig_result
+class(SUNLinearSolverContent_Dense_), intent(in) :: self
+integer(C_INT32_T) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNLinearSolverContent_Dense__last_flag_get(farg1)
 swig_result = fresult
+end function
+
+function swigf_create_SUNLinearSolverContent_Dense_() &
+result(self)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolverContent_Dense_) :: self
+type(SwigClassWrapper) :: fresult 
+
+fresult = swigc_new_SUNLinearSolverContent_Dense_()
+self%swigdata = fresult
+end function
+
+subroutine swigf_release_SUNLinearSolverContent_Dense_(self)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_Dense_), intent(inout) :: self
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+if (btest(farg1%cmemflags, swig_cmem_own_bit)) then
+call swigc_delete_SUNLinearSolverContent_Dense_(farg1)
+endif
+farg1%cptr = C_NULL_PTR
+farg1%cmemflags = 0
+self%swigdata = farg1
+end subroutine
+
+subroutine swigf_SUNLinearSolverContent_Dense__op_assign__(self, other)
+use, intrinsic :: ISO_C_BINDING
+class(SUNLinearSolverContent_Dense_), intent(inout) :: self
+type(SUNLinearSolverContent_Dense_), intent(in) :: other
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+
+farg1 = self%swigdata
+farg2 = other%swigdata
+call swigc_SUNLinearSolverContent_Dense__op_assign__(farg1, farg2)
+self%swigdata = farg1
+end subroutine
+
+function FSUNLinSol_Dense(y, a, sunctx) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+type(SUNLinearSolver_) :: swig_result
+class(N_Vector_), intent(in) :: y
+class(SUNMatrix_), intent(in) :: a
+type(C_PTR) :: sunctx
+type(SwigClassWrapper) :: fresult 
+type(SwigClassWrapper) :: farg1 
+type(SwigClassWrapper) :: farg2 
+type(C_PTR) :: farg3 
+
+farg1 = y%swigdata
+farg2 = a%swigdata
+farg3 = sunctx
+fresult = swigc_FSUNLinSol_Dense(farg1, farg2, farg3)
+swig_result%swigdata = fresult
 end function
 
 

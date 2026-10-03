@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,8 +227,22 @@
 
 #include "nvector/nvector_mpiplusx.h"
 
-SWIGEXPORT N_Vector _wrap_FN_VMake_MPIPlusX(int const *farg1, N_Vector farg2, void *farg3) {
-  N_Vector fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+SWIGEXPORT SwigClassWrapper _wrap_FN_VMake_MPIPlusX(int const *farg1, SwigClassWrapper const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   MPI_Comm arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   SUNContext arg3 = (SUNContext) 0 ;
@@ -229,89 +259,42 @@ SWIGEXPORT N_Vector _wrap_FN_VMake_MPIPlusX(int const *farg1, N_Vector farg2, vo
 #else
   arg1 = *farg1;
 #endif
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "N_VMake_MPIPlusX(MPI_Comm,N_Vector,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (SUNContext)(farg3);
   result = (N_Vector)N_VMake_MPIPlusX(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FN_VGetVectorID_MPIPlusX(N_Vector farg1) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector_ID result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (N_Vector_ID)N_VGetVectorID_MPIPlusX(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VSetArrayPointer_MPIPlusX(double *farg1, N_Vector farg2) {
-  sunrealtype *arg1 = (sunrealtype *) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VSetArrayPointer_MPIPlusX(arg1,arg2);
-}
-
-
-SWIGEXPORT N_Vector _wrap_FN_VGetLocalVector_MPIPlusX(N_Vector farg1) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VGetLocalVector_MPIPlusX(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VGetLocalVector_MPIPlusX(N_Vector)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
   result = (N_Vector)N_VGetLocalVector_MPIPlusX(arg1);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int32_t _wrap_FN_VGetLocalLength_MPIPlusX(N_Vector farg1) {
-  int32_t fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = N_VGetLocalLength_MPIPlusX(arg1);
-  fresult = (sunindextype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIPlusX(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableFusedOps_MPIPlusX(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableFusedOps_MPIPlusX(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableFusedOps_MPIPlusX(arg1,arg2);
   fresult = (SUNErrCode)(result);
   return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrint_MPIPlusX(N_Vector farg1) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  N_VPrint_MPIPlusX(arg1);
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrintFile_MPIPlusX(N_Vector farg1, void *farg2) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (FILE *)(farg2);
-  N_VPrintFile_MPIPlusX(arg1,arg2);
 }
 
 

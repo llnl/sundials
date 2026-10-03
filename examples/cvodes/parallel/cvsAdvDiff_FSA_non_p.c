@@ -409,8 +409,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   int nreq = 0;
   MPI_Comm comm;
 
-  udata  = N_VGetArrayPointer_Parallel(u);
-  dudata = N_VGetArrayPointer_Parallel(udot);
+  udata  = N_VGetArrayPointer(u);
+  dudata = N_VGetArrayPointer(udot);
 
   /* Extract needed problem constants from data */
   data  = (UserData)user_data;
@@ -419,11 +419,11 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   horac = data->p[1] / (SUN_RCONST(2.0) * dx);
 
   /* Extract parameters for parallel computation. */
-  comm  = data->comm;
-  npes  = data->npes;                        /* Number of processes. */
-  my_pe = data->my_pe;                       /* Current process number. */
-  my_length = N_VGetLocalLength_Parallel(u); /* Number of local elements of u. */
-  z = data->z;
+  comm      = data->comm;
+  npes      = data->npes;           /* Number of processes. */
+  my_pe     = data->my_pe;          /* Current process number. */
+  my_length = N_VGetLocalLength(u); /* Number of local elements of u. */
+  z         = data->z;
 
   /* Compute related parameters. */
   my_pe_m1 = my_pe - 1;
@@ -539,8 +539,8 @@ static void SetIC(N_Vector u, sunrealtype dx, sunindextype my_length,
   sunrealtype* udata;
 
   /* Set pointer to data array and get local length of u. */
-  udata     = N_VGetArrayPointer_Parallel(u);
-  my_length = N_VGetLocalLength_Parallel(u);
+  udata     = N_VGetArrayPointer(u);
+  my_length = N_VGetLocalLength(u);
 
   /* Load initial profile into u vector */
   for (i = 1; i <= my_length; i++)

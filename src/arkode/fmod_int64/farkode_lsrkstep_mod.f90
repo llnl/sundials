@@ -39,6 +39,14 @@ module farkode_lsrkstep_mod
  end enum
  integer, parameter, public :: ARKODE_LSRKMethodType = kind(ARKODE_LSRK_RKC_2)
  public :: ARKODE_LSRK_RKC_2, ARKODE_LSRK_RKL_2, ARKODE_LSRK_SSP_S_2, ARKODE_LSRK_SSP_S_3, ARKODE_LSRK_SSP_10_4
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FLSRKStepCreateSTS
  public :: FLSRKStepCreateSSP
  public :: FLSRKStepReInitSTS
@@ -71,9 +79,10 @@ function swigc_FLSRKStepCreateSTS(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FLSRKStepCreateSTS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_FUNPTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR) :: fresult
 end function
@@ -82,9 +91,10 @@ function swigc_FLSRKStepCreateSSP(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FLSRKStepCreateSSP") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_FUNPTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR) :: fresult
 end function
@@ -93,10 +103,11 @@ function swigc_FLSRKStepReInitSTS(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FLSRKStepReInitSTS") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -104,10 +115,11 @@ function swigc_FLSRKStepReInitSSP(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FLSRKStepReInitSSP") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -277,17 +289,17 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_FUNPTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = rhs
 farg2 = t0
-farg3 = c_loc(y0)
+farg3 = y0%swigdata
 farg4 = sunctx
 fresult = swigc_FLSRKStepCreateSTS(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -299,17 +311,17 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR) :: swig_result
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_FUNPTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 
 farg1 = rhs
 farg2 = t0
-farg3 = c_loc(y0)
+farg3 = y0%swigdata
 farg4 = sunctx
 fresult = swigc_FLSRKStepCreateSSP(farg1, farg2, farg3, farg4)
 swig_result = fresult
@@ -322,17 +334,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = arkode_mem
 farg2 = rhs
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 fresult = swigc_FLSRKStepReInitSTS(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -344,17 +356,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 type(C_FUNPTR), intent(in), value :: rhs
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = arkode_mem
 farg2 = rhs
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 fresult = swigc_FLSRKStepReInitSSP(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function

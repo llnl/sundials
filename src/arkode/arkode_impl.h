@@ -691,10 +691,6 @@ int ark_MRIStepInnerSetRTol(MRIStepInnerStepper stepper, sunrealtype rtol);
 /* utility functions for wrapping ARKODE as a SUNStepper */
 SUNErrCode arkSUNStepperSelfDestruct(SUNStepper stepper);
 
-/* XBraid interface functions */
-int arkSetForcePass(void* arkode_mem, sunbooleantype force_pass);
-int arkGetLastKFlag(void* arkode_mem, int* last_kflag);
-
 /* function used to free the python user supplied function table  */
 #if defined(SUNDIALS_ENABLE_PYTHON)
 void arkode_user_supplied_fn_table_destroy(void* ptr);

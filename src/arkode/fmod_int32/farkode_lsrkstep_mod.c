@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -209,6 +225,20 @@
 #include "arkode/arkode_lsrkstep.h"
 
 
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 # ifndef strtoull
@@ -233,7 +263,7 @@ SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
   return result;
 }
 
-SWIGEXPORT void * _wrap_FLSRKStepCreateSTS(ARKRhsFn farg1, double const *farg2, N_Vector farg3, void *farg4) {
+SWIGEXPORT void * _wrap_FLSRKStepCreateSTS(ARKRhsFn farg1, double const *farg2, SwigClassWrapper const *farg3, void *farg4) {
   void * fresult ;
   ARKRhsFn arg1 = (ARKRhsFn) 0 ;
   sunrealtype arg2 ;
@@ -243,7 +273,8 @@ SWIGEXPORT void * _wrap_FLSRKStepCreateSTS(ARKRhsFn farg1, double const *farg2, 
   
   arg1 = (ARKRhsFn)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "LSRKStepCreateSTS(ARKRhsFn,sunrealtype,N_Vector,SUNContext)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (SUNContext)(farg4);
   result = (void *)LSRKStepCreateSTS(arg1,arg2,arg3,arg4);
   fresult = result;
@@ -251,7 +282,7 @@ SWIGEXPORT void * _wrap_FLSRKStepCreateSTS(ARKRhsFn farg1, double const *farg2, 
 }
 
 
-SWIGEXPORT void * _wrap_FLSRKStepCreateSSP(ARKRhsFn farg1, double const *farg2, N_Vector farg3, void *farg4) {
+SWIGEXPORT void * _wrap_FLSRKStepCreateSSP(ARKRhsFn farg1, double const *farg2, SwigClassWrapper const *farg3, void *farg4) {
   void * fresult ;
   ARKRhsFn arg1 = (ARKRhsFn) 0 ;
   sunrealtype arg2 ;
@@ -261,7 +292,8 @@ SWIGEXPORT void * _wrap_FLSRKStepCreateSSP(ARKRhsFn farg1, double const *farg2, 
   
   arg1 = (ARKRhsFn)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "LSRKStepCreateSSP(ARKRhsFn,sunrealtype,N_Vector,SUNContext)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   arg4 = (SUNContext)(farg4);
   result = (void *)LSRKStepCreateSSP(arg1,arg2,arg3,arg4);
   fresult = result;
@@ -269,7 +301,7 @@ SWIGEXPORT void * _wrap_FLSRKStepCreateSSP(ARKRhsFn farg1, double const *farg2, 
 }
 
 
-SWIGEXPORT int _wrap_FLSRKStepReInitSTS(void *farg1, ARKRhsFn farg2, double const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FLSRKStepReInitSTS(void *farg1, ARKRhsFn farg2, double const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -280,14 +312,15 @@ SWIGEXPORT int _wrap_FLSRKStepReInitSTS(void *farg1, ARKRhsFn farg2, double cons
   arg1 = (void *)(farg1);
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "LSRKStepReInitSTS(void *,ARKRhsFn,sunrealtype,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)LSRKStepReInitSTS(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FLSRKStepReInitSSP(void *farg1, ARKRhsFn farg2, double const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FLSRKStepReInitSSP(void *farg1, ARKRhsFn farg2, double const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   ARKRhsFn arg2 = (ARKRhsFn) 0 ;
@@ -298,7 +331,8 @@ SWIGEXPORT int _wrap_FLSRKStepReInitSSP(void *farg1, ARKRhsFn farg2, double cons
   arg1 = (void *)(farg1);
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "LSRKStepReInitSSP(void *,ARKRhsFn,sunrealtype,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)LSRKStepReInitSSP(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;

@@ -63,6 +63,14 @@ module fkinsol_mod
  integer(C_INT), parameter, public :: KIN_PICARD = 2_C_INT
  integer(C_INT), parameter, public :: KIN_FP = 3_C_INT
  public :: FKINCreate
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FKINInit
  public :: FKINSol
  public :: FKINSetUserData
@@ -151,9 +159,10 @@ function swigc_FKINInit(farg1, farg2, farg3) &
 bind(C, name="_wrap_FKINInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_FUNPTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -161,11 +170,12 @@ function swigc_FKINSol(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FKINSol") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT), intent(in) :: farg3
-type(C_PTR), value :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg4
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -400,8 +410,9 @@ function swigc_FKINSetConstraints(farg1, farg2) &
 bind(C, name="_wrap_FKINSetConstraints") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -545,9 +556,10 @@ function swigc_FKINSetLinearSolver(farg1, farg2, farg3) &
 bind(C, name="_wrap_FKINSetLinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -702,15 +714,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: kinmem
 type(C_FUNPTR), intent(in), value :: func
-type(N_Vector), target, intent(inout) :: tmpl
+class(N_Vector_), intent(in) :: tmpl
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_FUNPTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = kinmem
 farg2 = func
-farg3 = c_loc(tmpl)
+farg3 = tmpl%swigdata
 fresult = swigc_FKINInit(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -720,22 +732,22 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: kinmem
-type(N_Vector), target, intent(inout) :: uu
+class(N_Vector_), intent(in) :: uu
 integer(C_INT), intent(in) :: strategy
-type(N_Vector), target, intent(inout) :: u_scale
-type(N_Vector), target, intent(inout) :: f_scale
+class(N_Vector_), intent(in) :: u_scale
+class(N_Vector_), intent(in) :: f_scale
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 integer(C_INT) :: farg3 
-type(C_PTR) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg4 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = kinmem
-farg2 = c_loc(uu)
+farg2 = uu%swigdata
 farg3 = strategy
-farg4 = c_loc(u_scale)
-farg5 = c_loc(f_scale)
+farg4 = u_scale%swigdata
+farg5 = f_scale%swigdata
 fresult = swigc_FKINSol(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function
@@ -1151,13 +1163,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: kinmem
-type(N_Vector), target, intent(inout) :: constraints
+class(N_Vector_), intent(in) :: constraints
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = kinmem
-farg2 = c_loc(constraints)
+farg2 = constraints%swigdata
 fresult = swigc_FKINSetConstraints(farg1, farg2)
 swig_result = fresult
 end function
@@ -1420,16 +1432,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: kinmem
-type(SUNLinearSolver), target, intent(inout) :: ls
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: ls
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = kinmem
-farg2 = c_loc(ls)
-farg3 = c_loc(a)
+farg2 = ls%swigdata
+farg3 = a%swigdata
 fresult = swigc_FKINSetLinearSolver(farg1, farg2, farg3)
 swig_result = fresult
 end function

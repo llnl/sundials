@@ -460,15 +460,13 @@ int ARKBraid_TakeStep(void* arkode_mem, sunrealtype tstart, sunrealtype tstop,
   if (flag != ARK_SUCCESS) { return flag; }
 
   /* Ignore temporal error test result and force step to pass */
-  flag = arkSetForcePass(arkode_mem, SUNTRUE);
-  if (flag != ARK_SUCCESS) { return flag; }
+  ark_mem->force_pass = SUNTRUE;
 
   /* Take step, check flag below */
   tmp_flag = ARKodeEvolve(arkode_mem, tstop, y, &tret, ARK_ONE_STEP);
 
   /* Re-enable temporal error test check */
-  flag = arkSetForcePass(arkode_mem, SUNFALSE);
-  if (flag != ARK_SUCCESS) { return flag; }
+  ark_mem->force_pass = SUNFALSE;
 
   /* Check if evolve call failed */
   if (tmp_flag < 0)
@@ -478,8 +476,7 @@ int ARKBraid_TakeStep(void* arkode_mem, sunrealtype tstart, sunrealtype tstop,
   }
 
   /* Check if temporal error test failed */
-  flag = arkGetLastKFlag(arkode_mem, &tmp_flag);
-  if (flag != ARK_SUCCESS) { return flag; }
+  tmp_flag = ark_mem->last_kflag;
 
   if (tmp_flag > 0)
   {

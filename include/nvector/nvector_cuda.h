@@ -72,10 +72,6 @@ SUNDIALS_EXPORT N_Vector N_VMake_Cuda(sunindextype length,
 SUNDIALS_EXPORT N_Vector N_VMakeManaged_Cuda(sunindextype length,
                                              sunrealtype* vdata_1d,
                                              SUNContext sunctx);
-SUNDIALS_EXPORT void N_VSetHostArrayPointer_Cuda(sunrealtype* h_vdata_1d,
-                                                 N_Vector v);
-SUNDIALS_EXPORT void N_VSetDeviceArrayPointer_Cuda(sunrealtype* d_vdata_1d,
-                                                   N_Vector v);
 SUNDIALS_EXPORT sunbooleantype N_VIsManagedMemory_Cuda(N_Vector x);
 SUNDIALS_EXPORT
 SUNErrCode N_VSetKernelExecPolicy_Cuda(N_Vector x,
@@ -83,107 +79,6 @@ SUNErrCode N_VSetKernelExecPolicy_Cuda(N_Vector x,
                                        SUNCudaExecPolicy* reduce_exec_policy);
 SUNDIALS_EXPORT void N_VCopyToDevice_Cuda(N_Vector v);
 SUNDIALS_EXPORT void N_VCopyFromDevice_Cuda(N_Vector v);
-
-static inline sunindextype N_VGetLength_Cuda(N_Vector x)
-{
-  N_VectorContent_Cuda content = (N_VectorContent_Cuda)x->content;
-  return content->length;
-}
-
-static inline sunrealtype* N_VGetHostArrayPointer_Cuda(N_Vector x)
-{
-  N_VectorContent_Cuda content = (N_VectorContent_Cuda)x->content;
-  return (content->host_data == NULL ? NULL
-                                     : (sunrealtype*)content->host_data->ptr);
-}
-
-static inline sunrealtype* N_VGetDeviceArrayPointer_Cuda(N_Vector x)
-{
-  N_VectorContent_Cuda content = (N_VectorContent_Cuda)x->content;
-  return (content->device_data == NULL ? NULL
-                                       : (sunrealtype*)content->device_data->ptr);
-}
-
-/*
- * -----------------------------------------------------------------
- * NVECTOR API functions
- * -----------------------------------------------------------------
- */
-
-static inline N_Vector_ID N_VGetVectorID_Cuda(N_Vector /*v*/)
-{
-  return SUNDIALS_NVEC_CUDA;
-}
-
-SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Cuda(N_Vector w);
-SUNDIALS_EXPORT N_Vector N_VClone_Cuda(N_Vector w);
-SUNDIALS_EXPORT void N_VDestroy_Cuda(N_Vector v);
-
-/* standard vector operations */
-SUNDIALS_EXPORT void N_VLinearSum_Cuda(sunrealtype a, N_Vector x, sunrealtype b,
-                                       N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VConst_Cuda(sunrealtype c, N_Vector z);
-SUNDIALS_EXPORT void N_VProd_Cuda(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VDiv_Cuda(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VScale_Cuda(sunrealtype c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAbs_Cuda(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VInv_Cuda(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAddConst_Cuda(N_Vector x, sunrealtype b, N_Vector z);
-SUNDIALS_EXPORT sunrealtype N_VDotProd_Cuda(N_Vector x, N_Vector y);
-SUNDIALS_EXPORT sunrealtype N_VMaxNorm_Cuda(N_Vector x);
-SUNDIALS_EXPORT sunrealtype N_VWrmsNorm_Cuda(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT sunrealtype N_VWrmsNormMask_Cuda(N_Vector x, N_Vector w,
-                                                 N_Vector id);
-SUNDIALS_EXPORT sunrealtype N_VMin_Cuda(N_Vector x);
-SUNDIALS_EXPORT sunrealtype N_VWL2Norm_Cuda(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT sunrealtype N_VL1Norm_Cuda(N_Vector x);
-SUNDIALS_EXPORT void N_VCompare_Cuda(sunrealtype c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT sunbooleantype N_VInvTest_Cuda(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT sunbooleantype N_VConstrMask_Cuda(N_Vector c, N_Vector x,
-                                                  N_Vector m);
-SUNDIALS_EXPORT sunrealtype N_VMinQuotient_Cuda(N_Vector num, N_Vector denom);
-
-/* fused vector operations */
-SUNDIALS_EXPORT SUNErrCode N_VLinearCombination_Cuda(int nvec, sunrealtype* c,
-                                                     N_Vector* X, N_Vector Z);
-SUNDIALS_EXPORT SUNErrCode N_VScaleAddMulti_Cuda(int nvec, sunrealtype* c,
-                                                 N_Vector X, N_Vector* Y,
-                                                 N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VDotProdMulti_Cuda(int nvec, N_Vector x, N_Vector* Y,
-                                                sunrealtype* dotprods);
-
-/* vector array operations */
-SUNDIALS_EXPORT SUNErrCode N_VLinearSumVectorArray_Cuda(
-  int nvec, sunrealtype a, N_Vector* X, sunrealtype b, N_Vector* Y, N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VScaleVectorArray_Cuda(int nvec, sunrealtype* c,
-                                                    N_Vector* X, N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VConstVectorArray_Cuda(int nvec, sunrealtype c,
-                                                    N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VScaleAddMultiVectorArray_Cuda(
-  int nvec, int nsum, sunrealtype* a, N_Vector* X, N_Vector** Y, N_Vector** Z);
-SUNDIALS_EXPORT SUNErrCode N_VLinearCombinationVectorArray_Cuda(
-  int nvec, int nsum, sunrealtype* c, N_Vector** X, N_Vector* Z);
-SUNDIALS_EXPORT SUNErrCode N_VWrmsNormVectorArray_Cuda(int nvec, N_Vector* X,
-                                                       N_Vector* W,
-                                                       sunrealtype* nrm);
-SUNDIALS_EXPORT SUNErrCode N_VWrmsNormMaskVectorArray_Cuda(int nvec, N_Vector* X,
-                                                           N_Vector* W,
-                                                           N_Vector id,
-                                                           sunrealtype* nrm);
-
-/* OPTIONAL local reduction kernels (no parallel communication) */
-SUNDIALS_EXPORT sunrealtype N_VWSqrSumLocal_Cuda(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT sunrealtype N_VWSqrSumMaskLocal_Cuda(N_Vector x, N_Vector w,
-                                                     N_Vector id);
-
-/* OPTIONAL XBraid interface operations */
-SUNDIALS_EXPORT SUNErrCode N_VBufSize_Cuda(N_Vector x, sunindextype* size);
-SUNDIALS_EXPORT SUNErrCode N_VBufPack_Cuda(N_Vector x, void* buf);
-SUNDIALS_EXPORT SUNErrCode N_VBufUnpack_Cuda(N_Vector x, void* buf);
-
-/* OPTIONAL operations for debugging */
-SUNDIALS_EXPORT void N_VPrint_Cuda(N_Vector v);
-SUNDIALS_EXPORT void N_VPrintFile_Cuda(N_Vector v, FILE* outfile);
 
 /*
  * -----------------------------------------------------------------

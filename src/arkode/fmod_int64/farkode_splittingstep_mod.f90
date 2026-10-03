@@ -378,10 +378,11 @@ function swigc_FSplittingStepCreate(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSplittingStepCreate") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 integer(C_INT), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 type(C_PTR), value :: farg5
 type(C_PTR) :: fresult
 end function
@@ -390,11 +391,12 @@ function swigc_FSplittingStepReInit(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FSplittingStepReInit") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
+type(SwigClassWrapper) :: farg5
 integer(C_INT) :: fresult
 end function
 
@@ -868,19 +870,19 @@ type(C_PTR) :: swig_result
 type(C_PTR), target, intent(inout) :: steppers
 integer(C_INT), intent(in) :: partitions
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 type(C_PTR) :: sunctx
 type(C_PTR) :: fresult 
 type(C_PTR) :: farg1 
 integer(C_INT) :: farg2 
 real(C_DOUBLE) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 type(C_PTR) :: farg5 
 
 farg1 = c_loc(steppers)
 farg2 = partitions
 farg3 = t0
-farg4 = c_loc(y0)
+farg4 = y0%swigdata
 farg5 = sunctx
 fresult = swigc_FSplittingStepCreate(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
@@ -894,19 +896,19 @@ type(C_PTR) :: arkode_mem
 type(C_PTR), target, intent(inout) :: steppers
 integer(C_INT), intent(in) :: partitions
 real(C_DOUBLE), intent(in) :: t0
-type(N_Vector), target, intent(inout) :: y0
+class(N_Vector_), intent(in) :: y0
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
 integer(C_INT) :: farg3 
 real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
+type(SwigClassWrapper) :: farg5 
 
 farg1 = arkode_mem
 farg2 = c_loc(steppers)
 farg3 = partitions
 farg4 = t0
-farg5 = c_loc(y0)
+farg5 = y0%swigdata
 fresult = swigc_FSplittingStepReInit(farg1, farg2, farg3, farg4, farg5)
 swig_result = fresult
 end function

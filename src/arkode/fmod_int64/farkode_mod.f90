@@ -126,6 +126,14 @@ module farkode_mod
  end enum
  integer, parameter, public :: ARKAccumError = kind(ARK_ACCUMERROR_NONE)
  public :: ARK_ACCUMERROR_NONE, ARK_ACCUMERROR_MAX, ARK_ACCUMERROR_SUM, ARK_ACCUMERROR_AVG
+
+ integer, parameter :: swig_cmem_own_bit = 0
+ integer, parameter :: swig_cmem_rvalue_bit = 1
+ integer, parameter :: swig_cmem_const_bit = 2
+ type, bind(C) :: SwigClassWrapper
+  type(C_PTR), public :: cptr = C_NULL_PTR
+  integer(C_INT), public :: cmemflags = 0
+ end type
  public :: FARKodeResize
  public :: FARKodeReset
  public :: FARKodeInit
@@ -285,14 +293,6 @@ module farkode_mod
  public :: FARKBBDPrecInit
  public :: FARKBBDPrecReInit
  public :: FARKBBDPrecGetNumGfnEvals
-
- integer, parameter :: swig_cmem_own_bit = 0
- integer, parameter :: swig_cmem_rvalue_bit = 1
- integer, parameter :: swig_cmem_const_bit = 2
- type, bind(C) :: SwigClassWrapper
-  type(C_PTR), public :: cptr = C_NULL_PTR
-  integer(C_INT), public :: cmemflags = 0
- end type
  ! struct struct ARKodeButcherTableMem
  type, public :: ARKodeButcherTableMem
   type(SwigClassWrapper), public :: swigdata
@@ -515,8 +515,9 @@ function swigc_FARKodeResize(farg1, farg2, farg3, farg4, farg5, farg6) &
 bind(C, name="_wrap_FARKodeResize") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
 type(C_FUNPTR), value :: farg5
@@ -528,9 +529,10 @@ function swigc_FARKodeReset(farg1, farg2, farg3) &
 bind(C, name="_wrap_FARKodeReset") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -565,9 +567,10 @@ function swigc_FARKodeSVtolerances(farg1, farg2, farg3) &
 bind(C, name="_wrap_FARKodeSVtolerances") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -593,8 +596,9 @@ function swigc_FARKodeResVtolerance(farg1, farg2) &
 bind(C, name="_wrap_FARKodeResVtolerance") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -780,8 +784,9 @@ function swigc_FARKodeSetNonlinearSolver(farg1, farg2) &
 bind(C, name="_wrap_FARKodeSetNonlinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -914,8 +919,9 @@ function swigc_FARKodeSetAdaptController(farg1, farg2) &
 bind(C, name="_wrap_FARKodeSetAdaptController") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1052,8 +1058,9 @@ function swigc_FARKodeSetConstraints(farg1, farg2) &
 bind(C, name="_wrap_FARKodeSetConstraints") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1150,9 +1157,10 @@ function swigc_FARKodeEvolve(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FARKodeEvolve") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg3
 type(C_PTR), value :: farg4
 integer(C_INT), intent(in) :: farg5
 integer(C_INT) :: fresult
@@ -1162,10 +1170,11 @@ function swigc_FARKodeGetDky(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FARKodeGetDky") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
-type(C_PTR), value :: farg4
+type(SwigClassWrapper) :: farg4
 integer(C_INT) :: fresult
 end function
 
@@ -1173,9 +1182,10 @@ function swigc_FARKodeComputeState(farg1, farg2, farg3) &
 bind(C, name="_wrap_FARKodeComputeState") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1238,8 +1248,9 @@ function swigc_FARKodeGetErrWeights(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetErrWeights") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1344,8 +1355,9 @@ function swigc_FARKodeGetEstLocalErrors(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetEstLocalErrors") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -1634,8 +1646,9 @@ function swigc_FARKodeGetResWeights(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetResWeights") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
+type(SwigClassWrapper) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -2375,9 +2388,10 @@ function swigc_FARKodeSetLinearSolver(farg1, farg2, farg3) &
 bind(C, name="_wrap_FARKodeSetLinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2385,9 +2399,10 @@ function swigc_FARKodeSetMassLinearSolver(farg1, farg2, farg3, farg4) &
 bind(C, name="_wrap_FARKodeSetMassLinearSolver") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
 type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
+type(SwigClassWrapper) :: farg2
+type(SwigClassWrapper) :: farg3
 integer(C_INT), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
@@ -2533,21 +2548,21 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: ynew
+class(N_Vector_), intent(in) :: ynew
 real(C_DOUBLE), intent(in) :: hscale
 real(C_DOUBLE), intent(in) :: t0
 type(C_FUNPTR), intent(in), value :: resize
 type(C_PTR) :: resize_data
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 real(C_DOUBLE) :: farg3 
 real(C_DOUBLE) :: farg4 
 type(C_FUNPTR) :: farg5 
 type(C_PTR) :: farg6 
 
 farg1 = arkode_mem
-farg2 = c_loc(ynew)
+farg2 = ynew%swigdata
 farg3 = hscale
 farg4 = t0
 farg5 = resize
@@ -2562,15 +2577,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 real(C_DOUBLE), intent(in) :: tr
-type(N_Vector), target, intent(inout) :: yr
+class(N_Vector_), intent(in) :: yr
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = arkode_mem
 farg2 = tr
-farg3 = c_loc(yr)
+farg3 = yr%swigdata
 fresult = swigc_FARKodeReset(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -2629,15 +2644,15 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 real(C_DOUBLE), intent(in) :: reltol
-type(N_Vector), target, intent(inout) :: abstol
+class(N_Vector_), intent(in) :: abstol
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = arkode_mem
 farg2 = reltol
-farg3 = c_loc(abstol)
+farg3 = abstol%swigdata
 fresult = swigc_FARKodeSVtolerances(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -2679,13 +2694,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: rabstol
+class(N_Vector_), intent(in) :: rabstol
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(rabstol)
+farg2 = rabstol%swigdata
 fresult = swigc_FARKodeResVtolerance(farg1, farg2)
 swig_result = fresult
 end function
@@ -3009,13 +3024,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(SUNNonlinearSolver), target, intent(inout) :: nls
+class(SUNNonlinearSolver_), intent(in) :: nls
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(nls)
+farg2 = nls%swigdata
 fresult = swigc_FARKodeSetNonlinearSolver(farg1, farg2)
 swig_result = fresult
 end function
@@ -3246,13 +3261,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(SUNAdaptController), target, intent(inout) :: c
+class(SUNAdaptController_), intent(in) :: c
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(c)
+farg2 = c%swigdata
 fresult = swigc_FARKodeSetAdaptController(farg1, farg2)
 swig_result = fresult
 end function
@@ -3511,13 +3526,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: constraints
+class(N_Vector_), intent(in) :: constraints
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(constraints)
+farg2 = constraints%swigdata
 fresult = swigc_FARKodeSetConstraints(farg1, farg2)
 swig_result = fresult
 end function
@@ -3685,19 +3700,19 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 real(C_DOUBLE), intent(in) :: tout
-type(N_Vector), target, intent(inout) :: yout
+class(N_Vector_), intent(in) :: yout
 real(C_DOUBLE), dimension(*), target, intent(inout) :: tret
 integer(C_INT), intent(in) :: itask
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg3 
 type(C_PTR) :: farg4 
 integer(C_INT) :: farg5 
 
 farg1 = arkode_mem
 farg2 = tout
-farg3 = c_loc(yout)
+farg3 = yout%swigdata
 farg4 = c_loc(tret(1))
 farg5 = itask
 fresult = swigc_FARKodeEvolve(farg1, farg2, farg3, farg4, farg5)
@@ -3711,17 +3726,17 @@ integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
 real(C_DOUBLE), intent(in) :: t
 integer(C_INT), intent(in) :: k
-type(N_Vector), target, intent(inout) :: dky
+class(N_Vector_), intent(in) :: dky
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 real(C_DOUBLE) :: farg2 
 integer(C_INT) :: farg3 
-type(C_PTR) :: farg4 
+type(SwigClassWrapper) :: farg4 
 
 farg1 = arkode_mem
 farg2 = t
 farg3 = k
-farg4 = c_loc(dky)
+farg4 = dky%swigdata
 fresult = swigc_FARKodeGetDky(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
@@ -3731,16 +3746,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: zcor
-type(N_Vector), target, intent(inout) :: z
+class(N_Vector_), intent(in) :: zcor
+class(N_Vector_), intent(in) :: z
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = arkode_mem
-farg2 = c_loc(zcor)
-farg3 = c_loc(z)
+farg2 = zcor%swigdata
+farg3 = z%swigdata
 fresult = swigc_FARKodeComputeState(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -3849,13 +3864,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: eweight
+class(N_Vector_), intent(in) :: eweight
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(eweight)
+farg2 = eweight%swigdata
 fresult = swigc_FARKodeGetErrWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -4043,13 +4058,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: ele
+class(N_Vector_), intent(in) :: ele
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(ele)
+farg2 = ele%swigdata
 fresult = swigc_FARKodeGetEstLocalErrors(farg1, farg2)
 swig_result = fresult
 end function
@@ -4570,13 +4585,13 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(N_Vector), target, intent(inout) :: rweight
+class(N_Vector_), intent(in) :: rweight
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
+type(SwigClassWrapper) :: farg2 
 
 farg1 = arkode_mem
-farg2 = c_loc(rweight)
+farg2 = rweight%swigdata
 fresult = swigc_FARKodeGetResWeights(farg1, farg2)
 swig_result = fresult
 end function
@@ -5829,16 +5844,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(SUNLinearSolver), target, intent(inout) :: ls
-type(SUNMatrix), target, intent(inout) :: a
+class(SUNLinearSolver_), intent(in) :: ls
+class(SUNMatrix_), intent(in) :: a
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 
 farg1 = arkode_mem
-farg2 = c_loc(ls)
-farg3 = c_loc(a)
+farg2 = ls%swigdata
+farg3 = a%swigdata
 fresult = swigc_FARKodeSetLinearSolver(farg1, farg2, farg3)
 swig_result = fresult
 end function
@@ -5848,18 +5863,18 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: arkode_mem
-type(SUNLinearSolver), target, intent(inout) :: ls
-type(SUNMatrix), target, intent(inout) :: m
+class(SUNLinearSolver_), intent(in) :: ls
+class(SUNMatrix_), intent(in) :: m
 integer(C_INT), intent(in) :: time_dep
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
+type(SwigClassWrapper) :: farg2 
+type(SwigClassWrapper) :: farg3 
 integer(C_INT) :: farg4 
 
 farg1 = arkode_mem
-farg2 = c_loc(ls)
-farg3 = c_loc(m)
+farg2 = ls%swigdata
+farg3 = m%swigdata
 farg4 = time_dep
 fresult = swigc_FARKodeSetMassLinearSolver(farg1, farg2, farg3, farg4)
 swig_result = fresult

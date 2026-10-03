@@ -88,8 +88,8 @@ contains
     !======= Cleanup ===========
     call FSUNMatDestroy_Band(A)
     call FSUNMatDestroy_Band(B)
-    call FN_VDestroy_Serial(x)
-    call FN_VDestroy_Serial(y)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
 
   end function smoke_tests
 

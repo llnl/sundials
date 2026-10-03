@@ -30,7 +30,9 @@ endif()
 sundials_add_library(
   sundials_sunnonlinsolpetscsnes
   SOURCES sunnonlinsol_petscsnes.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_petscsnes.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_petscsnes.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_petscsnes_deprecated.h
   INCLUDE_SUBDIR sunnonlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

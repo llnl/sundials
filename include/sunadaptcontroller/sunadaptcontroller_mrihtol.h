@@ -67,32 +67,6 @@ SUNErrCode SUNAdaptController_GetFastController_MRIHTol(
   SUNAdaptController C,
   SUNAdaptController* Cfast); // nb::rv_policy::reference
 
-SUNDIALS_EXPORT
-SUNAdaptController_Type SUNAdaptController_GetType_MRIHTol(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_EstimateStepTol_MRIHTol(
-  SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
-  sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_Reset_MRIHTol(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_SetDefaults_MRIHTol(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_Write_MRIHTol(SUNAdaptController C, FILE* fptr);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_SetErrorBias_MRIHTol(SUNAdaptController C,
-                                            sunrealtype bias);
-
-SUNDIALS_EXPORT
-int SUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptController C,
-                                             sunrealtype H, sunrealtype tolfac,
-                                             sunrealtype DSM, sunrealtype dsm);
-
 #ifdef __cplusplus
 }
 #endif

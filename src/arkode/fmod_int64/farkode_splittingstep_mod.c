@@ -693,7 +693,7 @@ SWIGEXPORT SwigClassWrapper _wrap_FSplittingStepCoefficients_SuzukiFractal(int c
 }
 
 
-SWIGEXPORT void * _wrap_FSplittingStepCreate(void *farg1, int const *farg2, double const *farg3, N_Vector farg4, void *farg5) {
+SWIGEXPORT void * _wrap_FSplittingStepCreate(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4, void *farg5) {
   void * fresult ;
   SUNStepper *arg1 = (SUNStepper *) 0 ;
   int arg2 ;
@@ -705,7 +705,8 @@ SWIGEXPORT void * _wrap_FSplittingStepCreate(void *farg1, int const *farg2, doub
   arg1 = (SUNStepper *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "SplittingStepCreate(SUNStepper *,int,sunrealtype,N_Vector,SUNContext)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   arg5 = (SUNContext)(farg5);
   result = (void *)SplittingStepCreate(arg1,arg2,arg3,arg4,arg5);
   fresult = result;
@@ -713,7 +714,7 @@ SWIGEXPORT void * _wrap_FSplittingStepCreate(void *farg1, int const *farg2, doub
 }
 
 
-SWIGEXPORT int _wrap_FSplittingStepReInit(void *farg1, void *farg2, int const *farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FSplittingStepReInit(void *farg1, void *farg2, int const *farg3, double const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNStepper *arg2 = (SUNStepper *) 0 ;
@@ -726,7 +727,8 @@ SWIGEXPORT int _wrap_FSplittingStepReInit(void *farg1, void *farg2, int const *f
   arg2 = (SUNStepper *)(farg2);
   arg3 = (int)(*farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "SplittingStepReInit(void *,SUNStepper *,int,sunrealtype,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)SplittingStepReInit(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;

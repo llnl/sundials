@@ -181,6 +181,35 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -211,8 +240,195 @@
 
 #include "nvector/nvector_openmp.h"
 
-SWIGEXPORT N_Vector _wrap_FN_VNew_OpenMP(int64_t const *farg1, int const *farg2, void *farg3) {
-  N_Vector fresult ;
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_N_VectorContent_OpenMP__length_set(SwigClassWrapper const *farg1, int64_t const *farg2) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  sunindextype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::length", return );
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  arg2 = (sunindextype)(*farg2);
+  if (arg1) (arg1)->length = arg2;
+}
+
+
+SWIGEXPORT int64_t _wrap_N_VectorContent_OpenMP__length_get(SwigClassWrapper const *farg1) {
+  int64_t fresult ;
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  sunindextype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::length", return 0);
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  result =  ((arg1)->length);
+  fresult = (sunindextype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_OpenMP__own_data_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::own_data", return );
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->own_data = arg2;
+}
+
+
+SWIGEXPORT int _wrap_N_VectorContent_OpenMP__own_data_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::own_data", return 0);
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  result = (int) ((arg1)->own_data);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_OpenMP__data_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::data", return );
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->data = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_N_VectorContent_OpenMP__data_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::data", return 0);
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_OpenMP__num_threads_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::num_threads", return );
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->num_threads = arg2;
+}
+
+
+SWIGEXPORT int _wrap_N_VectorContent_OpenMP__num_threads_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::num_threads", return 0);
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  result = (int) ((arg1)->num_threads);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_N_VectorContent_OpenMP_() {
+  SwigClassWrapper fresult ;
+  struct N_VectorContent_OpenMP_ *result = 0 ;
+  
+  result = (struct N_VectorContent_OpenMP_ *)calloc(1, sizeof(struct N_VectorContent_OpenMP_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_N_VectorContent_OpenMP_(SwigClassWrapper *farg1) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct N_VectorContent_OpenMP_ *", "N_VectorContent_OpenMP_", "N_VectorContent_OpenMP_::~N_VectorContent_OpenMP_()", return );
+  arg1 = (struct N_VectorContent_OpenMP_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_N_VectorContent_OpenMP__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct N_VectorContent_OpenMP_ *arg1 = (struct N_VectorContent_OpenMP_ *) 0 ;
+  struct N_VectorContent_OpenMP_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FN_VNew_OpenMP(int64_t const *farg1, int const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   int arg2 ;
   SUNContext arg3 = (SUNContext) 0 ;
@@ -222,13 +438,14 @@ SWIGEXPORT N_Vector _wrap_FN_VNew_OpenMP(int64_t const *farg1, int const *farg2,
   arg2 = (int)(*farg2);
   arg3 = (SUNContext)(farg3);
   result = (N_Vector)N_VNew_OpenMP(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VNewEmpty_OpenMP(int64_t const *farg1, int const *farg2, void *farg3) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VNewEmpty_OpenMP(int64_t const *farg1, int const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   int arg2 ;
   SUNContext arg3 = (SUNContext) 0 ;
@@ -238,13 +455,14 @@ SWIGEXPORT N_Vector _wrap_FN_VNewEmpty_OpenMP(int64_t const *farg1, int const *f
   arg2 = (int)(*farg2);
   arg3 = (SUNContext)(farg3);
   result = (N_Vector)N_VNewEmpty_OpenMP(arg1,arg2,arg3);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VMake_OpenMP(int64_t const *farg1, double *farg2, int const *farg3, void *farg4) {
-  N_Vector fresult ;
+SWIGEXPORT SwigClassWrapper _wrap_FN_VMake_OpenMP(int64_t const *farg1, double *farg2, int const *farg3, void *farg4) {
+  SwigClassWrapper fresult ;
   sunindextype arg1 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
   int arg3 ;
@@ -256,568 +474,20 @@ SWIGEXPORT N_Vector _wrap_FN_VMake_OpenMP(int64_t const *farg1, double *farg2, i
   arg3 = (int)(*farg3);
   arg4 = (SUNContext)(farg4);
   result = (N_Vector)N_VMake_OpenMP(arg1,arg2,arg3,arg4);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int64_t _wrap_FN_VGetLength_OpenMP(N_Vector farg1) {
-  int64_t fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = N_VGetLength_OpenMP(arg1);
-  fresult = (sunindextype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrint_OpenMP(N_Vector farg1) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  N_VPrint_OpenMP(arg1);
-}
-
-
-SWIGEXPORT void _wrap_FN_VPrintFile_OpenMP(N_Vector farg1, void *farg2) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (FILE *)(farg2);
-  N_VPrintFile_OpenMP(arg1,arg2);
-}
-
-
-SWIGEXPORT int _wrap_FN_VGetVectorID_OpenMP(N_Vector farg1) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector_ID result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (N_Vector_ID)N_VGetVectorID_OpenMP(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT N_Vector _wrap_FN_VCloneEmpty_OpenMP(N_Vector farg1) {
-  N_Vector fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (N_Vector)N_VCloneEmpty_OpenMP(arg1);
-  fresult = result;
-  return fresult;
-}
-
-
-SWIGEXPORT N_Vector _wrap_FN_VClone_OpenMP(N_Vector farg1) {
-  N_Vector fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (N_Vector)N_VClone_OpenMP(arg1);
-  fresult = result;
-  return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VDestroy_OpenMP(N_Vector farg1) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  N_VDestroy_OpenMP(arg1);
-}
-
-
-SWIGEXPORT void _wrap_FN_VSetArrayPointer_OpenMP(double *farg1, N_Vector farg2) {
-  sunrealtype *arg1 = (sunrealtype *) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VSetArrayPointer_OpenMP(arg1,arg2);
-}
-
-
-SWIGEXPORT void _wrap_FN_VLinearSum_OpenMP(double const *farg1, N_Vector farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
-  sunrealtype arg1 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype arg3 ;
-  N_Vector arg4 = (N_Vector) 0 ;
-  N_Vector arg5 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
-  N_VLinearSum_OpenMP(arg1,arg2,arg3,arg4,arg5);
-}
-
-
-SWIGEXPORT void _wrap_FN_VConst_OpenMP(double const *farg1, N_Vector farg2) {
-  sunrealtype arg1 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VConst_OpenMP(arg1,arg2);
-}
-
-
-SWIGEXPORT void _wrap_FN_VProd_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  N_VProd_OpenMP(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT void _wrap_FN_VDiv_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  N_VDiv_OpenMP(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT void _wrap_FN_VScale_OpenMP(double const *farg1, N_Vector farg2, N_Vector farg3) {
-  sunrealtype arg1 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  N_VScale_OpenMP(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT void _wrap_FN_VAbs_OpenMP(N_Vector farg1, N_Vector farg2) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VAbs_OpenMP(arg1,arg2);
-}
-
-
-SWIGEXPORT void _wrap_FN_VInv_OpenMP(N_Vector farg1, N_Vector farg2) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  N_VInv_OpenMP(arg1,arg2);
-}
-
-
-SWIGEXPORT void _wrap_FN_VAddConst_OpenMP(N_Vector farg1, double const *farg2, N_Vector farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype arg2 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  N_VAddConst_OpenMP(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT double _wrap_FN_VDotProd_OpenMP(N_Vector farg1, N_Vector farg2) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (sunrealtype)N_VDotProd_OpenMP(arg1,arg2);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VMaxNorm_OpenMP(N_Vector farg1) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (sunrealtype)N_VMaxNorm_OpenMP(arg1);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VWrmsNorm_OpenMP(N_Vector farg1, N_Vector farg2) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (sunrealtype)N_VWrmsNorm_OpenMP(arg1,arg2);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VWrmsNormMask_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  result = (sunrealtype)N_VWrmsNormMask_OpenMP(arg1,arg2,arg3);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VMin_OpenMP(N_Vector farg1) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (sunrealtype)N_VMin_OpenMP(arg1);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VWL2Norm_OpenMP(N_Vector farg1, N_Vector farg2) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (sunrealtype)N_VWL2Norm_OpenMP(arg1,arg2);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VL1Norm_OpenMP(N_Vector farg1) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  result = (sunrealtype)N_VL1Norm_OpenMP(arg1);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FN_VCompare_OpenMP(double const *farg1, N_Vector farg2, N_Vector farg3) {
-  sunrealtype arg1 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  
-  arg1 = (sunrealtype)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  N_VCompare_OpenMP(arg1,arg2,arg3);
-}
-
-
-SWIGEXPORT int _wrap_FN_VInvTest_OpenMP(N_Vector farg1, N_Vector farg2) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  int result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (int)N_VInvTest_OpenMP(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VConstrMask_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  int result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  result = (int)N_VConstrMask_OpenMP(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VMinQuotient_OpenMP(N_Vector farg1, N_Vector farg2) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (sunrealtype)N_VMinQuotient_OpenMP(arg1,arg2);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VLinearCombination_OpenMP(int const *farg1, double *farg2, void *farg3, N_Vector farg4) {
-  int fresult ;
-  int arg1 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  N_Vector arg4 = (N_Vector) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  result = (SUNErrCode)N_VLinearCombination_OpenMP(arg1,arg2,arg3,arg4);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VScaleAddMulti_OpenMP(int const *farg1, double *farg2, N_Vector farg3, void *farg4, void *farg5) {
-  int fresult ;
-  int arg1 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  N_Vector *arg4 = (N_Vector *) 0 ;
-  N_Vector *arg5 = (N_Vector *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector *)(farg4);
-  arg5 = (N_Vector *)(farg5);
-  result = (SUNErrCode)N_VScaleAddMulti_OpenMP(arg1,arg2,arg3,arg4,arg5);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VDotProdMulti_OpenMP(int const *farg1, N_Vector farg2, void *farg3, double *farg4) {
-  int fresult ;
-  int arg1 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  sunrealtype *arg4 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (sunrealtype *)(farg4);
-  result = (SUNErrCode)N_VDotProdMulti_OpenMP(arg1,arg2,arg3,arg4);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VLinearSumVectorArray_OpenMP(int const *farg1, double const *farg2, void *farg3, double const *farg4, void *farg5, void *farg6) {
-  int fresult ;
-  int arg1 ;
-  sunrealtype arg2 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  sunrealtype arg4 ;
-  N_Vector *arg5 = (N_Vector *) 0 ;
-  N_Vector *arg6 = (N_Vector *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector *)(farg5);
-  arg6 = (N_Vector *)(farg6);
-  result = (SUNErrCode)N_VLinearSumVectorArray_OpenMP(arg1,arg2,arg3,arg4,arg5,arg6);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VScaleVectorArray_OpenMP(int const *farg1, double *farg2, void *farg3, void *farg4) {
-  int fresult ;
-  int arg1 ;
-  sunrealtype *arg2 = (sunrealtype *) 0 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  N_Vector *arg4 = (N_Vector *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (N_Vector *)(farg4);
-  result = (SUNErrCode)N_VScaleVectorArray_OpenMP(arg1,arg2,arg3,arg4);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VConstVectorArray_OpenMP(int const *farg1, double const *farg2, void *farg3) {
-  int fresult ;
-  int arg1 ;
-  sunrealtype arg2 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector *)(farg3);
-  result = (SUNErrCode)N_VConstVectorArray_OpenMP(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VWrmsNormVectorArray_OpenMP(int const *farg1, void *farg2, void *farg3, double *farg4) {
-  int fresult ;
-  int arg1 ;
-  N_Vector *arg2 = (N_Vector *) 0 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  sunrealtype *arg4 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (N_Vector *)(farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (sunrealtype *)(farg4);
-  result = (SUNErrCode)N_VWrmsNormVectorArray_OpenMP(arg1,arg2,arg3,arg4);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VWrmsNormMaskVectorArray_OpenMP(int const *farg1, void *farg2, void *farg3, N_Vector farg4, double *farg5) {
-  int fresult ;
-  int arg1 ;
-  N_Vector *arg2 = (N_Vector *) 0 ;
-  N_Vector *arg3 = (N_Vector *) 0 ;
-  N_Vector arg4 = (N_Vector) 0 ;
-  sunrealtype *arg5 = (sunrealtype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (int)(*farg1);
-  arg2 = (N_Vector *)(farg2);
-  arg3 = (N_Vector *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (sunrealtype *)(farg5);
-  result = (SUNErrCode)N_VWrmsNormMaskVectorArray_OpenMP(arg1,arg2,arg3,arg4,arg5);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VWSqrSumLocal_OpenMP(N_Vector farg1, N_Vector farg2) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  result = (sunrealtype)N_VWSqrSumLocal_OpenMP(arg1,arg2);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT double _wrap_FN_VWSqrSumMaskLocal_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector farg3) {
-  double fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  sunrealtype result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  result = (sunrealtype)N_VWSqrSumMaskLocal_OpenMP(arg1,arg2,arg3);
-  fresult = (sunrealtype)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VBufSize_OpenMP(N_Vector farg1, int64_t *farg2) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  result = (SUNErrCode)N_VBufSize_OpenMP(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VBufPack_OpenMP(N_Vector farg1, void *farg2) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  void *arg2 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (void *)(farg2);
-  result = (SUNErrCode)N_VBufPack_OpenMP(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VBufUnpack_OpenMP(N_Vector farg1, void *farg2) {
-  int fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  void *arg2 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (void *)(farg2);
-  result = (SUNErrCode)N_VBufUnpack_OpenMP(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FN_VEnableFusedOps_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableFusedOps_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableFusedOps_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableFusedOps_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -825,13 +495,14 @@ SWIGEXPORT int _wrap_FN_VEnableFusedOps_OpenMP(N_Vector farg1, int const *farg2)
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableLinearCombination_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableLinearCombination_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableLinearCombination_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableLinearCombination_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -839,13 +510,14 @@ SWIGEXPORT int _wrap_FN_VEnableLinearCombination_OpenMP(N_Vector farg1, int cons
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableScaleAddMulti_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableScaleAddMulti_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -853,13 +525,14 @@ SWIGEXPORT int _wrap_FN_VEnableScaleAddMulti_OpenMP(N_Vector farg1, int const *f
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableDotProdMulti_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableDotProdMulti_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -867,13 +540,14 @@ SWIGEXPORT int _wrap_FN_VEnableDotProdMulti_OpenMP(N_Vector farg1, int const *fa
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableLinearSumVectorArray_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableLinearSumVectorArray_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -881,13 +555,14 @@ SWIGEXPORT int _wrap_FN_VEnableLinearSumVectorArray_OpenMP(N_Vector farg1, int c
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableScaleVectorArray_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableScaleVectorArray_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -895,13 +570,14 @@ SWIGEXPORT int _wrap_FN_VEnableScaleVectorArray_OpenMP(N_Vector farg1, int const
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableConstVectorArray_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableConstVectorArray_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -909,13 +585,14 @@ SWIGEXPORT int _wrap_FN_VEnableConstVectorArray_OpenMP(N_Vector farg1, int const
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableWrmsNormVectorArray_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableWrmsNormVectorArray_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -923,13 +600,14 @@ SWIGEXPORT int _wrap_FN_VEnableWrmsNormVectorArray_OpenMP(N_Vector farg1, int co
 }
 
 
-SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_OpenMP(N_Vector farg1, int const *farg2) {
+SWIGEXPORT int _wrap_FN_VEnableWrmsNormMaskVectorArray_OpenMP(SwigClassWrapper const *farg1, int const *farg2) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   int arg2 ;
   SUNErrCode result;
   
-  arg1 = (N_Vector)(farg1);
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "N_VEnableWrmsNormMaskVectorArray_OpenMP(N_Vector,int)", return 0);
+  arg1 = (N_Vector)(farg1->cptr);
   arg2 = (int)(*farg2);
   result = (SUNErrCode)N_VEnableWrmsNormMaskVectorArray_OpenMP(arg1,arg2);
   fresult = (SUNErrCode)(result);

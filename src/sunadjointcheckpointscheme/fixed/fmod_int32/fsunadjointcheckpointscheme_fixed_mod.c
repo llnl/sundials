@@ -181,6 +181,22 @@
  { printf("In " DECL ": " MSG); assert(0); RETURNNULL; }
 
 
+enum {
+    SWIG_MEM_OWN = 0x01,
+    SWIG_MEM_RVALUE = 0x02,
+    SWIG_MEM_CONST = 0x04
+};
+
+
+#define SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    if ((SWIG_CLASS_WRAPPER).cmemflags & SWIG_MEM_CONST) { \
+        SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+            "Cannot pass const " TYPENAME " (class " FNAME ") " \
+            "as a mutable reference", \
+            RETURNNULL); \
+    }
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -210,6 +226,20 @@
 
 
 #include "sunadjointcheckpointscheme/sunadjointcheckpointscheme_fixed.h"
+
+
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
 
 SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_Create_Fixed(int const *farg1, SUNMemoryHelper farg2, long const *farg3, long const *farg4, int const *farg5, void *farg6, void *farg7) {
   int fresult ;
@@ -255,7 +285,7 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_NeedsSaving_Fixed(void *farg1, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector_Fixed(void *farg1, long const *farg2, long const *farg3, double const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector_Fixed(void *farg1, long const *farg2, long const *farg3, double const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   SUNAdjointCheckpointScheme arg1 = (SUNAdjointCheckpointScheme) 0 ;
   suncountertype arg2 ;
@@ -268,7 +298,8 @@ SWIGEXPORT int _wrap_FSUNAdjointCheckpointScheme_InsertVector_Fixed(void *farg1,
   arg2 = (suncountertype)(*farg2);
   arg3 = (suncountertype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "SUNAdjointCheckpointScheme_InsertVector_Fixed(SUNAdjointCheckpointScheme,suncountertype,suncountertype,sunrealtype,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (SUNErrCode)SUNAdjointCheckpointScheme_InsertVector_Fixed(arg1,arg2,arg3,arg4,arg5);
   fresult = (SUNErrCode)(result);
   return fresult;

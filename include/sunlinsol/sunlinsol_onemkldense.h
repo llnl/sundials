@@ -54,32 +54,6 @@ typedef struct SUNLinearSolverContent_OneMklDense_* SUNLinearSolverContent_OneMk
 SUNDIALS_EXPORT
 SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix A, SUNContext sunctx);
 
-static inline SUNLinearSolver_Type SUNLinSolGetType_OneMklDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_DIRECT;
-};
-
-static inline SUNLinearSolver_ID SUNLinSolGetID_OneMklDense(SUNLinearSolver S)
-{
-  return SUNLINEARSOLVER_ONEMKLDENSE;
-};
-
-SUNDIALS_EXPORT
-SUNErrCode SUNLinSolInitialize_OneMklDense(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-int SUNLinSolSetup_OneMklDense(SUNLinearSolver S, SUNMatrix A);
-
-SUNDIALS_EXPORT
-int SUNLinSolSolve_OneMklDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
-                               N_Vector b, sunrealtype tol);
-
-SUNDIALS_EXPORT
-sunindextype SUNLinSolLastFlag_OneMklDense(SUNLinearSolver S);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNLinSolFree_OneMklDense(SUNLinearSolver S);
-
 #ifdef __cplusplus
 }
 #endif

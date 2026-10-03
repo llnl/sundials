@@ -197,6 +197,19 @@ enum {
     }
 
 
+#define SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+  if (!(SWIG_CLASS_WRAPPER).cptr) { \
+    SWIG_exception_impl(FUNCNAME, SWIG_TypeError, \
+                        "Cannot pass null " TYPENAME " (class " FNAME ") " \
+                        "as a reference", RETURNNULL); \
+  }
+
+
+#define SWIG_check_mutable_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL) \
+    SWIG_check_nonnull(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL); \
+    SWIG_check_mutable(SWIG_CLASS_WRAPPER, TYPENAME, FNAME, FUNCNAME, RETURNNULL);
+
+
 #include <stdio.h>
 #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(_WATCOM)
 # ifndef snprintf
@@ -228,31 +241,6 @@ enum {
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
 
 
-#include <stdlib.h>
-#ifdef _MSC_VER
-# ifndef strtoull
-#  define strtoull _strtoui64
-# endif
-# ifndef strtoll
-#  define strtoll _strtoi64
-# endif
-#endif
-
-
-typedef struct {
-    void* data;
-    size_t size;
-} SwigArrayWrapper;
-
-
-SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
-  SwigArrayWrapper result;
-  result.data = NULL;
-  result.size = 0;
-  return result;
-}
-
-
 typedef struct {
     void* cptr;
     int cmemflags;
@@ -266,24 +254,785 @@ SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
     return result;
 }
 
-SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_FixedPoint(N_Vector farg1, int const *farg2, void *farg3) {
-  SUNNonlinearSolver fresult ;
-  N_Vector arg1 = (N_Vector) 0 ;
-  int arg2 ;
-  SUNContext arg3 = (SUNContext) 0 ;
-  SUNNonlinearSolver result;
+
+#include <stdlib.h>
+#ifdef _MSC_VER
+# ifndef strtoull
+#  define strtoull _strtoui64
+# endif
+# ifndef strtoll
+#  define strtoll _strtoi64
+# endif
+#endif
+
+
+#include <string.h>
+
+
+SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
+  if (self->cptr == NULL) {
+    /* LHS is unassigned */
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture pointer from RHS, clear 'moving' flag */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_RVALUE);
+    } else {
+      /* Become a reference to the other object */
+      self->cptr = other.cptr;
+      self->cmemflags = other.cmemflags & (~SWIG_MEM_OWN);
+    }
+  } else if (other.cptr == NULL) {
+    /* Replace LHS with a null pointer */
+    free(self->cptr);
+    *self = SwigClassWrapper_uninitialized();
+  } else {
+    if (self->cmemflags & SWIG_MEM_OWN) {
+      free(self->cptr);
+    }
+    self->cptr = other.cptr;
+    if (other.cmemflags & SWIG_MEM_RVALUE) {
+      /* Capture RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_RVALUE;
+    } else {
+      /* Point to RHS */
+      self->cmemflags = other.cmemflags & ~SWIG_MEM_OWN;
+    }
+  }
+}
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__Sys_set(SwigClassWrapper const *farg1, SUNNonlinSolSysFn farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
   
-  arg1 = (N_Vector)(farg1);
-  arg2 = (int)(*farg2);
-  arg3 = (SUNContext)(farg3);
-  result = (SUNNonlinearSolver)SUNNonlinSol_FixedPoint(arg1,arg2,arg3);
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::Sys", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolSysFn)(farg2);
+  if (arg1) (arg1)->Sys = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolSysFn _wrap_SUNNonlinearSolverContent_FixedPoint__Sys_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolSysFn fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolSysFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::Sys", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (SUNNonlinSolSysFn) ((arg1)->Sys);
   fresult = result;
   return fresult;
 }
 
 
-SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_FixedPointSens(int const *farg1, N_Vector farg2, int const *farg3, void *farg4) {
-  SUNNonlinearSolver fresult ;
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__CTest_set(SwigClassWrapper const *farg1, SUNNonlinSolConvTestFn farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::CTest", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolConvTestFn)(farg2);
+  if (arg1) (arg1)->CTest = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolConvTestFn _wrap_SUNNonlinearSolverContent_FixedPoint__CTest_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolConvTestFn fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolConvTestFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::CTest", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (SUNNonlinSolConvTestFn) ((arg1)->CTest);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolNormFn farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::norm_fn", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolNormFn)(farg2);
+  if (arg1) (arg1)->norm_fn = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolNormFn _wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolNormFn fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolNormFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::norm_fn", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (SUNNonlinSolNormFn) ((arg1)->norm_fn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::norm_fn_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->norm_fn_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__norm_fn_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::norm_fn_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (void *) ((arg1)->norm_fn_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_fn_set(SwigClassWrapper const *farg1, SUNNonlinSolGetUpdateNormFn farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::getupdatenorm_fn", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
+  if (arg1) (arg1)->getupdatenorm_fn = arg2;
+}
+
+
+SWIGEXPORT SUNNonlinSolGetUpdateNormFn _wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_fn_get(SwigClassWrapper const *farg1) {
+  SUNNonlinSolGetUpdateNormFn fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  SUNNonlinSolGetUpdateNormFn result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::getupdatenorm_fn", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (SUNNonlinSolGetUpdateNormFn) ((arg1)->getupdatenorm_fn);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::getupdatenorm_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->getupdatenorm_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__getupdatenorm_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::getupdatenorm_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (void *) ((arg1)->getupdatenorm_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__m_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::m", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->m = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_FixedPoint__m_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::m", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (int) ((arg1)->m);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__imap_set(SwigClassWrapper const *farg1, int *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int *arg2 = (int *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::imap", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (int *)(farg2);
+  if (arg1) (arg1)->imap = arg2;
+}
+
+
+SWIGEXPORT int * _wrap_SUNNonlinearSolverContent_FixedPoint__imap_get(SwigClassWrapper const *farg1) {
+  int * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::imap", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (int *) ((arg1)->imap);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__damping_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::damping", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->damping = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_FixedPoint__damping_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::damping", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (int) ((arg1)->damping);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__beta_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::beta", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->beta = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNNonlinearSolverContent_FixedPoint__beta_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::beta", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->beta);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__R_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::R", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->R = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNNonlinearSolverContent_FixedPoint__R_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::R", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->R);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__gamma_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gamma", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->gamma = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNNonlinearSolverContent_FixedPoint__gamma_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gamma", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->gamma);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__cvals_set(SwigClassWrapper const *farg1, double *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *arg2 = (sunrealtype *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::cvals", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (sunrealtype *)(farg2);
+  if (arg1) (arg1)->cvals = arg2;
+}
+
+
+SWIGEXPORT double * _wrap_SUNNonlinearSolverContent_FixedPoint__cvals_get(SwigClassWrapper const *farg1) {
+  double * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::cvals", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (sunrealtype *) ((arg1)->cvals);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__delnrm_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::delnrm", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->delnrm = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNNonlinearSolverContent_FixedPoint__delnrm_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::delnrm", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->delnrm);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__df_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::df", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->df = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__df_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::df", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->df);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__dg_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::dg", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->dg = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__dg_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::dg", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->dg);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__q_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::q", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->q = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__q_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::q", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->q);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__Xvecs_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::Xvecs", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (N_Vector *)(farg2);
+  if (arg1) (arg1)->Xvecs = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__Xvecs_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::Xvecs", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector *) ((arg1)->Xvecs);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__yprev_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::yprev", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_FixedPoint_::yprev", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->yprev = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_FixedPoint__yprev_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::yprev", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->yprev);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__gy_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gy", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_FixedPoint_::gy", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->gy = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_FixedPoint__gy_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gy", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->gy);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__fold_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::fold", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_FixedPoint_::fold", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->fold = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_FixedPoint__fold_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::fold", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->fold);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__gold_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gold", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_FixedPoint_::gold", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->gold = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_FixedPoint__gold_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::gold", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->gold);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__delta_set(SwigClassWrapper const *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::delta", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinearSolverContent_FixedPoint_::delta", return );
+  arg2 = (N_Vector)(farg2->cptr);
+  if (arg1) (arg1)->delta = arg2;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_SUNNonlinearSolverContent_FixedPoint__delta_get(SwigClassWrapper const *farg1) {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  N_Vector result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::delta", return SwigClassWrapper_uninitialized());
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (N_Vector) ((arg1)->delta);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__curiter_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::curiter", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->curiter = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_FixedPoint__curiter_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::curiter", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (int) ((arg1)->curiter);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__maxiters_set(SwigClassWrapper const *farg1, int const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::maxiters", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  if (arg1) (arg1)->maxiters = arg2;
+}
+
+
+SWIGEXPORT int _wrap_SUNNonlinearSolverContent_FixedPoint__maxiters_get(SwigClassWrapper const *farg1) {
+  int fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  int result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::maxiters", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (int) ((arg1)->maxiters);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__niters_set(SwigClassWrapper const *farg1, long const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  long arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::niters", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (long)(*farg2);
+  if (arg1) (arg1)->niters = arg2;
+}
+
+
+SWIGEXPORT long _wrap_SUNNonlinearSolverContent_FixedPoint__niters_get(SwigClassWrapper const *farg1) {
+  long fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  long result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::niters", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (long) ((arg1)->niters);
+  fresult = (long)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__nconvfails_set(SwigClassWrapper const *farg1, long const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  long arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::nconvfails", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (long)(*farg2);
+  if (arg1) (arg1)->nconvfails = arg2;
+}
+
+
+SWIGEXPORT long _wrap_SUNNonlinearSolverContent_FixedPoint__nconvfails_get(SwigClassWrapper const *farg1) {
+  long fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  long result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::nconvfails", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (long) ((arg1)->nconvfails);
+  fresult = (long)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__ctest_data_set(SwigClassWrapper const *farg1, void *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::ctest_data", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  arg2 = (void *)(farg2);
+  if (arg1) (arg1)->ctest_data = arg2;
+}
+
+
+SWIGEXPORT void * _wrap_SUNNonlinearSolverContent_FixedPoint__ctest_data_get(SwigClassWrapper const *farg1) {
+  void * fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  void *result = 0 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::ctest_data", return 0);
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  result = (void *) ((arg1)->ctest_data);
+  fresult = result;
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_new_SUNNonlinearSolverContent_FixedPoint_() {
+  SwigClassWrapper fresult ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *result = 0 ;
+  
+  result = (struct SUNNonlinearSolverContent_FixedPoint_ *)calloc(1, sizeof(struct SUNNonlinearSolverContent_FixedPoint_));
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (1 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_delete_SUNNonlinearSolverContent_FixedPoint_(SwigClassWrapper *farg1) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  
+  SWIG_check_mutable(*farg1, "struct SUNNonlinearSolverContent_FixedPoint_ *", "SUNNonlinearSolverContent_FixedPoint_", "SUNNonlinearSolverContent_FixedPoint_::~SUNNonlinearSolverContent_FixedPoint_()", return );
+  arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *)(farg1->cptr);
+  free((char *) arg1);
+}
+
+
+SWIGEXPORT void _wrap_SUNNonlinearSolverContent_FixedPoint__op_assign__(SwigClassWrapper *farg1, SwigClassWrapper const *farg2) {
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg1 = (struct SUNNonlinearSolverContent_FixedPoint_ *) 0 ;
+  struct SUNNonlinearSolverContent_FixedPoint_ *arg2 = 0 ;
+  
+  (void)sizeof(arg1);
+  (void)sizeof(arg2);
+  SWIG_assign(farg1, *farg2);
+  
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNNonlinSol_FixedPoint(SwigClassWrapper const *farg1, int const *farg2, void *farg3) {
+  SwigClassWrapper fresult ;
+  N_Vector arg1 = (N_Vector) 0 ;
+  int arg2 ;
+  SUNContext arg3 = (SUNContext) 0 ;
+  SUNNonlinearSolver result;
+  
+  SWIG_check_mutable(*farg1, "N_Vector", "N_Vector_", "SUNNonlinSol_FixedPoint(N_Vector,int,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg1 = (N_Vector)(farg1->cptr);
+  arg2 = (int)(*farg2);
+  arg3 = (SUNContext)(farg3);
+  result = (SUNNonlinearSolver)SUNNonlinSol_FixedPoint(arg1,arg2,arg3);
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
+  return fresult;
+}
+
+
+SWIGEXPORT SwigClassWrapper _wrap_FSUNNonlinSol_FixedPointSens(int const *farg1, SwigClassWrapper const *farg2, int const *farg3, void *farg4) {
+  SwigClassWrapper fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int arg3 ;
@@ -291,147 +1040,25 @@ SWIGEXPORT SUNNonlinearSolver _wrap_FSUNNonlinSol_FixedPointSens(int const *farg
   SUNNonlinearSolver result;
   
   arg1 = (int)(*farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "SUNNonlinSol_FixedPointSens(int,N_Vector,int,SUNContext)", return SwigClassWrapper_uninitialized());
+  arg2 = (N_Vector)(farg2->cptr);
   arg3 = (int)(*farg3);
   arg4 = (SUNContext)(farg4);
   result = (SUNNonlinearSolver)SUNNonlinSol_FixedPointSens(arg1,arg2,arg3,arg4);
-  fresult = result;
+  fresult.cptr = result;
+  fresult.cmemflags = SWIG_MEM_RVALUE | (0 ? SWIG_MEM_OWN : 0);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolGetType_FixedPoint(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinearSolver_Type result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNNonlinearSolver_Type)SUNNonlinSolGetType_FixedPoint(arg1);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolInitialize_FixedPoint(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNErrCode)SUNNonlinSolInitialize_FixedPoint(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver farg1, N_Vector farg2, N_Vector farg3, N_Vector farg4, double const *farg5, int const *farg6, void *farg7) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  N_Vector arg2 = (N_Vector) 0 ;
-  N_Vector arg3 = (N_Vector) 0 ;
-  N_Vector arg4 = (N_Vector) 0 ;
-  sunrealtype arg5 ;
-  int arg6 ;
-  void *arg7 = (void *) 0 ;
-  int result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (sunrealtype)(*farg5);
-  arg6 = (int)(*farg6);
-  arg7 = (void *)(farg7);
-  result = (int)SUNNonlinSolSolve_FixedPoint(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolFree_FixedPoint(SUNNonlinearSolver farg1) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  result = (SUNErrCode)SUNNonlinSolFree_FixedPoint(arg1);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver farg1, SwigArrayWrapper *farg2, SwigArrayWrapper *farg3, int const *farg4, SwigClassWrapper const *farg5) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  int arg4 ;
-  char **arg5 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (char *)(farg2->data);
-  arg3 = (char *)(farg3->data);
-  arg4 = (int)(*farg4);
-  SWIG_check_mutable(*farg5, "char **", "SWIGTYPE_p_p_char", "SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver,char const *,char const *,int,char *[])", return 0);
-  arg5 = (char **)(farg5->cptr);
-  result = (SUNErrCode)SUNNonlinSolSetOptions_FixedPoint(arg1,(char const *)arg2,(char const *)arg3,arg4,arg5);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolSysFn farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolSysFn arg2 = (SUNNonlinSolSysFn) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolSysFn)(farg2);
-  result = (SUNErrCode)SUNNonlinSolSetSysFn_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetConvTestFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolConvTestFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolConvTestFn arg2 = (SUNNonlinSolConvTestFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolConvTestFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetConvTestFn_FixedPoint(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver farg1, int const *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  int arg2 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (int)(*farg2);
-  result = (SUNErrCode)SUNNonlinSolSetMaxIters_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver farg1, double const *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SwigClassWrapper const *farg1, double const *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   sunrealtype arg2 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver,sunrealtype)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (sunrealtype)(*farg2);
   result = (SUNErrCode)SUNNonlinSolSetDamping_FixedPoint(arg1,arg2);
   fresult = (SUNErrCode)(result);
@@ -439,87 +1066,14 @@ SWIGEXPORT int _wrap_FSUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver farg1
 }
 
 
-SWIGEXPORT int _wrap_FSUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolNormFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolNormFn arg2 = (SUNNonlinSolNormFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolNormFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetNormFn_FixedPoint(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolSetGetUpdateNormFn_FixedPoint(SUNNonlinearSolver farg1, SUNNonlinSolGetUpdateNormFn farg2, void *farg3) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  SUNNonlinSolGetUpdateNormFn arg2 = (SUNNonlinSolGetUpdateNormFn) 0 ;
-  void *arg3 = (void *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (SUNNonlinSolGetUpdateNormFn)(farg2);
-  arg3 = (void *)(farg3);
-  result = (SUNErrCode)SUNNonlinSolSetGetUpdateNormFn_FixedPoint(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver farg1, long *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetNumIters_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetCurIter_FixedPoint(SUNNonlinearSolver farg1, int *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  int *arg2 = (int *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (int *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetCurIter_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetNumConvFails_FixedPoint(SUNNonlinearSolver farg1, long *farg2) {
-  int fresult ;
-  SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNNonlinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  result = (SUNErrCode)SUNNonlinSolGetNumConvFails_FixedPoint(arg1,arg2);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver farg1, void *farg2) {
+SWIGEXPORT int _wrap_FSUNNonlinSolGetSysFn_FixedPoint(SwigClassWrapper const *farg1, void *farg2) {
   int fresult ;
   SUNNonlinearSolver arg1 = (SUNNonlinearSolver) 0 ;
   SUNNonlinSolSysFn *arg2 = (SUNNonlinSolSysFn *) 0 ;
   SUNErrCode result;
   
-  arg1 = (SUNNonlinearSolver)(farg1);
+  SWIG_check_mutable(*farg1, "SUNNonlinearSolver", "SUNNonlinearSolver_", "SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver,SUNNonlinSolSysFn *)", return 0);
+  arg1 = (SUNNonlinearSolver)(farg1->cptr);
   arg2 = (SUNNonlinSolSysFn *)(farg2);
   result = (SUNErrCode)SUNNonlinSolGetSysFn_FixedPoint(arg1,arg2);
   fresult = (SUNErrCode)(result);

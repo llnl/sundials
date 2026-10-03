@@ -469,7 +469,7 @@ static int cvBBDPrecSetup(sunrealtype t, N_Vector y,
   }
 
   /* Do LU factorization of matrix and return error flag */
-  retval = SUNLinSolSetup_Band(pdata->LS, pdata->savedP);
+  retval = SUNLinSolSetup(pdata->LS, pdata->savedP);
   return (retval);
 }
 

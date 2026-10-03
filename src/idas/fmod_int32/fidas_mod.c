@@ -240,6 +240,20 @@ enum {
 #include "idas/idas_ls.h"
 
 
+typedef struct {
+    void* cptr;
+    int cmemflags;
+} SwigClassWrapper;
+
+
+SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
+    SwigClassWrapper result;
+    result.cptr = NULL;
+    result.cmemflags = 0;
+    return result;
+}
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 # ifndef strtoull
@@ -266,20 +280,6 @@ SWIGINTERN SwigArrayWrapper SwigArrayWrapper_uninitialized() {
 
 
 #include <string.h>
-
-
-typedef struct {
-    void* cptr;
-    int cmemflags;
-} SwigClassWrapper;
-
-
-SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
-    SwigClassWrapper result;
-    result.cptr = NULL;
-    result.cmemflags = 0;
-    return result;
-}
 
 
 SWIGINTERN void SWIG_assign(SwigClassWrapper* self, SwigClassWrapper other) {
@@ -325,7 +325,7 @@ SWIGEXPORT void * _wrap_FIDACreate(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAInit(void *farg1, IDAResFn farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAInit(void *farg1, IDAResFn farg2, double const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   IDAResFn arg2 = (IDAResFn) 0 ;
@@ -337,15 +337,17 @@ SWIGEXPORT int _wrap_FIDAInit(void *farg1, IDAResFn farg2, double const *farg3, 
   arg1 = (void *)(farg1);
   arg2 = (IDAResFn)(farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAInit(void *,IDAResFn,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAInit(void *,IDAResFn,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAInit(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAReInit(void *farg1, double const *farg2, N_Vector farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAReInit(void *farg1, double const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -355,8 +357,10 @@ SWIGEXPORT int _wrap_FIDAReInit(void *farg1, double const *farg2, N_Vector farg3
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAReInit(void *,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAReInit(void *,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAReInit(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -379,7 +383,7 @@ SWIGEXPORT int _wrap_FIDASStolerances(void *farg1, double const *farg2, double c
 }
 
 
-SWIGEXPORT int _wrap_FIDASVtolerances(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDASVtolerances(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -388,7 +392,8 @@ SWIGEXPORT int _wrap_FIDASVtolerances(void *farg1, double const *farg2, N_Vector
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDASVtolerances(void *,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDASVtolerances(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -675,28 +680,30 @@ SWIGEXPORT int _wrap_FIDASetSuppressAlg(void *farg1, int const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDASetId(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDASetId(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDASetId(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDASetId(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDASetConstraints(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDASetConstraints(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDASetConstraints(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDASetConstraints(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -859,14 +866,15 @@ SWIGEXPORT int _wrap_FIDASetNonlinConvCoef(void *farg1, double const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDASetNonlinearSolver(void *farg1, SUNNonlinearSolver farg2) {
+SWIGEXPORT int _wrap_FIDASetNonlinearSolver(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNNonlinearSolver arg2 = (SUNNonlinearSolver) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNNonlinearSolver)(farg2);
+  SWIG_check_mutable(*farg2, "SUNNonlinearSolver", "SUNNonlinearSolver_", "IDASetNonlinearSolver(void *,SUNNonlinearSolver)", return 0);
+  arg2 = (SUNNonlinearSolver)(farg2->cptr);
   result = (int)IDASetNonlinearSolver(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -915,7 +923,7 @@ SWIGEXPORT int _wrap_FIDASetNoInactiveRootWarn(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FIDASolve(void *farg1, double const *farg2, double *farg3, N_Vector farg4, N_Vector farg5, int const *farg6) {
+SWIGEXPORT int _wrap_FIDASolve(void *farg1, double const *farg2, double *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5, int const *farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -928,8 +936,10 @@ SWIGEXPORT int _wrap_FIDASolve(void *farg1, double const *farg2, double *farg3, 
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDASolve(void *,sunrealtype,sunrealtype *,N_Vector,N_Vector,int)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDASolve(void *,sunrealtype,sunrealtype *,N_Vector,N_Vector,int)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   arg6 = (int)(*farg6);
   result = (int)IDASolve(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = (int)(result);
@@ -937,7 +947,7 @@ SWIGEXPORT int _wrap_FIDASolve(void *farg1, double const *farg2, double *farg3, 
 }
 
 
-SWIGEXPORT int _wrap_FIDAComputeY(void *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAComputeY(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -945,15 +955,17 @@ SWIGEXPORT int _wrap_FIDAComputeY(void *farg1, N_Vector farg2, N_Vector farg3) {
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAComputeY(void *,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAComputeY(void *,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAComputeY(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAComputeYp(void *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAComputeYp(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -961,8 +973,10 @@ SWIGEXPORT int _wrap_FIDAComputeYp(void *farg1, N_Vector farg2, N_Vector farg3) 
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAComputeYp(void *,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAComputeYp(void *,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAComputeYp(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -1001,7 +1015,7 @@ SWIGEXPORT int _wrap_FIDAComputeYpSens(void *farg1, void *farg2, void *farg3) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetDky(void *farg1, double const *farg2, int const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetDky(void *farg1, double const *farg2, int const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -1012,7 +1026,8 @@ SWIGEXPORT int _wrap_FIDAGetDky(void *farg1, double const *farg2, int const *far
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetDky(void *,sunrealtype,int,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetDky(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -1089,7 +1104,7 @@ SWIGEXPORT int _wrap_FIDAGetNumBacktrackOps(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetConsistentIC(void *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAGetConsistentIC(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -1097,8 +1112,10 @@ SWIGEXPORT int _wrap_FIDAGetConsistentIC(void *farg1, N_Vector farg2, N_Vector f
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAGetConsistentIC(void *,N_Vector,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAGetConsistentIC(void *,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAGetConsistentIC(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -1273,28 +1290,30 @@ SWIGEXPORT int _wrap_FIDAGetTolScaleFactor(void *farg1, double *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetErrWeights(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDAGetErrWeights(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAGetErrWeights(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDAGetErrWeights(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetEstLocalErrors(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDAGetEstLocalErrors(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAGetEstLocalErrors(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDAGetEstLocalErrors(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1566,7 +1585,7 @@ SWIGEXPORT int _wrap_FIDASetJacTimesResFn(void *farg1, IDAResFn farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadInit(void *farg1, IDAQuadRhsFn farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAQuadInit(void *farg1, IDAQuadRhsFn farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   IDAQuadRhsFn arg2 = (IDAQuadRhsFn) 0 ;
@@ -1575,21 +1594,23 @@ SWIGEXPORT int _wrap_FIDAQuadInit(void *farg1, IDAQuadRhsFn farg2, N_Vector farg
   
   arg1 = (void *)(farg1);
   arg2 = (IDAQuadRhsFn)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAQuadInit(void *,IDAQuadRhsFn,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAQuadInit(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadReInit(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDAQuadReInit(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAQuadReInit(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDAQuadReInit(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1612,7 +1633,7 @@ SWIGEXPORT int _wrap_FIDAQuadSStolerances(void *farg1, double const *farg2, doub
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadSVtolerances(void *farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAQuadSVtolerances(void *farg1, double const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -1621,7 +1642,8 @@ SWIGEXPORT int _wrap_FIDAQuadSVtolerances(void *farg1, double const *farg2, N_Ve
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAQuadSVtolerances(void *,sunrealtype,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAQuadSVtolerances(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -1642,7 +1664,7 @@ SWIGEXPORT int _wrap_FIDASetQuadErrCon(void *farg1, int const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuad(void *farg1, double *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAGetQuad(void *farg1, double *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -1651,14 +1673,15 @@ SWIGEXPORT int _wrap_FIDAGetQuad(void *farg1, double *farg2, N_Vector farg3) {
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype *)(farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAGetQuad(void *,sunrealtype *,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAGetQuad(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuadDky(void *farg1, double const *farg2, int const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetQuadDky(void *farg1, double const *farg2, int const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -1669,7 +1692,8 @@ SWIGEXPORT int _wrap_FIDAGetQuadDky(void *farg1, double const *farg2, int const 
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetQuadDky(void *,sunrealtype,int,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetQuadDky(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -1704,14 +1728,15 @@ SWIGEXPORT int _wrap_FIDAGetQuadNumErrTestFails(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuadErrWeights(void *farg1, N_Vector farg2) {
+SWIGEXPORT int _wrap_FIDAGetQuadErrWeights(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (N_Vector)(farg2);
+  SWIG_check_mutable(*farg2, "N_Vector", "N_Vector_", "IDAGetQuadErrWeights(void *,N_Vector)", return 0);
+  arg2 = (N_Vector)(farg2->cptr);
   result = (int)IDAGetQuadErrWeights(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1904,28 +1929,30 @@ SWIGEXPORT int _wrap_FIDASetSensParams(void *farg1, double *farg2, double *farg3
 }
 
 
-SWIGEXPORT int _wrap_FIDASetNonlinearSolverSensSim(void *farg1, SUNNonlinearSolver farg2) {
+SWIGEXPORT int _wrap_FIDASetNonlinearSolverSensSim(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNNonlinearSolver arg2 = (SUNNonlinearSolver) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNNonlinearSolver)(farg2);
+  SWIG_check_mutable(*farg2, "SUNNonlinearSolver", "SUNNonlinearSolver_", "IDASetNonlinearSolverSensSim(void *,SUNNonlinearSolver)", return 0);
+  arg2 = (SUNNonlinearSolver)(farg2->cptr);
   result = (int)IDASetNonlinearSolverSensSim(arg1,arg2);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDASetNonlinearSolverSensStg(void *farg1, SUNNonlinearSolver farg2) {
+SWIGEXPORT int _wrap_FIDASetNonlinearSolverSensStg(void *farg1, SwigClassWrapper const *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNNonlinearSolver arg2 = (SUNNonlinearSolver) 0 ;
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNNonlinearSolver)(farg2);
+  SWIG_check_mutable(*farg2, "SUNNonlinearSolver", "SUNNonlinearSolver_", "IDASetNonlinearSolverSensStg(void *,SUNNonlinearSolver)", return 0);
+  arg2 = (SUNNonlinearSolver)(farg2->cptr);
   result = (int)IDASetNonlinearSolverSensStg(arg1,arg2);
   fresult = (int)(result);
   return fresult;
@@ -1960,7 +1987,7 @@ SWIGEXPORT int _wrap_FIDAGetSens(void *farg1, double *farg2, void *farg3) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetSens1(void *farg1, double *farg2, int const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetSens1(void *farg1, double *farg2, int const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -1971,7 +1998,8 @@ SWIGEXPORT int _wrap_FIDAGetSens1(void *farg1, double *farg2, int const *farg3, 
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetSens1(void *,sunrealtype *,int,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetSens1(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -1996,7 +2024,7 @@ SWIGEXPORT int _wrap_FIDAGetSensDky(void *farg1, double const *farg2, int const 
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetSensDky1(void *farg1, double const *farg2, int const *farg3, int const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAGetSensDky1(void *farg1, double const *farg2, int const *farg3, int const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -2009,7 +2037,8 @@ SWIGEXPORT int _wrap_FIDAGetSensDky1(void *farg1, double const *farg2, int const
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
   arg4 = (int)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAGetSensDky1(void *,sunrealtype,int,int,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAGetSensDky1(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -2276,7 +2305,7 @@ SWIGEXPORT int _wrap_FIDAGetQuadSens(void *farg1, double *farg2, void *farg3) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuadSens1(void *farg1, double *farg2, int const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetQuadSens1(void *farg1, double *farg2, int const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype *arg2 = (sunrealtype *) 0 ;
@@ -2287,7 +2316,8 @@ SWIGEXPORT int _wrap_FIDAGetQuadSens1(void *farg1, double *farg2, int const *far
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype *)(farg2);
   arg3 = (int)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetQuadSens1(void *,sunrealtype *,int,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetQuadSens1(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -2312,7 +2342,7 @@ SWIGEXPORT int _wrap_FIDAGetQuadSensDky(void *farg1, double const *farg2, int co
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuadSensDky1(void *farg1, double const *farg2, int const *farg3, int const *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAGetQuadSensDky1(void *farg1, double const *farg2, int const *farg3, int const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -2325,7 +2355,8 @@ SWIGEXPORT int _wrap_FIDAGetQuadSensDky1(void *farg1, double const *farg2, int c
   arg2 = (sunrealtype)(*farg2);
   arg3 = (int)(*farg3);
   arg4 = (int)(*farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAGetQuadSensDky1(void *,sunrealtype,int,int,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAGetQuadSensDky1(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -2448,7 +2479,7 @@ SWIGEXPORT int _wrap_FIDACreateB(void *farg1, int *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAInitB(void *farg1, int const *farg2, IDAResFnB farg3, double const *farg4, N_Vector farg5, N_Vector farg6) {
+SWIGEXPORT int _wrap_FIDAInitB(void *farg1, int const *farg2, IDAResFnB farg3, double const *farg4, SwigClassWrapper const *farg5, SwigClassWrapper const *farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2462,15 +2493,17 @@ SWIGEXPORT int _wrap_FIDAInitB(void *farg1, int const *farg2, IDAResFnB farg3, d
   arg2 = (int)(*farg2);
   arg3 = (IDAResFnB)(farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
-  arg6 = (N_Vector)(farg6);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAInitB(void *,int,IDAResFnB,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
+  SWIG_check_mutable(*farg6, "N_Vector", "N_Vector_", "IDAInitB(void *,int,IDAResFnB,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg6 = (N_Vector)(farg6->cptr);
   result = (int)IDAInitB(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAInitBS(void *farg1, int const *farg2, IDAResFnBS farg3, double const *farg4, N_Vector farg5, N_Vector farg6) {
+SWIGEXPORT int _wrap_FIDAInitBS(void *farg1, int const *farg2, IDAResFnBS farg3, double const *farg4, SwigClassWrapper const *farg5, SwigClassWrapper const *farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2484,15 +2517,17 @@ SWIGEXPORT int _wrap_FIDAInitBS(void *farg1, int const *farg2, IDAResFnBS farg3,
   arg2 = (int)(*farg2);
   arg3 = (IDAResFnBS)(farg3);
   arg4 = (sunrealtype)(*farg4);
-  arg5 = (N_Vector)(farg5);
-  arg6 = (N_Vector)(farg6);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAInitBS(void *,int,IDAResFnBS,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
+  SWIG_check_mutable(*farg6, "N_Vector", "N_Vector_", "IDAInitBS(void *,int,IDAResFnBS,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg6 = (N_Vector)(farg6->cptr);
   result = (int)IDAInitBS(arg1,arg2,arg3,arg4,arg5,arg6);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAReInitB(void *farg1, int const *farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAReInitB(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2504,8 +2539,10 @@ SWIGEXPORT int _wrap_FIDAReInitB(void *farg1, int const *farg2, double const *fa
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAReInitB(void *,int,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAReInitB(void *,int,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAReInitB(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -2530,7 +2567,7 @@ SWIGEXPORT int _wrap_FIDASStolerancesB(void *farg1, int const *farg2, double con
 }
 
 
-SWIGEXPORT int _wrap_FIDASVtolerancesB(void *farg1, int const *farg2, double const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDASVtolerancesB(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2541,14 +2578,15 @@ SWIGEXPORT int _wrap_FIDASVtolerancesB(void *farg1, int const *farg2, double con
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDASVtolerancesB(void *,int,sunrealtype,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDASVtolerancesB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadInitB(void *farg1, int const *farg2, IDAQuadRhsFnB farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAQuadInitB(void *farg1, int const *farg2, IDAQuadRhsFnB farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2559,14 +2597,15 @@ SWIGEXPORT int _wrap_FIDAQuadInitB(void *farg1, int const *farg2, IDAQuadRhsFnB 
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (IDAQuadRhsFnB)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAQuadInitB(void *,int,IDAQuadRhsFnB,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAQuadInitB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadInitBS(void *farg1, int const *farg2, IDAQuadRhsFnBS farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAQuadInitBS(void *farg1, int const *farg2, IDAQuadRhsFnBS farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2577,14 +2616,15 @@ SWIGEXPORT int _wrap_FIDAQuadInitBS(void *farg1, int const *farg2, IDAQuadRhsFnB
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (IDAQuadRhsFnBS)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAQuadInitBS(void *,int,IDAQuadRhsFnBS,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAQuadInitBS(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadReInitB(void *farg1, int const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDAQuadReInitB(void *farg1, int const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2593,7 +2633,8 @@ SWIGEXPORT int _wrap_FIDAQuadReInitB(void *farg1, int const *farg2, N_Vector far
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAQuadReInitB(void *,int,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDAQuadReInitB(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -2618,7 +2659,7 @@ SWIGEXPORT int _wrap_FIDAQuadSStolerancesB(void *farg1, int const *farg2, double
 }
 
 
-SWIGEXPORT int _wrap_FIDAQuadSVtolerancesB(void *farg1, int const *farg2, double const *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAQuadSVtolerancesB(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2629,14 +2670,15 @@ SWIGEXPORT int _wrap_FIDAQuadSVtolerancesB(void *farg1, int const *farg2, double
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAQuadSVtolerancesB(void *,int,sunrealtype,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAQuadSVtolerancesB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDACalcICB(void *farg1, int const *farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDACalcICB(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2648,15 +2690,17 @@ SWIGEXPORT int _wrap_FIDACalcICB(void *farg1, int const *farg2, double const *fa
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDACalcICB(void *,int,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDACalcICB(void *,int,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDACalcICB(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDACalcICBS(void *farg1, int const *farg2, double const *farg3, N_Vector farg4, N_Vector farg5, void *farg6, void *farg7) {
+SWIGEXPORT int _wrap_FIDACalcICBS(void *farg1, int const *farg2, double const *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5, void *farg6, void *farg7) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2670,8 +2714,10 @@ SWIGEXPORT int _wrap_FIDACalcICBS(void *farg1, int const *farg2, double const *f
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype)(*farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDACalcICBS(void *,int,sunrealtype,N_Vector,N_Vector,N_Vector *,N_Vector *)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDACalcICBS(void *,int,sunrealtype,N_Vector,N_Vector,N_Vector *,N_Vector *)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   arg6 = (N_Vector *)(farg6);
   arg7 = (N_Vector *)(farg7);
   result = (int)IDACalcICBS(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
@@ -2680,7 +2726,7 @@ SWIGEXPORT int _wrap_FIDACalcICBS(void *farg1, int const *farg2, double const *f
 }
 
 
-SWIGEXPORT int _wrap_FIDASolveF(void *farg1, double const *farg2, double *farg3, N_Vector farg4, N_Vector farg5, int const *farg6, int *farg7) {
+SWIGEXPORT int _wrap_FIDASolveF(void *farg1, double const *farg2, double *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5, int const *farg6, int *farg7) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -2694,8 +2740,10 @@ SWIGEXPORT int _wrap_FIDASolveF(void *farg1, double const *farg2, double *farg3,
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
   arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDASolveF(void *,sunrealtype,sunrealtype *,N_Vector,N_Vector,int,int *)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDASolveF(void *,sunrealtype,sunrealtype *,N_Vector,N_Vector,int,int *)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   arg6 = (int)(*farg6);
   arg7 = (int *)(farg7);
   result = (int)IDASolveF(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
@@ -2828,7 +2876,7 @@ SWIGEXPORT int _wrap_FIDASetSuppressAlgB(void *farg1, int const *farg2, int cons
 }
 
 
-SWIGEXPORT int _wrap_FIDASetIdB(void *farg1, int const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDASetIdB(void *farg1, int const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2837,14 +2885,15 @@ SWIGEXPORT int _wrap_FIDASetIdB(void *farg1, int const *farg2, N_Vector farg3) {
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDASetIdB(void *,int,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDASetIdB(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDASetConstraintsB(void *farg1, int const *farg2, N_Vector farg3) {
+SWIGEXPORT int _wrap_FIDASetConstraintsB(void *farg1, int const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2853,7 +2902,8 @@ SWIGEXPORT int _wrap_FIDASetConstraintsB(void *farg1, int const *farg2, N_Vector
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (N_Vector)(farg3);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDASetConstraintsB(void *,int,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
   result = (int)IDASetConstraintsB(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -2876,7 +2926,7 @@ SWIGEXPORT int _wrap_FIDASetQuadErrConB(void *farg1, int const *farg2, int const
 }
 
 
-SWIGEXPORT int _wrap_FIDASetNonlinearSolverB(void *farg1, int const *farg2, SUNNonlinearSolver farg3) {
+SWIGEXPORT int _wrap_FIDASetNonlinearSolverB(void *farg1, int const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2885,14 +2935,15 @@ SWIGEXPORT int _wrap_FIDASetNonlinearSolverB(void *farg1, int const *farg2, SUNN
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (SUNNonlinearSolver)(farg3);
+  SWIG_check_mutable(*farg3, "SUNNonlinearSolver", "SUNNonlinearSolver_", "IDASetNonlinearSolverB(void *,int,SUNNonlinearSolver)", return 0);
+  arg3 = (SUNNonlinearSolver)(farg3->cptr);
   result = (int)IDASetNonlinearSolverB(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetB(void *farg1, int const *farg2, double *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAGetB(void *farg1, int const *farg2, double *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2904,15 +2955,17 @@ SWIGEXPORT int _wrap_FIDAGetB(void *farg1, int const *farg2, double *farg3, N_Ve
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetB(void *,int,sunrealtype *,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAGetB(void *,int,sunrealtype *,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAGetB(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetQuadB(void *farg1, int const *farg2, double *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetQuadB(void *farg1, int const *farg2, double *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2923,7 +2976,8 @@ SWIGEXPORT int _wrap_FIDAGetQuadB(void *farg1, int const *farg2, double *farg3, 
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetQuadB(void *,int,sunrealtype *,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetQuadB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -2960,7 +3014,7 @@ SWIGEXPORT void * _wrap_FIDAGetAdjIDABmem(void *farg1, int const *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetConsistentICB(void *farg1, int const *farg2, N_Vector farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetConsistentICB(void *farg1, int const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -2970,15 +3024,17 @@ SWIGEXPORT int _wrap_FIDAGetConsistentICB(void *farg1, int const *farg2, N_Vecto
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAGetConsistentICB(void *,int,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetConsistentICB(void *,int,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetConsistentICB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetAdjY(void *farg1, double const *farg2, N_Vector farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FIDAGetAdjY(void *farg1, double const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   sunrealtype arg2 ;
@@ -2988,8 +3044,10 @@ SWIGEXPORT int _wrap_FIDAGetAdjY(void *farg1, double const *farg2, N_Vector farg
   
   arg1 = (void *)(farg1);
   arg2 = (sunrealtype)(*farg2);
-  arg3 = (N_Vector)(farg3);
-  arg4 = (N_Vector)(farg4);
+  SWIG_check_mutable(*farg3, "N_Vector", "N_Vector_", "IDAGetAdjY(void *,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg3 = (N_Vector)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetAdjY(void *,sunrealtype,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
   result = (int)IDAGetAdjY(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;
@@ -3226,7 +3284,7 @@ SWIGEXPORT int _wrap_FIDASetJacTimesResFnB(void *farg1, int const *farg2, IDARes
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetAdjDataPointHermite(void *farg1, int const *farg2, double *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAGetAdjDataPointHermite(void *farg1, int const *farg2, double *farg3, SwigClassWrapper const *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -3238,15 +3296,17 @@ SWIGEXPORT int _wrap_FIDAGetAdjDataPointHermite(void *farg1, int const *farg2, d
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype *)(farg3);
-  arg4 = (N_Vector)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg4, "N_Vector", "N_Vector_", "IDAGetAdjDataPointHermite(void *,int,sunrealtype *,N_Vector,N_Vector)", return 0);
+  arg4 = (N_Vector)(farg4->cptr);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAGetAdjDataPointHermite(void *,int,sunrealtype *,N_Vector,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAGetAdjDataPointHermite(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetAdjDataPointPolynomial(void *farg1, int const *farg2, double *farg3, int *farg4, N_Vector farg5) {
+SWIGEXPORT int _wrap_FIDAGetAdjDataPointPolynomial(void *farg1, int const *farg2, double *farg3, int *farg4, SwigClassWrapper const *farg5) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -3259,7 +3319,8 @@ SWIGEXPORT int _wrap_FIDAGetAdjDataPointPolynomial(void *farg1, int const *farg2
   arg2 = (int)(*farg2);
   arg3 = (sunrealtype *)(farg3);
   arg4 = (int *)(farg4);
-  arg5 = (N_Vector)(farg5);
+  SWIG_check_mutable(*farg5, "N_Vector", "N_Vector_", "IDAGetAdjDataPointPolynomial(void *,int,sunrealtype *,int *,N_Vector)", return 0);
+  arg5 = (N_Vector)(farg5->cptr);
   result = (int)IDAGetAdjDataPointPolynomial(arg1,arg2,arg3,arg4,arg5);
   fresult = (int)(result);
   return fresult;
@@ -3390,7 +3451,7 @@ SWIGEXPORT int _wrap_FIDABBDPrecReInitB(void *farg1, int const *farg2, int32_t c
 }
 
 
-SWIGEXPORT int _wrap_FIDASetLinearSolver(void *farg1, SUNLinearSolver farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FIDASetLinearSolver(void *farg1, SwigClassWrapper const *farg2, SwigClassWrapper const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   SUNLinearSolver arg2 = (SUNLinearSolver) 0 ;
@@ -3398,8 +3459,10 @@ SWIGEXPORT int _wrap_FIDASetLinearSolver(void *farg1, SUNLinearSolver farg2, SUN
   int result;
   
   arg1 = (void *)(farg1);
-  arg2 = (SUNLinearSolver)(farg2);
-  arg3 = (SUNMatrix)(farg3);
+  SWIG_check_mutable(*farg2, "SUNLinearSolver", "SUNLinearSolver_", "IDASetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg2 = (SUNLinearSolver)(farg2->cptr);
+  SWIG_check_mutable(*farg3, "SUNMatrix", "SUNMatrix_", "IDASetLinearSolver(void *,SUNLinearSolver,SUNMatrix)", return 0);
+  arg3 = (SUNMatrix)(farg3->cptr);
   result = (int)IDASetLinearSolver(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
@@ -3703,7 +3766,7 @@ SWIGEXPORT SwigArrayWrapper _wrap_FIDAGetLinReturnFlagName(long const *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FIDASetLinearSolverB(void *farg1, int const *farg2, SUNLinearSolver farg3, SUNMatrix farg4) {
+SWIGEXPORT int _wrap_FIDASetLinearSolverB(void *farg1, int const *farg2, SwigClassWrapper const *farg3, SwigClassWrapper const *farg4) {
   int fresult ;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -3713,8 +3776,10 @@ SWIGEXPORT int _wrap_FIDASetLinearSolverB(void *farg1, int const *farg2, SUNLine
   
   arg1 = (void *)(farg1);
   arg2 = (int)(*farg2);
-  arg3 = (SUNLinearSolver)(farg3);
-  arg4 = (SUNMatrix)(farg4);
+  SWIG_check_mutable(*farg3, "SUNLinearSolver", "SUNLinearSolver_", "IDASetLinearSolverB(void *,int,SUNLinearSolver,SUNMatrix)", return 0);
+  arg3 = (SUNLinearSolver)(farg3->cptr);
+  SWIG_check_mutable(*farg4, "SUNMatrix", "SUNMatrix_", "IDASetLinearSolverB(void *,int,SUNLinearSolver,SUNMatrix)", return 0);
+  arg4 = (SUNMatrix)(farg4->cptr);
   result = (int)IDASetLinearSolverB(arg1,arg2,arg3,arg4);
   fresult = (int)(result);
   return fresult;

@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvecsycl
   SOURCES nvector_sycl.cpp
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_sycl.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_sycl_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES sundials_sunmemsycl_obj

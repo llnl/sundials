@@ -23,9 +23,8 @@
 #include <sycl/sycl.hpp>
 
 /* SUNDIALS public headers */
-#include <nvector/nvector_sycl.h>
+#include <nvector/nvector_sycl_deprecated.h>
 #include <sunmemory/sunmemory_sycl.h>
-
 /* SUNDIALS private headers */
 #include "sundials/sundials_errors.h"
 #include "sundials_debug.h"
@@ -90,6 +89,82 @@ typedef struct N_PrivateVectorContent_Sycl_* N_PrivateVectorContent_Sycl;
  * Utility functions
  * -------------------------------------------------------------------------- */
 
+/* Functions attached to the N_Vector */
+static void nvAbs_Sycl(N_Vector x, N_Vector z);
+static void nvAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode nvBufPack_Sycl(N_Vector x, void* buf);
+static SUNErrCode nvBufSize_Sycl(N_Vector x, sunindextype* size);
+static SUNErrCode nvBufUnpack_Sycl(N_Vector x, void* buf);
+static N_Vector nvCloneEmpty_Sycl(N_Vector w);
+static N_Vector nvClone_Sycl(N_Vector w);
+static void nvCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z);
+static SUNErrCode nvConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z);
+static void nvConst_Sycl(sunrealtype c, N_Vector z);
+static sunbooleantype nvConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m);
+static void nvDestroy_Sycl(N_Vector v);
+static void nvDiv_Sycl(N_Vector x, N_Vector y, N_Vector z);
+static sunrealtype nvDotProd_Sycl(N_Vector x, N_Vector y);
+
+static inline sunrealtype* nvGetDeviceArrayPointer_Sycl(N_Vector x)
+{
+  N_VectorContent_Sycl content = (N_VectorContent_Sycl)x->content;
+  return (content->device_data == NULL ? NULL
+                                       : (sunrealtype*)content->device_data->ptr);
+}
+
+static inline sunrealtype* nvGetHostArrayPointer_Sycl(N_Vector x)
+{
+  N_VectorContent_Sycl content = (N_VectorContent_Sycl)x->content;
+  return (content->host_data == NULL ? NULL
+                                     : (sunrealtype*)content->host_data->ptr);
+}
+
+static inline sunindextype nvGetLength_Sycl(N_Vector x)
+{
+  N_VectorContent_Sycl content = (N_VectorContent_Sycl)x->content;
+  return content->length;
+}
+
+static inline N_Vector_ID nvGetVectorID_Sycl(N_Vector)
+{
+  return SUNDIALS_NVEC_SYCL;
+}
+
+static sunbooleantype nvInvTest_Sycl(N_Vector x, N_Vector z);
+static void nvInv_Sycl(N_Vector x, N_Vector z);
+static sunrealtype nvL1Norm_Sycl(N_Vector x);
+static SUNErrCode nvLinearCombinationVectorArray_Sycl(int nvec, int nsum,
+                                                      sunrealtype* c,
+                                                      N_Vector** X, N_Vector* Z);
+static SUNErrCode nvLinearCombination_Sycl(int nvec, sunrealtype* c,
+                                           N_Vector* X, N_Vector Z);
+static SUNErrCode nvLinearSumVectorArray_Sycl(int nvec, sunrealtype a,
+                                              N_Vector* X, sunrealtype b,
+                                              N_Vector* Y, N_Vector* Z);
+static void nvLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b,
+                             N_Vector y, N_Vector z);
+static sunrealtype nvMaxNorm_Sycl(N_Vector x);
+static sunrealtype nvMinQuotient_Sycl(N_Vector num, N_Vector denom);
+static sunrealtype nvMin_Sycl(N_Vector x);
+static void nvPrintFile_Sycl(N_Vector v, FILE* outfile);
+static void nvPrint_Sycl(N_Vector v);
+static void nvProd_Sycl(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvScaleAddMultiVectorArray_Sycl(int nvec, int nsum,
+                                                  sunrealtype* a, N_Vector* X,
+                                                  N_Vector** Y, N_Vector** Z);
+static SUNErrCode nvScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector X,
+                                       N_Vector* Y, N_Vector* Z);
+static SUNErrCode nvScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
+                                          N_Vector* Z);
+static void nvScale_Sycl(sunrealtype c, N_Vector x, N_Vector z);
+static void nvSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata_1d, N_Vector v);
+static void nvSetHostArrayPointer_Sycl(sunrealtype* h_vdata_1d, N_Vector v);
+static sunrealtype nvWL2Norm_Sycl(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumLocal_Sycl(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id);
+static sunrealtype nvWrmsNormMask_Sycl(N_Vector x, N_Vector w, N_Vector id);
+static sunrealtype nvWrmsNorm_Sycl(N_Vector x, N_Vector w);
+
 /* Allocate vector data */
 static int AllocateData(N_Vector v);
 
@@ -133,58 +208,58 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid           = N_VGetVectorID_Sycl;
-  v->ops->nvclone                 = N_VClone_Sycl;
-  v->ops->nvcloneempty            = N_VCloneEmpty_Sycl;
-  v->ops->nvdestroy               = N_VDestroy_Sycl;
-  v->ops->nvgetlength             = N_VGetLength_Sycl;
-  v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Sycl;
-  v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Sycl;
-  v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Sycl;
-  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Sycl;
+  v->ops->nvgetvectorid           = nvGetVectorID_Sycl;
+  v->ops->nvclone                 = nvClone_Sycl;
+  v->ops->nvcloneempty            = nvCloneEmpty_Sycl;
+  v->ops->nvdestroy               = nvDestroy_Sycl;
+  v->ops->nvgetlength             = nvGetLength_Sycl;
+  v->ops->nvgetarraypointer       = nvGetHostArrayPointer_Sycl;
+  v->ops->nvgetdevicearraypointer = nvGetDeviceArrayPointer_Sycl;
+  v->ops->nvsetarraypointer       = nvSetHostArrayPointer_Sycl;
+  v->ops->nvsetdevicearraypointer = nvSetDeviceArrayPointer_Sycl;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_Sycl;
-  v->ops->nvconst        = N_VConst_Sycl;
-  v->ops->nvprod         = N_VProd_Sycl;
-  v->ops->nvdiv          = N_VDiv_Sycl;
-  v->ops->nvscale        = N_VScale_Sycl;
-  v->ops->nvabs          = N_VAbs_Sycl;
-  v->ops->nvinv          = N_VInv_Sycl;
-  v->ops->nvaddconst     = N_VAddConst_Sycl;
-  v->ops->nvdotprod      = N_VDotProd_Sycl;
-  v->ops->nvmaxnorm      = N_VMaxNorm_Sycl;
-  v->ops->nvmin          = N_VMin_Sycl;
-  v->ops->nvl1norm       = N_VL1Norm_Sycl;
-  v->ops->nvinvtest      = N_VInvTest_Sycl;
-  v->ops->nvconstrmask   = N_VConstrMask_Sycl;
-  v->ops->nvminquotient  = N_VMinQuotient_Sycl;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_Sycl;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_Sycl;
-  v->ops->nvwl2norm      = N_VWL2Norm_Sycl;
-  v->ops->nvcompare      = N_VCompare_Sycl;
+  v->ops->nvlinearsum    = nvLinearSum_Sycl;
+  v->ops->nvconst        = nvConst_Sycl;
+  v->ops->nvprod         = nvProd_Sycl;
+  v->ops->nvdiv          = nvDiv_Sycl;
+  v->ops->nvscale        = nvScale_Sycl;
+  v->ops->nvabs          = nvAbs_Sycl;
+  v->ops->nvinv          = nvInv_Sycl;
+  v->ops->nvaddconst     = nvAddConst_Sycl;
+  v->ops->nvdotprod      = nvDotProd_Sycl;
+  v->ops->nvmaxnorm      = nvMaxNorm_Sycl;
+  v->ops->nvmin          = nvMin_Sycl;
+  v->ops->nvl1norm       = nvL1Norm_Sycl;
+  v->ops->nvinvtest      = nvInvTest_Sycl;
+  v->ops->nvconstrmask   = nvConstrMask_Sycl;
+  v->ops->nvminquotient  = nvMinQuotient_Sycl;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_Sycl;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_Sycl;
+  v->ops->nvwl2norm      = nvWL2Norm_Sycl;
+  v->ops->nvcompare      = nvCompare_Sycl;
 
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_Sycl;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_Sycl;
-  v->ops->nvdotprodlocal     = N_VDotProd_Sycl;
-  v->ops->nvmaxnormlocal     = N_VMaxNorm_Sycl;
-  v->ops->nvminlocal         = N_VMin_Sycl;
-  v->ops->nvl1normlocal      = N_VL1Norm_Sycl;
-  v->ops->nvinvtestlocal     = N_VInvTest_Sycl;
-  v->ops->nvconstrmasklocal  = N_VConstrMask_Sycl;
-  v->ops->nvminquotientlocal = N_VMinQuotient_Sycl;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_Sycl;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_Sycl;
+  v->ops->nvdotprodlocal     = nvDotProd_Sycl;
+  v->ops->nvmaxnormlocal     = nvMaxNorm_Sycl;
+  v->ops->nvminlocal         = nvMin_Sycl;
+  v->ops->nvl1normlocal      = nvL1Norm_Sycl;
+  v->ops->nvinvtestlocal     = nvInvTest_Sycl;
+  v->ops->nvconstrmasklocal  = nvConstrMask_Sycl;
+  v->ops->nvminquotientlocal = nvMinQuotient_Sycl;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_Sycl;
-  v->ops->nvbufpack   = N_VBufPack_Sycl;
-  v->ops->nvbufunpack = N_VBufUnpack_Sycl;
+  v->ops->nvbufsize   = nvBufSize_Sycl;
+  v->ops->nvbufpack   = nvBufPack_Sycl;
+  v->ops->nvbufunpack = nvBufUnpack_Sycl;
 
   /* print operation for debugging */
-  v->ops->nvprint     = N_VPrint_Sycl;
-  v->ops->nvprintfile = N_VPrintFile_Sycl;
+  v->ops->nvprint     = nvPrint_Sycl;
+  v->ops->nvprintfile = nvPrintFile_Sycl;
 
   /* Allocate content structure */
   v->content = (N_VectorContent_Sycl)malloc(sizeof(N_VectorContent_Sycl_));
@@ -541,18 +616,18 @@ N_Vector N_VMakeManaged_Sycl(sunindextype length, sunrealtype* vdata,
 
 /* Function to return the global length of the vector. This is defined as an
  * inline function in nvector_sycl.h, so we just mark it as extern here. */
-extern sunindextype N_VGetLength_Sycl(N_Vector v);
+extern sunindextype nvGetLength_Sycl(N_Vector v);
 
 /* Return pointer to the raw host data. This is defined as an inline function in
  * nvector_sycl.h, so we just mark it as extern here. */
-extern sunrealtype* N_VGetHostArrayPointer_Sycl(N_Vector x);
+extern sunrealtype* nvGetHostArrayPointer_Sycl(N_Vector x);
 
 /* Return pointer to the raw device data. This is defined as an inline function
  * in nvector_sycl.h, so we just mark it as extern here. */
-extern sunrealtype* N_VGetDeviceArrayPointer_Sycl(N_Vector x);
+extern sunrealtype* nvGetDeviceArrayPointer_Sycl(N_Vector x);
 
 /* Set pointer to the raw host data. Does not free the existing pointer. */
-void N_VSetHostArrayPointer_Sycl(sunrealtype* h_vdata, N_Vector v)
+void nvSetHostArrayPointer_Sycl(sunrealtype* h_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Sycl(v))
   {
@@ -587,7 +662,7 @@ void N_VSetHostArrayPointer_Sycl(sunrealtype* h_vdata, N_Vector v)
 }
 
 /* Set pointer to the raw device data */
-void N_VSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata, N_Vector v)
+void nvSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Sycl(v))
   {
@@ -703,10 +778,10 @@ void N_VCopyFromDevice_Sycl(N_Vector x)
 }
 
 /* Function to print the a serial vector to stdout */
-void N_VPrint_Sycl(N_Vector X) { N_VPrintFile_Sycl(X, stdout); }
+void nvPrint_Sycl(N_Vector X) { nvPrintFile_Sycl(X, stdout); }
 
 /* Function to print the a serial vector to outfile */
-void N_VPrintFile_Sycl(N_Vector X, FILE* outfile)
+void nvPrintFile_Sycl(N_Vector X, FILE* outfile)
 {
   sunindextype i;
 
@@ -722,12 +797,12 @@ void N_VPrintFile_Sycl(N_Vector X, FILE* outfile)
  * Vector operations
  * -------------------------------------------------------------------------- */
 
-N_Vector N_VCloneEmpty_Sycl(N_Vector w)
+N_Vector nvCloneEmpty_Sycl(N_Vector w)
 {
   /* Check input */
   if (w == NULL)
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VCloneEmpty_Sycl: input vector is NULL\n");
+    SUNDIALS_DEBUG_PRINT("ERROR in nvCloneEmpty_Sycl: input vector is NULL\n");
     return NULL;
   }
 
@@ -736,7 +811,7 @@ N_Vector N_VCloneEmpty_Sycl(N_Vector w)
   if (v == NULL)
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VCloneEmpty_Sycl: N_VNewEmpty returned NULL\n");
+      "ERROR in nvCloneEmpty_Sycl: N_VNewEmpty returned NULL\n");
     return NULL;
   }
 
@@ -744,7 +819,7 @@ N_Vector N_VCloneEmpty_Sycl(N_Vector w)
   if (N_VCopyOps(w, v))
   {
     N_VDestroy(v);
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VCloneEmpty_Sycl: Error in N_VCopyOps\n");
+    SUNDIALS_DEBUG_PRINT("ERROR in nvCloneEmpty_Sycl: Error in N_VCopyOps\n");
     return NULL;
   }
 
@@ -756,21 +831,21 @@ N_Vector N_VCloneEmpty_Sycl(N_Vector w)
   return v;
 }
 
-N_Vector N_VClone_Sycl(N_Vector w)
+N_Vector nvClone_Sycl(N_Vector w)
 {
   /* Check inputs */
   if (w == NULL)
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VClone_Sycl: vector is NULL\n");
+    SUNDIALS_DEBUG_PRINT("ERROR in nvClone_Sycl: vector is NULL\n");
     return NULL;
   }
 
   /* Create an empty clone vector */
-  N_Vector v = N_VCloneEmpty_Sycl(w);
+  N_Vector v = nvCloneEmpty_Sycl(w);
   if (v == NULL)
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VClone_Sycl: N_VCloneEmpty_Sycl returned NULL\n");
+      "ERROR in nvClone_Sycl: nvCloneEmpty_Sycl returned NULL\n");
     return NULL;
   }
 
@@ -784,7 +859,7 @@ N_Vector N_VClone_Sycl(N_Vector w)
 
   if (NVEC_SYCL_MEMHELP(v) == NULL)
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VClone_Sycl: memory helper is NULL\n");
+    SUNDIALS_DEBUG_PRINT("ERROR in nvClone_Sycl: memory helper is NULL\n");
     N_VDestroy(v);
     return NULL;
   }
@@ -792,7 +867,7 @@ N_Vector N_VClone_Sycl(N_Vector w)
   if (AllocateData(v))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VClone_Sycl: AllocateData returned nonzero\n");
+      "ERROR in nvClone_Sycl: AllocateData returned nonzero\n");
     N_VDestroy(v);
     return NULL;
   }
@@ -800,7 +875,7 @@ N_Vector N_VClone_Sycl(N_Vector w)
   return v;
 }
 
-void N_VDestroy_Sycl(N_Vector v)
+void nvDestroy_Sycl(N_Vector v)
 {
   N_VectorContent_Sycl vc;
   N_PrivateVectorContent_Sycl vcp;
@@ -849,7 +924,7 @@ void N_VDestroy_Sycl(N_Vector v)
   else
   {
     SUNDIALS_DEBUG_PRINT(
-      "WARNING in N_VDestroy_Sycl: mem_helper was NULL when trying to dealloc "
+      "WARNING in nvDestroy_Sycl: mem_helper was NULL when trying to dealloc "
       "data, this could result in a memory leak\n");
   }
 
@@ -866,7 +941,7 @@ void N_VDestroy_Sycl(N_Vector v)
   return;
 }
 
-void N_VConst_Sycl(sunrealtype c, N_Vector z)
+void nvConst_Sycl(sunrealtype c, N_Vector z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(z);
   sunrealtype* zdata   = NVEC_SYCL_DDATAp(z);
@@ -876,7 +951,7 @@ void N_VConst_Sycl(sunrealtype c, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VConst_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvConst_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -884,8 +959,8 @@ void N_VConst_Sycl(sunrealtype c, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = c; });
 }
 
-void N_VLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
-                       N_Vector z)
+void nvLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                      N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -897,7 +972,7 @@ void N_VLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VLinearSum_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvLinearSum_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -906,7 +981,7 @@ void N_VLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
     });
 }
 
-void N_VProd_Sycl(N_Vector x, N_Vector y, N_Vector z)
+void nvProd_Sycl(N_Vector x, N_Vector y, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -918,7 +993,7 @@ void N_VProd_Sycl(N_Vector x, N_Vector y, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VProd_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvProd_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -926,7 +1001,7 @@ void N_VProd_Sycl(N_Vector x, N_Vector y, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = xdata[i] * ydata[i]; });
 }
 
-void N_VDiv_Sycl(N_Vector x, N_Vector y, N_Vector z)
+void nvDiv_Sycl(N_Vector x, N_Vector y, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -938,7 +1013,7 @@ void N_VDiv_Sycl(N_Vector x, N_Vector y, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDiv_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvDiv_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -946,7 +1021,7 @@ void N_VDiv_Sycl(N_Vector x, N_Vector y, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = xdata[i] / ydata[i]; });
 }
 
-void N_VScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
+void nvScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -957,7 +1032,7 @@ void N_VScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScale_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvScale_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -965,7 +1040,7 @@ void N_VScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = c * xdata[i]; });
 }
 
-void N_VAbs_Sycl(N_Vector x, N_Vector z)
+void nvAbs_Sycl(N_Vector x, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -976,7 +1051,7 @@ void N_VAbs_Sycl(N_Vector x, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VAbs_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvAbs_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -984,7 +1059,7 @@ void N_VAbs_Sycl(N_Vector x, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = abs(xdata[i]); });
 }
 
-void N_VInv_Sycl(N_Vector x, N_Vector z)
+void nvInv_Sycl(N_Vector x, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -995,7 +1070,7 @@ void N_VInv_Sycl(N_Vector x, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInv_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvInv_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -1003,7 +1078,7 @@ void N_VInv_Sycl(N_Vector x, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = ONE / xdata[i]; });
 }
 
-void N_VAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z)
+void nvAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1014,7 +1089,7 @@ void N_VAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VAddConst_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvAddConst_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -1022,7 +1097,7 @@ void N_VAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z)
     GRID_STRIDE_XLOOP(item, i, N) { zdata[i] = xdata[i] + b; });
 }
 
-sunrealtype N_VDotProd_Sycl(N_Vector x, N_Vector y)
+sunrealtype nvDotProd_Sycl(N_Vector x, N_Vector y)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1033,13 +1108,13 @@ sunrealtype N_VDotProd_Sycl(N_Vector x, N_Vector y)
   if (InitializeReductionBuffer(x, ZERO))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDotProd_Sycl: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvDotProd_Sycl: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDotProd_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvDotProd_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1051,14 +1126,14 @@ sunrealtype N_VDotProd_Sycl(N_Vector x, N_Vector y)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VDotProd_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvDotProd_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-sunrealtype N_VMaxNorm_Sycl(N_Vector x)
+sunrealtype nvMaxNorm_Sycl(N_Vector x)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1068,13 +1143,13 @@ sunrealtype N_VMaxNorm_Sycl(N_Vector x)
   if (InitializeReductionBuffer(x, ZERO))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMaxNorm_Sycl: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvMaxNorm_Sycl: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMaxNorm_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMaxNorm_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1087,14 +1162,14 @@ sunrealtype N_VMaxNorm_Sycl(N_Vector x)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VMaxNorm_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvMaxNorm_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-sunrealtype N_VWSqrSumLocal_Sycl(N_Vector x, N_Vector w)
+sunrealtype nvWSqrSumLocal_Sycl(N_Vector x, N_Vector w)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1104,14 +1179,14 @@ sunrealtype N_VWSqrSumLocal_Sycl(N_Vector x, N_Vector w)
 
   if (InitializeReductionBuffer(x, ZERO))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumLocal_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumLocal_Sycl: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VWSqrSumLocal_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvWSqrSumLocal_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1125,21 +1200,21 @@ sunrealtype N_VWSqrSumLocal_Sycl(N_Vector x, N_Vector w)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumLocal_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumLocal_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-sunrealtype N_VWrmsNorm_Sycl(N_Vector x, N_Vector w)
+sunrealtype nvWrmsNorm_Sycl(N_Vector x, N_Vector w)
 {
   const sunindextype N  = NVEC_SYCL_LENGTH(x);
-  const sunrealtype sum = N_VWSqrSumLocal_Sycl(x, w);
+  const sunrealtype sum = nvWSqrSumLocal_Sycl(x, w);
   return ::sycl::sqrt(sum / N);
 }
 
-sunrealtype N_VWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id)
 {
   const sunindextype N      = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata  = NVEC_SYCL_DDATAp(x);
@@ -1150,13 +1225,13 @@ sunrealtype N_VWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id)
 
   if (InitializeReductionBuffer(x, ZERO))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumMaskLocal_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumMaskLocal_Sycl: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumMaskLocal_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumMaskLocal_Sycl: "
                          "GetKernelParameters returned nonzero\n");
   }
 
@@ -1171,21 +1246,21 @@ sunrealtype N_VWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumMaskLocal_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumMaskLocal_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-sunrealtype N_VWrmsNormMask_Sycl(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWrmsNormMask_Sycl(N_Vector x, N_Vector w, N_Vector id)
 {
   const sunindextype N  = NVEC_SYCL_LENGTH(x);
-  const sunrealtype sum = N_VWSqrSumMaskLocal_Sycl(x, w, id);
+  const sunrealtype sum = nvWSqrSumMaskLocal_Sycl(x, w, id);
   return ::sycl::sqrt(sum / N);
 }
 
-sunrealtype N_VMin_Sycl(N_Vector x)
+sunrealtype nvMin_Sycl(N_Vector x)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1195,13 +1270,13 @@ sunrealtype N_VMin_Sycl(N_Vector x)
   if (InitializeReductionBuffer(x, std::numeric_limits<sunrealtype>::max()))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMin_Sycl: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvMin_Sycl: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMin_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMin_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1215,18 +1290,18 @@ sunrealtype N_VMin_Sycl(N_Vector x)
   if (CopyReductionBufferFromDevice(x))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMin_Sycl: CopyReductionBufferFromDevice returned nonzero\n");
+      "ERROR in nvMin_Sycl: CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-sunrealtype N_VWL2Norm_Sycl(N_Vector x, N_Vector w)
+sunrealtype nvWL2Norm_Sycl(N_Vector x, N_Vector w)
 {
-  return ::sycl::sqrt(N_VWSqrSumLocal_Sycl(x, w));
+  return ::sycl::sqrt(nvWSqrSumLocal_Sycl(x, w));
 }
 
-sunrealtype N_VL1Norm_Sycl(N_Vector x)
+sunrealtype nvL1Norm_Sycl(N_Vector x)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1236,13 +1311,13 @@ sunrealtype N_VL1Norm_Sycl(N_Vector x)
   if (InitializeReductionBuffer(x, ZERO))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VL1Norm_Sycl: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvL1Norm_Sycl: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VL1Norm_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvL1Norm_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1254,14 +1329,14 @@ sunrealtype N_VL1Norm_Sycl(N_Vector x)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VL1Norm_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvL1Norm_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return NVEC_SYCL_HBUFFERp(x)[0];
 }
 
-void N_VCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z)
+void nvCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1272,7 +1347,7 @@ void N_VCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z)
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VCompare_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvCompare_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   SYCL_FOR(
@@ -1281,7 +1356,7 @@ void N_VCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z)
     });
 }
 
-sunbooleantype N_VInvTest_Sycl(N_Vector x, N_Vector z)
+sunbooleantype nvInvTest_Sycl(N_Vector x, N_Vector z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(z);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1292,13 +1367,13 @@ sunbooleantype N_VInvTest_Sycl(N_Vector x, N_Vector z)
   if (InitializeReductionBuffer(x, ZERO))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInvTest_Sycl: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvInvTest_Sycl: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInvTest_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvInvTest_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1313,14 +1388,14 @@ sunbooleantype N_VInvTest_Sycl(N_Vector x, N_Vector z)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VInvTest_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvInvTest_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return (NVEC_SYCL_HBUFFERp(x)[0] < HALF);
 }
 
-sunbooleantype N_VConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* cdata = NVEC_SYCL_DDATAp(c);
@@ -1331,14 +1406,14 @@ sunbooleantype N_VConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
 
   if (InitializeReductionBuffer(x, ZERO))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstrMask_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstrMask_Sycl: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(x, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VConstrMask_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvConstrMask_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1355,14 +1430,14 @@ sunbooleantype N_VConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
 
   if (CopyReductionBufferFromDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstrMask_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstrMask_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
   return (NVEC_SYCL_HBUFFERp(x)[0] < HALF);
 }
 
-sunrealtype N_VMinQuotient_Sycl(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_Sycl(N_Vector num, N_Vector denom)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(num);
   const sunrealtype* ndata = NVEC_SYCL_DDATAp(num);
@@ -1372,14 +1447,14 @@ sunrealtype N_VMinQuotient_Sycl(N_Vector num, N_Vector denom)
 
   if (InitializeReductionBuffer(num, std::numeric_limits<sunrealtype>::max()))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VMinQuotient_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvMinQuotient_Sycl: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
   if (GetKernelParameters(num, SUNTRUE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMinQuotient_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMinQuotient_Sycl: GetKernelParameters returned nonzero\n");
   }
 
   /* Shortcut to the reduction buffer */
@@ -1393,7 +1468,7 @@ sunrealtype N_VMinQuotient_Sycl(N_Vector num, N_Vector denom)
 
   if (CopyReductionBufferFromDevice(num))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VMinQuotient_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvMinQuotient_Sycl: "
                          "CopyReductionBufferFromDevice returned nonzero\n");
   }
 
@@ -1404,8 +1479,8 @@ sunrealtype N_VMinQuotient_Sycl(N_Vector num, N_Vector denom)
  * fused vector operations
  * -------------------------------------------------------------------------- */
 
-SUNErrCode N_VLinearCombination_Sycl(int nvec, sunrealtype* c, N_Vector* X,
-                                     N_Vector z)
+SUNErrCode nvLinearCombination_Sycl(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(z);
   sunrealtype* zdata   = NVEC_SYCL_DDATAp(z);
@@ -1419,35 +1494,35 @@ SUNErrCode N_VLinearCombination_Sycl(int nvec, sunrealtype* c, N_Vector* X,
   /* Setup the fused op workspace */
   if (FusedBuffer_Init(z, nvec, nvec))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Sycl: FusedBuffer_Init "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Sycl: FusedBuffer_Init "
                          "returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(z, c, nvec, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Sycl: "
                          "FusedBuffer_CopyRealArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(z, X, nvec, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(z))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (GetKernelParameters(z, SUNFALSE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombination_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombination_Sycl: "
                          "GetKernelParameters returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1461,8 +1536,8 @@ SUNErrCode N_VLinearCombination_Sycl(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector x,
-                                 N_Vector* Y, N_Vector* Z)
+SUNErrCode nvScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector x,
+                                N_Vector* Y, N_Vector* Z)
 {
   const sunindextype N     = NVEC_SYCL_LENGTH(x);
   const sunrealtype* xdata = NVEC_SYCL_DDATAp(x);
@@ -1478,34 +1553,34 @@ SUNErrCode N_VScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector x,
   if (FusedBuffer_Init(x, nvec, 2 * nvec))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScaleAddMulti_Sycl: FusedBuffer_Init returned nonzero\n");
+      "ERROR in nvScaleAddMulti_Sycl: FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(x, c, nvec, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Sycl: "
                          "FusedBuffer_CopyRealArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(x, Y, nvec, &ydata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(x, Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(x))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMulti_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMulti_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1513,7 +1588,7 @@ SUNErrCode N_VScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector x,
   if (GetKernelParameters(x, SUNFALSE, nthreads_total, nthreads_per_block))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScaleAddMulti_Sycl: GetKernelParameters returned nonzero\n");
+      "ERROR in nvScaleAddMulti_Sycl: GetKernelParameters returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
@@ -1532,8 +1607,8 @@ SUNErrCode N_VScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector x,
  * vector array operations
  * -------------------------------------------------------------------------- */
 
-SUNErrCode N_VLinearSumVectorArray_Sycl(int nvec, sunrealtype a, N_Vector* X,
-                                        sunrealtype b, N_Vector* Y, N_Vector* Z)
+SUNErrCode nvLinearSumVectorArray_Sycl(int nvec, sunrealtype a, N_Vector* X,
+                                       sunrealtype b, N_Vector* Y, N_Vector* Z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(Z[0]);
   ::sycl::queue* Q     = NVEC_SYCL_QUEUE(Z[0]);
@@ -1547,28 +1622,28 @@ SUNErrCode N_VLinearSumVectorArray_Sycl(int nvec, sunrealtype a, N_Vector* X,
   /* Setup the fused op workspace */
   if (FusedBuffer_Init(Z[0], 0, 3 * nvec))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearSumVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearSumVectorArray_Sycl: "
                          "FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], X, nvec, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearSumVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearSumVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], Y, nvec, &ydata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearSumVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearSumVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearSumVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearSumVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1598,8 +1673,8 @@ SUNErrCode N_VLinearSumVectorArray_Sycl(int nvec, sunrealtype a, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
-                                    N_Vector* Z)
+SUNErrCode nvScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
+                                   N_Vector* Z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(Z[0]);
   ::sycl::queue* Q     = NVEC_SYCL_QUEUE(Z[0]);
@@ -1614,41 +1689,41 @@ SUNErrCode N_VScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
   if (FusedBuffer_Init(Z[0], nvec, 2 * nvec))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScaleVectorArray_Sycl: FusedBuffer_Init returned nonzero\n");
+      "ERROR in nvScaleVectorArray_Sycl: FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(Z[0], c, nvec, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyReadArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], X, nvec, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(Z[0]))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (GetKernelParameters(Z[0], SUNFALSE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1661,7 +1736,7 @@ SUNErrCode N_VScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode nvConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(Z[0]);
   ::sycl::queue* Q     = NVEC_SYCL_QUEUE(Z[0]);
@@ -1674,27 +1749,27 @@ SUNErrCode N_VConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z)
   if (FusedBuffer_Init(Z[0], 0, nvec))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VConstVectorArray_Sycl: FusedBuffer_Init returned nonzero\n");
+      "ERROR in nvConstVectorArray_Sycl: FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(Z[0]))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstVectorArray_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (GetKernelParameters(Z[0], SUNFALSE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstVectorArray_Sycl: "
                          "GetKernelParameters returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1707,9 +1782,9 @@ SUNErrCode N_VConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z)
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMultiVectorArray_Sycl(int nvec, int nsum, sunrealtype* c,
-                                            N_Vector* X, N_Vector** Y,
-                                            N_Vector** Z)
+SUNErrCode nvScaleAddMultiVectorArray_Sycl(int nvec, int nsum, sunrealtype* c,
+                                           N_Vector* X, N_Vector** Y,
+                                           N_Vector** Z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(X[0]);
   ::sycl::queue* Q     = NVEC_SYCL_QUEUE(X[0]);
@@ -1738,35 +1813,35 @@ SUNErrCode N_VScaleAddMultiVectorArray_Sycl(int nvec, int nsum, sunrealtype* c,
 
   if (FusedBuffer_CopyPtrArray1D(X[0], X, nvec, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMultiVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMultiVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray2D(X[0], Y, nvec, nsum, &ydata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMultiVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMultiVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray2D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray2D(X[0], Z, nvec, nsum, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMultiVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMultiVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray2D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(X[0]))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleVectorArray_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (GetKernelParameters(X[0], SUNFALSE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VScaleAddMultiVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvScaleAddMultiVectorArray_Sycl: "
                          "GetKernelParameters returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1786,9 +1861,8 @@ SUNErrCode N_VScaleAddMultiVectorArray_Sycl(int nvec, int nsum, sunrealtype* c,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VLinearCombinationVectorArray_Sycl(int nvec, int nsum,
-                                                sunrealtype* c, N_Vector** X,
-                                                N_Vector* Z)
+SUNErrCode nvLinearCombinationVectorArray_Sycl(int nvec, int nsum, sunrealtype* c,
+                                               N_Vector** X, N_Vector* Z)
 {
   const sunindextype N = NVEC_SYCL_LENGTH(Z[0]);
   ::sycl::queue* Q     = NVEC_SYCL_QUEUE(Z[0]);
@@ -1802,42 +1876,42 @@ SUNErrCode N_VLinearCombinationVectorArray_Sycl(int nvec, int nsum,
   /* Setup the fused op workspace */
   if (FusedBuffer_Init(Z[0], nsum, nvec + nvec * nsum))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "FusedBuffer_Init returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyRealArray(Z[0], c, nsum, &cdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "FusedBuffer_CopyRealArray returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray2D(Z[0], X, nvec, nsum, &xdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray2D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyPtrArray1D(Z[0], Z, nvec, &zdata))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "FusedBuffer_CopyPtrArray1D returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (FusedBuffer_CopyToDevice(Z[0]))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "FusedBuffer_CopyToDevice returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
 
   if (GetKernelParameters(Z[0], SUNFALSE, nthreads_total, nthreads_per_block))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VLinearCombinationVectorArray_Sycl: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvLinearCombinationVectorArray_Sycl: "
                          "GetKernelParameters returned nonzero\n");
     return SUN_ERR_GENERIC;
   }
@@ -1861,14 +1935,14 @@ SUNErrCode N_VLinearCombinationVectorArray_Sycl(int nvec, int nsum,
  * OPTIONAL XBraid interface operations
  * -------------------------------------------------------------------------- */
 
-SUNErrCode N_VBufSize_Sycl(N_Vector x, sunindextype* size)
+SUNErrCode nvBufSize_Sycl(N_Vector x, sunindextype* size)
 {
   if (x == NULL) { return SUN_ERR_GENERIC; }
   *size = (sunindextype)NVEC_SYCL_MEMSIZE(x);
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VBufPack_Sycl(N_Vector x, void* buf)
+SUNErrCode nvBufPack_Sycl(N_Vector x, void* buf)
 {
   int copy_fail = 0;
 
@@ -1890,7 +1964,7 @@ SUNErrCode N_VBufPack_Sycl(N_Vector x, void* buf)
   return (copy_fail ? SUN_ERR_GENERIC : SUN_SUCCESS);
 }
 
-SUNErrCode N_VBufUnpack_Sycl(N_Vector x, void* buf)
+SUNErrCode nvBufUnpack_Sycl(N_Vector x, void* buf)
 {
   int copy_fail = 0;
 
@@ -1927,17 +2001,17 @@ SUNErrCode N_VEnableFusedOps_Sycl(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = N_VLinearCombination_Sycl;
-    v->ops->nvscaleaddmulti     = N_VScaleAddMulti_Sycl;
+    v->ops->nvlinearcombination = nvLinearCombination_Sycl;
+    v->ops->nvscaleaddmulti     = nvScaleAddMulti_Sycl;
     v->ops->nvdotprodmulti      = NULL;
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = N_VLinearSumVectorArray_Sycl;
-    v->ops->nvscalevectorarray         = N_VScaleVectorArray_Sycl;
-    v->ops->nvconstvectorarray         = N_VConstVectorArray_Sycl;
+    v->ops->nvlinearsumvectorarray     = nvLinearSumVectorArray_Sycl;
+    v->ops->nvscalevectorarray         = nvScaleVectorArray_Sycl;
+    v->ops->nvconstvectorarray         = nvConstVectorArray_Sycl;
     v->ops->nvwrmsnormvectorarray      = NULL;
     v->ops->nvwrmsnormmaskvectorarray  = NULL;
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Sycl;
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Sycl;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Sycl;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Sycl;
   }
   else
   {
@@ -1963,7 +2037,7 @@ SUNErrCode N_VEnableLinearCombination_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvlinearcombination = tf ? N_VLinearCombination_Sycl : NULL;
+  v->ops->nvlinearcombination = tf ? nvLinearCombination_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -1971,7 +2045,7 @@ SUNErrCode N_VEnableScaleAddMulti_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvscaleaddmulti = tf ? N_VScaleAddMulti_Sycl : NULL;
+  v->ops->nvscaleaddmulti = tf ? nvScaleAddMulti_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -1979,7 +2053,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvlinearsumvectorarray = tf ? N_VLinearSumVectorArray_Sycl : NULL;
+  v->ops->nvlinearsumvectorarray = tf ? nvLinearSumVectorArray_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -1987,7 +2061,7 @@ SUNErrCode N_VEnableScaleVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvscalevectorarray = tf ? N_VScaleVectorArray_Sycl : NULL;
+  v->ops->nvscalevectorarray = tf ? nvScaleVectorArray_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -1995,7 +2069,7 @@ SUNErrCode N_VEnableConstVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvconstvectorarray = tf ? N_VConstVectorArray_Sycl : NULL;
+  v->ops->nvconstvectorarray = tf ? nvConstVectorArray_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -2003,7 +2077,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 {
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
-  v->ops->nvscaleaddmultivectorarray = tf ? N_VScaleAddMultiVectorArray_Sycl
+  v->ops->nvscaleaddmultivectorarray = tf ? nvScaleAddMultiVectorArray_Sycl
                                           : NULL;
   return SUN_SUCCESS;
 }
@@ -2014,7 +2088,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Sycl(N_Vector v,
   if (v == NULL) { return SUN_ERR_GENERIC; }
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
   v->ops->nvlinearcombinationvectorarray =
-    tf ? N_VLinearCombinationVectorArray_Sycl : NULL;
+    tf ? nvLinearCombinationVectorArray_Sycl : NULL;
   return SUN_SUCCESS;
 }
 
@@ -2028,7 +2102,7 @@ static int AllocateData(N_Vector v)
   N_VectorContent_Sycl vc         = NVEC_SYCL_CONTENT(v);
   N_PrivateVectorContent_Sycl vcp = NVEC_SYCL_PRIVATE(v);
 
-  if (N_VGetLength_Sycl(v) == 0) { return SUN_SUCCESS; }
+  if (nvGetLength_Sycl(v) == 0) { return SUN_SUCCESS; }
 
   if (vcp->use_managed_mem)
   {
@@ -2435,3 +2509,172 @@ static int GetKernelParameters(N_Vector v, sunbooleantype reduction,
 }
 
 } /* extern "C" */
+
+/* Deprecated concrete operation wrappers */
+
+extern "C" {
+
+void N_VAbs_Sycl(N_Vector x, N_Vector z) { nvAbs_Sycl(x, z); }
+
+void N_VAddConst_Sycl(N_Vector x, sunrealtype b, N_Vector z)
+{
+  nvAddConst_Sycl(x, b, z);
+}
+
+SUNErrCode N_VBufPack_Sycl(N_Vector x, void* buf)
+{
+  return nvBufPack_Sycl(x, buf);
+}
+
+SUNErrCode N_VBufSize_Sycl(N_Vector x, sunindextype* size)
+{
+  return nvBufSize_Sycl(x, size);
+}
+
+SUNErrCode N_VBufUnpack_Sycl(N_Vector x, void* buf)
+{
+  return nvBufUnpack_Sycl(x, buf);
+}
+
+N_Vector N_VCloneEmpty_Sycl(N_Vector w) { return nvCloneEmpty_Sycl(w); }
+
+N_Vector N_VClone_Sycl(N_Vector w) { return nvClone_Sycl(w); }
+
+void N_VCompare_Sycl(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvCompare_Sycl(c, x, z);
+}
+
+SUNErrCode N_VConstVectorArray_Sycl(int nvec, sunrealtype c, N_Vector* Z)
+{
+  return nvConstVectorArray_Sycl(nvec, c, Z);
+}
+
+void N_VConst_Sycl(sunrealtype c, N_Vector z) { nvConst_Sycl(c, z); }
+
+sunbooleantype N_VConstrMask_Sycl(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMask_Sycl(c, x, m);
+}
+
+void N_VDestroy_Sycl(N_Vector v) { nvDestroy_Sycl(v); }
+
+void N_VDiv_Sycl(N_Vector x, N_Vector y, N_Vector z) { nvDiv_Sycl(x, y, z); }
+
+sunrealtype N_VDotProd_Sycl(N_Vector x, N_Vector y)
+{
+  return nvDotProd_Sycl(x, y);
+}
+
+sunbooleantype N_VInvTest_Sycl(N_Vector x, N_Vector z)
+{
+  return nvInvTest_Sycl(x, z);
+}
+
+void N_VInv_Sycl(N_Vector x, N_Vector z) { nvInv_Sycl(x, z); }
+
+sunrealtype N_VL1Norm_Sycl(N_Vector x) { return nvL1Norm_Sycl(x); }
+
+SUNErrCode N_VLinearCombinationVectorArray_Sycl(int nvec, int nsum,
+                                                sunrealtype* c, N_Vector** X,
+                                                N_Vector* Z)
+{
+  return nvLinearCombinationVectorArray_Sycl(nvec, nsum, c, X, Z);
+}
+
+SUNErrCode N_VLinearCombination_Sycl(int nvec, sunrealtype* c, N_Vector* X,
+                                     N_Vector Z)
+{
+  return nvLinearCombination_Sycl(nvec, c, X, Z);
+}
+
+SUNErrCode N_VLinearSumVectorArray_Sycl(int nvec, sunrealtype a, N_Vector* X,
+                                        sunrealtype b, N_Vector* Y, N_Vector* Z)
+{
+  return nvLinearSumVectorArray_Sycl(nvec, a, X, b, Y, Z);
+}
+
+void N_VLinearSum_Sycl(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                       N_Vector z)
+{
+  nvLinearSum_Sycl(a, x, b, y, z);
+}
+
+sunrealtype N_VMaxNorm_Sycl(N_Vector x) { return nvMaxNorm_Sycl(x); }
+
+sunrealtype N_VMinQuotient_Sycl(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotient_Sycl(num, denom);
+}
+
+sunrealtype N_VMin_Sycl(N_Vector x) { return nvMin_Sycl(x); }
+
+void N_VPrintFile_Sycl(N_Vector v, FILE* outfile)
+{
+  nvPrintFile_Sycl(v, outfile);
+}
+
+void N_VPrint_Sycl(N_Vector v) { nvPrint_Sycl(v); }
+
+void N_VProd_Sycl(N_Vector x, N_Vector y, N_Vector z) { nvProd_Sycl(x, y, z); }
+
+SUNErrCode N_VScaleAddMultiVectorArray_Sycl(int nvec, int nsum, sunrealtype* a,
+                                            N_Vector* X, N_Vector** Y,
+                                            N_Vector** Z)
+{
+  return nvScaleAddMultiVectorArray_Sycl(nvec, nsum, a, X, Y, Z);
+}
+
+SUNErrCode N_VScaleAddMulti_Sycl(int nvec, sunrealtype* c, N_Vector X,
+                                 N_Vector* Y, N_Vector* Z)
+{
+  return nvScaleAddMulti_Sycl(nvec, c, X, Y, Z);
+}
+
+SUNErrCode N_VScaleVectorArray_Sycl(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector* Z)
+{
+  return nvScaleVectorArray_Sycl(nvec, c, X, Z);
+}
+
+void N_VScale_Sycl(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvScale_Sycl(c, x, z);
+}
+
+void N_VSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata_1d, N_Vector v)
+{
+  nvSetDeviceArrayPointer_Sycl(d_vdata_1d, v);
+}
+
+void N_VSetHostArrayPointer_Sycl(sunrealtype* h_vdata_1d, N_Vector v)
+{
+  nvSetHostArrayPointer_Sycl(h_vdata_1d, v);
+}
+
+sunrealtype N_VWL2Norm_Sycl(N_Vector x, N_Vector w)
+{
+  return nvWL2Norm_Sycl(x, w);
+}
+
+sunrealtype N_VWSqrSumLocal_Sycl(N_Vector x, N_Vector w)
+{
+  return nvWSqrSumLocal_Sycl(x, w);
+}
+
+sunrealtype N_VWSqrSumMaskLocal_Sycl(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWSqrSumMaskLocal_Sycl(x, w, id);
+}
+
+sunrealtype N_VWrmsNormMask_Sycl(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWrmsNormMask_Sycl(x, w, id);
+}
+
+sunrealtype N_VWrmsNorm_Sycl(N_Vector x, N_Vector w)
+{
+  return nvWrmsNorm_Sycl(x, w);
+}
+
+} // extern "C"

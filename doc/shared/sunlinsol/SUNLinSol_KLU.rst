@@ -274,21 +274,4 @@ following operations:
 
 The SUNLinSol_KLU module defines implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_KLU``
-
-* ``SUNLinSolInitialize_KLU`` -- this sets the
-  ``first_factorize`` flag to 1, forcing both symbolic and numerical
-  factorizations on the subsequent "setup" call.
-
-* ``SUNLinSolSetup_KLU`` -- this performs either a :math:`LU`
-  factorization or refactorization of the input matrix.
-
-* ``SUNLinSolSolve_KLU`` -- this calls the appropriate KLU
-  solve routine to utilize the :math:`LU` factors to solve the linear
-  system.
-
-* ``SUNLinSolLastFlag_KLU``
-
-* ``SUNLinSolFree_KLU``
+:numref:`SUNLinSol.API`.
