@@ -68,7 +68,7 @@
 #define TWO  SUN_RCONST(2.0)
 #define FIVE SUN_RCONST(5.0)
 
-/* Type : _UserData (contains model and discretization parameters) */
+/* Type : UserData_ (contains model and discretization parameters) */
 typedef struct
 {
   sunindextype MX, MY, NEQ;
@@ -76,7 +76,7 @@ typedef struct
   sunrealtype hdcoef, hacoef, vdcoef;
 }* UserData;
 
-/*typedef _UserData *UserData;*/
+/*typedef UserData_ *UserData;*/
 
 /* Problem setup and initialization functions */
 static UserData SetUserData(int argc, char** argv);
