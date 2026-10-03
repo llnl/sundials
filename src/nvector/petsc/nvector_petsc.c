@@ -146,7 +146,6 @@ N_Vector N_VNewEmpty_Petsc(MPI_Comm comm, sunindextype local_length,
   v->ops->nvclone           = N_VClone_Petsc;
   v->ops->nvcloneempty      = N_VCloneEmpty_Petsc;
   v->ops->nvdestroy         = N_VDestroy_Petsc;
-  v->ops->nvspace           = N_VSpace_Petsc;
   v->ops->nvgetcommunicator = N_VGetCommunicator_Petsc;
   v->ops->nvgetlength       = N_VGetLength_Petsc;
 
@@ -383,37 +382,6 @@ void N_VDestroy_Petsc(N_Vector v)
   free(v);
   v = NULL;
 
-  return;
-}
-
-void N_VSpace_Petsc(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  MPI_Comm comm;
-  int npes;
-
-  comm = NV_COMM_PTC(v);
-  MPI_Comm_size(comm, &npes);
-
-  *lrw = NV_GLOBLENGTH_PTC(v);
-  *liw = 2 * npes;
-
-  return;
-}
-
-/*
- * Not implemented for PETSc wrapper.
- */
-sunrealtype* N_VGetArrayPointer_Petsc(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return NULL;
-}
-
-/*
- * Not implemented for PETSc wrapper.
- */
-void N_VSetArrayPointer_Petsc(SUNDIALS_MAYBE_UNUSED sunrealtype* v_data,
-                              SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
   return;
 }
 

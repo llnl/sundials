@@ -198,20 +198,6 @@ ARKodeButcherTable ARKodeButcherTable_Copy(ARKodeButcherTable B)
 /*---------------------------------------------------------------
   Routine to query the Butcher table structure workspace size
   ---------------------------------------------------------------*/
-void ARKodeButcherTable_Space(ARKodeButcherTable B, sunindextype* liw,
-                              sunindextype* lrw)
-{
-  /* initialize outputs and return if B is not allocated */
-  *liw = 0;
-  *lrw = 0;
-  if (B == NULL) { return; }
-
-  /* fill outputs based on B */
-  *liw = 3;
-  if (B->d != NULL) { *lrw = B->stages * (B->stages + 3); }
-  else { *lrw = B->stages * (B->stages + 2); }
-}
-
 /*---------------------------------------------------------------
   Routine to free a Butcher table structure
   ---------------------------------------------------------------*/

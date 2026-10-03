@@ -70,27 +70,6 @@ contains
     end if
   end function Test_FSUNLinSolLastFlag
 
-  integer(c_int) function Test_FSUNLinSolSpace(S, myid) result(failure)
-    use, intrinsic :: iso_c_binding
-    implicit none
-
-    type(SUNLinearSolver), pointer :: S
-    integer(c_int)                 :: myid
-    integer(c_long)                :: lenrw(1), leniw(1)
-
-    failure = 0
-
-    ! call FSUNLinSolSpace (failure based on output flag)
-    failure = FSUNLinSolSpace(S, lenrw, leniw)
-    if (failure /= 0) then
-      write (*, *) ">>> FAILED test -- FSUNLinSolSpace, Proc ", myid
-    else if (myid == 0) then
-      write (*, '(A,I0,A,I0)') "     PASSED test -- FSUNLinSolSpace, lenrw = ", &
-        lenrw, " leniw = ", leniw
-    end if
-
-  end function Test_FSUNLinSolSpace
-
   integer(c_int) function Test_FSUNLinSolNumIters(S, myid) result(failure)
     use, intrinsic :: iso_c_binding
     implicit none

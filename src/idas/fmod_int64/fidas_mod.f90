@@ -138,7 +138,6 @@ module fidas_mod
  public :: FIDAComputeYSens
  public :: FIDAComputeYpSens
  public :: FIDAGetDky
- public :: FIDAGetWorkSpace
  public :: FIDAGetNumSteps
  public :: FIDAGetNumResEvals
  public :: FIDAGetNumLinSolvSetups
@@ -309,7 +308,6 @@ module fidas_mod
  public :: FIDAGetAdjCurrentCheckPoint
  public :: FIDABBDPrecInit
  public :: FIDABBDPrecReInit
- public :: FIDABBDPrecGetWorkSpace
  public :: FIDABBDPrecGetNumGfnEvals
  public :: FIDABBDPrecInitB
  public :: FIDABBDPrecReInitB
@@ -337,7 +335,6 @@ module fidas_mod
  public :: FIDAGetJacCj
  public :: FIDAGetJacTime
  public :: FIDAGetJacNumSteps
- public :: FIDAGetLinWorkSpace
  public :: FIDAGetNumJacEvals
  public :: FIDAGetNumPrecEvals
  public :: FIDAGetNumPrecSolves
@@ -808,16 +805,6 @@ type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 integer(C_INT), intent(in) :: farg3
 type(C_PTR), value :: farg4
-integer(C_INT) :: fresult
-end function
-
-function swigc_FIDAGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FIDAGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2289,16 +2276,6 @@ real(C_DOUBLE), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
 
-function swigc_FIDABBDPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FIDABBDPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FIDABBDPrecGetNumGfnEvals(farg1, farg2) &
 bind(C, name="_wrap_FIDABBDPrecGetNumGfnEvals") &
 result(fresult)
@@ -2445,16 +2422,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FIDAGetLinWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FIDAGetLinWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -3484,25 +3451,6 @@ farg2 = t
 farg3 = k
 farg4 = c_loc(dky)
 fresult = swigc_FIDAGetDky(farg1, farg2, farg3, farg4)
-swig_result = fresult
-end function
-
-function FIDAGetWorkSpace(ida_mem, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: ida_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = ida_mem
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FIDAGetWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -6238,25 +6186,6 @@ fresult = swigc_FIDABBDPrecReInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FIDABBDPrecGetWorkSpace(ida_mem, lenrwbbdp, leniwbbdp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: ida_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwbbdp
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwbbdp
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = ida_mem
-farg2 = c_loc(lenrwbbdp(1))
-farg3 = c_loc(leniwbbdp(1))
-fresult = swigc_FIDABBDPrecGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FIDABBDPrecGetNumGfnEvals(ida_mem, ngevalsbbdp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -6536,25 +6465,6 @@ type(C_PTR) :: farg2
 farg1 = ida_mem
 farg2 = c_loc(nst_j(1))
 fresult = swigc_FIDAGetJacNumSteps(farg1, farg2)
-swig_result = fresult
-end function
-
-function FIDAGetLinWorkSpace(ida_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: ida_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = ida_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FIDAGetLinWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

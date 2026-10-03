@@ -234,59 +234,6 @@ in :numref:`ARKODE.Mathematics.Error.Norm`.
 
 
 
-.. _ARKODE.Usage.AdaptivityFn:
-
-Time step adaptivity function
---------------------------------------------------------
-
-.. warning::
-
-   The function in this section is only used in now-deprecated functions
-   in ARKStep and ERKStep, and will be removed in a future release.
-
-
-As an alternative to using one of the built-in time step adaptivity
-methods for controlling solution error, the user may provide a
-function of type :c:type:`ARKAdaptFn` to compute a target step size
-:math:`h` for the next integration step.  These steps should be chosen
-such that the error estimate for the next time step remains below 1.
-
-
-
-.. c:type:: int (*ARKAdaptFn)(N_Vector y, sunrealtype t, sunrealtype h1, sunrealtype h2, sunrealtype h3, sunrealtype e1, sunrealtype e2, sunrealtype e3, int q, int p, sunrealtype* hnew, void* user_data)
-
-   This function implements a time step adaptivity algorithm
-   that chooses :math:`h` to satisfy the error tolerances.
-
-   **Parameters:**
-
-   * **y** -- the current value of the dependent variable vector.
-   * **t** -- the current value of the independent variable.
-   * **h1** -- the current step size, :math:`t_n - t_{n-1}`.
-   * **h2** -- the previous step size, :math:`t_{n-1} - t_{n-2}`.
-   * **h3** -- the step size :math:`t_{n-2}-t_{n-3}`.
-   * **e1** -- the error estimate from the current step, :math:`n`.
-   * **e2** --  the error estimate from the previous step, :math:`n-1`.
-   * **e3** -- the error estimate from the step :math:`n-2`.
-   * **q** -- the global order of accuracy for the method.
-   * **p** -- the global order of accuracy for the embedded method.
-   * **hnew** -- the output value of the next step size.
-   * **user_data** -- a pointer to user data, the same as the
-     *h_data* parameter that was passed to :c:func:`ARKStepSetAdaptivityFn`
-     or :c:func:`ERKStepSetAdaptivityFn`.
-
-   **Returns:**
-
-     An *ARKAdaptFn* function should return 0 if it
-     successfully set the next step size, and a non-zero value otherwise.
-
-   .. deprecated:: 6.7.0 (ARKODE 5.7.0)
-
-      Use the SUNAdaptController infrastructure instead (see
-      :numref:`SUNAdaptController.Description`).
-
-
-
 .. _ARKODE.Usage.StabilityFn:
 
 Explicit stability function

@@ -35,10 +35,6 @@ extern "C" {
   ARKODE Time Step Adaptivity Private Constants
   ===============================================================*/
 
-/* size constants for the adaptivity memory structure */
-#define ARK_ADAPT_LRW 10
-#define ARK_ADAPT_LIW 7 /* includes function/data pointers */
-
 /* Time step controller default values */
 #define CFLFAC    SUN_RCONST(0.5)
 #define SAFETY    SUN_RCONST(0.9)  /* CVODE uses 1.0  */
@@ -56,12 +52,7 @@ extern "C" {
 #define ETACF SUN_RCONST(0.25)
 /* if an error failure occurs and SMALL_NEF <= nef, then reset eta = MIN(eta, ETAMXF) */
 #define SMALL_NEF 2
-/* order to use for controller:
-     0=embedding,
-     1=method,
-     otherwise min(method,embedding)
-   DEPRECATED, REMOVE AT SAME TIME AS ARKStepSetAdaptivityMethod */
-#define PQ 0
+#define PQ        0
 /* adjustment to apply within controller to method order of accuracy */
 #define ADJUST 0
 

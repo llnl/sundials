@@ -1480,7 +1480,6 @@ Linear Solver) has been added here (e.g., ``lenrwLS``).
   **Optional output**                                             **Function name**
   ==============================================================  ==================================
   **KINSOL main solver**
-  Size of KINSOL real and integer workspaces                      :c:func:`KINGetWorkSpace`
   Number of function evaluations                                  :c:func:`KINGetNumFuncEvals`
   Number of nonlinear iterations                                  :c:func:`KINGetNumNonlinSolvIters`
   Number of :math:`\beta`-condition failures                      :c:func:`KINGetNumBetaCondFails`
@@ -1493,7 +1492,6 @@ Linear Solver) has been added here (e.g., ``lenrwLS``).
   **KINLS linear solver interface**
   Stored Jacobian of the nonlinear system                         :c:func:`KINGetJac`
   Nonlinear iteration number at which the Jacobian was evaluated  :c:func:`KINGetJacNumIters`
-  Size of real and integer workspaces                             :c:func:`KINGetLinWorkSpace`
   No. of Jacobian evaluations                                     :c:func:`KINGetNumJacEvals`
   No. of :math:`F` calls for D.Q. Jacobian[-vector] evals.        :c:func:`KINGetNumLinFuncEvals`
   No. of linear iterations                                        :c:func:`KINGetNumLinIters`
@@ -1515,35 +1513,6 @@ KINSOL provides several user-callable functions that can be used to obtain
 different quantities that may be of interest to the user, such as solver
 workspace requirements and solver performance statistics. These optional output
 functions are described next.
-
-.. c:function:: int KINGetWorkSpace(void * kin_mem, long int * lenrw, long int * leniw)
-
-   The function :c:func:`KINGetWorkSpace` returns the  KINSOL integer and real
-   workspace sizes.
-
-   **Arguments:**
-     * ``kin_mem`` -- pointer to the KINSOL memory block.
-     * ``lenrw`` -- the number of ``sunrealtype`` values in the KINSOL workspace.
-     * ``leniw`` -- the number of integer values in the KINSOL workspace.
-
-   **Return value:**
-     * ``KIN_SUCCESS`` -- The optional output values have been successfully set.
-     * ``KIN_MEM_NULL`` -- The ``kin_mem`` pointer is ``NULL``.
-
-   **Notes:**
-      KINSOL solver  In terms of the problem size :math:`N`, the actual size of
-      the real workspace  is :math:`17 + 5 N` ``sunrealtype`` words. The real workspace
-      is increased by  an additional :math:`N` words if constraint checking is
-      enabled (see :c:func:`KINSetConstraints`).
-
-      The actual size of the integer
-      workspace (without distinction between ``int``  and ``long int``) is
-      :math:`22 + 5 N` (increased by :math:`N` if constraint checking is enabled).
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
 
 .. c:function:: int KINGetNumFuncEvals(void * kin_mem, long int * nfevals)
 
@@ -1731,37 +1700,6 @@ The following optional outputs are available from the KINLS modules:
    :retval KINLS_SUCCESS: the output value has been successfully set
    :retval KINLS_MEM_NULL: ``kin_mem`` was ``NULL``
    :retval KINLS_LMEM_NULL: the linear solver interface has not been initialized
-
-.. c:function:: int KINGetLinWorkSpace(void * kin_mem, long int * lenrwLS, long int * leniwLS)
-
-   The function :c:func:`KINGetLinWorkSpace` returns the sizes of the real and
-   integer workspaces used by the KINLS linear solver interface.
-
-   **Arguments:**
-      * ``kin_mem`` -- pointer to the KINSOL solver object.
-      * ``lenrwLS`` -- the number of real values in the KINLS workspace.
-      * ``leniwLS`` -- the number of integer values in the KINLS workspace.
-
-   **Return value:**
-      * ``KINLS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``KINLS_MEM_NULL`` -- The ``kin_mem`` pointer is ``NULL``.
-      * ``KINLS_LMEM_NULL`` -- The KINLS linear solver has not been initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within this interface and to memory allocated by the
-      ``SUNLinearSolver`` object attached to it.  The template Jacobian
-      matrix allocated by the user outside of KINLS is not included in this report.
-
-   .. versionadded:: 4.0.0
-
-      Replaces the deprecated function ``KINDlsGetWorkspace`` and
-      ``KINSpilsGetWorkspace``.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
 
 .. c:function:: int KINGetNumJacEvals(void * kin_mem, long int * njevals)
 
@@ -2530,9 +2468,8 @@ user main program presented in :numref:`KINSOL.Usage.CC.skeleton_sim` are not bo
 
 #. **Get optional outputs**
 
-   Additional optional outputs associated with KINBBDPRE are available by way of
-   two routines described below, :c:func:`KINBBDPrecGetWorkSpace` and
-   :c:func:`KINBBDPrecGetNumGfnEvals`.
+    Additional optional outputs associated with KINBBDPRE are available by way of
+    the routine described below, :c:func:`KINBBDPrecGetNumGfnEvals`.
 
 #. Deallocate memory
 
@@ -2583,38 +2520,8 @@ preconditioner module are described next.
      every process.
 
 
-
 The following two optional output functions are available for use with the
 KINBBDPRE module:
-
-.. c:function:: int KINBBDPrecGetWorkSpace(void * kin_mem, long int * lenrwBBDP, long int * leniwBBDP)
-
-   The function :c:func:`KINBBDPrecGetWorkSpace` returns the local sizes of the
-   KINBBDPRE real and integer workspaces.
-
-   **Arguments:**
-      * ``kin_mem`` -- pointer to the KINSOL solver object.
-      * ``lenrwBBDP`` -- local number of real values in the KINBBDPRE workspace.
-      * ``leniwBBDP`` -- local number of integer values in the KINBBDPRE workspace.
-
-   **Return value:**
-      * ``KINLS_SUCCESS`` -- The optional output value has been successfully set.
-      * ``KINLS_MEM_NULL`` -- The ``kin_mem`` pointer was ``NULL``.
-      * ``KINLS_PMEM_NULL`` -- The KINBBDPRE preconditioner has not been
-        initialized.
-
-   **Notes:**
-      The workspace requirements reported by this routine correspond only to memory
-      allocated within the KINBBDPRE module (the banded matrix approximation,
-      banded ``SUNLinearSolver`` object, temporary vectors).  These values
-      are local to each process.
-
-      The workspaces referred to here exist in addition
-      to those given by the corresponding :c:func:`KINGetLinWorkSpace` function.
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: int KINBBDPrecGetNumGfnEvals(void * kin_mem, long int * ngevalsBBDP)
 

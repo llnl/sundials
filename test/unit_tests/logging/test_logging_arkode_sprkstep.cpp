@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
   if (check_flag(flag, "ARKodeSetFixedStep")) { return 1; }
 
   // Compensated summation
-  flag = SPRKStepSetUseCompensatedSums(arkode_mem, use_compensated_sum);
-  if (check_flag(flag, "SPRKStepSetUseCompensatedSums")) { return 1; }
+  flag = ARKodeSetUseCompensatedSums(arkode_mem, use_compensated_sum);
+  if (check_flag(flag, "ARKodeSetUseCompensatedSums")) { return 1; }
 
   // Initial time and fist output time
   const sunrealtype dtout = dt; // output interval

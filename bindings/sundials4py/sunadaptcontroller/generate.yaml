@@ -35,7 +35,6 @@ modules:
       - "^SUNAdaptController_SetErrorBias.*"
       - "^SUNAdaptController_UpdateH.*"
       - "^SUNAdaptController_UpdateMRIHTol.*"
-      - "^SUNAdaptController_Space.*"
   sunadaptcontroller_imexgus:
     path: sunadaptcontroller/sunadaptcontroller_imexgus_generated.hpp
     headers:

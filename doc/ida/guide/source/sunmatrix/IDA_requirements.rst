@@ -41,8 +41,6 @@ implementation detail for the interested reader.
    +---------------------------+-----------------+-----------------+
    | :c:func:`SUNMatZero`      | x               | x               |
    +---------------------------+-----------------+-----------------+
-   | :c:func:`SUNMatSpace`     |                 | :math:`\dagger` |
-   +---------------------------+-----------------+-----------------+
 
 The matrix functions listed with a :math:`\dagger` symbol are optionally used, in that these are
 only called if they are implemented in the ``SUNMatrix`` module that is being used (i.e. their

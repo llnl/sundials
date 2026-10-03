@@ -79,9 +79,6 @@ The following is a list of the example functions in ``test_sunlinsol.c``:
 * ``Test_SUNLinSolResid`` (iterative solvers only): Verifies that
   ``SUNLinSolResid`` can be called.
 
-* ``Test_SUNLinSolSpace`` verifies that ``SUNLinSolSpace`` can be
-  called, and outputs the results to ``stdout``.
-
 We'll note that these tests should be performed in a particular
 order.  For either direct or iterative linear
 solvers, ``Test_SUNLinSolInitialize`` must be called

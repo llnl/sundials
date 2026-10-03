@@ -312,16 +312,6 @@ void* KINCreate(SUNContext sunctx)
   kin_mem->kin_omega_min        = OMEGA_MIN;
   kin_mem->kin_omega_max        = OMEGA_MAX;
 
-  /* initialize lrw and liw */
-
-  kin_mem->kin_lrw = 17;
-  kin_mem->kin_liw = 22;
-
-  /* NOTE: needed since KINInit could be called after KINSetConstraints */
-
-  kin_mem->kin_lrw1 = 0;
-  kin_mem->kin_liw1 = 0;
-
   return ((void*)kin_mem);
 }
 
@@ -336,7 +326,6 @@ void* KINCreate(SUNContext sunctx)
 
 int KINInit(void* kinmem, KINSysFn func, N_Vector tmpl)
 {
-  sunindextype liw1, lrw1;
   KINMem kin_mem;
   sunbooleantype allocOK, nvectorOK;
 
@@ -368,20 +357,6 @@ int KINInit(void* kinmem, KINSysFn func, N_Vector tmpl)
                     MSG_BAD_NVECTOR);
     SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
     return (KIN_ILL_INPUT);
-  }
-
-  /* set space requirements for one N_Vector */
-
-  if (tmpl->ops->nvspace != NULL)
-  {
-    N_VSpace(tmpl, &lrw1, &liw1);
-    kin_mem->kin_lrw1 = lrw1;
-    kin_mem->kin_liw1 = liw1;
-  }
-  else
-  {
-    kin_mem->kin_lrw1 = 0;
-    kin_mem->kin_liw1 = 0;
   }
 
   /* allocate necessary vectors */
@@ -607,8 +582,6 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
         SUNDIALS_MARK_FUNCTION_END(KIN_PROFILER);
         return (KIN_MEM_FAIL);
       }
-      kin_mem->kin_liw += kin_mem->kin_liw1;
-      kin_mem->kin_lrw += kin_mem->kin_lrw1;
     }
     ret = KINPicardAA(kin_mem);
 
@@ -862,8 +835,6 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
   {
     kin_mem->kin_unew = N_VClone(tmpl);
     if (kin_mem->kin_unew == NULL) { return (SUNFALSE); }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
   }
 
   if (kin_mem->kin_fval == NULL)
@@ -872,12 +843,8 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
     if (kin_mem->kin_fval == NULL)
     {
       N_VDestroy(kin_mem->kin_unew);
-      kin_mem->kin_liw -= kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= kin_mem->kin_lrw1;
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
   }
 
   if (kin_mem->kin_pp == NULL)
@@ -887,12 +854,8 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
     {
       N_VDestroy(kin_mem->kin_unew);
       N_VDestroy(kin_mem->kin_fval);
-      kin_mem->kin_liw -= 2 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 2 * kin_mem->kin_lrw1;
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
   }
 
   if (kin_mem->kin_vtemp1 == NULL)
@@ -903,12 +866,8 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
       N_VDestroy(kin_mem->kin_unew);
       N_VDestroy(kin_mem->kin_fval);
       N_VDestroy(kin_mem->kin_pp);
-      kin_mem->kin_liw -= 3 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 3 * kin_mem->kin_lrw1;
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
   }
 
   if (kin_mem->kin_vtemp2 == NULL)
@@ -920,12 +879,8 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
       N_VDestroy(kin_mem->kin_fval);
       N_VDestroy(kin_mem->kin_pp);
       N_VDestroy(kin_mem->kin_vtemp1);
-      kin_mem->kin_liw -= 4 * kin_mem->kin_liw1;
-      kin_mem->kin_lrw -= 4 * kin_mem->kin_lrw1;
       return (SUNFALSE);
     }
-    kin_mem->kin_liw += kin_mem->kin_liw1;
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
   }
 
   return (SUNTRUE);
@@ -944,56 +899,42 @@ static void KINFreeVectors(KINMem kin_mem)
   {
     N_VDestroy(kin_mem->kin_unew);
     kin_mem->kin_unew = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_fval != NULL)
   {
     N_VDestroy(kin_mem->kin_fval);
     kin_mem->kin_fval = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_pp != NULL)
   {
     N_VDestroy(kin_mem->kin_pp);
     kin_mem->kin_pp = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_vtemp1 != NULL)
   {
     N_VDestroy(kin_mem->kin_vtemp1);
     kin_mem->kin_vtemp1 = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_vtemp2 != NULL)
   {
     N_VDestroy(kin_mem->kin_vtemp2);
     kin_mem->kin_vtemp2 = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_gval != NULL)
   {
     N_VDestroy(kin_mem->kin_gval);
     kin_mem->kin_gval = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   if (kin_mem->kin_constraints != NULL)
   {
     N_VDestroy(kin_mem->kin_constraints);
     kin_mem->kin_constraints = NULL;
-    kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-    kin_mem->kin_liw -= kin_mem->kin_liw1;
   }
 
   return;

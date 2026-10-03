@@ -22,7 +22,6 @@
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_sprk.h>
-#include <arkode/arkode_sprkstep_deprecated.h>
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {

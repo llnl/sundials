@@ -66,8 +66,7 @@ int KINBBDPrecInit(void* kinmem, sunindextype Nlocal, sunindextype mudq,
   KINMem kin_mem;
   KINLsMem kinls_mem;
   KBBDPrecData pdata;
-  sunindextype muk, mlk, storage_mu, lrw1, liw1;
-  long int lrw, liw;
+  sunindextype muk, mlk, storage_mu;
   int flag;
 
   if (kinmem == NULL)
@@ -249,37 +248,7 @@ int KINBBDPrecInit(void* kinmem, sunindextype Nlocal, sunindextype mudq,
   /* Set work space sizes and initialize nge */
   pdata->rpwsize = 0;
   pdata->ipwsize = 0;
-  if (kin_mem->kin_vtemp1->ops->nvspace)
-  {
-    N_VSpace(kin_mem->kin_vtemp1, &lrw1, &liw1);
-    pdata->rpwsize += 3 * lrw1;
-    pdata->ipwsize += 3 * liw1;
-  }
-  if (pdata->zlocal->ops->nvspace)
-  {
-    N_VSpace(pdata->zlocal, &lrw1, &liw1);
-    pdata->rpwsize += lrw1;
-    pdata->ipwsize += liw1;
-  }
-  if (pdata->rlocal->ops->nvspace)
-  {
-    N_VSpace(pdata->rlocal, &lrw1, &liw1);
-    pdata->rpwsize += lrw1;
-    pdata->ipwsize += liw1;
-  }
-  if (pdata->PP->ops->space)
-  {
-    flag = SUNMatSpace(pdata->PP, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->LS->ops->space)
-  {
-    flag = SUNLinSolSpace(pdata->LS, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  pdata->nge = 0;
+  pdata->nge     = 0;
 
   /* make sure pdata is free from any previous allocations */
   if (kinls_mem->pfree != NULL) { kinls_mem->pfree(kin_mem); }
@@ -294,45 +263,6 @@ int KINBBDPrecInit(void* kinmem, sunindextype Nlocal, sunindextype mudq,
   flag = KINSetPreconditioner(kinmem, KINBBDPrecSetup, KINBBDPrecSolve);
 
   return (flag);
-}
-
-/*------------------------------------------------------------------
-  KINBBDPrecGetWorkSpace
-  ------------------------------------------------------------------*/
-int KINBBDPrecGetWorkSpace(void* kinmem, long int* lenrwBBDP, long int* leniwBBDP)
-{
-  KINMem kin_mem;
-  KINLsMem kinls_mem;
-  KBBDPrecData pdata;
-
-  if (kinmem == NULL)
-  {
-    KINProcessError(NULL, KINLS_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_MEM_NULL);
-    return (KINLS_MEM_NULL);
-  }
-  kin_mem = (KINMem)kinmem;
-
-  if (kin_mem->kin_lmem == NULL)
-  {
-    KINProcessError(kin_mem, KINLS_LMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_LMEM_NULL);
-    return (KINLS_LMEM_NULL);
-  }
-  kinls_mem = (KINLsMem)kin_mem->kin_lmem;
-
-  if (kinls_mem->pdata == NULL)
-  {
-    KINProcessError(kin_mem, KINLS_PMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGBBD_PMEM_NULL);
-    return (KINLS_PMEM_NULL);
-  }
-  pdata = (KBBDPrecData)kinls_mem->pdata;
-
-  *lenrwBBDP = pdata->rpwsize;
-  *leniwBBDP = pdata->ipwsize;
-
-  return (KINLS_SUCCESS);
 }
 
 /*------------------------------------------------------------------

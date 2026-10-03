@@ -108,11 +108,6 @@ The virtual table structure is defined as
       
       .. versionadded:: 7.3.0
 
-   .. c:member:: SUNErrCode (*space)(SUNMatrix, long int*, long int*)
-
-      The function implementing :c:func:`SUNMatSpace`
-
-
 The generic SUNMATRIX module defines and implements the matrix
 operations acting on a ``SUNMatrix``. These routines are nothing but
 wrappers for the matrix operations defined by a particular SUNMATRIX
@@ -195,7 +190,6 @@ set and all operations are copied when cloning a matrix.
    **Arguments:**
       * *A* -- the SUNMatrix object to free
 
-
 .. c:type:: SUNMatrix_ID
 
    Each SUNMATRIX implementation included in SUNDIALS has a unique identifier
@@ -203,7 +197,6 @@ set and all operations are copied when cloning a matrix.
    :numref:`SUNMatrix.Description.matrixIDs`. It is recommended that a
    user-supplied SUNMATRIX implementation use the ``SUNMATRIX_CUSTOM``
    identifier.
-
 
 .. _SUNMatrix.Description.matrixIDs:
 .. table:: Identifiers associated with matrix kernels supplied with SUNDIALS

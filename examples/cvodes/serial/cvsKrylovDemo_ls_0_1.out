@@ -11,8 +11,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.756e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =    50
 nfe     =    80     nfeLS   =    55
 nni     =    77     nli     =    55
@@ -29,8 +27,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.757e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   100
 nfe     =   131     nfeLS   =   105
 nni     =   128     nli     =   105
@@ -47,8 +43,6 @@ c2 (bot.left/middle/top rt.) =    2.509e+11     9.328e+11     2.615e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   150
 nfe     =   197     nfeLS   =   162
 nni     =   194     nli     =   162
@@ -65,8 +59,6 @@ c2 (bot.left/middle/top rt.) =    2.518e+11     8.171e+11     2.667e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   200
 nfe     =   259     nfeLS   =   214
 nni     =   256     nli     =   214
@@ -83,8 +75,6 @@ c2 (bot.left/middle/top rt.) =    2.581e+11     2.116e+11     2.831e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   250
 nfe     =   320     nfeLS   =   265
 nni     =   317     nli     =   265
@@ -101,8 +91,6 @@ c2 (bot.left/middle/top rt.) =    3.375e+11     4.520e+11     3.743e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   300
 nfe     =   391     nfeLS   =   337
 nni     =   388     nli     =   337
@@ -119,8 +107,6 @@ c2 (bot.left/middle/top rt.) =    3.387e+11     4.022e+11     3.769e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   350
 nfe     =   461     nfeLS   =   428
 nni     =   458     nli     =   428
@@ -137,8 +123,6 @@ c2 (bot.left/middle/top rt.) =    3.361e+11     4.418e+11     3.860e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   400
 nfe     =   518     nfeLS   =   521
 nni     =   515     nli     =   521
@@ -155,8 +139,6 @@ c2 (bot.left/middle/top rt.) =    3.334e+11     6.542e+11     4.117e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   450
 nfe     =   586     nfeLS   =   614
 nni     =   583     nli     =   614
@@ -173,8 +155,6 @@ c2 (bot.left/middle/top rt.) =    3.352e+11     9.107e+11     4.163e+11
 
 Final Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   461
 nfe     =   597     nfeLS   =   636
 nni     =   594     nli     =   636
@@ -197,8 +177,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.756e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =    50
 nfe     =    80     nfeLS   =    55
 nni     =    77     nli     =    55
@@ -215,8 +193,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.757e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   100
 nfe     =   131     nfeLS   =   105
 nni     =   128     nli     =   105
@@ -233,8 +209,6 @@ c2 (bot.left/middle/top rt.) =    2.510e+11     9.210e+11     2.622e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   150
 nfe     =   200     nfeLS   =   171
 nni     =   197     nli     =   171
@@ -251,8 +225,6 @@ c2 (bot.left/middle/top rt.) =    2.535e+11     6.262e+11     2.724e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   200
 nfe     =   261     nfeLS   =   225
 nni     =   258     nli     =   225
@@ -269,8 +241,6 @@ c2 (bot.left/middle/top rt.) =    3.075e+11     1.307e+11     3.403e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   250
 nfe     =   315     nfeLS   =   359
 nni     =   312     nli     =   359
@@ -287,8 +257,6 @@ c2 (bot.left/middle/top rt.) =    3.383e+11     5.600e+11     3.757e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   300
 nfe     =   396     nfeLS   =   484
 nni     =   393     nli     =   484
@@ -305,8 +273,6 @@ c2 (bot.left/middle/top rt.) =    3.387e+11     3.251e+11     3.774e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   350
 nfe     =   462     nfeLS   =   656
 nni     =   459     nli     =   656
@@ -323,8 +289,6 @@ c2 (bot.left/middle/top rt.) =    3.324e+11     9.373e+11     3.904e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   400
 nfe     =   519     nfeLS   =   758
 nni     =   516     nli     =   758
@@ -341,8 +305,6 @@ c2 (bot.left/middle/top rt.) =    3.352e+11     9.106e+11     4.162e+11
 
 Final Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  3254     leniwLS =    46
 nst     =   439
 nfe     =   565     nfeLS   =   858
 nni     =   562     nli     =   858
@@ -365,8 +327,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.756e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =    50
 nfe     =    80     nfeLS   =   110
 nni     =    77     nli     =    55
@@ -381,8 +341,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.757e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   100
 nfe     =   131     nfeLS   =   210
 nni     =   128     nli     =   105
@@ -397,8 +355,6 @@ c2 (bot.left/middle/top rt.) =    2.509e+11     9.235e+11     2.620e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   150
 nfe     =   197     nfeLS   =   312
 nni     =   194     nli     =   156
@@ -413,8 +369,6 @@ c2 (bot.left/middle/top rt.) =    2.538e+11     5.888e+11     2.734e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   200
 nfe     =   261     nfeLS   =   418
 nni     =   258     nli     =   209
@@ -429,8 +383,6 @@ c2 (bot.left/middle/top rt.) =    3.194e+11     1.885e+11     3.533e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   250
 nfe     =   318     nfeLS   =   520
 nni     =   315     nli     =   260
@@ -445,8 +397,6 @@ c2 (bot.left/middle/top rt.) =    3.385e+11     5.914e+11     3.761e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   300
 nfe     =   395     nfeLS   =   642
 nni     =   392     nli     =   321
@@ -461,8 +411,6 @@ c2 (bot.left/middle/top rt.) =    3.387e+11     2.896e+11     3.776e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   350
 nfe     =   460     nfeLS   =   752
 nni     =   457     nli     =   376
@@ -477,8 +425,6 @@ c2 (bot.left/middle/top rt.) =    3.317e+11     9.872e+11     3.915e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   400
 nfe     =   522     nfeLS   =   870
 nni     =   519     nli     =   435
@@ -493,8 +439,6 @@ c2 (bot.left/middle/top rt.) =    3.352e+11     9.107e+11     4.163e+11
 
 Final Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2202     leniwLS =    41
 nst     =   447
 nfe     =   569     nfeLS   =   964
 nni     =   566     nli     =   482
@@ -515,8 +459,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.756e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =    50
 nfe     =    80     nfeLS   =   110
 nni     =    77     nli     =    55
@@ -531,8 +473,6 @@ c2 (bot.left/middle/top rt.) =    2.500e+11     9.757e+11     2.500e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   100
 nfe     =   131     nfeLS   =   210
 nni     =   128     nli     =   105
@@ -547,8 +487,6 @@ c2 (bot.left/middle/top rt.) =    2.509e+11     9.336e+11     2.614e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   150
 nfe     =   197     nfeLS   =   318
 nni     =   194     nli     =   156
@@ -563,8 +501,6 @@ c2 (bot.left/middle/top rt.) =    2.518e+11     8.218e+11     2.666e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   200
 nfe     =   259     nfeLS   =   422
 nni     =   256     nli     =   208
@@ -579,8 +515,6 @@ c2 (bot.left/middle/top rt.) =    2.583e+11     2.022e+11     2.834e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   250
 nfe     =   318     nfeLS   =   525
 nni     =   315     nli     =   259
@@ -595,8 +529,6 @@ c2 (bot.left/middle/top rt.) =    3.382e+11     5.329e+11     3.754e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   300
 nfe     =   382     nfeLS   =   671
 nni     =   379     nli     =   313
@@ -611,8 +543,6 @@ c2 (bot.left/middle/top rt.) =    3.387e+11     3.228e+11     3.774e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   350
 nfe     =   448     nfeLS   =   840
 nni     =   445     nli     =   370
@@ -627,8 +557,6 @@ c2 (bot.left/middle/top rt.) =    3.324e+11     9.339e+11     3.904e+11
 
 Intermediate Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   400
 nfe     =   505     nfeLS   =   987
 nni     =   502     nli     =   424
@@ -643,8 +571,6 @@ c2 (bot.left/middle/top rt.) =    3.352e+11     9.106e+11     4.163e+11
 
 Final Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2602     leniwLS =    43
 nst     =   445
 nfe     =   558     nfeLS   =  1143
 nni     =   555     nli     =   477

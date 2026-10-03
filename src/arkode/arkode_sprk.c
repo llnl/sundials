@@ -544,13 +544,6 @@ ARKodeSPRKTable ARKodeSPRKTable_Copy(ARKodeSPRKTable that_sprk_table)
   return sprk_table;
 }
 
-void ARKodeSPRKTable_Space(ARKodeSPRKTable sprk_table, sunindextype* liw,
-                           sunindextype* lrw)
-{
-  *liw = 2;
-  *lrw = sprk_table->stages * 2;
-}
-
 void ARKodeSPRKTable_Free(ARKodeSPRKTable sprk_table)
 {
   if (sprk_table)

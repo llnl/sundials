@@ -29,7 +29,6 @@ is not recommended to use a threaded vector module with
 SUNLinSol_SuperLUMT unless it is the NVECTOR_OPENMP module and the
 SuperLU_MT library has also been compiled with OpenMP.
 
-
 .. _SUNLinSol.SuperLUMT.Usage:
 
 SUNLinSol_SuperLUMT Usage
@@ -75,7 +74,6 @@ The module SUNLinSol_SuperLUMT provides the following user-callable routines:
       The ``num_threads`` argument is not checked
       and is passed directly to SuperLU_MT routines.
 
-
 .. c:function:: SUNErrCode SUNLinSol_SuperLUMTSetOrdering(SUNLinearSolver S, int ordering_choice)
 
    This function sets the ordering used by SuperLU_MT for reducing fill in
@@ -102,7 +100,6 @@ The module SUNLinSol_SuperLUMT provides the following user-callable routines:
 
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.ordering".
-
 
 .. _SUNLinSol.SuperLUMT.Description:
 
@@ -198,11 +195,9 @@ following operations:
   native data arrays for the right-hand side and solution vectors,
   without requiring costly data copies.
 
-
 The SUNLinSol_SuperLUMT module defines implementations of all
 "direct" linear solver operations listed in
 :numref:`SUNLinSol.API`:
-
 
 * ``SUNLinSolGetType_SuperLUMT``
 
@@ -218,10 +213,5 @@ The SUNLinSol_SuperLUMT module defines implementations of all
   linear system.
 
 * ``SUNLinSolLastFlag_SuperLUMT``
-
-* ``SUNLinSolSpace_SuperLUMT`` -- this only returns information for
-  the storage within the solver *interface*, i.e. storage for the
-  integers ``last_flag`` and ``first_factorize``.  For additional
-  space requirements, see the SuperLU_MT documentation.
 
 * ``SUNLinSolFree_SuperLUMT``
