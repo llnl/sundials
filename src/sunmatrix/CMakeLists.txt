@@ -31,7 +31,8 @@ if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
   install(CODE "MESSAGE(\"\nInstall SUNMATRIX_GINKGO\n\")")
   message(STATUS "Added SUNDIALS_ENABLE_SUNMATRIX_GINKGO module")
   add_library(sundials_sunmatrixginkgo INTERFACE)
-  target_link_libraries(sundials_sunmatrixginkgo INTERFACE sundials_core)
+  target_link_libraries(sundials_sunmatrixginkgo INTERFACE sundials_core
+                                                            Ginkgo::ginkgo)
   target_include_directories(
     sundials_sunmatrixginkgo
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -42,6 +43,9 @@ if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
     FILES ${PROJECT_SOURCE_DIR}/include/sunmatrix/sunmatrix_ginkgo.hpp
           ${PROJECT_SOURCE_DIR}/include/sunmatrix/sunmatrix_ginkgobatch.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunmatrix")
+  set_target_properties(sundials_sunmatrixginkgo PROPERTIES EXPORT_NAME
+                                                              sunmatrixginkgo)
+  install(TARGETS sundials_sunmatrixginkgo EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunmatrixginkgo;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)
@@ -63,6 +67,9 @@ if(SUNDIALS_ENABLE_SUNMATRIX_KOKKOSDENSE)
   install(
     FILES ${PROJECT_SOURCE_DIR}/include/sunmatrix/sunmatrix_kokkosdense.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunmatrix")
+  set_target_properties(sundials_sunmatrixkokkosdense
+                        PROPERTIES EXPORT_NAME sunmatrixkokkosdense)
+  install(TARGETS sundials_sunmatrixkokkosdense EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunmatrixkokkosdense;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)

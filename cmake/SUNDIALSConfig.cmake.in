@@ -104,6 +104,10 @@ if("@SUNDIALS_ENABLE_CUDA@"
   find_dependency(CUDAToolkit)
 endif()
 
+if("@SUNDIALS_ENABLE_HIP@" AND NOT TARGET hip::device)
+  find_dependency(HIP)
+endif()
+
 if("@SUNDIALS_ENABLE_GINKGO@" AND NOT TARGET Ginkgo::ginkgo)
   if(NOT TARGET hwloc AND NOT HWLOC_DIR)
     set(HWLOC_DIR "@HWLOC_DIR@")

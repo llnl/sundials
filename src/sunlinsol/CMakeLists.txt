@@ -35,7 +35,8 @@ if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
   install(CODE "MESSAGE(\"\nInstall SUNLINSOL_GINKGO\n\")")
   message(STATUS "Added SUNDIALS_ENABLE_SUNLINSOL_GINKGO module")
   add_library(sundials_sunlinsolginkgo INTERFACE)
-  target_link_libraries(sundials_sunlinsolginkgo INTERFACE sundials_core)
+  target_link_libraries(sundials_sunlinsolginkgo INTERFACE sundials_core
+                                                            Ginkgo::ginkgo)
   target_include_directories(
     sundials_sunlinsolginkgo
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -46,6 +47,9 @@ if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
     FILES ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgo.hpp
           ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgobatch.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunlinsol")
+  set_target_properties(sundials_sunlinsolginkgo PROPERTIES EXPORT_NAME
+                                                              sunlinsolginkgo)
+  install(TARGETS sundials_sunlinsolginkgo EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunlinsolginkgo;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)
@@ -71,6 +75,9 @@ if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
   install(
     FILES ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_kokkosdense.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunlinsol")
+  set_target_properties(sundials_sunlinsolkokkosdense
+                        PROPERTIES EXPORT_NAME sunlinsolkokkosdense)
+  install(TARGETS sundials_sunlinsolkokkosdense EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunlinsolkokkosdense;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)
