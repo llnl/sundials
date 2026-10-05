@@ -1,0 +1,351 @@
+# Labels for changes to the repository infrastructure.
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.gitlab/build_and_bench.sh'
+          - '.gitlab/build_and_test.sh'
+          - 'docker/sundials-ci/**'
+          - 'test/test_driver.sh'
+
+ci-github:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**'
+          - '.github/actions/**'
+          - '.github/dependabot.yml'
+          - '.github/labeler.yml'
+
+ci-jenkins:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'test/env/jenkins.sh'
+          - 'test/jenkins/**'
+
+ci-lc-gitlab:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/hubcast.yml'
+          - '.gitlab/custom-jobs-and-variables.yml'
+          - '.gitlab/gitlab-ci-llnl-lc.yml'
+          - '.gitlab/jobs/**'
+          - '.gitlab/subscribed-pipelines.yml'
+
+ci-uoregon-gitlab:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/uoregon-gitlab-status.yml'
+          - '.gitlab/gitlab-ci-uoregon.yml'
+          - 'test/env/uoregon.sh'
+
+cmake:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/CMakeLists.txt'
+          - '**/*.cmake'
+          - 'cmake/**'
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'doc/**'
+          - '*.md'
+
+sundials4py:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'bindings/sundials4py/**'
+          - 'examples/python/**'
+          - 'pyproject.toml'
+
+tools:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'scripts/**'
+          - 'suntools/**'
+
+skill:
+  - changed-files:
+      - any-glob-to-any-file: '.agents/skills/**'
+
+# Shared TPL infrastructure that does not belong to one specific TPL.
+tpl:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'cmake/SundialsSetupTPLs.cmake'
+          - 'cmake/SundialsTPLOptions.cmake'
+          - 'cmake/tpl/SundialsTPL.cmake.template'
+
+tpl-adiak:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*adiak*/**'
+          - '**/*adiak*'
+          - '**/*Adiak*'
+          - '**/*ADIAK*'
+
+tpl-caliper:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*caliper*/**'
+          - '**/*caliper*'
+          - '**/*Caliper*'
+          - '**/*CALIPER*'
+
+tpl-ginkgo:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*ginkgo*/**'
+          - '**/*ginkgo*'
+          - '**/*Ginkgo*'
+
+tpl-hypre:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*hypre*/**'
+          - '**/*hypre*'
+          - '**/*HYPRE*'
+          - '**/*parhyp*/**'
+          - '**/*parhyp*'
+          - '**/*ParHyp*'
+
+tpl-klu:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*klu*/**'
+          - '**/*klu*'
+          - '**/*KLU*'
+
+tpl-kokkos:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*kokkos*/**'
+          - '**/*kokkos*'
+          - '**/*Kokkos*'
+
+tpl-lapack:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*lapack*/**'
+          - '**/*lapack*'
+          - '**/*Lapack*'
+          - '**/*LAPACK*'
+
+tpl-magma:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*magma*/**'
+          - '**/*magma*'
+          - '**/*MAGMA*'
+
+tpl-onemkl:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*onemkl*/**'
+          - '**/*onemkl*'
+          - '**/*OneMkl*'
+          - '**/*ONEMKL*'
+
+tpl-petsc:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/nvector/petsc/**'
+          - '**/*petsc*/**'
+          - '**/*petsc*'
+          - '**/*Petsc*'
+          - '**/*PETSc*'
+          - '**/*PETSC*'
+
+tpl-raja:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*raja*/**'
+          - '**/*raja*'
+          - '**/*RAJA*'
+
+tpl-superludist:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*superludist*/**'
+          - '**/*superludist*'
+          - '**/*SuperLUDIST*'
+
+tpl-superlumt:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*superlumt*/**'
+          - '**/*superlumt*'
+          - '**/*SuperLUMT*'
+          - '**/*superlu-mt*/**'
+          - '**/*superlu-mt*'
+          - '**/*SuperLU-MT*'
+
+tpl-trilinos:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*trilinos*/**'
+          - '**/*trilinos*'
+          - '**/*Trilinos*'
+
+tpl-xbraid:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*xbraid*/**'
+          - '**/*xbraid*'
+          - '**/*XBraid*'
+          - '**/*XBRAID*'
+
+spack:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'scripts/spack/**'
+          - '.gitlab/radiuss-spack-configs/**'
+
+Fortran:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.f'
+          - '**/*.f90'
+          - '**/*.F'
+          - '**/*.F90'
+
+mpi:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'cmake/tpl/SundialsMPI.cmake'
+          - '**/mpi*/**'
+          - '**/*_mpi/**'
+          - '**/*parallel*/**'
+          - '**/*MPI*'
+          - '**/*mpimanyvector*'
+          - '**/*mpiplusx*'
+          - '**/*mpinvector*'
+          - '**/nvector_parallel.h'
+          - '**/fnvector_parallel_mod.i'
+          - '**/sundials_mpi*'
+
+openmp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*openmp*/**'
+          - '**/*openmp*'
+          - '**/*OpenMP*'
+          - '**/*OPENMP*'
+
+cuda:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*cuda*/**'
+          - '**/*cuda*'
+          - '**/*CUDA*'
+          - '**/*.cu'
+          - '**/*.cuh'
+
+hip:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*hip*/**'
+          - '**/*hip*'
+          - '**/*HIP*'
+          - '**/*.hip'
+          - '**/*.hip.hpp'
+
+sycl-dpcpp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*sycl*/**'
+          - '**/*sycl*'
+          - '**/*SYCL*'
+
+update-answers:
+  - changed-files:
+      - any-glob-to-any-file: 'test/answers/**'
+
+output-change:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'examples/**/*.out'
+          - 'test/answers/**'
+
+# Labels for changes to the individual SUNDIALS packages.
+pkg-core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/nvector/**'
+          - 'src/sun*/**'
+          - 'include/nvector/**'
+          - 'include/sun*/**'
+          - 'doc/shared/**'
+          - 'examples/utilities/**'
+          - 'benchmarks/nvector/**'
+          - 'test/unit_tests/nvector/**'
+          - 'test/unit_tests/sun*/**'
+          - 'bindings/sundials4py/nvector/**'
+          - 'bindings/sundials4py/sun*/**'
+          - 'swig/nvector/**'
+          - 'swig/sun*/**'
+
+pkg-ARKODE:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/arkode/**'
+          - 'include/arkode/**'
+          - 'doc/arkode/**'
+          - 'examples/arkode/**'
+          - 'test/unit_tests/arkode/**'
+          - 'bindings/sundials4py/arkode/**'
+          - 'swig/arkode/**'
+
+pkg-CVODE:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/cvode/**'
+          - 'include/cvode/**'
+          - 'doc/cvode/**'
+          - 'examples/cvode/**'
+          - 'test/unit_tests/cvode/**'
+          - 'bindings/sundials4py/cvode/**'
+          - 'swig/cvode/**'
+
+pkg-CVODES:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/cvodes/**'
+          - 'include/cvodes/**'
+          - 'doc/cvodes/**'
+          - 'examples/cvodes/**'
+          - 'test/unit_tests/cvodes/**'
+          - 'bindings/sundials4py/cvodes/**'
+          - 'swig/cvodes/**'
+
+pkg-IDA:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/ida/**'
+          - 'include/ida/**'
+          - 'doc/ida/**'
+          - 'examples/ida/**'
+          - 'test/unit_tests/ida/**'
+          - 'bindings/sundials4py/ida/**'
+          - 'swig/ida/**'
+
+pkg-IDAS:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/idas/**'
+          - 'include/idas/**'
+          - 'doc/idas/**'
+          - 'examples/idas/**'
+          - 'test/unit_tests/idas/**'
+          - 'bindings/sundials4py/idas/**'
+          - 'swig/idas/**'
+
+pkg-KINSOL:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/kinsol/**'
+          - 'include/kinsol/**'
+          - 'doc/kinsol/**'
+          - 'examples/kinsol/**'
+          - 'test/unit_tests/kinsol/**'
+          - 'bindings/sundials4py/kinsol/**'
+          - 'swig/kinsol/**'
