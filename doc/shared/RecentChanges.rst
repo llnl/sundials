@@ -13,4 +13,7 @@ pointers. This is useful when using the Fortran 2003 interfaces.
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 
+Fixed a bug in ``FindMAGMA.cmake`` which didn't allow use of MAGMA versions with 
+multiple digits in an identifier.
+
 **Deprecation Notices**
