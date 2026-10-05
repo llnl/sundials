@@ -80,6 +80,7 @@ module fsundials_core_mod
   enumerator :: SUN_ERR_CORRUPT
   enumerator :: SUN_ERR_OUTOFRANGE
   enumerator :: SUN_ERR_FILE_OPEN
+  enumerator :: SUN_ERR_FILE_FLUSH
   enumerator :: SUN_ERR_OP_FAIL
   enumerator :: SUN_ERR_MEM_FAIL
   enumerator :: SUN_ERR_MALLOC_FAIL
@@ -106,8 +107,8 @@ module fsundials_core_mod
  end enum
  integer, parameter, public :: SUNErrCode_ = kind(SUN_ERR_MINIMUM)
  public :: SUN_ERR_MINIMUM, SUN_ERR_ARG_CORRUPT, SUN_ERR_ARG_INCOMPATIBLE, SUN_ERR_ARG_OUTOFRANGE, SUN_ERR_ARG_WRONGTYPE, &
-    SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_OP_FAIL, &
-    SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
+    SUN_ERR_ARG_DIMSMISMATCH, SUN_ERR_GENERIC, SUN_ERR_CORRUPT, SUN_ERR_OUTOFRANGE, SUN_ERR_FILE_OPEN, SUN_ERR_FILE_FLUSH, &
+    SUN_ERR_OP_FAIL, SUN_ERR_MEM_FAIL, SUN_ERR_MALLOC_FAIL, SUN_ERR_EXT_FAIL, SUN_ERR_DESTROY_FAIL, SUN_ERR_NOT_IMPLEMENTED, &
     SUN_ERR_USER_FCN_FAIL, SUN_ERR_DATANODE_NODENOTFOUND, SUN_ERR_PROFILER_MAPFULL, SUN_ERR_PROFILER_MAPGET, &
     SUN_ERR_PROFILER_MAPINSERT, SUN_ERR_PROFILER_MAPKEYNOTFOUND, SUN_ERR_PROFILER_MAPSORT, SUN_ERR_ADJOINT_STEPPERFAILED, &
     SUN_ERR_ADJOINT_STEPPERINVALIDSTOP, SUN_ERR_CHECKPOINT_NOT_FOUND, SUN_ERR_CHECKPOINT_MISMATCH, SUN_ERR_SUNCTX_CORRUPT, &
@@ -170,6 +171,7 @@ module fsundials_core_mod
  public :: FSUNLogger_GetOutputRank
  public :: FSUNLogger_Destroy
  public :: FSUNFileOpen
+ public :: FSUNFileFlush
  public :: FSUNDIALSFileOpen
  public :: FSUNFileClose
  public :: FSUNDIALSFileClose
@@ -208,6 +210,7 @@ module fsundials_core_mod
   type(C_FUNPTR), public :: nvgetarraypointer
   type(C_FUNPTR), public :: nvgetdevicearraypointer
   type(C_FUNPTR), public :: nvsetarraypointer
+  type(C_FUNPTR), public :: nvsetdevicearraypointer
   type(C_FUNPTR), public :: nvgetcommunicator
   type(C_FUNPTR), public :: nvgetlength
   type(C_FUNPTR), public :: nvgetlocallength
@@ -272,6 +275,7 @@ module fsundials_core_mod
  public :: FN_VDestroy
  public :: FN_VSpace
  public :: FN_VSetArrayPointer
+ public :: FN_VSetDeviceArrayPointer
  public :: FN_VGetCommunicator
  public :: FN_VGetLength
  public :: FN_VGetLocalLength
@@ -1151,6 +1155,14 @@ type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
+function swigc_FSUNFileFlush(farg1) &
+bind(C, name="_wrap_FSUNFileFlush") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT) :: fresult
+end function
+
 function swigc_FSUNDIALSFileOpen(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNDIALSFileOpen") &
 result(fresult)
@@ -1241,6 +1253,13 @@ end subroutine
 
 subroutine swigc_FN_VSetArrayPointer(farg1, farg2) &
 bind(C, name="_wrap_FN_VSetArrayPointer")
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+end subroutine
+
+subroutine swigc_FN_VSetDeviceArrayPointer(farg1, farg2) &
+bind(C, name="_wrap_FN_VSetDeviceArrayPointer")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
@@ -3964,6 +3983,19 @@ fresult = swigc_FSUNFileOpen(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
+function FSUNFileFlush(fp) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: fp
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+
+farg1 = fp
+fresult = swigc_FSUNFileFlush(farg1)
+swig_result = fresult
+end function
+
 function FSUNDIALSFileOpen(filename, modes, fp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4122,6 +4154,18 @@ type(C_PTR) :: farg2
 farg1 = c_loc(v_data_1d(1))
 farg2 = c_loc(v)
 call swigc_FN_VSetArrayPointer(farg1, farg2)
+end subroutine
+
+subroutine FN_VSetDeviceArrayPointer(d_vdata_1d, v)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE), dimension(*), target, intent(inout) :: d_vdata_1d
+type(N_Vector), target, intent(inout) :: v
+type(C_PTR) :: farg1 
+type(C_PTR) :: farg2 
+
+farg1 = c_loc(d_vdata_1d(1))
+farg2 = c_loc(v)
+call swigc_FN_VSetDeviceArrayPointer(farg1, farg2)
 end subroutine
 
 function FN_VGetCommunicator(v) &

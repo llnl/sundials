@@ -317,7 +317,7 @@ int LSRKStepSetDomEigSafetyFactor(void* arkode_mem, sunrealtype dom_eig_safety)
 }
 
 /*---------------------------------------------------------------
-  LSRKStepSetUseAnalyticStabilityRegion sets whether to use the ellipse or the exact 
+  LSRKStepSetUseAnalyticStabilityRegion sets whether to use the ellipse or the exact
   stability region for stability checks.
   ---------------------------------------------------------------*/
 int LSRKStepSetUseAnalyticStabilityRegion(void* arkode_mem,
@@ -796,6 +796,26 @@ int lsrkStep_SetDefaults(ARKodeMem ark_mem)
   if (retval) { return retval; }
 
   return ARK_SUCCESS;
+}
+
+/*---------------------------------------------------------------
+  lsrkStep_SetUserData:
+
+  Stores provided user-data pointer to the "wrapped" user_data,
+  in case LSRKStep is used as an MRIStep inner stepper.
+  ---------------------------------------------------------------*/
+int lsrkStep_SetUserData(ARKodeMem ark_mem, void* user_data)
+{
+  ARKodeLSRKStepMem step_mem;
+  int retval;
+
+  /* access ARKodeLSRKStepMem structure */
+  retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  step_mem->user_data_wrap = user_data;
+
+  return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------

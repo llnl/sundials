@@ -30,32 +30,32 @@ class LotkaVolterraODE:
         self.NP = 4
 
     def set_init_cond(self, yvec):
-        y = sun.N_VGetArrayPointer(yvec)
+        y = sun.N_VGetNumpyArray(yvec)
         y[0] = 1.0
         y[1] = 1.0
         return 0
 
     def f(self, t, yvec, ydotvec, user_data):
         p = self.p
-        y = sun.N_VGetArrayPointer(yvec)
-        ydot = sun.N_VGetArrayPointer(ydotvec)
+        y = sun.N_VGetNumpyArray(yvec)
+        ydot = sun.N_VGetNumpyArray(ydotvec)
         ydot[0] = p[0] * y[0] - p[1] * y[0] * y[1]
         ydot[1] = -p[2] * y[1] + p[3] * y[0] * y[1]
         return 0
 
     def vjp(self, vvec, Jvvec, t, yvec):
         p = self.p
-        v = sun.N_VGetArrayPointer(vvec)
-        Jv = sun.N_VGetArrayPointer(Jvvec)
-        y = sun.N_VGetArrayPointer(yvec)
+        v = sun.N_VGetNumpyArray(vvec)
+        Jv = sun.N_VGetNumpyArray(Jvvec)
+        y = sun.N_VGetNumpyArray(yvec)
         Jv[0] = (p[0] - p[1] * y[1]) * v[0] + p[3] * y[1] * v[1]
         Jv[1] = -p[1] * y[0] * v[0] + (-p[2] + p[3] * y[0]) * v[1]
         return 0
 
     def parameter_vjp(self, vvec, Jvvec, t, yvec):
-        v = sun.N_VGetArrayPointer(vvec)
-        Jv = sun.N_VGetArrayPointer(Jvvec)
-        y = sun.N_VGetArrayPointer(yvec)
+        v = sun.N_VGetNumpyArray(vvec)
+        Jv = sun.N_VGetNumpyArray(Jvvec)
+        y = sun.N_VGetNumpyArray(yvec)
         Jv[0] = y[0] * v[0]
         Jv[1] = -y[0] * y[1] * v[0]
         Jv[2] = -y[1] * v[1]
@@ -63,7 +63,7 @@ class LotkaVolterraODE:
         return 0
 
     def dgdu(self, yvec):
-        y = sun.N_VGetArrayPointer(yvec)
+        y = sun.N_VGetNumpyArray(yvec)
         return np.array([-1.0 + y[0], -1.0 + y[1]], dtype=sun.sunrealtype)
 
     def dgdp(self, yvec):
@@ -143,7 +143,7 @@ def main():
     #
 
     print("Initial condition:")
-    yarr = sun.N_VGetArrayPointer(y)
+    yarr = sun.N_VGetNumpyArray(y)
     print(yarr)
 
     tret = t0
@@ -166,11 +166,11 @@ def main():
     uB = sun.N_VNew_Serial(NEQ, sunctx)
     assert uB is not None
     arr_uB = ode.dgdu(y)
-    uB_arr = sun.N_VGetArrayPointer(uB)
+    uB_arr = sun.N_VGetNumpyArray(uB)
     uB_arr[:] = arr_uB
     qB = sun.N_VNew_Serial(NP, sunctx)
     assert qB is not None
-    qB_arr = sun.N_VGetArrayPointer(qB)
+    qB_arr = sun.N_VGetNumpyArray(qB)
     qB_arr[:] = ode.dgdp(y)
 
     # Combine adjoint vectors into a ManyVector
@@ -179,8 +179,8 @@ def main():
     assert sf is not None
 
     print("Adjoint terminal condition:")
-    print(sun.N_VGetArrayPointer(uB))
-    print(sun.N_VGetArrayPointer(qB))
+    print(sun.N_VGetNumpyArray(uB))
+    print(sun.N_VGetNumpyArray(qB))
 
     # Create ARKStep adjoint stepper
     status, adj_stepper = ark.ARKStepCreateAdjointStepper(
@@ -196,8 +196,8 @@ def main():
     assert status == ark.ARK_SUCCESS
 
     print("Adjoint Solution:")
-    print(sun.N_VGetArrayPointer(uB))
-    print(sun.N_VGetArrayPointer(qB))
+    print(sun.N_VGetNumpyArray(uB))
+    print(sun.N_VGetNumpyArray(qB))
 
 
 # This function allows pytest to discover the example as a test

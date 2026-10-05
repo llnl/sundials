@@ -27,8 +27,8 @@ include_guard(GLOBAL)
 # Section 2: Check to make sure options are compatible
 # -----------------------------------------------------------------------------
 
-# SuperLU_DIST only supports double precision
-if(SUNDIALS_PRECISION MATCHES "SINGLE" OR SUNDIALS_PRECISION MATCHES "EXTENDED")
+# SuperLU_DIST only supports single and double precision
+if(SUNDIALS_PRECISION MATCHES "EXTENDED")
   message(
     FATAL_ERROR
       "SuperLU_DIST is not compatible with ${SUNDIALS_PRECISION} precision")

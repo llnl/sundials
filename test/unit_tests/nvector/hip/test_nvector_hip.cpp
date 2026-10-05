@@ -74,12 +74,24 @@ int main(int argc, char* argv[])
     Test_Abort(1);
   }
 
+  /* warpSize is only accessible from device code, so query the device for the
+   * warp size used in the host side check below */
+  int device = 0;
+  hipDeviceProp_t deviceProp;
+  if (hipGetDevice(&device) != hipSuccess ||
+      hipGetDeviceProperties(&deviceProp, device) != hipSuccess)
+  {
+    printf("ERROR: unable to query the HIP device properties\n");
+    Test_Abort(1);
+  }
+  int deviceWarpSize = deviceProp.warpSize;
+
   threadsPerBlock = (int)atoi(argv[2]);
-  if (threadsPerBlock < 0 || threadsPerBlock % warpSize)
+  if (threadsPerBlock < 0 || threadsPerBlock % deviceWarpSize)
   {
     printf("ERROR: hip threads per block must be 0 to use the default or a "
            "multiple of %d\n",
-           warpSize);
+           deviceWarpSize);
     Test_Abort(1);
   }
 
