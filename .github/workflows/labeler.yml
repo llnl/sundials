@@ -10,42 +10,6 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - id: labeler
-        uses: actions/labeler@v6
+      - uses: actions/labeler@v6
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Prefer specific labels
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LABELS: ${{ steps.labeler.outputs.all-labels }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          remove_generic_label() {
-            local generic_label="$1"
-            local specific_prefix="$2"
-
-            IFS=',' read -ra labels <<< "$LABELS"
-            local has_generic=false
-            local has_specific=false
-
-            for label in "${labels[@]}"; do
-              label="${label#"${label%%[![:space:]]*}"}"
-              label="${label%"${label##*[![:space:]]}"}"
-
-              if [[ "$label" == "$generic_label" ]]; then
-                has_generic=true
-              elif [[ "$label" == "$specific_prefix"* ]]; then
-                has_specific=true
-              fi
-            done
-
-            if [[ "$has_generic" == true && "$has_specific" == true ]]; then
-              gh api --method DELETE \
-                "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels/${generic_label}" \
-                --silent
-            fi
-          }
-
-          remove_generic_label ci ci-
-          remove_generic_label tpl tpl-
