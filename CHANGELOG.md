@@ -22,6 +22,12 @@ annotated templates.
 
 ### Bug Fixes
 
+Fixed a segfault that could occur when handling errors without a `SUNContext`
+provided.
+
+Fixed a bug in `FindMAGMA.cmake` which didn't allow use of MAGMA versions with 
+multiple digits in an identifier.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
