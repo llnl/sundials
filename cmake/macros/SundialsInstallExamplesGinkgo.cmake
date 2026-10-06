@@ -74,13 +74,30 @@ macro(sundials_install_examples_ginkgo MODULE)
 
       # extract the file name without extension
       get_filename_component(example_noext ${example} NAME_WE)
+      get_filename_component(example_dir ${example} DIRECTORY)
+      if(IS_ABSOLUTE "${example_dir}")
+        set(example_source_dir "${example_dir}")
+      else()
+        set(example_source_dir "${CMAKE_CURRENT_SOURCE_DIR}/${example_dir}")
+      endif()
 
       # get example header and output files
-      file(GLOB example_header ${example_noext}.h*)
+      file(GLOB example_header "${example_source_dir}/${example_noext}.h*"
+           "${example_source_dir}/${example_noext}_gpu.h*")
       file(GLOB example_out ${example_noext}*.out)
 
+      set(example_sources ${example})
+      set(cuda_source "${example_source_dir}/${example_noext}_cuda.cu")
+      if(EXISTS "${cuda_source}")
+        list(APPEND example_sources ${cuda_source})
+      endif()
+      set(hip_source "${example_source_dir}/${example_noext}_hip.cpp")
+      if(EXISTS "${hip_source}")
+        list(APPEND example_sources ${hip_source})
+      endif()
+
       # install files
-      install(FILES ${example} ${example_header} ${example_out}
+      install(FILES ${example_sources} ${example_header} ${example_out}
               DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${arg_DESTINATION})
 
     endforeach()

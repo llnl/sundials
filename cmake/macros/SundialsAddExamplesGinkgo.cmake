@@ -74,15 +74,34 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
         set(vector nvecserial)
       endif()
 
-      if(backend MATCHES "CUDA")
-        set_source_files_properties(${example} PROPERTIES LANGUAGE CUDA)
-      else()
-        set_source_files_properties(${example} PROPERTIES LANGUAGE CXX)
-      endif()
-
       # extract the file name without extension
+      get_filename_component(example_basename ${example} NAME_WE)
       get_filename_component(example_target ${example} NAME_WE)
       set(example_target "${example_target}.${backend}")
+      set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
+      set(example_sources ${example})
+
+      if(backend MATCHES "CUDA")
+        # CUDA-specific kernels are kept in a separate translation unit.
+        set(cuda_source
+            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_cuda.cu")
+        if(EXISTS "${cuda_source}")
+          list(APPEND example_sources ${cuda_source})
+        endif()
+      elseif(backend MATCHES "HIP")
+        # HIP-specific kernels are kept in a separate translation unit. This
+        # will also allow the source to be compiled as HIP once HIP language
+        # support is enabled in SUNDIALS.
+        set(hip_source
+            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_hip.cpp")
+        if(EXISTS "${hip_source}")
+          get_property(enabled_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+          if(HIP IN_LIST enabled_languages)
+            set_source_files_properties(${hip_source} PROPERTIES LANGUAGE HIP)
+          endif()
+          list(APPEND example_sources ${hip_source})
+        endif()
+      endif()
 
       # check if example args are provided and set the test name
       if("${example_args}" STREQUAL "")
@@ -101,9 +120,8 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
         else()
           list(APPEND test_args FLOAT_PRECISION ${float_precision})
         endif()
-        set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
         sundials_add_example(
-          ${example_target} ${example} ${test_args}
+          ${example_target} ${example_sources} ${test_args}
           INSTALL_FILES ${install_files}
           LINK_LIBRARIES PRIVATE ${arg_TARGETS} sundials_${vector}
                          Ginkgo::ginkgo ${EXTRA_LINK_LIBS}
