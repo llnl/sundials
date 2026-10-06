@@ -87,13 +87,9 @@ macro(sundials_install_examples_ginkgo MODULE)
       file(GLOB example_out ${example_noext}*.out)
 
       set(example_sources ${example})
-      set(cuda_source "${example_source_dir}/${example_noext}_cuda.cu")
-      if(EXISTS "${cuda_source}")
-        list(APPEND example_sources ${cuda_source})
-      endif()
-      set(hip_source "${example_source_dir}/${example_noext}_hip.cpp")
-      if(EXISTS "${hip_source}")
-        list(APPEND example_sources ${hip_source})
+      set(gpu_source "${example_source_dir}/${example_noext}_gpu.cpp")
+      if(EXISTS "${gpu_source}")
+        list(APPEND example_sources ${gpu_source})
       endif()
 
       # install files

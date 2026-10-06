@@ -81,25 +81,19 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
       set(example_utilities_dir "${PROJECT_SOURCE_DIR}/examples/utilities")
       set(example_sources ${example})
 
-      if(backend MATCHES "CUDA")
-        # CUDA-specific kernels are kept in a separate translation unit.
-        set(cuda_source
-            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_cuda.cu")
-        if(EXISTS "${cuda_source}")
-          list(APPEND example_sources ${cuda_source})
-        endif()
-      elseif(backend MATCHES "HIP")
-        # HIP-specific kernels are kept in a separate translation unit. This
-        # will also allow the source to be compiled as HIP once HIP language
-        # support is enabled in SUNDIALS.
-        set(hip_source
-            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_hip.cpp")
-        if(EXISTS "${hip_source}")
-          get_property(enabled_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
-          if(HIP IN_LIST enabled_languages)
-            set_source_files_properties(${hip_source} PROPERTIES LANGUAGE HIP)
+      if(backend MATCHES "CUDA" OR backend MATCHES "HIP")
+        set(gpu_source
+            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_gpu.cpp")
+        if(EXISTS "${gpu_source}")
+          if(backend MATCHES "CUDA")
+            set_source_files_properties(${gpu_source} PROPERTIES LANGUAGE CUDA)
+          elseif(backend MATCHES "HIP")
+            get_property(enabled_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+            if(HIP IN_LIST enabled_languages)
+              set_source_files_properties(${gpu_source} PROPERTIES LANGUAGE HIP)
+            endif()
           endif()
-          list(APPEND example_sources ${hip_source})
+          list(APPEND example_sources ${gpu_source})
         endif()
       endif()
 
