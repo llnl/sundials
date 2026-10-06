@@ -287,65 +287,29 @@ pkg-core:
 pkg-ARKODE:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/arkode/**'
-          - 'include/arkode/**'
-          - 'doc/arkode/**'
-          - 'examples/arkode/**'
-          - 'test/unit_tests/arkode/**'
-          - 'bindings/sundials4py/arkode/**'
-          - 'swig/arkode/**'
+          - '**/arkode/**'
 
 pkg-CVODE:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/cvode/**'
-          - 'include/cvode/**'
-          - 'doc/cvode/**'
-          - 'examples/cvode/**'
-          - 'test/unit_tests/cvode/**'
-          - 'bindings/sundials4py/cvode/**'
-          - 'swig/cvode/**'
+          - '**/cvode/**'
 
 pkg-CVODES:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/cvodes/**'
-          - 'include/cvodes/**'
-          - 'doc/cvodes/**'
-          - 'examples/cvodes/**'
-          - 'test/unit_tests/cvodes/**'
-          - 'bindings/sundials4py/cvodes/**'
-          - 'swig/cvodes/**'
+          - '**/cvodes/**'
 
 pkg-IDA:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/ida/**'
-          - 'include/ida/**'
-          - 'doc/ida/**'
-          - 'examples/ida/**'
-          - 'test/unit_tests/ida/**'
-          - 'bindings/sundials4py/ida/**'
-          - 'swig/ida/**'
+          - '**/ida/**'
 
 pkg-IDAS:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/idas/**'
-          - 'include/idas/**'
-          - 'doc/idas/**'
-          - 'examples/idas/**'
-          - 'test/unit_tests/idas/**'
-          - 'bindings/sundials4py/idas/**'
-          - 'swig/idas/**'
+          - '**/idas/**'
 
 pkg-KINSOL:
   - changed-files:
       - any-glob-to-any-file:
-          - 'src/kinsol/**'
-          - 'include/kinsol/**'
-          - 'doc/kinsol/**'
-          - 'examples/kinsol/**'
-          - 'test/unit_tests/kinsol/**'
-          - 'bindings/sundials4py/kinsol/**'
-          - 'swig/kinsol/**'
+          - '**/kinsol/**'
