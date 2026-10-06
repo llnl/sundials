@@ -72,5 +72,5 @@ Final Solver Statistics (for processor 0):
    Total number of error test failures = 3
    Total number of nonlinear solver convergence failures = 0
    Total number of nonlinear iterations = 3272
-   Total number of linear iterations = 2600
-   Total number of preconditioner solves = 4788
+   Total number of linear iterations = 2162
+   Total number of preconditioner solves = 4327

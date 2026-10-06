@@ -954,6 +954,18 @@ SWIGEXPORT int _wrap_FSUNFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *far
 }
 
 
+SWIGEXPORT int _wrap_FSUNFileFlush(void *farg1) {
+  int fresult ;
+  FILE *arg1 = (FILE *) 0 ;
+  SUNErrCode result;
+  
+  arg1 = (FILE *)(farg1);
+  result = (SUNErrCode)SUNFileFlush(arg1);
+  fresult = (SUNErrCode)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FSUNDIALSFileOpen(SwigArrayWrapper *farg1, SwigArrayWrapper *farg2, void *farg3) {
   int fresult ;
   char *arg1 = (char *) 0 ;
@@ -1091,6 +1103,16 @@ SWIGEXPORT void _wrap_FN_VSetArrayPointer(double *farg1, N_Vector farg2) {
   arg1 = (sunrealtype *)(farg1);
   arg2 = (N_Vector)(farg2);
   N_VSetArrayPointer(arg1,arg2);
+}
+
+
+SWIGEXPORT void _wrap_FN_VSetDeviceArrayPointer(double *farg1, N_Vector farg2) {
+  sunrealtype *arg1 = (sunrealtype *) 0 ;
+  N_Vector arg2 = (N_Vector) 0 ;
+  
+  arg1 = (sunrealtype *)(farg1);
+  arg2 = (N_Vector)(farg2);
+  N_VSetDeviceArrayPointer(arg1,arg2);
 }
 
 

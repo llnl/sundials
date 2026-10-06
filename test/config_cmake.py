@@ -190,7 +190,7 @@ def main():
         group,
         "--Wall",
         "SUNDIALS_ENABLE_ALL_WARNINGS",
-        "ENABLE_ALL_WARNINGS",
+        "SUNDIALS_ENABLE_ALL_WARNINGS",
         "OFF",
         "BOOL",
         "Enable all compiler warnings",
@@ -199,11 +199,21 @@ def main():
     add_arg(
         group,
         "--Werror",
-        "SUNDIALS_ENABLE_WARNINGS_AS_ERRORS",
-        "ENABLE_WARNINGS_AS_ERRORS",
+        "CMAKE_COMPILE_WARNING_AS_ERROR",
+        "CMAKE_COMPILE_WARNING_AS_ERROR",
         "OFF",
         "BOOL",
         "Enable compiler warnings as errors",
+    )
+
+    add_arg(
+        group,
+        "--deprecated-warnings",
+        "SUNDIALS_ENABLE_DEPRECATED_WARNINGS",
+        "SUNDIALS_ENABLE_DEPRECATED_WARNINGS",
+        "ON",
+        "BOOL",
+        "Enable compiler warnings for deprecated SUNDIALS APIs",
     )
 
     add_arg(

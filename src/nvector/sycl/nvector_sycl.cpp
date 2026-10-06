@@ -142,6 +142,7 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Sycl;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Sycl;
   v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Sycl;
+  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Sycl;
 
   /* standard vector operations */
   v->ops->nvlinearsum    = N_VLinearSum_Sycl;

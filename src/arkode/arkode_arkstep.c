@@ -234,9 +234,6 @@ void* ARKStepCreate(ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0, N_Vector y0,
   step_mem->mass_type   = MASS_IDENTITY;
   step_mem->msolve_type = -1;
 
-  /* Initialize initial error norm  */
-  step_mem->eRNrm = ONE;
-
   /* Initialize all the counters */
   step_mem->nfe       = 0;
   step_mem->nfi       = 0;
@@ -325,9 +322,6 @@ int ARKStepReInit(void* arkode_mem, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
   /* Copy the input parameters into ARKODE state */
   step_mem->fe = fe;
   step_mem->fi = fi;
-
-  /* Initialize initial error norm  */
-  step_mem->eRNrm = ONE;
 
   /* Initialize main ARKODE infrastructure */
   retval = arkInit(ark_mem, t0, y0, FIRST_INIT);
@@ -694,7 +688,6 @@ void arkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   fprintf(outfile, "ARKStep: gammap = " SUN_FORMAT_G "\n", step_mem->gammap);
   fprintf(outfile, "ARKStep: gamrat = " SUN_FORMAT_G "\n", step_mem->gamrat);
   fprintf(outfile, "ARKStep: crate = " SUN_FORMAT_G "\n", step_mem->crate);
-  fprintf(outfile, "ARKStep: eRNrm = " SUN_FORMAT_G "\n", step_mem->eRNrm);
   fprintf(outfile, "ARKStep: nlscoef = " SUN_FORMAT_G "\n", step_mem->nlscoef);
   fprintf(outfile, "ARKStep: crdown = " SUN_FORMAT_G "\n", step_mem->crdown);
   fprintf(outfile, "ARKStep: rdiv = " SUN_FORMAT_G "\n", step_mem->rdiv);

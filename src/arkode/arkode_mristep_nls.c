@@ -358,9 +358,6 @@ int mriStep_Nls(ARKodeMem ark_mem, int nflag)
   /* set a zero guess for correction */
   N_VConst(ZERO, step_mem->zcor);
 
-  /* Reset the stored residual norm (for iterative linear solvers) */
-  step_mem->eRNrm = SUN_RCONST(0.1) * step_mem->nlscoef;
-
   SUNLogInfo(ARK_LOGGER, "begin-nonlinear-solve", "tol = " SUN_FORMAT_G,
              step_mem->nlscoef);
 
@@ -468,7 +465,7 @@ int mriStep_NlsLSolve(N_Vector b, void* arkode_mem)
   /* call linear solver interface, and handle return value */
   retval = step_mem->lsolve(ark_mem, b, ark_mem->tcur, ark_mem->ycur,
                             step_mem->Fsi[step_mem->stage_map[step_mem->istage]],
-                            step_mem->eRNrm, nonlin_iter);
+                            step_mem->nlscoef, nonlin_iter);
 
   if (retval < 0) { return (ARK_LSOLVE_FAIL); }
   if (retval > 0) { return (CONV_FAIL); }

@@ -22,42 +22,49 @@ Butcher Tables
 ==============
 
 Here we catalog the full set of Butcher tables included in ARKODE. We group
-these into four categories: *explicit*, *implicit*, *additive* and
-*symplectic partitioned*.
-However, since the methods that comprise an additive Runge--Kutta method are
-themselves explicit and implicit, their component Butcher tables are listed
+these into four categories: *explicit*, *implicit*, *additive*, and *symplectic
+partitioned*. Since the methods that comprise an additive Runge--Kutta method
+are themselves explicit and implicit, their component Butcher tables are listed
 within their separate sections, but are referenced together in the additive
 section.
 
-In each of the following tables, we use the following notation (shown
-for a 3-stage method):
+In each of the following tables, we use the following notation for an
+:math:`s`-stage method:
 
 .. math::
 
-   \begin{array}{r|ccc}
-     c_1 & a_{1,1} & a_{1,2} & a_{1,3} \\
-     c_2 & a_{2,1} & a_{2,2} & a_{2,3} \\
-     c_3 & a_{3,1} & a_{3,2} & a_{3,3} \\
-     \hline
-     q & b_1 & b_2 & b_3 \\
-     p & \tilde{b}_1 & \tilde{b}_2 & \tilde{b}_3
+   \begin{array}[b]{c|c}
+   c &  A \\
+   \hline
+   q  & b^T \\
+   p  & \tilde{b}^T \\
+   \end{array}
+   \begin{array}[b]{c} \quad = \quad \\ {} \\ {} \end{array}
+   \begin{array}[b]{c|cccc}
+   c_1    & a_{11}      & a_{12}      & \dots  & a_{1s}\\
+   c_2    & a_{21}      & a_{22}      & \dots  & a_{2s}\\
+   \vdots & \vdots      & \vdots      & \ddots & \vdots\\
+   c_s    & a_{s1}      & a_{s2}      & \dots  & a_{ss} \\
+   \hline
+   q      & b_1         & b_2         & \dots  & b_s \\
+   p      & \tilde{b}_1 & \tilde{b}_2 & \dots  & \tilde{b}_s
    \end{array}
 
-where here the method and embedding share stage :math:`A` and
-:math:`c` values, but use their stages :math:`z_i` differently through
-the coefficients :math:`b` and :math:`\tilde{b}` to generate methods
-of orders :math:`q` (the main method) and :math:`p` (the embedding,
-typically :math:`q = p+1`, though sometimes this is reversed).
+where the method and embedding share stage weights, :math:`A \in \mathbb{R}^{s
+\times s}`, and abscissa, :math:`c \in \mathbb{R}^s`. The main method weights,
+:math:`b \in \mathbb{R}^s`, generate a solution of order :math:`q` and the
+embedding weights, :math:`\tilde{b} \in \mathbb{R}^s`, give a solution of order
+:math:`p` (typically :math:`q = p+1`, though sometimes this is reversed).
 
-Method authors often use different naming conventions to categorize
-their methods.  For each of the methods below with an embedding, we follow the
-uniform naming convention:
+Method authors often use different naming conventions to categorize their
+methods. For each of the methods below with an embedding, we use the naming
+convention:
 
 .. code-block:: text
 
-   NAME-S-P-Q
+   ARKODE_NAME_S_P_Q
 
-where here
+where
 
 * ``NAME`` is the author or the name provided by the author (if applicable),
 * ``S`` is the number of stages in the method,
@@ -65,78 +72,23 @@ where here
 * ``Q`` is the global order of accuracy for the method.
 
 For methods without an embedding (e.g., fixed-step methods) ``P`` is omitted so
-that methods follow the naming convention ``NAME-S-Q``.
+that methods follow the naming convention ``ARKODE_NAME_S_Q``. For SPRK methods,
+the naming convention is ``ARKODE_SPRK_NAME_S_Q``. These method IDs can be used
+to load the desired method with the appropriate set function (listed below).
 
-For SPRK methods, the naming convention is ``SPRK-NAME-S-Q``.
-
-In the code, unique integer IDs are defined inside ``arkode_butcher_erk.h`` and
-``arkode_butcher_dirk.h`` for each method, which may be used by calling routines
-to specify the desired method. SPRK methods are defined inside ``arkode_sprk.h``.
-These names are specified in ``fixed width font`` at the start of each method's
-section below.
-
-Additionally, for each method we provide a plot of the linear
-stability region in the complex plane.  These have been computed via
-the following approach.  For any Runge--Kutta method as defined above,
-we may define the stability function
+Additionally, for each method we provide a plot of the linear stability region
+in the complex plane. For the linear test equation, :math:`\dot{y} = \lambda y`,
+a Runge--Kutta method with step size :math:`h` reduces to :math:`y_{n+1} =
+R(h\lambda) y_{n}`. Letting :math:`z = h\lambda \in \mathbb{C}`, the stability
+function, :math:`R`, is given by
 
 .. math::
 
-   R(\eta) = 1 + \eta b [I - \eta A]^{-1} e,
+   R(z) = \frac{\det(I - zA + z e b^T)}{\det(I - z A)} = 1 + z b^T (I - z A)^{-1} e
 
-where :math:`e\in\mathbb{R}^s` is a column vector of all ones, :math:`\eta =
-h\lambda` and :math:`h` is the time step size.  If the stability
-function satisfies :math:`|R(\eta)| \le 1` for all eigenvalues,
-:math:`\lambda`, of :math:`\frac{\partial }{\partial y}f(t,y)` for a
-given IVP, then the method will be linearly stable for that problem
-and step size.  The stability region
-
-.. math::
-
-   S = \{ \eta\in\mathbb{C}\; :\; \left| R(\eta) \right| \le 1\}
-
-is typically given by an enclosed region of the complex plane, so it
-is standard to search for the border of that region in order to
-understand the method.  Since all complex numbers with unit magnitude
-may be written as :math:`e^{i\theta}` for some value of :math:`\theta`,
-we perform the following algorithm to trace out this boundary.
-
-1. Define an array of values ``Theta``.  Since we wish for a
-   smooth curve, and since we wish to trace out the entire boundary,
-   we choose 10,000 linearly-spaced points from 0 to :math:`16\pi`.
-   Since some angles will correspond to multiple locations on the
-   stability boundary, by going beyond :math:`2\pi` we ensure that all
-   boundary locations are plotted, and by using such a fine
-   discretization the Newton method (next step) is more likely to
-   converge to the root closest to the previous boundary point,
-   ensuring a smooth plot.
-
-2. For each value :math:`\theta \in` ``Theta``, we solve the nonlinear
-   equation
-
-   .. math::
-
-      0 = f(\eta) = R(\eta) - e^{i\theta}
-
-   using a finite-difference Newton iteration, using tolerance
-   :math:`10^{-7}`, and differencing parameter
-   :math:`\sqrt{\varepsilon}` (:math:`\approx 10^{-8}`).
-
-   In this iteration, we use as initial guess the solution from the
-   previous value of :math:`\theta`, starting with an initial-initial
-   guess of :math:`\eta=0` for :math:`\theta=0`.
-
-3. We then plot the resulting :math:`\eta` values that trace the
-   stability region boundary.
-
-We note that for any stable IVP method, the value :math:`\eta_0 =
--\varepsilon + 0i` is always within the stability region.  So in each
-of the following pictures, the interior of the stability region is the
-connected region that includes :math:`\eta_0`.  Resultingly, methods
-whose linear stability boundary is located entirely in the right
-half-plane indicate an `A-stable` method.
-
-
+where :math:`e\in\mathbb{R}^s` is a column vector of all ones. The values of
+:math:`z` where :math:`|R(z)| \le 1` define the linear stability region of the
+method.
 
 .. _Butcher.explicit:
 
@@ -172,9 +124,9 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_1_2`                 | 4      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`                | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_GKC21_ERK_3_1_2`               | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`              | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`              | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_LSPUM_ERK_3_1_2`           | 3      | 1              | 2     |
    +------------------------------------------------------+--------+----------------+-------+
@@ -187,6 +139,10 @@ with values specified in :numref:`ARKODE.Butcher.ERK_properties`.
    | :c:enumerator:`ARKODE_KNOTH_WOLKE_3_3`               | 3      | ---            | 3     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_4_2_3`                 | 4      | 2              | 3     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4a_4_4`                | 4      | ---            | 4     |
+   +------------------------------------------------------+--------+----------------+-------+
+   | :c:enumerator:`ARKODE_KUTTA_RK4b_4_4`                | 4      | ---            | 4     |
    +------------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_10_3_4`                | 10     | 3              | 4     |
    +------------------------------------------------------+--------+----------------+-------+
@@ -250,11 +206,12 @@ This is the default 1st order explicit method (from :cite:p:`Euler:68`).
      1 & 1
    \end{array}
 
-.. figure:: /figs/arkode/forward_euler_erk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_FORWARD_EULER_1_1_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the forward Euler method.
+   Linear stability region for the forward Euler method, shaded blue with a
+   solid outline.
 
 
 .. c:enumerator:: ARKODE_RALSTON_3_1_2
@@ -284,12 +241,13 @@ This is the default 2nd order explicit method
      1 & \frac{5}{37} & \frac{2}{3} & \frac{22}{111}
    \end{array}
 
-.. figure:: /figs/arkode/ralston_stab_region.png
+.. figure:: /figs/arkode/ARKODE_RALSTON_3_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Ralston method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Ralston method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_HEUN_EULER_2_1_2
@@ -317,12 +275,13 @@ Accessible via the string ``"ARKODE_HEUN_EULER_2_1_2"`` to
      1 & 1 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_0.png
+.. figure:: /figs/arkode/ARKODE_HEUN_EULER_2_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Heun-Euler method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Heun-Euler method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_RALSTON_EULER_2_1_2
@@ -346,12 +305,13 @@ Accessible via the string ``"ARKODE_RALSTON_EULER_2_1_2"`` to
      1 & 1 & 0
    \end{array}
 
-.. figure:: /figs/arkode/ralston_euler_erk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_RALSTON_EULER_2_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Ralston-Euler method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Ralston-Euler method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2
@@ -375,12 +335,13 @@ Accessible via the string ``"ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2"`` to
      1 & 1 & 0
    \end{array}
 
-.. figure:: /figs/arkode/explicit_midpoint_euler_erk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Explicit-Midpoint-Euler method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Explicit-Midpoint-Euler method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_3_1_2
@@ -395,7 +356,7 @@ This is the "SSPERK(3,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 2.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -410,11 +371,12 @@ equal to 2.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_ERK_3_1_2_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-ERK-3-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-ERK-3-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_4_1_2
@@ -429,7 +391,7 @@ This is the "SSPERK(4,2)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have optimal SSP coefficient
 equal to 3.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -445,23 +407,29 @@ equal to 3.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_ERK_4_1_2_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-ERK-4-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-ERK-4-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
-.. c:enumerator:: ARKODE_ARK2_ERK_3_1_2
+.. c:enumerator:: ARKODE_GKC21_ERK_3_1_2
 
-Accessible via the constant ``ARKODE_ARK2_ERK_3_1_2`` to
+Accessible via the constant ``ARKODE_GKC21_ERK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
 :c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_ARK2_ERK_3_1_2"`` to
+Accessible via the string ``"ARKODE_GKC21_ERK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 This is the explicit portion of the default 2nd order additive method (the
 explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
+
+.. versionchanged:: 7.9.0 (ARKODE 6.9.0)
+
+   The ARKODE table was originally named ``ARKODE_ARK2_ERK_3_1_2``; it was renamed
+   to ``ARKODE_GKC21_ERK_3_1_2`` to reflect the method's origin.
 
 .. math::
 
@@ -475,27 +443,33 @@ explicit portion of the ARK2 method from :cite:p:`giraldo2013implicit`).
      1 & \frac{4 - \sqrt{2}}{8} & \frac{4 - \sqrt{2}}{8} & \frac{1}{2\sqrt{2}}    \\
    \end{array}
 
-.. figure:: /figs/arkode/ark2_erk_stab_region.png
-   :scale: 65 %
+.. figure:: /figs/arkode/ARKODE_GKC21_ERK_3_1_2_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK2-ERK method. The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the GKC21-ERK method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
-.. c:enumerator:: ARKODE_ASCHER_ERK_3_1_2
+.. c:enumerator:: ARKODE_ARS222_ERK_3_1_2
 
-Accessible via the constant ``ARKODE_ASCHER_ERK_3_1_2`` to
+Accessible via the constant ``ARKODE_ARS222_ERK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum` or
 :c:func:`ARKodeButcherTable_LoadERK`.
-Accessible via the string ``"ARKODE_ASCHER_ERK_3_1_2"`` to
+Accessible via the string ``"ARKODE_ARS222_ERK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, :c:func:`ERKStepSetTableName` or
 :c:func:`ARKodeButcherTable_LoadERKByName`.
 The method is the explicit portion of the "(2,2,2)" additive Runge--Kutta
 method from Section 2.6 of :cite:p:`ARS:97`; the embedding was invented specifically for
 ARKODE.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
+
+.. versionchanged:: 7.9.0 (ARKODE 6.9.0)
+
+   The ARKODE table was originally named ``ARKODE_ASCHER_ERK_3_1_2``; it was renamed
+   to ``ARKODE_ARS222_ERK_3_1_2`` to reflect the method's origin.
 
 .. math::
 
@@ -511,12 +485,13 @@ ARKODE.
 
 where :math:`\gamma = \frac{2-\sqrt{2}}{2}` and :math:`\delta = 1-\frac{1}{2\gamma}`.
 
-.. figure:: /figs/arkode/ARKODE_ASCHER_ERK_3_1_2_stab_region.png
-   :width: 50 %
+.. figure:: /figs/arkode/ARKODE_ARS222_ERK_3_1_2_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Ascher-ERK-3-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the ARS222-ERK method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SSP_LSPUM_ERK_3_1_2
@@ -532,7 +507,7 @@ Runge--Kutta method from :cite:p:`H:14`; the embedding was invented
 specifically for ARKODE.  The method has SSP coefficient equal to 1.2,
 and the embedding has SSP coefficient equal to 1.15.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -547,11 +522,12 @@ and the embedding has SSP coefficient equal to 1.15.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_LSPUM_ERK_3_1_2_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-LSPUM-ERK-3-1-2 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-LSPUM-ERK-3-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_BOGACKI_SHAMPINE_4_2_3
@@ -578,12 +554,13 @@ explicit method (from :cite:p:`Bogacki:89`).
      2 & \frac{7}{24} & \frac{1}{4} & \frac{1}{3} & \frac{1}{8}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_1.png
+.. figure:: /figs/arkode/ARKODE_BOGACKI_SHAMPINE_4_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Bogacki-Shampine method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Bogacki-Shampine method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK324L2SA_ERK_4_2_3
@@ -611,12 +588,13 @@ method from :cite:p:`KenCarp:03`).
      2 & \frac{2756255671327}{12835298489170} & -\frac{10771552573575}{22201958757719} & \frac{9247589265047}{10645013368117} & \frac{2193209047091}{5459859503100}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_2.png
+.. figure:: /figs/arkode/ARKODE_ARK324L2SA_ERK_4_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the explicit ARK-4-2-3 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the explicit ARK-4-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SHU_OSHER_3_2_3
@@ -641,12 +619,13 @@ Accessible via the string ``"ARKODE_SHU_OSHER_3_2_3"`` to
      2 & \frac{291485418878409}{1000000000000000} & \frac{291485418878409}{1000000000000000} & \frac{208514581121591}{500000000000000}
    \end{array}
 
-.. figure:: /figs/arkode/shu_osher_erk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_SHU_OSHER_3_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Shu-Osher method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Shu-Osher method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_KNOTH_WOLKE_3_3
@@ -676,11 +655,12 @@ This is the default 3th order slow and fast MRIStep method (from
                3 & \frac{1}{6} & \frac{3}{10} & \frac{8}{15}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_24.png
+.. figure:: /figs/arkode/ARKODE_KNOTH_WOLKE_3_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Knoth-Wolke method
+   Linear stability region for the Knoth-Wolke method, shaded blue with a solid
+   outline.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_4_2_3
@@ -694,7 +674,7 @@ Accessible via the string ``"ARKODE_SSP_ERK_4_2_3"`` to
 This is the "SSPERK(4,3)" method from :cite:p:`FCS:22`.
 Both the method and its embedding have SSP coefficient equal to 2.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -710,11 +690,83 @@ Both the method and its embedding have SSP coefficient equal to 2.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_ERK_4_2_3_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-ERK-4-2-3 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-ERK-4-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
+
+
+.. c:enumerator:: ARKODE_KUTTA_RK4a_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4a_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4a_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical RK4 method :cite:p:`K:01`.
+
+.. warning::
+
+   When using this non-embedded table, users must specify the time step by
+   calling :c:func:`ARKodeSetFixedStep`.
+
+.. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0       & 0       & 0       & 0 \\
+     \frac12 & \frac12 & 0       & 0       & 0 \\
+     \frac12 & 0       & \frac12 & 0       & 0 \\
+           1 & 0       & 0       & 1       & 0 \\
+     \hline
+           4 & \frac16 & \frac13 & \frac13 & \frac16\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4a_4_4_stab_region.png
+   :scale: 50 %
+   :align: center
+
+   Linear stability region for the RK4 method, shaded blue with a solid outline.
+
+
+.. c:enumerator:: ARKODE_KUTTA_RK4b_4_4
+
+Accessible via the constant ``ARKODE_KUTTA_RK4b_4_4`` to
+:c:func:`ARKStepSetTableNum`, :c:func:`ERKStepSetTableNum`, or
+:c:func:`ARKodeButcherTable_LoadERK`.  Accessible via the string
+``"ARKODE_KUTTA_RK4b_4_4"`` to :c:func:`ARKStepSetTableName`,
+:c:func:`ERKStepSetTableName`, or :c:func:`ARKodeButcherTable_LoadERKByName`.
+This is the classical 3/8-rule :cite:p:`K:01`.
+
+.. warning::
+
+   When using this non-embedded table, users must specify the time step by
+   calling :c:func:`ARKodeSetFixedStep`.
+
+.. versionadded:: 7.9.0 (ARKODE 6.9.0)
+
+.. math::
+
+   \renewcommand{\arraystretch}{1.5}
+   \begin{array}{r|cccc}
+           0 & 0        & 0       & 0       & 0 \\
+     \frac13 & \frac13  & 0       & 0       & 0 \\
+     \frac23 & -\frac13 & 1       & 0       & 0 \\
+           1 & 1        & -1      & 1       & 0 \\
+     \hline
+           4 & \frac18 & \frac38 & \frac38 & \frac18\\
+   \end{array}
+
+.. figure:: /figs/arkode/ARKODE_KUTTA_RK4b_4_4_stab_region.png
+   :scale: 50 %
+   :align: center
+
+   Linear stability region for the 3/8-rule method, shaded blue with a solid
+   outline.
 
 
 .. c:enumerator:: ARKODE_SSP_ERK_10_3_4
@@ -728,7 +780,7 @@ Accessible via the string ``"ARKODE_SSP_ERK_10_3_4"`` to
 This is the "SSPERK(10,4)" method from :cite:p:`FCS:22`.
 The method has SSP coefficient equal to 6.
 
-.. versionadded:: 7.8.0 (6.8.0)
+.. versionadded:: 7.8.0 (ARKODE 6.8.0)
 
 .. math::
 
@@ -750,11 +802,12 @@ The method has SSP coefficient equal to 6.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_ERK_10_3_4_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-ERK-10-3-4 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-ERK-10-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SOFRONIOU_SPALETTA_5_3_4
@@ -786,12 +839,13 @@ This is the default 4th order explicit method.
      3 & \frac{1251515}{8970912} & \frac{3710105}{8970912} & \frac{2519695}{8970912} & \frac{61105}{8970912} & \frac{119041}{747576} \\
    \end{array}
 
-.. figure:: /figs/arkode/sofroniou_spaletta_erk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_SOFRONIOU_SPALETTA_5_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Sofroniou-Spaletta method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Sofroniou-Spaletta method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ZONNEVELD_5_3_4
@@ -822,12 +876,13 @@ Accessible via the string ``"ARKODE_ZONNEVELD_5_3_4"`` to
      3 & -\frac{1}{2} & \frac{7}{3} & \frac{7}{3} & \frac{13}{6} & -\frac{16}{3}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_3.png
+.. figure:: /figs/arkode/ARKODE_ZONNEVELD_5_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Zonneveld method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Zonneveld method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK436L2SA_ERK_6_3_4
@@ -860,12 +915,13 @@ This is the explicit portion of the ARK4(3)6L[2]SA method from
      3 & \frac{4586570599}{29645900160} & 0 & \frac{178811875}{945068544} & \frac{814220225}{1159782912} & -\frac{3700637}{11593932} & \frac{61727}{225920}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_4.png
+.. figure:: /figs/arkode/ARKODE_ARK436L2SA_ERK_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK436L2SA-ERK-6-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK436L2SA-ERK-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK437L2SA_ERK_7_3_4
@@ -905,12 +961,13 @@ explicit portion of the ARK4(3)7L[2]SA method from :cite:p:`KenCarp:19`.
 
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
-.. figure:: /figs/arkode/stab_region_34.png
+.. figure:: /figs/arkode/ARKODE_ARK437L2SA_ERK_7_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK437L2SA-ERK-7-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK437L2SA-ERK-7-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SAYFY_ABURUB_6_3_4
@@ -938,12 +995,13 @@ Accessible via the string ``"ARKODE_SAYFY_ABURUB_6_3_4"`` to
      3 & \frac{1}{6} & \frac{2}{3} & \frac{1}{6} & 0 & 0 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_5.png
+.. figure:: /figs/arkode/ARKODE_SAYFY_ABURUB_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Sayfy-Aburub-6-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Sayfy-Aburub-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_TSITOURAS_7_4_5
@@ -991,12 +1049,13 @@ This is the default 5th order explicit method (from :cite:p:`Tsitouras:11`).
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/tsitouras_stab_region.png
+.. figure:: /figs/arkode/ARKODE_TSITOURAS_7_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Tsitouras method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Tsitouras method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_CASH_KARP_6_4_5
@@ -1028,12 +1087,13 @@ Accessible via the string ``"ARKODE_CASH_KARP_6_4_5"`` to
      4 & \frac{2825}{27648} & 0 & \frac{18575}{48384} & \frac{13525}{55296} & \frac{277}{14336} & \frac{1}{4}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_6.png
+.. figure:: /figs/arkode/ARKODE_CASH_KARP_6_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Cash-Karp method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Cash-Karp method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_FEHLBERG_6_4_5
@@ -1061,12 +1121,13 @@ Accessible via the string ``"ARKODE_FEHLBERG_6_4_5"`` to
      4 & \frac{25}{216} & 0 & \frac{1408}{2565} & \frac{2197}{4104} & -\frac{1}{5} & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_7.png
+.. figure:: /figs/arkode/ARKODE_FEHLBERG_6_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Fehlberg method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Fehlberg method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_DORMAND_PRINCE_7_4_5
@@ -1095,12 +1156,13 @@ Accessible via the string ``"ARKODE_DORMAND_PRINCE_7_4_5"`` to
      4 & \frac{5179}{57600} & 0 & \frac{7571}{16695} & \frac{393}{640} & -\frac{92097}{339200} & \frac{187}{2100} & \frac{1}{40}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_8.png
+.. figure:: /figs/arkode/ARKODE_DORMAND_PRINCE_7_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Dormand-Prince method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Dormand-Prince method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK548L2SA_ERK_8_4_5
@@ -1142,12 +1204,13 @@ This is the explicit portion of the ARK5(4)8L[2]SA method from
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_9.png
+.. figure:: /figs/arkode/ARKODE_ARK548L2SA_ERK_8_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the explicit ARK-8-4-5 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the explicit ARK-8-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK548L2SAb_ERK_8_4_5
@@ -1190,12 +1253,13 @@ explicit portion of the 5th order ARK5(4)8L[2]SA method from
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_35.png
+.. figure:: /figs/arkode/ARKODE_ARK548L2SAb_ERK_8_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK548L2SAb-ERK-8-4-5 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK548L2SAb-ERK-8-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_VERNER_9_5_6
@@ -1240,12 +1304,13 @@ This is the default 6th order explicit method
 
 
 
-.. figure:: /figs/arkode/v65b_erk_stab_region.png
-   :scale: 75 %
+.. figure:: /figs/arkode/ARKODE_VERNER_9_5_6_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Verner-9-5-6 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Verner-9-5-6 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_VERNER_8_5_6
@@ -1279,12 +1344,13 @@ Accessible via the string ``"ARKODE_VERNER_8_5_6"`` to
      5 & \frac{13}{160} & 0 & \frac{2375}{5984} & \frac{5}{16} & \frac{12}{85} & \frac{3}{44} & 0 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_10.png
+.. figure:: /figs/arkode/ARKODE_VERNER_8_5_6_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Verner-8-5-6 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Verner-8-5-6 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_VERNER_10_6_7
@@ -1323,12 +1389,13 @@ This is the default 7th order explicit method (from :cite:p:`Ver:10`).
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/v76_erk_stab_region.png
-   :scale: 75 %
+.. figure:: /figs/arkode/ARKODE_VERNER_10_6_7_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Verner-10-6-7 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Verner-10-6-7 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_VERNER_13_7_8
@@ -1376,12 +1443,13 @@ This is the default 8th order explicit method
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/v87_erk_stab_region.png
-   :scale: 75 %
+.. figure:: /figs/arkode/ARKODE_VERNER_13_7_8_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Verner-13-7-8 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Verner-13-7-8 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_FEHLBERG_13_7_8
@@ -1421,12 +1489,13 @@ Accessible via the string ``"ARKODE_FEHLBERG_13_7_8"`` to
    \end{array}
 
 
-.. figure:: /figs/arkode/stab_region_23.png
+.. figure:: /figs/arkode/ARKODE_FEHLBERG_13_7_8_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Fehlberg-13-7-8 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Fehlberg-13-7-8 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_VERNER_16_8_9
@@ -1472,12 +1541,13 @@ This is the default 9th order explicit method (from :cite:p:`Ver:10`).
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/v98_erk_stab_region.png
-   :scale: 75 %
+.. figure:: /figs/arkode/ARKODE_VERNER_16_8_9_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Verner-16-8-9 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Verner-16-8-9 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 
@@ -1506,11 +1576,11 @@ with values specified in :numref:`ARKODE.Butcher.DIRK_properties`.
    +=================================================+========+================+=======+
    | :c:enumerator:`ARKODE_BACKWARD_EULER_1_1`       | 1      | ---            | 1*    |
    +-------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`          | 3      | 1              | 2*    |
+   | :c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`       | 3      | 1              | 2*    |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SDIRK_2_1_2`              | 2      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`       | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`      | 3      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`           | 3      | 1              | 2     |
    +-------------------------------------------------+--------+----------------+-------+
@@ -1592,19 +1662,20 @@ This is the default 1st order implicit method.  The method is A-, L-, and B-stab
      1 & 1
    \end{array}
 
-.. figure:: /figs/arkode/backward_euler_dirk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_BACKWARD_EULER_1_1_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the backward Euler method.
+   Linear stability region for the backward Euler method, shaded blue with a
+   solid outline.
 
 
-.. c:enumerator:: ARKODE_ARK2_DIRK_3_1_2
+.. c:enumerator:: ARKODE_GKC21_ESDIRK_3_1_2
 
-Accessible via the constant ``ARKODE_ARK2_DIRK_3_1_2`` to
+Accessible via the constant ``ARKODE_GKC21_ESDIRK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, or
 :c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_ARK2_DIRK_3_1_2"`` to
+Accessible via the string ``"ARKODE_GKC21_ESDIRK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 This is the default 2nd order implicit method and the implicit portion of the
@@ -1614,6 +1685,11 @@ default 2nd order additive method
 .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
    Made the default 2nd order implicit method
+
+.. versionchanged:: 7.9.0 (6.9.0)
+
+   Renamed from ``ARKODE_ARK2_DIRK_3_1_2`` to ``ARKODE_GKC21_ESDIRK_3_1_2`` to reflect
+   the method's origin.
 
 .. math::
 
@@ -1627,12 +1703,13 @@ default 2nd order additive method
      1 & \frac{4 - \sqrt{2}}{8} & \frac{4 - \sqrt{2}}{8} & \frac{1}{2\sqrt{2}}    \\
    \end{array}
 
-.. figure:: /figs/arkode/ark2_dirk_stab_region.png
-   :scale: 65 %
+.. figure:: /figs/arkode/ARKODE_GKC21_ESDIRK_3_1_2_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK2-DIRK method. The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the GKC21-DIRK method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SDIRK_2_1_2
@@ -1647,7 +1724,7 @@ Both the method and embedding are A- and B-stable.
 
 .. versionchanged:: 7.3.0 (ARKODE 6.3.0)
 
-   Replaced by ``ARKODE_ARK2_DIRK_3_1_2`` as the default 2nd order implicit method
+   Replaced by ``ARKODE_GKC21_ESDIRK_3_1_2`` as the default 2nd order implicit method
 
 .. math::
 
@@ -1660,20 +1737,21 @@ Both the method and embedding are A- and B-stable.
      1 & 1 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_11.png
+.. figure:: /figs/arkode/ARKODE_SDIRK_2_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the SDIRK-2-1-2 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the SDIRK-2-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
-.. c:enumerator:: ARKODE_ASCHER_SDIRK_3_1_2
+.. c:enumerator:: ARKODE_ARS222_ESDIRK_3_1_2
 
-Accessible via the constant ``ARKODE_ASCHER_SDIRK_3_1_2`` to
+Accessible via the constant ``ARKODE_ARS222_ESDIRK_3_1_2`` to
 :c:func:`ARKStepSetTableNum`, or
 :c:func:`ARKodeButcherTable_LoadDIRK`.
-Accessible via the string ``"ARKODE_ASCHER_SDIRK_3_1_2"`` to
+Accessible via the string ``"ARKODE_ARS222_ESDIRK_3_1_2"`` to
 :c:func:`ARKStepSetTableName`, or
 :c:func:`ARKodeButcherTable_LoadDIRKByName`.
 The method is the implicit portion of the "(2,2,2)" additive Runge--Kutta
@@ -1682,6 +1760,11 @@ specifically for ARKODE.  The method is both A- and L-stable, and the
 embedding is A-stable.
 
 .. versionadded:: 7.8.0 (6.8.0)
+
+.. versionchanged:: 7.9.0 (6.9.0)
+
+   Renamed from ``ARKODE_ASCHER_SDIRK_3_1_2`` to ``ARKODE_ARS222_ESDIRK_3_1_2`` to reflect
+   the method's origin.
 
 .. math::
 
@@ -1697,12 +1780,13 @@ embedding is A-stable.
 
 where :math:`\gamma = \frac{2-\sqrt{2}}{2}`.
 
-.. figure:: /figs/arkode/ARKODE_ASCHER_SDIRK_3_1_2_stab_region.png
-   :width: 50 %
+.. figure:: /figs/arkode/ARKODE_ARS222_ESDIRK_3_1_2_stab_region.png
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the Ascher-SDIRK-3-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the ARS222-ESDIRK method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SSP_DIRK_3_1_2
@@ -1733,11 +1817,12 @@ embedding have SSP coefficient equal to 2.4.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_DIRK_3_1_2_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-DIRK-3-1-2 method. The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-DIRK-3-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SSP_LSPUM_SDIRK_3_1_2
@@ -1769,11 +1854,12 @@ coefficient equal to 3.81.
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_LSPUM_SDIRK_3_1_2_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-LSPUM-SDIRK-3-1-2 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-LSPUM-SDIRK-3-1-2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_IMPLICIT_MIDPOINT_1_2
@@ -1800,11 +1886,12 @@ The method is A- and B-stable.
      2 & 1
    \end{array}
 
-.. figure:: /figs/arkode/implicit_midpoint_dirk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_IMPLICIT_MIDPOINT_1_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the implicit midpoint method.
+   Linear stability region for the implicit midpoint method, shaded blue with a
+   solid outline.
 
 
 .. c:enumerator:: ARKODE_IMPLICIT_TRAPEZOIDAL_2_2
@@ -1832,11 +1919,12 @@ The method is A-stable.
      2 & \frac{1}{2} & \frac{1}{2}
    \end{array}
 
-.. figure:: /figs/arkode/implicit_trapezoidal_dirk_stab_region.png
+.. figure:: /figs/arkode/ARKODE_IMPLICIT_TRAPEZOIDAL_2_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the implicit trapezoidal method.
+   Linear stability region for the trapezoidal method, shaded blue with a solid
+   outline.
 
 
 .. c:enumerator:: ARKODE_BILLINGTON_3_3_2
@@ -1862,12 +1950,13 @@ Here, the higher-order embedding is less stable than the lower-order method
      3 & \frac{263 - 95 \sqrt{2}}{186} & \frac{47 + 33 \sqrt{2}}{186} & \frac{\sqrt{2} - 2}{3}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_12.png
+.. figure:: /figs/arkode/ARKODE_BILLINGTON_3_3_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Billington method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Billington method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_TRBDF2_3_3_2
@@ -1893,12 +1982,13 @@ lower-order method (from :cite:p:`Bank:85`).
      3 & \frac{1-\frac{\sqrt{2}}{4}}{3} & \frac{\frac{3\sqrt{2}}{4}+1}{3} & \frac{2-\sqrt{2}}{6}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_13.png
+.. figure:: /figs/arkode/ARKODE_TRBDF2_3_3_2_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the TRBDF2 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the TRBDF2 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK325L2SA_5_2_3
@@ -1916,12 +2006,13 @@ Both the method and embedding are A- and L-stable.
 
    Made the default 3rd order implicit method
 
-.. figure:: /figs/arkode/stab_region_26.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK325L2SA_5_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK325L2SA-5-2-3 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK325L2SA-5-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK_4_2_3
@@ -1955,11 +2046,12 @@ where :math:`\gamma =  0.435866521508459`, :math:`\alpha = 0.1677218170940733`,
 :math:`\beta = 1.386012857827706`, and :math:`\eta = -0.8234932532713241`.
 
 .. figure:: /figs/arkode/ARKODE_ESDIRK_4_2_3_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
-   Linear stability region for the SSP-ESDIRK-4-2-3 method.  The method's
-   region is outlined in red; the embedding's region is in blue dashed.
+   Linear stability regions for the SSP-ESDIRK-4-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK324L2SA_4_2_3
@@ -1972,12 +2064,13 @@ Accessible via the string ``"ARKODE_ESDIRK324L2SA_4_2_3"`` to
 This is the ESDIRK3(2)4L[2]SA method from :cite:p:`KenCarp:19b`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_25.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK324L2SA_4_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK324L2SA-4-2-3 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK324L2SA-4-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK32I5L2SA_5_2_3
@@ -1990,12 +2083,13 @@ Accessible via the string ``"ARKODE_ESDIRK32I5L2SA_5_2_3"`` to
 This is the ESDIRK3(2I)5L[2]SA method from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_27.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK32I5L2SA_5_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK32I5L2SA-5-2-3 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK32I5L2SA-5-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_KVAERNO_4_2_3
@@ -2022,12 +2116,13 @@ Both the method and embedding are A-stable; additionally the method is L-stable
      2 & 0.490563388419108 & 0.073570090080892 & 0.4358665215 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_14.png
+.. figure:: /figs/arkode/ARKODE_KVAERNO_4_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Kvaerno-4-2-3 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Kvaerno-4-2-3 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK324L2SA_DIRK_4_2_3
@@ -2060,12 +2155,14 @@ method and embedding are A-stable; additionally the method is L-stable
      2 & \frac{2756255671327}{12835298489170} & -\frac{10771552573575}{22201958757719} & \frac{9247589265047}{10645013368117} & \frac{2193209047091}{5459859503100}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_15.png
+.. figure:: /figs/arkode/ARKODE_ARK324L2SA_DIRK_4_2_3_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the implicit ARK324L2SA-DIRK-4-2-3 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK324L2SA-DIRK-4-2-3 method and
+   its embedding.  The method's stability region is shaded blue with a solid
+   outline; the embedding's stability region is shaded red with a dashed
+   outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK436L2SA_6_3_4
@@ -2082,12 +2179,13 @@ from :cite:p:`KenCarp:16`. Both the method and embedding are A- and L-stable.
 
    Made the default 4th order implicit method
 
-.. figure:: /figs/arkode/stab_region_28.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK436L2SA_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK436L2SA-6-3-4 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK436L2SA-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_CASH_5_2_4
@@ -2115,12 +2213,13 @@ Both the method and embedding are A-stable; additionally the method is L-stable
      2 & 1.05646216107052 & -0.0564621610705236 & 0 & 0 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_16.png
+.. figure:: /figs/arkode/ARKODE_CASH_5_2_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Cash-5-2-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Cash-5-2-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_CASH_5_3_4
@@ -2148,12 +2247,13 @@ Both the method and embedding are A-stable; additionally the method is L-stable
      3 & 0.776691932910 & 0.0297472791484 & -0.0267440239074 & 0.220304811849 & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_17.png
+.. figure:: /figs/arkode/ARKODE_CASH_5_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Cash-5-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Cash-5-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_SDIRK_5_3_4
@@ -2185,12 +2285,13 @@ stability (from :cite:p:`HaWa:91`).
      3 & \frac{59}{48} & -\frac{17}{96} & \frac{225}{32} & -\frac{85}{12} & 0
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_18.png
+.. figure:: /figs/arkode/ARKODE_SDIRK_5_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the SDIRK-5-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the SDIRK-5-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_KVAERNO_5_3_4
@@ -2224,12 +2325,13 @@ Both the method and embedding are A-stable (from :cite:p:`Kva:04`).
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_19.png
+.. figure:: /figs/arkode/ARKODE_KVAERNO_5_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Kvaerno-5-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Kvaerno-5-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK436L2SA_DIRK_6_3_4
@@ -2263,12 +2365,13 @@ Both the method and embedding are A-stable; additionally the method is L-stable
      3 & \frac{4586570599}{29645900160} & 0 & \frac{178811875}{945068544} & \frac{814220225}{1159782912} & -\frac{3700637}{11593932} & \frac{61727}{225920}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_20.png
+.. figure:: /figs/arkode/ARKODE_ARK436L2SA_DIRK_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK436L2SA-DIRK-6-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK436L2SA-DIRK-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK437L2SA_DIRK_7_3_4
@@ -2303,12 +2406,13 @@ implicit portion of the 4th order ARK4(3)7L[2]SA method from
      3 & 0 & 0 & \frac{4469248916618}{8635866897933} & -\frac{621260224600}{4094290005349} & \frac{696572312987}{2942599194819} & \frac{1532940081127}{5565293938103} & \frac{2441}{20000}
    \end{array}
 
-.. figure:: /figs/arkode/stab_region_36.png
+.. figure:: /figs/arkode/ARKODE_ARK437L2SA_DIRK_7_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK437L2SA-DIRK-7-3-4 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK437L2SA-DIRK-7-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK43I6L2SA_6_3_4
@@ -2321,12 +2425,13 @@ Accessible via the string ``"ARKODE_ESDIRK43I6L2SA_6_3_4"`` to
 This is the ESDIRK4(3I)6L[2]SA method from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_29.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK43I6L2SA_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK43I6L2SA-6-3-4 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK43I6L2SA-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_QESDIRK436L2SA_6_3_4
@@ -2339,12 +2444,13 @@ Accessible via the string ``"ARKODE_QESDIRK436L2SA_6_3_4"`` to
 This is the QESDIRK4(3)6L[2]SA method from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_30.png
+.. figure:: /figs/arkode/ARKODE_QESDIRK436L2SA_6_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the QESDIRK436L2SA-6-3-4 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the QESDIRK436L2SA-6-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK437L2SA_7_3_4
@@ -2357,12 +2463,13 @@ Accessible via the string ``"ARKODE_ESDIRK437L2SA_7_3_4"`` to
 This is the ESDIRK4(3)7L[2]SA method from :cite:p:`KenCarp:19b`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_31.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK437L2SA_7_3_4_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK437L2SA-7-3-4 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK437L2SA-7-3-4 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK547L2SA2_7_4_5
@@ -2379,12 +2486,13 @@ from :cite:p:`KenCarp:19b`. Both the method and embedding are A- and L-stable.
 
    Made the default 5th order implicit method
 
-.. figure:: /figs/arkode/stab_region_33.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK547L2SA2_7_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK547L2SA2-7-4-5 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK547L2SA2-7-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_KVAERNO_7_4_5
@@ -2421,12 +2529,13 @@ L-stable (from :cite:p:`Kva:04`).
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_21.png
+.. figure:: /figs/arkode/ARKODE_KVAERNO_7_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the Kvaerno-7-4-5 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the Kvaerno-7-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ARK548L2SA_DIRK_8_4_5
@@ -2468,12 +2577,14 @@ Both the method and embedding are A-stable; additionally the method is L-stable
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_22.png
+.. figure:: /figs/arkode/ARKODE_ARK548L2SA_DIRK_8_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the implicit ARK548L2SA-ESDIRK-8-4-5 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK548L2SA-ESDIRK-8-4-5 method and its
+   embedding.  The method's stability region is shaded blue with a solid
+   outline; the embedding's stability region is shaded red with a dashed
+   outline.
 
 
 .. c:enumerator:: ARKODE_ARK548L2SAb_DIRK_8_4_5
@@ -2517,12 +2628,13 @@ Both the method and embedding are A-stable; additionally the method is L-stable
    The Butcher table is too large to fit in the PDF version of this documentation.  Please see the HTML documentation for the table coefficients.
 
 
-.. figure:: /figs/arkode/stab_region_37.png
+.. figure:: /figs/arkode/ARKODE_ARK548L2SAb_DIRK_8_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ARK548L2SAb-DIRK-8-4-5 method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ARK548L2SAb-DIRK-8-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. c:enumerator:: ARKODE_ESDIRK547L2SA_7_4_5
@@ -2535,12 +2647,13 @@ Accessible via the string ``"ARKODE_ESDIRK547L2SA_7_4_5"`` to
 This is the ESDIRK5(4)7L[2]SA method from :cite:p:`KenCarp:16`.
 Both the method and embedding are A- and L-stable.
 
-.. figure:: /figs/arkode/stab_region_32.png
+.. figure:: /figs/arkode/ARKODE_ESDIRK547L2SA_7_4_5_stab_region.png
    :scale: 50 %
    :align: center
 
-   Linear stability region for the ESDIRK547L2SA-7-4-5 method method.  The method's
-   region is outlined in blue; the embedding's region is in red.
+   Linear stability regions for the ESDIRK547L2SA-7-4-5 method and its embedding.
+   The method's stability region is shaded blue with a solid outline; the
+   embedding's stability region is shaded red with a dashed outline.
 
 
 .. _Butcher.additive:
@@ -2603,9 +2716,9 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | ERK Method ID                                | DIRK Method ID                                | Stages | Embedded Order | Order |
    +==============================================+===============================================+========+================+=======+
-   | :c:enumerator:`ARKODE_ARK2_ERK_3_1_2`        | :c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`        | 3      | 1              | 2*    |
+   | :c:enumerator:`ARKODE_GKC21_ERK_3_1_2`       | :c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`     | 3      | 1              | 2*    |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
-   | :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2`      | :c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`     | 3      | 1              | 2     |
+   | :c:enumerator:`ARKODE_ARS222_ERK_3_1_2`      | :c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`    | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
    | :c:enumerator:`ARKODE_SSP_ERK_3_1_2`         | :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`         | 3      | 1              | 2     |
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
@@ -2625,42 +2738,42 @@ are as follows.
    +----------------------------------------------+-----------------------------------------------+--------+----------------+-------+
 
 
-.. _Butcher.ARKODE_ARK2_3_1_2:
+.. _Butcher.ARKODE_GKC21_3_1_2:
 
-ARKODE_ARK2_3_1_2
-^^^^^^^^^^^^^^^^^
+ARKODE_GKC21_3_1_2
+^^^^^^^^^^^^^^^^^^
 
-.. index:: ARKODE_ARK2_3_1_2 ARK method
+.. index:: ARKODE_GKC21_3_1_2 ARK method
 
-2nd-order method that combines :c:enumerator:`ARKODE_ARK2_ERK_3_1_2` with
-:c:enumerator:`ARKODE_ARK2_DIRK_3_1_2`.  This is the default
+2nd-order method that combines :c:enumerator:`ARKODE_GKC21_ERK_3_1_2` with
+:c:enumerator:`ARKODE_GKC21_ESDIRK_3_1_2`.  This is the default
 second-order ARK method.
 
 .. figure:: /figs/arkode/ARKODE_ARK2_3_1_2_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
-   ``ARKODE_ARK2_3_1_2`` method.  All
+   ``ARKODE_GKC21_3_1_2`` method.  All
    joint stability regions coincide, so only the :math:`90^{\circ}` boundary is visible.
 
 
-.. _Butcher.ARKODE_ASCHER_ARK_3_1_2:
+.. _Butcher.ARKODE_ARS222_ARK_3_1_2:
 
-ARKODE_ASCHER_ARK_3_1_2
+ARKODE_ARS222_ARK_3_1_2
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. index:: ARKODE_ASCHER_ARK_3_1_2 ARK method
+.. index:: ARKODE_ARS222_ARK_3_1_2 ARK method
 
-2nd-order method that combines :c:enumerator:`ARKODE_ASCHER_ERK_3_1_2` with
-:c:enumerator:`ARKODE_ASCHER_SDIRK_3_1_2`.
+2nd-order method that combines :c:enumerator:`ARKODE_ARS222_ERK_3_1_2` with
+:c:enumerator:`ARKODE_ARS222_ESDIRK_3_1_2`.
 
 .. figure:: /figs/arkode/ARKODE_ASCHER_ARK_3_1_2_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
-   ``ARKODE_ASCHER_ARK_3_1_2`` method.
+   ``ARKODE_ARS222_ARK_3_1_2`` method.
    All joint stability regions coincide, so only the :math:`90^{\circ}` boundary
    is visible.
 
@@ -2676,7 +2789,7 @@ ARKODE_SSP_ARK_3_1_2
 :c:enumerator:`ARKODE_SSP_DIRK_3_1_2`.
 
 .. figure:: /figs/arkode/ARKODE_SSP_ARK_3_1_2_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2694,7 +2807,7 @@ ARKODE_SSP_LSPUM_ARK_3_1_2
 :c:enumerator:`ARKODE_SSP_LSPUM_SDIRK_3_1_2`.
 
 .. figure:: /figs/arkode/ARKODE_SSP_LSPUM_ARK_3_1_2_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2713,7 +2826,7 @@ with :c:enumerator:`ARKODE_ARK324L2SA_DIRK_4_2_3`.
 This is the default third-order ARK method.
 
 .. figure:: /figs/arkode/ARKODE_ARK324L2SA_4_2_3_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2733,7 +2846,7 @@ ARKODE_SSP_ARK_4_2_3
 :c:enumerator:`ARKODE_ESDIRK_4_2_3`.
 
 .. figure:: /figs/arkode/ARKODE_SSP_ARK_4_2_3_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2741,7 +2854,7 @@ ARKODE_SSP_ARK_4_2_3
 
 
 .. figure:: /figs/arkode/ARKODE_SSP_ARK_4_2_3_joint_stab_region_rho1.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,1}` for the
@@ -2762,7 +2875,7 @@ ARKODE_ARK436L2SA_ARK_6_3_4
 This is the default fourth-order ARK method.
 
 .. figure:: /figs/arkode/ARKODE_ARK436L2SA_6_3_4_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2780,7 +2893,7 @@ ARKODE_ARK437L2SA_ARK_7_3_4
 :c:enumerator:`ARKODE_ARK437L2SA_DIRK_7_3_4`.
 
 .. figure:: /figs/arkode/ARKODE_ARK437L2SA_7_3_4_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2799,7 +2912,7 @@ ARKODE_ARK548L2SA_ARK_8_4_5
 This is the default fifth-order ARK method.
 
 .. figure:: /figs/arkode/ARKODE_ARK548L2SA_8_4_5_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the
@@ -2817,7 +2930,7 @@ ARKODE_ARK548L2SAb_ARK_8_4_5
 :c:enumerator:`ARKODE_ARK548L2SAb_DIRK_8_4_5`.
 
 .. figure:: /figs/arkode/ARKODE_ARK548L2SAb_8_4_5_joint_stab_region.png
-   :width: 50 %
+   :scale: 50 %
    :align: center
 
    Joint linear stability regions :math:`\mathcal{J}_{\theta,10^8}` for the

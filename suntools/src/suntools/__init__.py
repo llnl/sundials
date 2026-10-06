@@ -22,5 +22,7 @@ Right now it consists of the following modules:
 - `table`: this module has functions for parsing stats output by SUNDIALS
            integrators in the table format.
 - `csv`: this module has functions for parsing stats output by SUNDIALS
-         integrators in the CSV format.
+          integrators in the CSV format.
+- `rk`: this namespace contains Runge-Kutta table parsing, stability, and
+       plotting utilities.
 """

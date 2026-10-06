@@ -126,14 +126,10 @@ def main():
             etf_color = s_color
             sf_color = s_color
 
-        if args.labels:
-            s_label = f"{args.labels[idx]} successful"
-            etf_label = f"{args.labels[idx]} error test failed"
-            sf_label = f"{args.labels[idx]} solver failed"
-        else:
-            s_label = "successful"
-            etf_label = "error test failed"
-            sf_label = "solver failed"
+        label_prefix = f"{args.labels[idx]} " if args.labels else ""
+        s_label = f"{label_prefix}successful ({len(steps_s)})"
+        etf_label = f"{label_prefix}error test failed ({len(steps_etf)})"
+        sf_label = f"{label_prefix}solver failed ({len(steps_sf)})"
 
         # plot successful data
         if args.scatter:

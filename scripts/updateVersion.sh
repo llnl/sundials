@@ -22,7 +22,7 @@
 # development releases the label string is of the form "-dev.#" and for full
 # releases the label string is "".
 sun_major=${1:-7}
-sun_minor=${2:-8}
+sun_minor=${2:-9}
 sun_patch=${3:-0}
 sun_label=${4:-""}
 month=${5:-$(date +"%b")}
@@ -193,9 +193,12 @@ sedi() {
 }
 
 # ------------------------------------------------------------------------------
-# Update the pyproject.toml file
+# Update pyproject.toml files
 # ------------------------------------------------------------------------------
 fn="../pyproject.toml"
+sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
+
+fn="../suntools/pyproject.toml"
 sedi "/^version =/ s/version = \".*\"/version = \"${sun_ver}\"/" $fn
 
 # ------------------------------------------------------------------------------
