@@ -37,6 +37,67 @@ namespace sundials4py {
 
 void bind_sundomeigestimator(nb::module_& m)
 {
+  nb::class_<CustomSUNDomEigEstimator>(m, "CustomSUNDomEigEstimator",
+                                       nb::dynamic_attr())
+    .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>>(),
+         nb::arg("sunctx"))
+    .def("_is_materialized", &CustomSUNDomEigEstimator::_is_materialized)
+    .def_prop_ro("sunctx", &CustomSUNDomEigEstimator::sunctx,
+                 nb::sig("def sunctx(self) -> object"))
+    .def("set_atimes", [](CustomSUNDomEigEstimator&, nb::object)
+         { return CustomSUNDomEigEstimator::base_method_status("set_atimes"); })
+    .def("set_rhs", [](CustomSUNDomEigEstimator&, nb::object)
+         { return CustomSUNDomEigEstimator::base_method_status("set_rhs"); })
+    .def("set_rhs_linearization_point",
+         [](CustomSUNDomEigEstimator&, sunrealtype, N_Vector)
+         {
+           return CustomSUNDomEigEstimator::base_method_status(
+             "set_rhs_linearization_point");
+         })
+    .def("set_options", [](CustomSUNDomEigEstimator&, const std::string&,
+                           const std::string&, const std::vector<std::string>&)
+         { return CustomSUNDomEigEstimator::base_method_status("set_options"); })
+    .def("set_max_iters",
+         [](CustomSUNDomEigEstimator&, long int) {
+           return CustomSUNDomEigEstimator::base_method_status("set_max_iters");
+         })
+    .def("set_num_preprocess_iters",
+         [](CustomSUNDomEigEstimator&, int)
+         {
+           return CustomSUNDomEigEstimator::base_method_status(
+             "set_num_preprocess_iters");
+         })
+    .def("set_rel_tol", [](CustomSUNDomEigEstimator&, sunrealtype)
+         { return CustomSUNDomEigEstimator::base_method_status("set_rel_tol"); })
+    .def("set_initial_guess",
+         [](CustomSUNDomEigEstimator&, N_Vector) {
+           return CustomSUNDomEigEstimator::base_method_status(
+             "set_initial_guess");
+         })
+    .def("initialize", [](CustomSUNDomEigEstimator&)
+         { return CustomSUNDomEigEstimator::base_method_status("initialize"); })
+    .def("estimate", [](CustomSUNDomEigEstimator&)
+         { return CustomSUNDomEigEstimator::base_method_status("estimate"); })
+    .def("get_res", [](CustomSUNDomEigEstimator&)
+         { return CustomSUNDomEigEstimator::base_method_status("get_res"); })
+    .def("get_num_iters",
+         [](CustomSUNDomEigEstimator&) {
+           return CustomSUNDomEigEstimator::base_method_status("get_num_iters");
+         })
+    .def("get_num_rhs_evals",
+         [](CustomSUNDomEigEstimator&) {
+           return CustomSUNDomEigEstimator::base_method_status(
+             "get_num_rhs_evals");
+         })
+    .def("get_num_atimes_calls",
+         [](CustomSUNDomEigEstimator&)
+         {
+           return CustomSUNDomEigEstimator::base_method_status(
+             "get_num_atimes_calls");
+         })
+    .def("write", [](CustomSUNDomEigEstimator&, std::uintptr_t)
+         { return CustomSUNDomEigEstimator::base_method_status("write"); });
+
 #include "sundials_domeigestimator_generated.hpp"
 
   m.def(

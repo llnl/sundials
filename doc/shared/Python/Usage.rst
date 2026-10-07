@@ -430,9 +430,9 @@ Implementing SUNDIALS Objects in Python
 
 SUNDIALS is designed so that applications may supply their own implementations of
 several of its class interfaces. sundials4py exposes those interfaces for
-subclassing directly in Python, so that a matrix, linear solver, nonlinear
-solver, or time step controller written in Python can be handed to any SUNDIALS
-package exactly as a C implementation would be:
+subclassing directly in Python, so that a vector, matrix, solver, dominant
+eigenvalue estimator, or time step controller written in Python can be handed
+to any SUNDIALS package exactly as a C implementation would be:
 
 .. list-table::
    :header-rows: 1
@@ -444,12 +444,18 @@ package exactly as a C implementation would be:
    * - ``CustomSUNMatrix``
      - :c:type:`SUNMatrix`
      - ``zero``
+   * - ``CustomNVector``
+     - :c:type:`N_Vector`
+     - ``clone``
    * - ``CustomSUNLinearSolver``
      - :c:type:`SUNLinearSolver`
      - ``solve``
    * - ``CustomSUNNonlinearSolver``
      - :c:type:`SUNNonlinearSolver`
      - ``solve``
+   * - ``CustomSUNDomEigEstimator``
+     - :c:type:`SUNDomEigEstimator`
+     - ``estimate``
    * - ``CustomSUNHController``
      - :c:type:`SUNAdaptController` (``SUN_ADAPTCONTROLLER_H``)
      - ``estimate_step``
@@ -562,8 +568,67 @@ objects: the native handle holds only a weak reference back to the Python
 object, so the application must keep the Python object alive for as long as
 SUNDIALS may use it. The one exception is a handle that SUNDIALS creates and
 owns itself; those hold a strong
-reference, so a cloned matrix keeps its Python implementation alive until
-SUNDIALS destroys it.
+reference, so a cloned matrix or vector keeps its Python implementation alive
+until SUNDIALS destroys it.
+
+
+.. _Python.Usage.CustomObjects.NVector:
+
+CustomNVector
+^^^^^^^^^^^^^
+
+``CustomNVector(sunctx)`` implements the :c:type:`N_Vector` class. ``clone`` is
+universally required. Override the remaining operations required by the
+consuming package; the package-specific N_Vector chapters list those
+requirements. The standard vector operations are always installed in the
+native operation table so that a missing Python override reports an exception
+instead of dereferencing a null function pointer.
+
+The method names are the C operation names in snake case without the ``N_V``
+prefix. Output vectors are represented by ``self``. For example,
+``N_VLinearSum(a, x, b, y, z)`` invokes ``z.linear_sum(a, x, b, y)``, and
+``N_VScale(c, x, z)`` invokes ``z.scale(c, x)``. Reduction methods such as
+``dot_prod(y)``, ``max_norm()``, and ``wrms_norm(w)`` return a scalar;
+``inv_test(x)`` and ``constr_mask(c, m)`` return a ``sunbooleantype``.
+
+``get_length()`` and the standard arithmetic and reduction methods are needed
+by most integrators. ``clone_empty()``, ``get_local_length()``,
+``get_array_pointer()``, ``get_device_array_pointer()``, their corresponding
+setters, ``get_communicator()``, and ``space()`` are optional. When omitted,
+``clone_empty`` falls back to ``clone`` and ``get_local_length`` falls back to
+``get_length``. Array-pointer methods exchange integer addresses because the C
+interface uses raw pointers. A host-backed implementation may return
+``numpy_array.ctypes.data`` from ``get_array_pointer()``; this also enables
+``N_VGetNumpyArray`` for that custom vector.
+
+The optional fused, vector-array, local-reduction, buffer-exchange, and print
+operations are also available under their snake-case names (for example,
+``linear_combination``, ``wrms_norm_vector_array``, ``dot_prod_local``, and
+``buf_pack``). They are installed only when overridden, preserving the generic
+N_Vector fallbacks for fused and vector-array operations.
+
+
+.. _Python.Usage.CustomObjects.SUNDomEigEstimator:
+
+CustomSUNDomEigEstimator
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+``CustomSUNDomEigEstimator(sunctx)`` implements
+:c:type:`SUNDomEigEstimator`. Only ``estimate()`` is required; it returns
+``(status, lambda_real, lambda_imag)``. Optional methods mirror the generic C
+interface: ``initialize()``, ``set_rhs_linearization_point(t, v)``,
+``set_max_iters(value)``, ``set_num_preprocess_iters(value)``,
+``set_rel_tol(value)``, ``set_initial_guess(q)``, and
+``set_options(id, file_name, args)`` return status codes. Statistic getters
+return ``(status, value)`` and are named ``get_res()``, ``get_num_iters()``,
+``get_num_rhs_evals()``, and ``get_num_atimes_calls()``.
+The optional ``write(file_address)`` method receives the C ``FILE*`` as an
+integer address.
+
+The ``set_atimes(fn)`` and ``set_rhs(fn)`` methods receive ordinary Python
+callables for the package callbacks. Their signatures are ``fn(x, y)`` and
+``fn(t, y, ydot)`` respectively. As with solver callback adapters, replacing or
+removing one invalidates the previously supplied callable.
 
 
 .. _Python.Usage.CustomObjects.SUNMatrix:

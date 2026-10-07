@@ -183,7 +183,8 @@ inline sundials4py::Array1d host_array(N_Vector v)
   {
     throw sundials4py::error_returned("Failed to get array pointer");
   }
-  auto owner = nanobind::find(v);
+  nanobind::object owner = sundials4py::CustomNVector::_python_object_for(v);
+  if (!owner.is_valid()) { owner = nanobind::find(v); }
   size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
   return sundials4py::Array1d(ptr, 1, shape, owner);
 }

@@ -17,7 +17,7 @@
  *------------------------------------------------------------------------------
  * Umbrella header included by every sundials4py translation unit.
  *
- * It supplies the basic types and exceptions, the four Python-subclassable
+ * It supplies the basic types and exceptions, the Python-subclassable
  * "custom" object base classes, and the nanobind type casters that make those
  * subclasses acceptable wherever a raw SUNDIALS pointer is expected. Because the
  * casters must be visible in every translation unit that binds a SUNDIALS
@@ -39,12 +39,14 @@
 
 /* The custom object base classes themselves. */
 #include "sundials_adaptcontroller_custom.hpp"
+#include "sundials_domeigestimator_custom.hpp"
 #include "sundials_linearsolver_custom.hpp"
 #include "sundials_matrix_custom.hpp"
 #include "sundials_nonlinearsolver_custom.hpp"
+#include "sundials_nvector_custom.hpp"
 
-/* type_caster specializations for _generic_SUNMatrix and friends. Must come last,
-   since it names all four classes above. */
+/* Type-caster specializations for the SUNDIALS handles. Must come last, since
+   it names all the classes above. */
 #include "sundials4py_custom_casters.hpp"
 
 #endif // SUNDIALS4PY_TYPES_HPP

@@ -18,7 +18,7 @@
  * generated bindings expect a raw SUNDIALS pointer.
  *
  * Every sundials4py binding signature names the pointee type (_generic_SUNMatrix
- * and friends), so specializing type_caster for those four types is enough to
+ * and friends), so specializing type_caster for those types is enough to
  * cover the entire generated API without touching a single wrapper. This header
  * must be included by every translation unit that binds such a signature; if one
  * translation unit sees the caster and another does not, the two disagree about
@@ -35,9 +35,11 @@
 #include <utility>
 
 #include "sundials_adaptcontroller_custom.hpp"
+#include "sundials_domeigestimator_custom.hpp"
 #include "sundials_linearsolver_custom.hpp"
 #include "sundials_matrix_custom.hpp"
 #include "sundials_nonlinearsolver_custom.hpp"
+#include "sundials_nvector_custom.hpp"
 
 namespace nanobind::detail {
 
@@ -48,7 +50,7 @@ namespace nanobind::detail {
  * CUSTOM_CLASS is the sundials4py base class Python subclasses inherit from, and
  * WHAT names the family in the fallback error message.
  *
- * The bodies of all four are identical apart from those three tokens, so they
+ * The bodies are identical apart from those three tokens, so they
  * are generated rather than copied: a divergence between them would be a subtle
  * behavioral inconsistency between object families.
  *
@@ -170,6 +172,11 @@ SUNDIALS4PY_DEFINE_CUSTOM_CASTER(_generic_SUNNonlinearSolver,
 
 SUNDIALS4PY_DEFINE_CUSTOM_CASTER(_generic_SUNAdaptController,
                                  CustomSUNAdaptController, "SUNAdaptController")
+
+SUNDIALS4PY_DEFINE_CUSTOM_CASTER(SUNDomEigEstimator_, CustomSUNDomEigEstimator,
+                                 "SUNDomEigEstimator")
+
+SUNDIALS4PY_DEFINE_CUSTOM_CASTER(_generic_N_Vector, CustomNVector, "N_Vector")
 
 #undef SUNDIALS4PY_DEFINE_CUSTOM_CASTER
 

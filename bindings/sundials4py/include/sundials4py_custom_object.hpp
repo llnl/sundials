@@ -287,6 +287,7 @@ struct NativeCallbackState : NativeCallbackStateBase
 enum class NativeCallbackSlot
 {
   atimes,
+  rhs,
   psetup,
   psolve,
   sysfn,
@@ -538,7 +539,7 @@ nb::object custom_content_impl(ContentT* content, const char* label)
 
 /*
  * Destroy custom content, skipping the work entirely if Python is already gone.
- * Centralizes the interpreter-shutdown policy for all four families.
+ * Centralizes the interpreter-shutdown policy for all custom object families.
  */
 template<typename ContentT>
 void custom_content_destroy(ContentT*& content)

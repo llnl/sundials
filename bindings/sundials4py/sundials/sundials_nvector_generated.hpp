@@ -43,40 +43,6 @@ auto pyClass_generic_N_Vector =
 
 m.def("N_VGetVectorID", N_VGetVectorID, nb::arg("w"));
 
-m.def(
-  "N_VClone",
-  [](N_Vector w) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-  {
-    auto N_VClone_adapt_return_type_to_shared_ptr =
-      [](N_Vector w) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    {
-      auto lambda_result = N_VClone(w);
-
-      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
-        lambda_result);
-    };
-
-    return N_VClone_adapt_return_type_to_shared_ptr(w);
-  },
-  nb::arg("w"));
-
-m.def(
-  "N_VCloneEmpty",
-  [](N_Vector w) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-  {
-    auto N_VCloneEmpty_adapt_return_type_to_shared_ptr =
-      [](N_Vector w) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    {
-      auto lambda_result = N_VCloneEmpty(w);
-
-      return our_make_shared<std::remove_pointer_t<N_Vector>, N_VectorDeleter>(
-        lambda_result);
-    };
-
-    return N_VCloneEmpty_adapt_return_type_to_shared_ptr(w);
-  },
-  nb::arg("w"));
-
 m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
 
 m.def("N_VGetLength", N_VGetLength, nb::arg("v"));

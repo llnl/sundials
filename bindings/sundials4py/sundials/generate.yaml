@@ -135,6 +135,9 @@ modules:
     headers:
     - ../../include/sundials/sundials_nvector.h
     fn_exclude_by_name__regex:
+    # Custom vectors return their Python implementation from clone operations.
+    - "^N_VClone$"
+    - "^N_VCloneEmpty$"
     # we have to have custom handling for the following to get the proper dimensions set for the numpy array
     - "^N_VGetArrayPointer$"
     - "^N_VSetArrayPointer$"
