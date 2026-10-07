@@ -459,6 +459,7 @@ void* PDAEStepCreate(PDAEStepComponentResFn component_res_fn,
     ARKodeFree((void**)&ark_mem);
     return NULL;
   }
+  N_VScale(1, yp0, step_mem->yp);
   step_mem->partitions = partitions;
   step_mem->order      = DEFAULT_ORDER;
   step_mem->maxcor     = DEFAULT_MAX_COR;

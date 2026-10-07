@@ -43,7 +43,7 @@ extern "C" {
  */
 typedef int (*PDAEStepComponentResFn)(int partition, sunrealtype t, N_Vector y,
                                       N_Vector w, N_Vector yp, N_Vector res,
-                                      void* user_data);
+                                      void* user_data); // [y_d' - f(y,w); g(y,w)]
 
 // TODO(SBR): Could add tmp vectors and f/res if needed
 typedef int (*PDAEStepLsComponentJacFn)(int partition, sunrealtype t,

@@ -50,11 +50,13 @@ if(SUNDIALS_ENABLE_CVODE)
 endif()
 
 if(SUNDIALS_ENABLE_IDA)
+  list(APPEND ARKODE_examples "ark_advection_pulse.cpp\;\;develop")
   list(APPEND ARKODE_examples "ark_inverter_chain_ida.cpp\;\;develop")
 endif()
 
 # Auxiliary files to install
-set(ARKODE_extras plot_heat2D.py plot_sol.py)
+set(ARKODE_extras
+    plot_advection_pulse_solution_error.py plot_heat2D.py plot_sol.py)
 
 # Add the build and install targets for each example
 foreach(example_tuple ${ARKODE_examples})
@@ -85,7 +87,8 @@ foreach(example_tuple ${ARKODE_examples})
       target_link_libraries(${example_target} sundials_cvode)
     endif()
 
-    if("${example_target}" STREQUAL "ark_inverter_chain_ida")
+    if("${example_target}" STREQUAL "ark_inverter_chain_ida"
+       OR "${example_target}" STREQUAL "ark_advection_pulse")
       target_link_libraries(${example_target} sundials_ida sundials_nvecmanyvector
                             sundials_sunlinsolspgmr
                             sundials_sunnonlinsolnewton)

@@ -1,5 +1,6 @@
 List of serial ARKODE C++ examples
 
+  ark_advection_pulse : 1-D advection/wave equation with a boundary pulse
   ark_analytic_sys : simple stiff, linear, ODE system example
   ark_heat2D       : 2-D heat equation
   ark_inverter_chain_ida : inverter chain baseline solved with IDA
