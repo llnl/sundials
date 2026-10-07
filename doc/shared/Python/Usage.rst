@@ -429,7 +429,7 @@ Implementing SUNDIALS Objects in Python
 ---------------------------------------
 
 SUNDIALS is designed so that applications may supply their own implementations of
-several of its class interfaces. sundials4py exposes four of those interfaces for
+several of its class interfaces. sundials4py exposes those interfaces for
 subclassing directly in Python, so that a matrix, linear solver, nonlinear
 solver, or time step controller written in Python can be handed to any SUNDIALS
 package exactly as a C implementation would be:
@@ -443,7 +443,7 @@ package exactly as a C implementation would be:
      - Required method(s)
    * - ``CustomSUNMatrix``
      - :c:type:`SUNMatrix`
-     - ``clone``, ``zero``, ``copy``, ``scaleadd``, ``scaleaddi``, ``matvec``
+     - ``zero``
    * - ``CustomSUNLinearSolver``
      - :c:type:`SUNLinearSolver`
      - ``solve``
@@ -457,7 +457,7 @@ package exactly as a C implementation would be:
      - :c:type:`SUNAdaptController` (``SUN_ADAPTCONTROLLER_MRI_H_TOL``)
      - ``estimate_step_tol``
 
-All six classes are provided by the ``sundials4py.core`` module.
+All classes are provided by the ``sundials4py.core`` module.
 ``CustomSUNHController`` and ``CustomSUNMRIController`` share the base class
 ``CustomSUNAdaptController``, which is not intended to be subclassed directly.
 
@@ -543,21 +543,9 @@ conventions described in :ref:`Python.Usage.Differences`:
   the data with ``N_VGetNumpyArray``, or express the operation with the ``N_V*``
   functions, rather than assuming a particular vector implementation.
 
-* Methods that receive another object of the *same* class -- such as
-  ``copy(dst)`` and ``scaleadd(c, other)`` on a matrix -- receive the Python
-  object, so your own attributes are available on it.
-
-.. warning::
-
-   Operations that receive an object of a *different* class receive it as an
-   opaque native handle, not as the Python object behind it. In particular, the
-   ``A`` argument to a linear solver's ``setup(A)`` and ``solve(A, x, b, tol)``
-   is a native :c:type:`SUNMatrix`, even when the matrix is a
-   ``CustomSUNMatrix`` subclass. A Python linear solver should therefore be
-   given a reference to its matrix when it is constructed, and read the entries
-   through that reference. This is not usually a restriction in practice, since
-   a matrix and the linear solver that factors it must already agree on how the
-   entries are stored, and so are written together.
+* Methods that receive another custom object receive the original Python
+  subclass when the native handle is borrowed. For example, a linear solver's
+  ``setup(A)`` can access attributes on a ``CustomSUNMatrix`` directly.
 
 .. warning::
 
@@ -573,7 +561,7 @@ The lifetime rules in :ref:`Python.Usage.Differences.Lifetimes` apply to these
 objects: the native handle holds only a weak reference back to the Python
 object, so the application must keep the Python object alive for as long as
 SUNDIALS may use it. The one exception is a handle that SUNDIALS creates and
-owns itself, such as the result of :c:func:`SUNMatClone`; those hold a strong
+owns itself; those hold a strong
 reference, so a cloned matrix keeps its Python implementation alive until
 SUNDIALS destroys it.
 
@@ -583,11 +571,11 @@ SUNDIALS destroys it.
 CustomSUNMatrix
 ^^^^^^^^^^^^^^^
 
-``CustomSUNMatrix(sunctx)`` implements the :c:type:`SUNMatrix` class. All six
-operations below are required, since a calling package has no way to ask which
-of them are missing. KINSOL uses only ``clone`` and ``zero``, an implicit ODE
-integrator additionally needs ``scaleaddi`` to form :math:`I - \gamma J`, and an
-iterative linear solver needs ``matvec``.
+``CustomSUNMatrix(sunctx)`` implements the :c:type:`SUNMatrix` class. Only
+``zero`` is universally required. Override the other operations needed by the
+consuming package; consult the :c:type:`SUNMatrix` documentation for those
+requirements. For example, an implicit ODE integrator may need ``scaleaddi`` to
+form :math:`I - \gamma J`, while an iterative linear solver needs ``matvec``.
 
 .. list-table::
    :header-rows: 1
@@ -599,7 +587,8 @@ iterative linear solver needs ``matvec``.
      - Return a new, empty matrix with the same shape and structure as ``self``,
        *not* a copy of the entries. Implements :c:func:`SUNMatClone`.
    * - ``zero()``
-     - Set every entry of ``self`` to zero. Implements :c:func:`SUNMatZero`.
+     - **Required.** Set every entry of ``self`` to zero. Implements
+       :c:func:`SUNMatZero`.
    * - ``copy(dst)``
      - Copy ``self`` into the matrix ``dst``, which is a Python object of your
        own class. Implements :c:func:`SUNMatCopy`.
@@ -613,14 +602,6 @@ iterative linear solver needs ``matvec``.
      - Compute ``y = self*x`` for ``N_Vector`` arguments ``x`` and ``y``.
        Implements :c:func:`SUNMatMatvec`.
 
-The following are optional:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 60
-
-   * - Method
-     - Description
    * - ``matvecsetup()``
      - Perform any setup needed before a sequence of ``matvec`` calls.
        Implements :c:func:`SUNMatMatvecSetup`.
@@ -651,9 +632,8 @@ Only ``solve`` is required.
    * - Method
      - Description
    * - ``solve(A, x, b, tol)``
-     - **Required.** Solve ``A*x = b`` for the ``N_Vector`` ``x``. ``A`` is an
-       opaque native :c:type:`SUNMatrix` handle (see the warning in
-       :ref:`Python.Usage.CustomObjects.Conventions`). Implements
+     - **Required.** Solve ``A*x = b`` for the ``N_Vector`` ``x``. A custom
+       ``A`` is passed as its original Python subclass. Implements
        :c:func:`SUNLinSolSolve`.
    * - ``initialize()``
      - Perform any setup that must happen after construction but before first
@@ -678,6 +658,9 @@ Only ``solve`` is required.
      - Note whether ``x`` will arrive as the zero vector, allowing the initial
        matrix-vector product to be skipped. Implements
        :c:func:`SUNLinSolSetZeroGuess`.
+   * - ``set_options(id, file_name, args)``
+     - Handle runtime configuration options. Implements
+       :c:func:`SUNLinSolSetOptions`.
    * - ``num_iters()``
      - Return the number of iterations used in the last solve. Implements
        :c:func:`SUNLinSolNumIters`.
@@ -738,12 +721,11 @@ Only ``solve`` is required.
      - Handle runtime configuration options. Implements
        :c:func:`SUNNonlinSolSetOptions`.
 
-A nonlinear solver is unusual among these interfaces in that it does not
-receive the functions it needs as constructor arguments: the calling package
-*installs* them by calling setter operations, once, before the first solve. Each
-setter receives an ordinary Python callable, so SUNDIALS' function and data
-pointers never appear in the subclass's interface. Store the callable and use it
-from ``solve``.
+The calling package will provide the nonlinear solver with callback functions
+through setter operations before the first solve. Each setter receives an
+ordinary Python callable. Store the callables and use them from ``setup`` or
+``solve`` as needed. Linear solvers similarly receive package callbacks through
+``set_atimes`` and ``set_preconditioner`` when their algorithms require them.
 
 .. list-table::
    :header-rows: 1

@@ -68,13 +68,8 @@ class DenseArrayMatrix(CustomSUNMatrix):
 
 class NumpyLinearSolver(CustomSUNLinearSolver):
     # A direct linear solver that factors the matrix with NumPy.
-    #
-    # setup() and solve() receive the SUNMatrix as an opaque native handle, not
-    # as the Python object behind it, so the matrix to read is supplied at
-    # construction. This is the normal pattern for a Python implementation: the
-    # solver and the matrix it is paired with are written together.
     def __init__(self, matrix, sunctx):
-        self.matrix = matrix
+        self.shape = matrix.data.shape
         self.factor = None
         self.calls = {"initialize": 0, "setup": 0, "solve": 0}
         super().__init__(sunctx, SUNLINEARSOLVER_DIRECT)
@@ -85,8 +80,9 @@ class NumpyLinearSolver(CustomSUNLinearSolver):
 
     def setup(self, A):
         self.calls["setup"] += 1
+        assert A.data.shape == self.shape
         # Copy, because the package is free to overwrite the matrix afterwards.
-        self.factor = self.matrix.data.copy()
+        self.factor = A.data.copy()
         return SUN_SUCCESS
 
     def solve(self, A, x, b, tol):
@@ -251,12 +247,12 @@ def test_custom_matrix_and_linear_solver_through_kinsol(sunctx):
     LS = NumpyLinearSolver(J, sunctx)
 
     def jac_fn(uvec, fuvec, Jmat, _, tmp1, tmp2):
-        # Analytic Jacobian of f(u) = g(u) - u, written into the Python matrix.
-        # Jmat is the same matrix as J, but arrives as an opaque native handle.
+        # Analytic Jacobian of f(u) = g(u) - u.
+        assert Jmat is J
         x, y, z = N_VGetArrayPointer(uvec)
         r = np.sqrt(x * x + np.sin(z) + 1.06)
         e = np.exp(-x * (y - 1.0))
-        J.data[:] = [
+        Jmat.data[:] = [
             [
                 -1.0,
                 -(1.0 / 3.0) * z * np.sin((y - 1.0) * z),
@@ -362,7 +358,7 @@ def test_custom_adapt_controller_through_arkode(sunctx):
 def test_custom_adapt_controller_survives_repeated_evolutions(sunctx):
     # Purpose:
     # Custom adapt controller survives repeated evolutions.
-    # 11.3: an H controller must keep working across many ARKODE steps and a
+    # An H controller must keep working across many ARKODE steps and a
     # reset, which is where a stale weak reference or a released handle shows up.
     problem = AnalyticODE(lamb=-10.0)
     y = N_VNew_Serial(1, sunctx)
@@ -378,6 +374,12 @@ def test_custom_adapt_controller_survives_repeated_evolutions(sunctx):
         status, t = ARKodeEvolve(ark.get(), tout, y, ARK_NORMAL)
         assert status == ARK_SUCCESS
         assert t == pytest.approx(tout)
+
+    problem.set_init_cond(y)
+    assert ARKodeReset(ark.get(), 0.0, y) == ARK_SUCCESS
+    status, t = ARKodeEvolve(ark.get(), 1.0, y, ARK_NORMAL)
+    assert status == ARK_SUCCESS
+    assert t == pytest.approx(1.0)
 
     expected = N_VNew_Serial(1, sunctx)
     problem.solution(None, expected, 1.0)

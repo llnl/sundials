@@ -22,25 +22,19 @@
 #    dy/dt = (t+1)*exp(-y),    y(0) = 0
 #
 # whose exact solution is y(t) = log(t^2/2 + t + 1). It is non-stiff, so it runs
-# with an explicit Runge-Kutta method and needs no linear or nonlinear solver --
-# which leaves the controller as the only Python-implemented object in the loop.
-# The solution's curvature falls off as t grows, so a working controller visibly
-# lengthens its steps over the run; that is what the printed step sizes show.
+# with an explicit Runge-Kutta method. The solution's curvature falls off as t
+# grows, so a controller should increase the step sizes over the run.
 #
 # WHAT A CONTROLLER IS ASKED TO DO
 #
 # After every step attempt, ARKODE forms a scaled error measure `dsm` from the
 # embedded error estimate: dsm ~ 1 means the step just met the requested
 # tolerance, dsm > 1 means it failed the error test and will be retried, and
-# dsm < 1 means it was more accurate than needed. ARKODE hands that to your
-# controller and asks for the step size to try next. Nothing else about the
-# integrator is exposed -- a controller sees only (h, p, dsm), which is why it can
-# be written in a few lines of Python.
+# dsm < 1 means it was more accurate than needed. ARKODE passes this estimate to
+# the controller which returns the step size to try next.
 #
-# You subclass CustomSUNHController and override estimate_step(), which is the
-# only required method. Everything else is optional: override a method and
-# SUNDIALS will call it, leave it alone and SUNDIALS behaves as though the
-# operation were absent, exactly as for a controller written in C.
+# Create a subclass of CustomSUNHController and override estimate_step(). All
+# other functions are optional.
 #
 # For a multirate (MRIStep) controller, subclass CustomSUNMRIController instead
 # and override estimate_step_tol(H, tolfac, P, DSM, dsm), which returns both a
@@ -64,8 +58,8 @@ class NonlinearODE:
     """dy/dt = (t+1)*exp(-y), with y(t) = log(t^2/2 + t + 1)."""
 
     def rhs(self, t, yvec, ydotvec, user_data):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
         ydot[0] = (t + 1.0) * np.exp(-y[0])
         return 0
 
@@ -74,26 +68,12 @@ class NonlinearODE:
 
 
 class MyController(CustomSUNHController):
-    """A SUNAdaptController implemented in Python.
-
-    Reference implementations worth comparing against:
-      src/sunadaptcontroller/soderlind/sunadaptcontroller_soderlind.c
-        (the I, PI, PID, and Soderlind controllers, all one family)
-      src/sunadaptcontroller/imexgus/sunadaptcontroller_imexgus.c
-    """
+    """A SUNAdaptController implemented in Python."""
 
     def __init__(self, sunctx, safety=0.9):
-        # A pure I-controller needs no history at all -- each new step size
-        # depends only on the error measure from the step just taken. A PI or
-        # PID controller would keep the error measures from the previous one
-        # or two steps here instead, which is exactly the state reset() below
-        # would have to clear.
+        # Step size safety and error bias factors for an I-controller.
         self.safety = safety
         self.bias = 1.0
-
-        # Recorded so main() can show what the controller was asked and what it
-        # answered. A real controller would not need this.
-        self.history = []
 
         # The base constructor takes only the context, and must be called after
         # your own state is in place: it makes the object convertible to a native
@@ -121,27 +101,10 @@ class MyController(CustomSUNHController):
         # Asymptotically the error scales like h^(p+1), so scaling h by
         # e^(-1/(p+1)) targets dsm == 1. The safety factor keeps the next
         # attempt on the accurate side of that target.
-        #
-        # A PI or PID controller replaces this single exponent with a product
-        # of powers of the last few error measures; see the Soderlind source
-        # named above for the general form and for how to handle the first
-        # step, when no history exists yet.
         hnew = self.safety * h * e ** (-1.0 / (p + 1))
-
-        self.history.append((h, p, dsm, hnew))
         return SUN_SUCCESS, hnew
 
     # -- optional operations -------------------------------------------------
-
-    def reset(self):
-        # Discard accumulated history. ARKODE calls this when the integration is
-        # reinitialized, so anything remembered from before is no longer about
-        # the problem being solved. A controller that keeps history and does not
-        # implement reset() will make bad predictions after a reset. An
-        # I-controller has no such history to discard; this only clears the
-        # bookkeeping this example keeps for its own printout.
-        self.history.clear()
-        return SUN_SUCCESS
 
     def set_defaults(self):
         # Restore the parameters to their default values, undoing any tuning.
@@ -149,18 +112,9 @@ class MyController(CustomSUNHController):
         return SUN_SUCCESS
 
     def set_error_bias(self, bias):
-        # ARKODE applies this multiplier to dsm before the controller sees it,
-        # letting a user aim below the requested tolerance. Store it and use it
-        # in estimate_step(); ARKODE will not apply it for you.
+        # An error multiplier letting a user aim below the requested tolerance.
+        # Store it and use it in estimate_step(); ARKODE will not apply it for you.
         self.bias = bias
-        return SUN_SUCCESS
-
-    def update_h(self, h, dsm):
-        # Called after a step attempt is ACCEPTED, reporting the step and error
-        # that were kept. This is where a controller with history records it --
-        # estimate_step() is also called for rejected attempts, so accumulating
-        # history there would fold discarded steps into the prediction. An
-        # I-controller needs no such record, so there is nothing to do here.
         return SUN_SUCCESS
 
 
@@ -175,7 +129,7 @@ def main():
     problem = NonlinearODE()
 
     y = N_VNew_Serial(NEQ, sunctx)
-    N_VGetArrayPointer(y)[0] = problem.solution(T0)
+    N_VGetNumpyArray(y)[0] = problem.solution(T0)
 
     ark = ERKStepCreate(problem.rhs, T0, y, sunctx)
     assert ARKodeSStolerances(ark.get(), RTOL, ATOL) == ARK_SUCCESS
@@ -199,7 +153,7 @@ def main():
         status, hlast = ARKodeGetLastStep(ark.get())
         assert status == ARK_SUCCESS
 
-        computed = N_VGetArrayPointer(y)[0]
+        computed = N_VGetNumpyArray(y)[0]
         exact = problem.solution(t)
         print(f"{t:10.4f}  {computed:14.8e}  {abs(computed - exact):12.4e}  {hlast:12.4e}")
 
@@ -217,10 +171,6 @@ def main():
     print("\nFinal Statistics..\n")
     print(f"nst      = {nst:6d}    nst_a   = {nst_a:6d}")
     print(f"nfe      = {nfe:6d}    netf    = {netf:6d}")
-
-    # The controller saw every attempt, accepted or not, so this count matches
-    # the attempt count rather than the step count.
-    print(f"controller estimate_step calls = {len(controller.history)}")
 
 
 def test_ark_custom_adaptcontroller():

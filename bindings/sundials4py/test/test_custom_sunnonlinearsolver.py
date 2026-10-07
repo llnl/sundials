@@ -140,9 +140,9 @@ def test_custom_sunnonlinearsolver_type_and_lazy_materialization(sunctx):
     # Custom sunnonlinearsolver type and lazy materialization.
     NLS = CopyNonlinearSolver(sunctx, SUNNONLINEARSOLVER_HYBRID)
 
-    assert NLS._materialization_count() == 0
+    assert not NLS._is_materialized()
     assert SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_HYBRID
-    assert NLS._materialization_count() == 1
+    assert NLS._is_materialized()
 
 
 def test_custom_sunnonlinearsolver_required_solve_is_validated(sunctx):
@@ -153,7 +153,7 @@ def test_custom_sunnonlinearsolver_required_solve_is_validated(sunctx):
     with pytest.raises(TypeError, match="SUNNonlinSolGetType"):
         SUNNonlinSolGetType(NLS)
 
-    assert NLS._materialization_count() == 0
+    assert not NLS._is_materialized()
 
 
 def test_custom_sunnonlinearsolver_setup_and_solve(sunctx):

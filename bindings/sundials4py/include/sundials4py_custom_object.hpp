@@ -25,13 +25,12 @@
  *   ShutdownSafeGIL           interpreter-finalization-safe GIL acquisition
  *   NativeCallbackState       revocable capture of C function/data pairs
  *   NativeCallbackRegistry    per-vtable-slot ownership of the above
- *   ActiveMemMode/Scope       explicit tracking of the integrator "mem" pointer
+ *   ActiveMemMode/Scope       explicit tracking of the SUNDIALS "mem" pointer
  *   custom_method_overridden  optional-operation detection via the MRO
- *   custom_content_cast       tag-checked recovery of custom content
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_CUSTOM_OBJECT_HPP
-#define _SUNDIALS4PY_CUSTOM_OBJECT_HPP
+#ifndef SUNDIALS4PY_CUSTOM_OBJECT_HPP
+#define SUNDIALS4PY_CUSTOM_OBJECT_HPP
 
 #include <map>
 #include <memory>
@@ -115,7 +114,8 @@ void shutdown_safe_delete(T* state)
  * preserves the useful Python diagnostic.
  */
 inline void report_custom_exception(SUNContext sunctx, const char* operation,
-                                    const std::exception& error) noexcept
+                                    const std::exception& error,
+                                    const char* file, int line) noexcept
 {
   try
   {
@@ -124,16 +124,8 @@ inline void report_custom_exception(SUNContext sunctx, const char* operation,
 
     std::string message = std::string("exception in ") + operation + ":\n" +
                           error.what();
-    if (sunctx)
-    {
-      SUNHandleErrWithMsg(__LINE__, operation, __FILE__, message.c_str(),
-                          SUN_ERR_EXT_FAIL, sunctx);
-    }
-    else
-    {
-      SUNGlobalFallbackErrHandler(__LINE__, operation, __FILE__, "%s",
-                                  SUN_ERR_EXT_FAIL, message.c_str());
-    }
+    SUNHandleErrWithMsg(line, operation, file, message.c_str(),
+                        SUN_ERR_EXT_FAIL, sunctx);
   }
   catch (...)
   {
@@ -149,24 +141,27 @@ inline void report_custom_exception(SUNContext sunctx, const char* operation,
 }
 
 inline void report_custom_unknown_exception(SUNContext sunctx,
-                                            const char* operation) noexcept
+                                            const char* operation,
+                                            const char* file, int line) noexcept
 {
   const std::runtime_error error("unknown non-standard C++ exception");
-  report_custom_exception(sunctx, operation, error);
+  report_custom_exception(sunctx, operation, error, file, line);
 }
 
 /* Every trampoline supplies its own failure sentinel, since SUNDIALS callback
    APIs return status codes, pointers, integers, and real scalars. */
-#define SUNDIALS4PY_CATCH_AND_REPORT(SUNCTX, OPERATION, FAILURE)       \
-  catch (const std::exception& error)                                  \
-  {                                                                    \
-    ::sundials4py::report_custom_exception(SUNCTX, OPERATION, error);  \
-    return FAILURE;                                                    \
-  }                                                                    \
-  catch (...)                                                          \
-  {                                                                    \
-    ::sundials4py::report_custom_unknown_exception(SUNCTX, OPERATION); \
-    return FAILURE;                                                    \
+#define SUNDIALS4PY_CATCH_AND_REPORT(SUNCTX, OPERATION, FAILURE)               \
+  catch (const std::exception& error)                                          \
+  {                                                                            \
+    ::sundials4py::report_custom_exception(SUNCTX, OPERATION, error, __FILE__, \
+                                           __LINE__);                          \
+    return FAILURE;                                                            \
+  }                                                                            \
+  catch (...)                                                                  \
+  {                                                                            \
+    ::sundials4py::report_custom_unknown_exception(SUNCTX, OPERATION,          \
+                                                   __FILE__, __LINE__);        \
+    return FAILURE;                                                            \
   }
 
 /*------------------------------------------------------------------------------
@@ -186,7 +181,7 @@ enum class ActiveMemMode
      invalid. */
   none,
 
-  /* A SUNDIALS package (CVODES, IDAS, ARKODE, KINSOL) drove the custom vtable
+  /* A SUNDIALS package or other native caller drove the custom vtable
      and supplied its own integrator memory. */
   integrator,
 
@@ -210,14 +205,10 @@ inline const char* active_mem_mode_name(ActiveMemMode mode)
  * Marks the dynamic extent during which a hand-written sundials4py wrapper --
  * rather than a SUNDIALS package -- is driving a custom object.
  *
- * Two things need this. A setter (SUNNonlinSolSetSysFn and friends) uses it so
- * the custom trampoline can record that the callback being installed expects the
- * binding's function table. An entry point (SUNNonlinSolSetup/Solve) uses it so
- * the custom trampoline establishes direct-binding rather than integrator mode.
- *
- * Determining this by comparing the incoming `mem` against `NLS->python` would
- * also work, but it infers provenance from pointer identity; stating it at the
- * one place that knows the answer is both cheaper and harder to get wrong.
+ * Callback setters have no memory argument from which to infer their caller, so
+ * the hand-written bindings mark their dynamic extent. Setup and solve can and
+ * do determine provenance directly by comparing their `mem` input with the
+ * object's Python function table.
  */
 class DirectBindingScope
 {
@@ -289,7 +280,24 @@ struct NativeCallbackState : NativeCallbackStateBase
   // Which provider's memory this callback expects, for the subset of callbacks
   // whose data pointer only arrives at call time. Callbacks that
   // carry an explicit data pointer ignore this.
-  ActiveMemMode required_mode{ActiveMemMode::integrator};
+  ActiveMemMode required_mode{ActiveMemMode::none};
+};
+
+/* A closed set makes misspelled registry slots a compile-time error. */
+enum class NativeCallbackSlot
+{
+  atimes,
+  psetup,
+  psolve,
+  sysfn,
+  rootsysfn,
+  fixedpointsysfn,
+  lsetupfn,
+  lsolvefn,
+  ctestfn,
+  normfn,
+  getupdatenormfn,
+  getconvratefn
 };
 
 /*
@@ -303,8 +311,8 @@ class NativeCallbackRegistry
 {
 public:
   template<typename Fn>
-  std::shared_ptr<NativeCallbackState<Fn>> install(const char* slot, Fn fn,
-                                                   void* data)
+  std::shared_ptr<NativeCallbackState<Fn>> install(NativeCallbackSlot slot,
+                                                   Fn fn, void* data)
   {
     invalidate(slot);
     if (!fn) { return nullptr; }
@@ -319,7 +327,7 @@ public:
   }
 
   /* Revoke the state held for one slot, if any. */
-  void invalidate(const char* slot)
+  void invalidate(NativeCallbackSlot slot)
   {
     auto it = slots_.find(slot);
     if (it == slots_.end()) { return; }
@@ -338,7 +346,7 @@ public:
   }
 
 private:
-  std::map<std::string, std::shared_ptr<NativeCallbackStateBase>> slots_;
+  std::map<NativeCallbackSlot, std::shared_ptr<NativeCallbackStateBase>> slots_;
 };
 
 /*
@@ -398,7 +406,7 @@ public:
   ActiveMemScope& operator=(const ActiveMemScope&) = delete;
 
 private:
-  ContentT* content_;
+  ContentT* content_{nullptr};
   ActiveMemMode saved_mode_{ActiveMemMode::none};
   void* saved_mem_{nullptr};
 };
@@ -471,7 +479,7 @@ bool custom_method_overridden(nb::handle impl, const char* name)
 }
 
 /*------------------------------------------------------------------------------
- * Tagged custom content
+ * Custom content
  *----------------------------------------------------------------------------*/
 
 /*
@@ -483,13 +491,7 @@ bool custom_method_overridden(nb::handle impl, const char* name)
  * Families that never take ownership of a handle simply leave `strong_impl`
  * empty; families with no native callbacks leave `callbacks` untouched.
  */
-#define SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(TAG)                               \
-  static constexpr uint64_t tag_value = TAG;                                  \
-                                                                              \
-  /* Distinguishes this private payload from native content routed through  \
-     the same wrapper type. Must stay first so the check is cheap. */ \
-  uint64_t tag{tag_value};                                                    \
-                                                                              \
+#define SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS                                    \
   /* Set for handles the user owns: SUNDIALS must not keep the Python       \
      object alive, or attaching a solver would create an immortal cycle. */ \
   nb::object weak_impl;                                                       \
@@ -503,23 +505,6 @@ bool custom_method_overridden(nb::handle impl, const char* name)
                                                                               \
   /* Revocable native callback adapters handed to Python. */                  \
   NativeCallbackRegistry callbacks
-
-/*
- * Recover custom content from a native handle, or nullptr.
- *
- * Every custom content struct starts with a distinctive `tag` constant. Native
- * SUNDIALS objects of the same class route through the same wrapper types, so
- * the tag is what lets a trampoline tell "my content" from "somebody else's
- * content" without ever dereferencing the latter as the wrong type.
- */
-template<typename ContentT, typename Handle>
-ContentT* custom_content_cast(Handle handle)
-{
-  if (!handle || !handle->content) { return nullptr; }
-  auto* content = static_cast<ContentT*>(handle->content);
-  if (content->tag != ContentT::tag_value) { return nullptr; }
-  return content;
-}
 
 /*
  * Resolve the Python implementation behind a native handle.
@@ -580,4 +565,4 @@ void custom_content_destroy(ContentT*& content)
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_CUSTOM_OBJECT_HPP
+#endif // SUNDIALS4PY_CUSTOM_OBJECT_HPP

@@ -21,6 +21,9 @@ sundials4py function that expects the corresponding SUNDIALS object. See
 
 **Bug Fixes**
 
+Fixed :c:func:`SUNMatCopyOps` so it also copies the optional
+Hermitian-transpose matrix-vector operation.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 

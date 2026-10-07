@@ -411,13 +411,14 @@ module fsundials_core_mod
  public :: FSUNQRAdd_DCGS2_SB
  ! enum SUNLinearSolver_Type
  enum, bind(c)
+  enumerator :: SUNLINEARSOLVER_NONE = -1
   enumerator :: SUNLINEARSOLVER_DIRECT
   enumerator :: SUNLINEARSOLVER_ITERATIVE
   enumerator :: SUNLINEARSOLVER_MATRIX_ITERATIVE
   enumerator :: SUNLINEARSOLVER_MATRIX_EMBEDDED
  end enum
  integer, parameter, public :: SUNLinearSolver_Type = kind(SUNLINEARSOLVER_DIRECT)
- public :: SUNLINEARSOLVER_DIRECT, SUNLINEARSOLVER_ITERATIVE, SUNLINEARSOLVER_MATRIX_ITERATIVE, &
+ public :: SUNLINEARSOLVER_NONE, SUNLINEARSOLVER_DIRECT, SUNLINEARSOLVER_ITERATIVE, SUNLINEARSOLVER_MATRIX_ITERATIVE, &
     SUNLINEARSOLVER_MATRIX_EMBEDDED
  ! enum SUNLinearSolver_ID
  enum, bind(c)
@@ -508,12 +509,13 @@ module fsundials_core_mod
  integer(C_INT), parameter, public :: SUNLS_LUFACT_FAIL = 808_C_INT
  ! enum SUNNonlinearSolver_Type
  enum, bind(c)
+  enumerator :: SUNNONLINEARSOLVER_NONE = -1
   enumerator :: SUNNONLINEARSOLVER_ROOTFIND
   enumerator :: SUNNONLINEARSOLVER_FIXEDPOINT
   enumerator :: SUNNONLINEARSOLVER_HYBRID
  end enum
  integer, parameter, public :: SUNNonlinearSolver_Type = kind(SUNNONLINEARSOLVER_ROOTFIND)
- public :: SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
+ public :: SUNNONLINEARSOLVER_NONE, SUNNONLINEARSOLVER_ROOTFIND, SUNNONLINEARSOLVER_FIXEDPOINT, SUNNONLINEARSOLVER_HYBRID
  ! struct struct _generic_SUNNonlinearSolver_Ops
  type, bind(C), public :: SUNNonlinearSolver_Ops
   type(C_FUNPTR), public :: gettype

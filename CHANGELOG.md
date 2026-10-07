@@ -22,6 +22,9 @@ annotated templates.
 
 ### Bug Fixes
 
+Fixed `SUNMatCopyOps` so it also copies the optional Hermitian-transpose
+matrix-vector operation.
+
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
 

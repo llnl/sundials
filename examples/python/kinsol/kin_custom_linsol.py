@@ -26,33 +26,23 @@
 # the standard second-order central difference for u'' turns this into a
 # size-N nonlinear algebraic system in the nodal values. Its Jacobian is
 # tridiagonal: the -u'' term contributes the constant off-diagonals, and the
-# u^3 term only ever touches the diagonal. That structure is what makes a
-# custom matrix and linear solver worth writing here -- SUNMatrix_Dense would
-# waste both memory and flops on all those zero entries, and the tridiagonal
-# system can be solved directly (Thomas algorithm) in O(N) work with no
-# pivoting, since the diagonal here is always strictly larger in magnitude
-# than the two off-diagonal entries in its row.
+# u^3 term only ever touches the diagonal. The tridiagonal system can be solved
+# directly in O(N) work (Thomas algorithm) with no pivoting, since the diagonal
+# here is always strictly larger in magnitude than the two off-diagonal entries
+# in its row.
 #
 # WHY THESE TWO OBJECTS COME AS A PAIR
 #
 # A matrix and the linear solver that factors it are written together,
 # because only they agree on how the entries are stored. That has a concrete
-# consequence in Python: when KINSOL calls your solver's setup(A) and
-# solve(A, x, b, tol), the `A` it passes is an *opaque native SUNMatrix
-# handle*, not the Python object you created. So the solver reads the matrix
-# through a reference it was given at construction -- see MyLinearSolver.
-# __init__ below -- and ignores the handle. The same holds for the Jacobian
-# function: it writes into the Python matrix object it closes over rather
-# than into the handle KINSOL passes it.
+# consequence in Python: the matrix passed to the Jacobian function and to the
+# solver's setup(A) and solve(A, x, b, tol) is the original CustomSUNMatrix
+# subclass, so both can access its storage directly.
 #
 # WHICH OPERATIONS YOU MUST WRITE
 #
-# CustomSUNMatrix requires all six of clone(), zero(), copy(), scaleadd(),
-# scaleaddi(), and matvec(); the binding refuses to build a native handle
-# without them, since a package has no way to ask which are missing. KINSOL
-# itself only calls zero() and clone(), but an ODE package forming
-# I - gamma*J needs scaleaddi(), and an iterative solver needs matvec(), so
-# implementing all six makes the matrix reusable.
+# KINSOL only requires zero(); the other matrix operations below make this
+# implementation reusable by packages with additional requirements.
 #
 # CustomSUNLinearSolver requires only solve(). Everything else -- initialize(),
 # setup(), the statistics getters -- is optional: override a method and
@@ -77,10 +67,7 @@ class NonlinearBVP:
     discrete solution matches it to O(h^2), the discretization's own error.
     """
 
-    def __init__(self, matrix, n=NEQ):
-        # The Jacobian is written into this Python matrix object; see the note
-        # on opaque handles in the file header.
-        self.matrix = matrix
+    def __init__(self, n=NEQ):
         self.n = n
         self.h = 1.0 / (n + 1)
         self.x = np.array([(i + 1) * self.h for i in range(n)])
@@ -89,8 +76,8 @@ class NonlinearBVP:
         self.forcing = (np.pi**2) * s + s**3
 
     def residual(self, uvec, fvec, user_data):
-        u = N_VGetArrayPointer(uvec)
-        r = N_VGetArrayPointer(fvec)
+        u = N_VGetNumpyArray(uvec)
+        r = N_VGetNumpyArray(fvec)
 
         u_left = np.empty_like(u)
         u_left[0] = 0.0  # Dirichlet boundary value at x=0
@@ -104,11 +91,8 @@ class NonlinearBVP:
         r[:] = (2.0 * u - u_left - u_right) / h2 + u**3 - self.forcing
         return 0
 
-    def jacobian(self, uvec, fuvec, Jhandle, user_data, tmp1, tmp2):
-        # Jhandle is the same matrix as self.matrix, but arrives as an opaque
-        # native handle, so the entries are written through the Python
-        # object.
-        u = N_VGetArrayPointer(uvec)
+    def jacobian(self, uvec, fuvec, matrix, user_data, tmp1, tmp2):
+        u = N_VGetNumpyArray(uvec)
         h2 = self.h * self.h
 
         diag = 2.0 / h2 + 3.0 * u**2
@@ -117,7 +101,7 @@ class NonlinearBVP:
         sup = np.full(self.n, -1.0 / h2)
         sup[-1] = 0.0  # last row has no u_{n} neighbor
 
-        self.matrix.set_entries(sub, diag, sup)
+        matrix.set_entries(sub, diag, sup)
         return 0
 
     def solution(self):
@@ -172,17 +156,14 @@ class MyMatrix(CustomSUNMatrix):
         return SUN_SUCCESS
 
     def copy(self, dst):
-        # Copy self into dst, which is the PYTHON matrix object -- clone()
-        # built it, so it is your own type and you may use your own
-        # attributes.
+        # Copy self into dst.
         dst.sub[:] = self.sub
         dst.diag[:] = self.diag
         dst.super[:] = self.super
         return SUN_SUCCESS
 
     def scaleadd(self, c, other):
-        # In place: self <- c*self + other. `other` is a Python matrix
-        # object.
+        # In place: self <- c*self + other.
         self.sub[:] = c * self.sub + other.sub
         self.diag[:] = c * self.diag + other.diag
         self.super[:] = c * self.super + other.super
@@ -199,10 +180,10 @@ class MyMatrix(CustomSUNMatrix):
 
     def matvec(self, x, y):
         # y <- self*x. Unlike copy()/scaleadd(), x and y are N_Vectors, so
-        # use the N_V* API (or N_VGetArrayPointer for a serial vector) rather
+        # use the N_V* API (or N_VGetNumpyArray for a serial vector) rather
         # than assuming a representation.
-        xv = N_VGetArrayPointer(x)
-        yv = N_VGetArrayPointer(y)
+        xv = N_VGetNumpyArray(x)
+        yv = N_VGetNumpyArray(y)
         yv[:] = self.diag * xv
         yv[1:] += self.sub[1:] * xv[:-1]
         yv[:-1] += self.super[:-1] * xv[1:]
@@ -218,10 +199,6 @@ class MyLinearSolver(CustomSUNLinearSolver):
     """
 
     def __init__(self, matrix, sunctx):
-        # The matrix this solver factors. It is supplied here rather than
-        # read from the handle setup()/solve() receive, because that handle
-        # is opaque.
-        self.matrix = matrix
         self.n = matrix.n
 
         # Populated by setup(): the modified diagonal and superdiagonal, and
@@ -231,7 +208,7 @@ class MyLinearSolver(CustomSUNLinearSolver):
         self.super_star = np.zeros(self.n)
         self.mult = np.zeros(self.n)
 
-        # SUNLINEARSOLVER_DIRECT for a factorization,
+        # SUNLINEARSOLVER_DIRECT for solvers that perform an "exact" solve,
         # SUNLINEARSOLVER_ITERATIVE for a Krylov method,
         # SUNLINEARSOLVER_MATRIX_ITERATIVE for an iterative method that still
         # needs the matrix. The type tells the calling package how to use
@@ -247,8 +224,6 @@ class MyLinearSolver(CustomSUNLinearSolver):
         # solver has state that must be established after construction but
         # before use -- for example, checking that the matrix shape is one
         # you can handle.
-        if self.matrix.n != self.n:
-            return SUN_ERR_ARG_DIMSMISMATCH
         return SUN_SUCCESS
 
     def setup(self, A):
@@ -257,12 +232,10 @@ class MyLinearSolver(CustomSUNLinearSolver):
         # that solve() can finish cheaply. Called whenever the package
         # believes the matrix has changed.
         #
-        # `A` is an opaque native handle for the same matrix as self.matrix
-        # -- read the entries through self.matrix instead.
         n = self.n
-        sub = self.matrix.sub
-        diag = self.matrix.diag
-        sup = self.matrix.super
+        sub = A.sub
+        diag = A.diag
+        sup = A.super
 
         self.diag_star[0] = diag[0]
         self.super_star[0] = sup[0]
@@ -277,7 +250,7 @@ class MyLinearSolver(CustomSUNLinearSolver):
     def solve(self, A, x, b, tol):
         """Solve A*x = b by the Thomas algorithm's back-substitution pass.
 
-        A    opaque native handle for the matrix (read self.matrix instead)
+        A    the same matrix passed to setup()
         x    output N_Vector for the solution
         b    right-hand side N_Vector
         tol  requested residual tolerance; meaningful only for iterative
@@ -289,32 +262,16 @@ class MyLinearSolver(CustomSUNLinearSolver):
         code for a failure no retry will fix.
         """
         n = self.n
-        d = N_VGetArrayPointer(b).copy()
+        d = N_VGetNumpyArray(b).copy()
         for i in range(1, n):
             d[i] -= self.mult[i] * d[i - 1]
 
-        xv = N_VGetArrayPointer(x)
+        xv = N_VGetNumpyArray(x)
         xv[n - 1] = d[n - 1] / self.diag_star[n - 1]
         for i in range(n - 2, -1, -1):
             xv[i] = (d[i] - self.super_star[i] * xv[i + 1]) / self.diag_star[i]
 
         return SUN_SUCCESS
-
-    # -- optional: the rest of the interface ---------------------------------
-    #
-    # An iterative solver would also override:
-    #
-    #   set_atimes(atimes)                  matrix-vector product callback
-    #   set_preconditioner(psetup, psolve)  preconditioner callbacks
-    #   set_scaling_vectors(s1, s2)         left/right scaling
-    #   set_zero_guess(onoff)               x arrives as zero, skip the product
-    #   num_iters()  -> int                 iterations in the last solve
-    #   res_norm()   -> float               final residual norm
-    #   resid()      -> N_Vector            the residual vector itself
-    #
-    # These are omitted here because a direct solver has nothing useful to
-    # report for any of them, and an unimplemented optional method is simply
-    # absent from the native operation table.
 
 
 def main():
@@ -327,11 +284,9 @@ def main():
     status, sunctx = SUNContext_Create(SUN_COMM_NULL)
     assert status == SUN_SUCCESS
 
-    # The matrix, the solver that factors it, and the problem that fills it
-    # in all refer to the same Python matrix object.
     J = MyMatrix(NEQ, sunctx)
     LS = MyLinearSolver(J, sunctx)
-    problem = NonlinearBVP(J)
+    problem = NonlinearBVP()
 
     u = N_VNew_Serial(NEQ, sunctx)
     scale = N_VNew_Serial(NEQ, sunctx)
@@ -355,7 +310,7 @@ def main():
     status = KINSol(kin.get(), u, KIN_LINESEARCH, scale, scale)
     assert status == KIN_SUCCESS, f"KINSol returned {status}"
 
-    computed = N_VGetArrayPointer(u)
+    computed = N_VGetNumpyArray(u)
     exact = problem.solution()
     print(f"{'x':>8}  {'computed':>14}  {'exact':>14}  {'error':>12}")
     print("-" * 54)

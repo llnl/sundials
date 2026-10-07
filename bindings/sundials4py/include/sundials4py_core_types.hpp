@@ -22,8 +22,8 @@
  * creating a cycle with sundials4py_types.hpp (which pulls in all of them).
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_CORE_TYPES_HPP
-#define _SUNDIALS4PY_CORE_TYPES_HPP
+#ifndef SUNDIALS4PY_CORE_TYPES_HPP
+#define SUNDIALS4PY_CORE_TYPES_HPP
 
 #include <stdexcept>
 #include <string>
@@ -106,4 +106,4 @@ private:
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_CORE_TYPES_HPP
+#endif // SUNDIALS4PY_CORE_TYPES_HPP

@@ -140,7 +140,10 @@ def test_real_scalar_exception_is_reported_and_python_state_is_cleared(sunctx):
 
     assert SUNLinSolResNorm(LS) == 0.0
     assert_reported(
-        sunctx, errors, "custom_linsol_resnorm", "ArithmeticError: linear residual norm boom"
+        sunctx,
+        errors,
+        "CustomSUNLinearSolver.res_norm",
+        "ArithmeticError: linear residual norm boom",
     )
     assert SUNLinSolResNorm(LS) == 0.5
 
@@ -175,7 +178,7 @@ def test_controller_output_exception_is_reported_and_python_state_is_cleared(sun
     assert_reported(
         sunctx,
         errors,
-        "custom_controller_estimatestep",
+        "CustomSUNAdaptController.estimate_step",
         "ZeroDivisionError: controller estimate boom",
     )
     assert SUNAdaptController_EstimateStep(C, 2.0, 1, 1.0) == (SUN_SUCCESS, 1.0)

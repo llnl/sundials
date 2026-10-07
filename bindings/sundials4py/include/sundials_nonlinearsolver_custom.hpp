@@ -18,8 +18,8 @@
  * SUNNonlinearSolver, including explicit handling of active-memory modes.
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP
-#define _SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP
+#ifndef SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP
+#define SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -89,8 +89,7 @@ public:
     try
     {
       solver_ = make_handle(self, sunctx_owner_, solver_type_);
-      materialization_count_++;
-      state_ = HandleState::materialized;
+      state_  = HandleState::materialized;
     }
     catch (...)
     {
@@ -101,7 +100,7 @@ public:
     return solver_;
   }
 
-  int _materialization_count() const { return materialization_count_; }
+  bool _is_materialized() const { return state_ == HandleState::materialized; }
 
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx() const
   {
@@ -118,11 +117,11 @@ public:
 private:
   struct Content
   {
-    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(0x53554e4e4c535031ULL);
+    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS;
 
     // Keep the solver kind in content so gettype works from the opaque C handle
     // without ever calling into Python.
-    SUNNonlinearSolver_Type solver_type{SUNNONLINEARSOLVER_ROOTFIND};
+    SUNNonlinearSolver_Type solver_type{SUNNONLINEARSOLVER_NONE};
 
     // The pointer SUNDIALS supplied for the setup()/solve() call
     // currently in progress, and which provider supplied it.
@@ -210,9 +209,30 @@ private:
 
   static Content* get_content(SUNNonlinearSolver NLS)
   {
-    return custom_content_cast<Content>(NLS);
+    if (!NLS || !NLS->ops || NLS->ops->solve != custom_nls_solve || !NLS->content)
+    {
+      return nullptr;
+    }
+    return static_cast<Content*>(NLS->content);
   }
 
+public:
+  static nb::object _python_object_for(SUNNonlinearSolver NLS) noexcept
+  {
+    try
+    {
+      Content* content = get_content(NLS);
+      if (!content) { return nb::object(); }
+      nb::object impl = content->weak_impl();
+      return impl.is_none() ? nb::object() : impl;
+    }
+    catch (...)
+    {
+      return nb::object();
+    }
+  }
+
+private:
   static nb::object get_impl(SUNNonlinearSolver NLS)
   {
     return custom_content_impl(get_content(NLS), label);
@@ -232,22 +252,18 @@ private:
     }
   }
 
-  /*
-   * Determine which provider is driving the vtable right now. A hand-written
-   * sundials4py wrapper announces itself with DirectBindingScope; anything else
-   * reaching setup()/solve() is a SUNDIALS package.
-   */
-  static ActiveMemMode entry_mode(void* mem)
+  /* Determine which provider is driving the vtable from the call inputs. */
+  static ActiveMemMode entry_mode(SUNNonlinearSolver NLS, void* mem)
   {
     if (!mem) { return ActiveMemMode::none; }
-    return DirectBindingScope::active() ? ActiveMemMode::direct_binding
-                                        : ActiveMemMode::integrator;
+    return mem == NLS->python ? ActiveMemMode::direct_binding
+                              : ActiveMemMode::integrator;
   }
 
   static SUNNonlinearSolver_Type custom_nls_gettype(SUNNonlinearSolver NLS)
   {
     Content* content = get_content(NLS);
-    return content ? content->solver_type : SUNNONLINEARSOLVER_ROOTFIND;
+    return content ? content->solver_type : SUNNONLINEARSOLVER_NONE;
   }
 
   static SUNErrCode custom_nls_initialize(SUNNonlinearSolver NLS)
@@ -258,7 +274,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(NLS).attr("initialize")()));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.initialize",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -271,11 +288,12 @@ private:
       // The scope restores the previous active memory on every exit path, so a
       // package that calls setup() from inside solve() nests correctly and a
       // Python exception cannot leave a stale pointer behind.
-      MemScope scope(content, entry_mode(mem), mem);
+      MemScope scope(content, entry_mode(NLS, mem), mem);
       return nb::cast<int>(
         get_impl(NLS).attr("setup")(nb::cast(y, nb::rv_policy::reference)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.setup",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -287,13 +305,14 @@ private:
     try
     {
       nb::gil_scoped_acquire gil;
-      MemScope scope(content, entry_mode(mem), mem);
+      MemScope scope(content, entry_mode(NLS, mem), mem);
       return nb::cast<int>(get_impl(NLS).attr(
         "solve")(nb::cast(y0, nb::rv_policy::reference),
                  nb::cast(y, nb::rv_policy::reference),
                  nb::cast(w, nb::rv_policy::reference), tol, call_lsetup));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.solve",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -305,8 +324,8 @@ private:
    * that installed this callback.
    */
   static nb::object make_sys_fn(SUNNonlinearSolver NLS, Content* content,
-                                const char* slot, SUNNonlinSolSysFn SysFn,
-                                const char* what)
+                                NativeCallbackSlot slot,
+                                SUNNonlinSolSysFn SysFn, const char* what)
   {
     auto state = content ? content->callbacks.install(slot, SysFn, nullptr)
                          : nullptr;
@@ -331,9 +350,11 @@ private:
       Content* content = get_content(NLS);
       nb::object impl  = get_impl(NLS);
       return static_cast<SUNErrCode>(nb::cast<int>(impl.attr("set_sys_fn")(
-        make_sys_fn(NLS, content, "sysfn", SysFn, "nonlinear system"))));
+        make_sys_fn(NLS, content, NativeCallbackSlot::sysfn, SysFn,
+                    "nonlinear system"))));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_sys_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -347,15 +368,16 @@ private:
       Content* content = get_content(NLS);
       nb::object impl  = get_impl(NLS);
       // Hybrid solvers receive both forms and choose per iteration.
-      nb::object root        = make_sys_fn(NLS, content, "rootsysfn", root_fn,
-                                           "root-find nonlinear system");
-      nb::object fixed_point = make_sys_fn(NLS, content, "fixedpointsysfn",
-                                           fixed_point_fn,
-                                           "fixed-point nonlinear system");
+      nb::object root = make_sys_fn(NLS, content, NativeCallbackSlot::rootsysfn,
+                                    root_fn, "root-find nonlinear system");
+      nb::object fixed_point =
+        make_sys_fn(NLS, content, NativeCallbackSlot::fixedpointsysfn,
+                    fixed_point_fn, "fixed-point nonlinear system");
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_sys_fns")(root, fixed_point)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_sys_fns",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -369,7 +391,8 @@ private:
       nb::object impl  = get_impl(NLS);
 
       auto state = content
-                     ? content->callbacks.install("lsetupfn", SetupFn, nullptr)
+                     ? content->callbacks.install(NativeCallbackSlot::lsetupfn,
+                                                  SetupFn, nullptr)
                      : nullptr;
 
       nb::object setup = nb::none();
@@ -392,7 +415,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_lsetup_fn")(setup)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_lsetup_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -406,7 +430,8 @@ private:
       nb::object impl  = get_impl(NLS);
 
       auto state = content
-                     ? content->callbacks.install("lsolvefn", SolveFn, nullptr)
+                     ? content->callbacks.install(NativeCallbackSlot::lsolvefn,
+                                                  SolveFn, nullptr)
                      : nullptr;
 
       nb::object solve = nb::none();
@@ -425,7 +450,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_lsolve_fn")(solve)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_lsolve_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -442,7 +468,8 @@ private:
       // This callback carries its own data pointer, so it does not consult the
       // active-memory scope; it only needs to be revocable.
       auto state = content
-                     ? content->callbacks.install("ctestfn", CTestFn, ctest_data)
+                     ? content->callbacks.install(NativeCallbackSlot::ctestfn,
+                                                  CTestFn, ctest_data)
                      : nullptr;
 
       nb::object ctest = nb::none();
@@ -462,7 +489,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_conv_test_fn")(ctest)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_conv_test_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -477,7 +505,8 @@ private:
       nb::object impl  = get_impl(NLS);
 
       auto state = content
-                     ? content->callbacks.install("normfn", NormFn, norm_fn_data)
+                     ? content->callbacks.install(NativeCallbackSlot::normfn,
+                                                  NormFn, norm_fn_data)
                      : nullptr;
 
       nb::object norm = nb::none();
@@ -496,7 +525,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_norm_fn")(norm)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_norm_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -510,10 +540,10 @@ private:
       Content* content = get_content(NLS);
       nb::object impl  = get_impl(NLS);
 
-      auto state = content ? content->callbacks.install("getupdatenormfn",
-                                                        GetUpdateNormFn,
-                                                        getupdatenorm_data)
-                           : nullptr;
+      auto state =
+        content ? content->callbacks.install(NativeCallbackSlot::getupdatenormfn,
+                                             GetUpdateNormFn, getupdatenorm_data)
+                : nullptr;
 
       nb::object get_update_norm = nb::none();
       if (state)
@@ -530,7 +560,7 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_get_update_norm_fn")(get_update_norm)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, "CustomSUNNonlinearSolver.set_get_update_norm_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -544,10 +574,10 @@ private:
       Content* content = get_content(NLS);
       nb::object impl  = get_impl(NLS);
 
-      auto state = content
-                     ? content->callbacks.install("getconvratefn", GetConvRateFn,
-                                                  getconvrate_data)
-                     : nullptr;
+      auto state =
+        content ? content->callbacks.install(NativeCallbackSlot::getconvratefn,
+                                             GetConvRateFn, getconvrate_data)
+                : nullptr;
 
       nb::object get_conv_rate = nb::none();
       if (state)
@@ -564,7 +594,7 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_get_conv_rate_fn")(get_conv_rate)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, "CustomSUNNonlinearSolver.set_get_conv_rate_fn",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -582,7 +612,8 @@ private:
       return static_cast<SUNErrCode>(nb::cast<int>(get_impl(NLS).attr(
         "set_options")(NLSid ? NLSid : "", file_name ? file_name : "", args)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_options",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -594,7 +625,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(NLS).attr("set_max_iters")(maxiters)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(NLS ? NLS->sunctx : nullptr,
+                                 "CustomSUNNonlinearSolver.set_max_iters",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -651,9 +683,8 @@ private:
   SUNNonlinearSolver_Type solver_type_;
   std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>> solver_;
   HandleState state_{HandleState::unmaterialized};
-  int materialization_count_{0};
 };
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP
+#endif // SUNDIALS4PY_NONLINEARSOLVER_CUSTOM_HPP

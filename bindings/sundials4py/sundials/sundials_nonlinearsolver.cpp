@@ -43,8 +43,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>,
                   SUNNonlinearSolver_Type>(),
          nb::arg("sunctx"), nb::arg("solver_type"))
-    .def("_materialization_count",
-         &CustomSUNNonlinearSolver::_materialization_count)
+    .def("_is_materialized", &CustomSUNNonlinearSolver::_is_materialized)
     .def_prop_ro("sunctx", &CustomSUNNonlinearSolver::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")

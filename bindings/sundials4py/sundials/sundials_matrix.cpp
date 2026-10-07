@@ -40,7 +40,7 @@ void bind_sunmatrix(nb::module_& m)
          nb::arg("sunctx"))
     // This is intentionally private-facing: tests use it to verify that
     // transparent conversion materializes the native handle exactly once.
-    .def("_materialization_count", &CustomSUNMatrix::_materialization_count)
+    .def("_is_materialized", &CustomSUNMatrix::_is_materialized)
     .def_prop_ro("sunctx", &CustomSUNMatrix::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")
@@ -70,6 +70,14 @@ void bind_sunmatrix(nb::module_& m)
     {
       SUNMatrix clone = SUNMatClone(A);
       if (!clone) { return nb::none(); }
+
+      nb::object impl = CustomSUNMatrix::_python_object_for(clone);
+      if (impl.is_valid())
+      {
+        SUNMatDestroy(clone);
+        return impl;
+      }
+
       return nb::cast(
         our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
           clone));

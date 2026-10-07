@@ -7,6 +7,7 @@
 auto pyEnumSUNNonlinearSolver_Type =
   nb::enum_<SUNNonlinearSolver_Type>(m, "SUNNonlinearSolver_Type",
                                      nb::is_arithmetic(), "")
+    .value("SUNNONLINEARSOLVER_NONE", SUNNONLINEARSOLVER_NONE, "")
     .value("SUNNONLINEARSOLVER_ROOTFIND", SUNNONLINEARSOLVER_ROOTFIND, "")
     .value("SUNNONLINEARSOLVER_FIXEDPOINT", SUNNONLINEARSOLVER_FIXEDPOINT, "")
     .value("SUNNONLINEARSOLVER_HYBRID", SUNNONLINEARSOLVER_HYBRID, "")

@@ -77,14 +77,14 @@ def test_custom_hcontroller_type_and_estimate(sunctx):
     # Custom hcontroller type and estimate.
     C = HController(sunctx)
 
-    assert C._materialization_count() == 0
+    assert not C._is_materialized()
     assert SUNAdaptController_GetType(C) == SUN_ADAPTCONTROLLER_H
     status, hnew = SUNAdaptController_EstimateStep(C, 4.0, 3, 1.0)
 
     assert status == SUN_SUCCESS
     assert hnew == 1.0
     assert C.calls["estimate_step"] == 1
-    assert C._materialization_count() == 1
+    assert C._is_materialized()
 
 
 def test_custom_hcontroller_required_method_is_validated(sunctx):
@@ -95,7 +95,7 @@ def test_custom_hcontroller_required_method_is_validated(sunctx):
     with pytest.raises(TypeError, match="SUNAdaptController_GetType"):
         SUNAdaptController_GetType(C)
 
-    assert C._materialization_count() == 0
+    assert not C._is_materialized()
 
 
 def test_custom_hcontroller_optional_methods(sunctx):

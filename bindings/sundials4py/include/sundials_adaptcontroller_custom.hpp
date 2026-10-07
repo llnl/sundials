@@ -18,8 +18,8 @@
  * CustomSUNMRIController.
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
-#define _SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
+#ifndef SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
+#define SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -84,8 +84,7 @@ public:
     try
     {
       controller_ = make_handle(self, sunctx_owner_, controller_type_);
-      materialization_count_++;
-      state_ = HandleState::materialized;
+      state_      = HandleState::materialized;
     }
     catch (...)
     {
@@ -96,7 +95,7 @@ public:
     return controller_;
   }
 
-  int _materialization_count() const { return materialization_count_; }
+  bool _is_materialized() const { return state_ == HandleState::materialized; }
 
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx() const
   {
@@ -113,7 +112,7 @@ public:
 private:
   struct Content
   {
-    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(0x53554e4144505931ULL);
+    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS;
 
     // Store the requested controller kind so gettype and the typed estimate
     // trampoline remain available from the opaque C handle.
@@ -183,9 +182,31 @@ private:
 
   static Content* get_content(SUNAdaptController C)
   {
-    return custom_content_cast<Content>(C);
+    if (!C || !C->ops || C->ops->destroy != custom_controller_destroy ||
+        !C->content)
+    {
+      return nullptr;
+    }
+    return static_cast<Content*>(C->content);
   }
 
+public:
+  static nb::object _python_object_for(SUNAdaptController C) noexcept
+  {
+    try
+    {
+      Content* content = get_content(C);
+      if (!content) { return nb::object(); }
+      nb::object impl = content->weak_impl();
+      return impl.is_none() ? nb::object() : impl;
+    }
+    catch (...)
+    {
+      return nb::object();
+    }
+  }
+
+private:
   static nb::object get_impl(SUNAdaptController C)
   {
     return custom_content_impl(get_content(C), label);
@@ -235,7 +256,8 @@ private:
       *hnew = std::get<1>(result);
       return static_cast<SUNErrCode>(std::get<0>(result));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                                 "CustomSUNAdaptController.estimate_step",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -256,7 +278,8 @@ private:
       *tolfacnew = std::get<2>(result);
       return static_cast<SUNErrCode>(std::get<0>(result));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                                 "CustomSUNAdaptController.estimate_step_tol",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -293,7 +316,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(C).attr("set_error_bias")(bias)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                                 "CustomSUNAdaptController.set_error_bias",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -306,7 +330,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(C).attr("update_h")(h, dsm)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                                 "CustomSUNAdaptController.update_h",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -322,7 +347,8 @@ private:
       return static_cast<SUNErrCode>(nb::cast<int>(
         get_impl(C).attr("update_mri_h_tol")(H, tolfac, DSM, dsm)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                                 "CustomSUNAdaptController.update_mri_h_tol",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -340,7 +366,6 @@ private:
   SUNAdaptController_Type controller_type_;
   std::shared_ptr<std::remove_pointer_t<SUNAdaptController>> controller_;
   HandleState state_{HandleState::unmaterialized};
-  int materialization_count_{0};
 };
 
 /* Time step (H) controller: must implement estimate_step(). */
@@ -365,4 +390,4 @@ public:
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
+#endif // SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP

@@ -26,8 +26,8 @@
  * sundials4py_types.hpp rather than being included piecemeal.
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_CUSTOM_CASTERS_HPP
-#define _SUNDIALS4PY_CUSTOM_CASTERS_HPP
+#ifndef SUNDIALS4PY_CUSTOM_CASTERS_HPP
+#define SUNDIALS4PY_CUSTOM_CASTERS_HPP
 
 #include <cstdint>
 #include <exception>
@@ -98,7 +98,8 @@ namespace nanobind::detail {
              Python error indicator is left clear. */      \
           ::sundials4py::report_custom_exception(custom ? custom->sunctx().get()   \
                                                         : nullptr,                 \
-                                                 WHAT, error);                     \
+                                                 WHAT, error, __FILE__,            \
+                                                 __LINE__);                        \
           return false;                                                            \
         }                                                                          \
         catch (...)                                                                \
@@ -115,8 +116,22 @@ namespace nanobind::detail {
     static handle from_cpp(T&& value, rv_policy policy,                            \
                            cleanup_list* cleanup) noexcept                         \
     {                                                                              \
-      /* C++ to Python is unchanged: a raw handle always becomes the native      \
-         wrapper, never a custom subclass. */ \
+      Type* ptr = nullptr;                                                         \
+      if constexpr (std::is_pointer_v<std::remove_reference_t<T>>)                 \
+      {                                                                            \
+        ptr = value;                                                               \
+      }                                                                            \
+      else { ptr = &value; }                                                       \
+                                                                                   \
+      /* Preserve the Python subclass when C++ passes a borrowed custom handle   \
+         back through a callback. Ownership transfers must continue through the  \
+         native caster so the handle is released exactly once. */ \
+      if (ptr && policy != rv_policy::take_ownership &&                            \
+          policy != rv_policy::move)                                               \
+      {                                                                            \
+        nb::object impl = sundials4py::CUSTOM_CLASS::_python_object_for(ptr);      \
+        if (impl.is_valid()) { return impl.release(); }                            \
+      }                                                                            \
       return type_caster_base<Type>::from_cpp(std::forward<T>(value), policy,      \
                                               cleanup);                            \
     }                                                                              \
@@ -160,4 +175,4 @@ SUNDIALS4PY_DEFINE_CUSTOM_CASTER(_generic_SUNAdaptController,
 
 } // namespace nanobind::detail
 
-#endif // _SUNDIALS4PY_CUSTOM_CASTERS_HPP
+#endif // SUNDIALS4PY_CUSTOM_CASTERS_HPP

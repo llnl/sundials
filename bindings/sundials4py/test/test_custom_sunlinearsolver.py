@@ -34,6 +34,7 @@ class CopyLinearSolver(CustomSUNLinearSolver):
             "solve": 0,
             "set_scaling_vectors": 0,
             "set_zero_guess": 0,
+            "set_options": 0,
         }
         self.zero_guess = False
         super().__init__(sunctx, solver_type)
@@ -62,6 +63,11 @@ class CopyLinearSolver(CustomSUNLinearSolver):
     def set_zero_guess(self, onoff):
         self.calls["set_zero_guess"] += 1
         self.zero_guess = bool(onoff)
+        return SUN_SUCCESS
+
+    def set_options(self, solver_id, file_name, args):
+        self.calls["set_options"] += 1
+        self.last_options = (solver_id, file_name, args)
         return SUN_SUCCESS
 
     def num_iters(self):
@@ -118,10 +124,10 @@ def test_custom_sunlinearsolver_type_id_and_lazy_materialization(sunctx):
     # Custom sunlinearsolver type id and lazy materialization.
     LS = CopyLinearSolver(sunctx, SUNLINEARSOLVER_MATRIX_ITERATIVE)
 
-    assert LS._materialization_count() == 0
+    assert not LS._is_materialized()
     assert SUNLinSolGetType(LS) == SUNLINEARSOLVER_MATRIX_ITERATIVE
     assert SUNLinSolGetID(LS) == SUNLINEARSOLVER_CUSTOM
-    assert LS._materialization_count() == 1
+    assert LS._is_materialized()
 
 
 def test_custom_sunlinearsolver_required_solve_is_validated(sunctx):
@@ -132,7 +138,7 @@ def test_custom_sunlinearsolver_required_solve_is_validated(sunctx):
     with pytest.raises(TypeError, match="SUNLinSolGetType"):
         SUNLinSolGetType(LS)
 
-    assert LS._materialization_count() == 0
+    assert not LS._is_materialized()
 
 
 def test_custom_sunlinearsolver_initialize_setup_and_solve(sunctx):
@@ -165,10 +171,13 @@ def test_custom_sunlinearsolver_optional_methods(sunctx):
 
     assert SUNLinSolSetScalingVectors(LS, s1, s2) == SUN_SUCCESS
     assert SUNLinSolSetZeroGuess(LS, True) == SUN_SUCCESS
+    assert SUNLinSolSetOptions(LS, "numpy", "options.ini", 2, ["a", "b"]) == SUN_SUCCESS
     assert SUNLinSolNumIters(LS) == 3
     assert SUNLinSolResNorm(LS) == 0.25
     assert LS.calls["set_scaling_vectors"] == 1
     assert LS.calls["set_zero_guess"] == 1
+    assert LS.calls["set_options"] == 1
+    assert LS.last_options == ("numpy", "options.ini", ["a", "b"])
     assert LS.zero_guess
 
 

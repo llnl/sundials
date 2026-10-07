@@ -32,31 +32,13 @@
 # can be solved in one shot with the quadratic formula. See MyNonlinearSolver
 # below for how that works and what it assumes about the problem.
 #
-# HOW A CUSTOM NONLINEAR SOLVER FITS TOGETHER
+# IMPLEMENTING A CUSTOM NONLINEAR SOLVER
 #
-# You subclass CustomSUNNonlinearSolver and override solve(), which is the
-# only required method. Everything else is optional: override a method and
-# SUNDIALS will call it, leave it alone and SUNDIALS behaves as though the
-# operation were absent, exactly as for a solver written in C.
-#
-# CVODE does not hand your solve() the residual function directly. Instead it
-# calls setter methods -- set_sys_fn() and set_conv_test_fn() here -- once, up
-# front, passing an ordinary Python callable for each. You store those
-# callables and use them inside solve(). The opaque integrator memory pointer
-# that the C API threads through these callbacks is supplied for you, so the
-# callables take only the arguments you care about.
-#
-# A solver that forms Newton updates would also override set_lsetup_fn() and
-# set_lsolve_fn() to get at a linear solver -- see kin_custom_linsol.py for
-# that pattern. This solver never forms a Jacobian, so it leaves both
-# unimplemented; CVODE treats that exactly like SUNNonlinSol_FixedPoint, which
-# does not use a linear solver either.
-#
-# One rule follows from the callback pattern: the callable given to
-# set_sys_fn() is valid ONLY while SUNDIALS is inside your solve(). Calling it
-# at any other time raises RuntimeError rather than reading a stale pointer.
-# The callable from set_conv_test_fn() carries its own data and may be called
-# at any time.
+# Create a subclass of CustomSUNNonlinearSolver and override solve(). All other
+# functions are optional. CVODE provides the nonlinear residual function or
+# fixed-point function as an ordinary Python callable through set_sys_fn(). Store
+# this callable and use it inside solve(). It is valid only while SUNDIALS is
+# inside solve(); calling it at any other time raises RuntimeError.
 # -----------------------------------------------------------------
 
 import numpy as np
@@ -84,8 +66,8 @@ class LogisticODE:
         self.y0 = y0
 
     def rhs(self, t, yvec, ydotvec, user_data):
-        y = N_VGetArrayPointer(yvec)
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)
+        ydot = N_VGetNumpyArray(ydotvec)
         ydot[0] = self.r * y[0] * (1.0 - y[0] / self.k)
         return 0
 
@@ -121,24 +103,12 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
     """
 
     def __init__(self, template_vector, sunctx):
-        # Scratch space for probing sys_fn at trial points, and for reporting
-        # the correction to the convergence test.
+        # Scratch space for probing sys_fn at trial points.
         self.probe = N_VClone(template_vector)
         self.Fprobe = N_VClone(template_vector)
-        self.corr = N_VClone(template_vector)
 
-        # Callables CVODE installs through the setters below.
+        # Callable CVODE installs through the setter below.
         self.sys_fn = None
-        self.conv_test_fn = None
-
-        # Statistics SUNDIALS may ask for. CVODE's convergence test judges an
-        # iteration by how much the correction has shrunk relative to the
-        # previous one, so it needs to know which iteration this is; see
-        # solve() for why that matters even though this solver never really
-        # "iterates".
-        self.cur_iter = 0
-        self.num_iters = 0
-        self.num_conv_fails = 0
 
         # ROOTFIND means "solve F(y) = 0", matching the correction equation
         # above.
@@ -151,20 +121,12 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
         self.sys_fn = sys_fn
         return SUN_SUCCESS
 
-    def set_conv_test_fn(self, conv_test_fn):
-        # conv_test_fn(y, delta, tol, w) -> SUN_SUCCESS when converged,
-        # SUN_NLS_CONTINUE to keep iterating, or a failure code. Use the
-        # integrator's test rather than inventing your own; it is what makes
-        # the solver's accuracy consistent with the step size controller's.
-        self.conv_test_fn = conv_test_fn
-        return SUN_SUCCESS
-
     # -- helper: evaluate the scalar residual at a trial point ---------------
 
     def _residual(self, yval):
-        N_VGetArrayPointer(self.probe)[0] = yval
+        N_VGetNumpyArray(self.probe)[0] = yval
         status = self.sys_fn(self.probe, self.Fprobe)
-        return status, N_VGetArrayPointer(self.Fprobe)[0]
+        return status, N_VGetNumpyArray(self.Fprobe)[0]
 
     # -- the required operation ---------------------------------------------
 
@@ -181,8 +143,6 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
         Return SUN_SUCCESS on convergence, or SUN_NLS_CONV_RECVR for a
         failure the integrator can recover from by shrinking its step.
         """
-        self.num_iters += 1
-
         # Probe F at three points straddling the current correction guess c0
         # (CVODE always starts this at 0). Since F(c0+u) is exactly
         # A*u^2 + B*u + C for some A, B, C, these three values pin down all
@@ -191,8 +151,8 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
         # be chosen for floating-point conditioning, not accuracy. Scale it to
         # the predicted solution's own magnitude (y0), since the correction
         # itself starts at 0 regardless of how large y is.
-        c0 = N_VGetArrayPointer(y)[0]
-        delta = max(abs(N_VGetArrayPointer(y0)[0]), 1.0)
+        c0 = N_VGetNumpyArray(y)[0]
+        delta = max(abs(N_VGetNumpyArray(y0)[0]), 1.0)
         status, Fm = self._residual(c0 - delta)
         if status != 0:
             return status
@@ -214,7 +174,6 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
         else:
             disc = B * B - 4.0 * A * C
             if disc < 0.0:
-                self.num_conv_fails += 1
                 return SUN_NLS_CONV_RECVR
             # The textbook -B +/- sqrt(disc) formula cancels catastrophically
             # whenever B**2 >> 4*A*C -- which is exactly the well-conditioned
@@ -230,50 +189,8 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
             # of the step), so keep whichever root is closest to it.
             u = u1 if abs(u1) < abs(u2) else u2
 
-        N_VGetArrayPointer(y)[0] = c0 + u
-
-        # Report the update just applied to the integrator's own convergence
-        # test, rather than assuming the algebra above is exact in floating
-        # point.
-        self.cur_iter = 0
-        N_VGetArrayPointer(self.corr)[0] = u
-        status = self.conv_test_fn(y, self.corr, tol, w)
-        if status == SUN_SUCCESS:
-            return SUN_SUCCESS
-        if status != SUN_NLS_CONTINUE:
-            self.num_conv_fails += 1
-            return SUN_NLS_CONV_RECVR
-
-        # CVODE's convergence test compares the size of successive
-        # corrections and is unconvinced by a single (possibly large) one, no
-        # matter how accurate -- it is designed for an iteration that
-        # shrinks, not a closed-form solve that lands on the answer in one
-        # step. So confirm exactness in a way that test understands: report a
-        # second "iteration" that applies zero further correction. Since the
-        # root really is exact (up to floating point), that is simply the
-        # truth, and a strictly shrinking correction is what the test wants
-        # to see.
-        self.cur_iter = 1
-        N_VConst(0.0, self.corr)
-        status = self.conv_test_fn(y, self.corr, tol, w)
-        if status == SUN_SUCCESS:
-            return SUN_SUCCESS
-        self.num_conv_fails += 1
-        return SUN_NLS_CONV_RECVR
-
-    # -- optional: statistics ----------------------------------------------
-    #
-    # Each of these returns a (status, value) pair, matching how sundials4py
-    # binds C functions with output pointers.
-
-    def get_cur_iter(self):
-        return SUN_SUCCESS, self.cur_iter
-
-    def get_num_iters(self):
-        return SUN_SUCCESS, self.num_iters
-
-    def get_num_conv_fails(self):
-        return SUN_SUCCESS, self.num_conv_fails
+        N_VGetNumpyArray(y)[0] = c0 + u
+        return SUN_SUCCESS
 
 
 def main():
@@ -288,7 +205,7 @@ def main():
     problem = LogisticODE()
 
     y = N_VNew_Serial(NEQ, sunctx)
-    N_VGetArrayPointer(y)[0] = problem.solution(T0)
+    N_VGetNumpyArray(y)[0] = problem.solution(T0)
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), problem.rhs, T0, y) == CV_SUCCESS
@@ -311,7 +228,7 @@ def main():
         status, t = CVode(cvode.get(), tout, y, CV_NORMAL)
         assert status == CV_SUCCESS, f"CVode returned {status}"
 
-        computed = N_VGetArrayPointer(y)[0]
+        computed = N_VGetNumpyArray(y)[0]
         exact = problem.solution(t)
         print(f"{t:10.4f}  {computed:14.8e}  {abs(computed - exact):12.4e}")
 
@@ -324,7 +241,6 @@ def main():
 
     print("\nFinal Statistics..\n")
     print(f"nst      = {nst:6d}    nfe     = {nfe:6d}")
-    print(f"nni      = {NLS.num_iters:6d}    ncfn    = {NLS.num_conv_fails:6d}")
 
 
 def test_cvs_custom_nonlinsol():

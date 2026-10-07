@@ -18,8 +18,8 @@
  * SUNMatrix.
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_MATRIX_CUSTOM_HPP
-#define _SUNDIALS4PY_MATRIX_CUSTOM_HPP
+#ifndef SUNDIALS4PY_MATRIX_CUSTOM_HPP
+#define SUNDIALS4PY_MATRIX_CUSTOM_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -88,8 +88,7 @@ public:
     try
     {
       matrix_ = make_handle(self, sunctx_owner_, Ownership::weak);
-      materialization_count_++;
-      state_ = HandleState::materialized;
+      state_  = HandleState::materialized;
     }
     catch (...)
     {
@@ -101,7 +100,7 @@ public:
     return matrix_;
   }
 
-  int _materialization_count() const { return materialization_count_; }
+  bool _is_materialized() const { return state_ == HandleState::materialized; }
 
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx() const
   {
@@ -124,7 +123,7 @@ private:
 
   struct Content
   {
-    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(0x53554e4d41545059ULL);
+    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS;
   };
 
   static constexpr const char* label = "CustomSUNMatrix";
@@ -138,6 +137,11 @@ private:
 
     // Complete every potentially throwing Python operation before allocating
     // the native shell. Once A exists, the remaining assignments are noexcept.
+    const bool has_clone       = method_overridden(impl, "clone");
+    const bool has_copy        = method_overridden(impl, "copy");
+    const bool has_scaleadd    = method_overridden(impl, "scaleadd");
+    const bool has_scaleaddi   = method_overridden(impl, "scaleaddi");
+    const bool has_matvec      = method_overridden(impl, "matvec");
     const bool has_matvecsetup = method_overridden(impl, "matvecsetup");
     const bool has_hermitian   = method_overridden(impl,
                                                    "hermitian_transpose_matvec");
@@ -155,18 +159,18 @@ private:
     SUNMatrix A = SUNMatNewEmpty(content->sunctx_owner.get());
     if (!A) { throw error_returned("SUNMatNewEmpty failed"); }
 
-    // Required operations are always installed; optional operations are exposed
-    // only when the Python subclass overrides the corresponding base method.
-    A->content        = content.release();
-    A->ops->getid     = custom_matrix_getid;
-    A->ops->clone     = custom_matrix_clone;
-    A->ops->destroy   = custom_matrix_destroy;
-    A->ops->zero      = custom_matrix_zero;
-    A->ops->copy      = custom_matrix_copy;
-    A->ops->scaleadd  = custom_matrix_scaleadd;
-    A->ops->scaleaddi = custom_matrix_scaleaddi;
-    A->ops->matvec    = custom_matrix_matvec;
+    // getid, destroy, and zero are universal. Other operations are exposed only
+    // when the subclass overrides them, allowing a minimal KINSOL/IDA matrix.
+    A->content      = content.release();
+    A->ops->getid   = custom_matrix_getid;
+    A->ops->destroy = custom_matrix_destroy;
+    A->ops->zero    = custom_matrix_zero;
 
+    if (has_clone) { A->ops->clone = custom_matrix_clone; }
+    if (has_copy) { A->ops->copy = custom_matrix_copy; }
+    if (has_scaleadd) { A->ops->scaleadd = custom_matrix_scaleadd; }
+    if (has_scaleaddi) { A->ops->scaleaddi = custom_matrix_scaleaddi; }
+    if (has_matvec) { A->ops->matvec = custom_matrix_matvec; }
     if (has_matvecsetup) { A->ops->matvecsetup = custom_matrix_matvecsetup; }
     if (has_hermitian)
     {
@@ -189,9 +193,32 @@ private:
 
   static Content* get_content(SUNMatrix A)
   {
-    return custom_content_cast<Content>(A);
+    if (!A || !A->ops || A->ops->destroy != custom_matrix_destroy || !A->content)
+    {
+      return nullptr;
+    }
+    return static_cast<Content*>(A->content);
   }
 
+public:
+  /* Recover the Python implementation for borrowed custom handles. */
+  static nb::object _python_object_for(SUNMatrix A) noexcept
+  {
+    try
+    {
+      Content* content = get_content(A);
+      if (!content) { return nb::object(); }
+      if (content->strong_impl.is_valid()) { return content->strong_impl; }
+      nb::object impl = content->weak_impl();
+      return impl.is_none() ? nb::object() : impl;
+    }
+    catch (...)
+    {
+      return nb::object();
+    }
+  }
+
+private:
   static nb::object get_impl(SUNMatrix A)
   {
     return custom_content_impl(get_content(A), label);
@@ -204,18 +231,9 @@ private:
 
   static void validate_required_methods(nb::handle impl)
   {
-    static constexpr const char* required[] = {"clone",     "zero",
-                                               "copy",      "scaleadd",
-                                               "scaleaddi", "matvec"};
-
-    for (const char* name : required)
+    if (!method_overridden(impl, "zero"))
     {
-      if (!method_overridden(impl, name))
-      {
-        throw nb::type_error(
-          (std::string("CustomSUNMatrix subclass must override ") + name + "()")
-            .c_str());
-      }
+      throw nb::type_error("CustomSUNMatrix subclass must override zero()");
     }
   }
 
@@ -377,9 +395,8 @@ private:
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner_;
   std::shared_ptr<std::remove_pointer_t<SUNMatrix>> matrix_;
   HandleState state_{HandleState::unmaterialized};
-  int materialization_count_{0};
 };
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_MATRIX_CUSTOM_HPP
+#endif // SUNDIALS4PY_MATRIX_CUSTOM_HPP

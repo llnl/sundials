@@ -45,7 +45,7 @@ void bind_sunlinearsolver(nb::module_& m)
     .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>,
                   SUNLinearSolver_Type>(),
          nb::arg("sunctx"), nb::arg("solver_type"))
-    .def("_materialization_count", &CustomSUNLinearSolver::_materialization_count)
+    .def("_is_materialized", &CustomSUNLinearSolver::_is_materialized)
     .def_prop_ro("sunctx", &CustomSUNLinearSolver::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")
@@ -59,6 +59,9 @@ void bind_sunlinearsolver(nb::module_& m)
          })
     .def("set_zero_guess", [](CustomSUNLinearSolver&, sunbooleantype)
          { return CustomSUNLinearSolver::base_method_int("set_zero_guess"); })
+    .def("set_options", [](CustomSUNLinearSolver&, const std::string&,
+                           const std::string&, const std::vector<std::string>&)
+         { return CustomSUNLinearSolver::base_method_int("set_options"); })
     .def("initialize", [](CustomSUNLinearSolver&)
          { return CustomSUNLinearSolver::base_method_int("initialize"); })
     .def("setup", [](CustomSUNLinearSolver&, nb::object)

@@ -297,6 +297,7 @@ m.def(
 auto pyEnumSUNLinearSolver_Type =
   nb::enum_<SUNLinearSolver_Type>(m, "SUNLinearSolver_Type",
                                   nb::is_arithmetic(), "")
+    .value("SUNLINEARSOLVER_NONE", SUNLINEARSOLVER_NONE, "")
     .value("SUNLINEARSOLVER_DIRECT", SUNLINEARSOLVER_DIRECT, "")
     .value("SUNLINEARSOLVER_ITERATIVE", SUNLINEARSOLVER_ITERATIVE, "")
     .value("SUNLINEARSOLVER_MATRIX_ITERATIVE", SUNLINEARSOLVER_MATRIX_ITERATIVE,

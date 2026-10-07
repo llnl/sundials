@@ -37,8 +37,7 @@ void bind_sunadaptcontroller(nb::module_& m)
   // H and MRI subclasses below select the required estimate callback shape.
   nb::class_<CustomSUNAdaptController>(m, "CustomSUNAdaptController",
                                        nb::dynamic_attr())
-    .def("_materialization_count",
-         &CustomSUNAdaptController::_materialization_count)
+    .def("_is_materialized", &CustomSUNAdaptController::_is_materialized)
     .def_prop_ro("sunctx", &CustomSUNAdaptController::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")

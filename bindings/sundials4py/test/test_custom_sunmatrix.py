@@ -89,17 +89,27 @@ class IncompleteMatrix(CustomSUNMatrix):
         super().__init__(sunctx)
 
 
+class MinimalMatrix(CustomSUNMatrix):
+    def __init__(self, sunctx):
+        self.zero_calls = 0
+        super().__init__(sunctx)
+
+    def zero(self):
+        self.zero_calls += 1
+        return SUN_SUCCESS
+
+
 def test_custom_sunmatrix_converts_for_handwritten_bindings(sunctx):
     # Purpose:
     # Custom sunmatrix converts for handwritten bindings.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
 
-    assert A._materialization_count() == 0
+    assert not A._is_materialized()
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
 
     assert SUNMatZero(A) == SUN_SUCCESS
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
     assert A.calls["zero"] == 1
     assert_allclose(A.diagonal, [0.0, 0.0])
 
@@ -112,7 +122,15 @@ def test_custom_sunmatrix_required_methods_are_validated(sunctx):
     with pytest.raises(TypeError, match="SUNMatGetID"):
         SUNMatGetID(A)
 
-    assert A._materialization_count() == 0
+    assert not A._is_materialized()
+
+
+def test_custom_sunmatrix_only_requires_zero(sunctx):
+    A = MinimalMatrix(sunctx)
+
+    assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
+    assert SUNMatZero(A) == SUN_SUCCESS
+    assert A.zero_calls == 1
 
 
 def test_custom_sunmatrix_copy_scaleadd_and_scaleaddi(sunctx):
@@ -153,7 +171,7 @@ def test_custom_sunmatrix_clone_uses_python_clone(sunctx):
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SUNMatClone(A)
 
-    assert B is not None
+    assert isinstance(B, DiagonalMatrix)
     assert A.calls["clone"] == 1
     assert SUNMatGetID(B) == SUNMATRIX_CUSTOM
     assert SUNMatScaleAddI(3.0, B) == SUN_SUCCESS
@@ -240,7 +258,7 @@ def test_custom_sunmatrix_converts_for_generated_optional_bindings(sunctx):
     A = DiagonalMatrix([1.0, 2.0], sunctx)
 
     assert SUNLinSolSetup(LS, A) == SUN_SUCCESS
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
 
 
 def test_generated_optional_bindings_still_accept_none(sunctx):

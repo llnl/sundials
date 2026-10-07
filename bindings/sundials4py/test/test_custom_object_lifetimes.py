@@ -121,9 +121,9 @@ def test_failed_materialization_is_transactional_and_retryable(sunctx):
     with pytest.raises(TypeError, match="SUNMatGetID"):
         SUNMatGetID(A)
 
-    assert A._materialization_count() == 0
+    assert not A._is_materialized()
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
 
 
 def test_reentrant_materialization_resets_state_and_allows_retry(sunctx):
@@ -140,9 +140,9 @@ def test_reentrant_materialization_resets_state_and_allows_retry(sunctx):
     with pytest.raises(TypeError, match="SUNMatGetID"):
         SUNMatGetID(A)
 
-    assert A._materialization_count() == 0
+    assert not A._is_materialized()
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
 
 
 def test_dropping_an_unused_custom_object_releases_its_handle(sunctx):
@@ -150,7 +150,7 @@ def test_dropping_an_unused_custom_object_releases_its_handle(sunctx):
     # Dropping an unused custom object releases its handle.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
 
     # The native handle holds only a weak reference back to the Python object, so
     # materializing must not turn the object into a permanent resident.
@@ -173,7 +173,7 @@ def test_retaining_the_python_object_for_the_full_use_period_succeeds(sunctx):
         assert SUNMatMatvec(A, x, y) == SUN_SUCCESS
 
     # Repeated conversion reuses the one cached handle rather than rebuilding it.
-    assert A._materialization_count() == 1
+    assert A._is_materialized()
     assert list(N_VGetArrayPointer(y)) == [2.0, 3.0]
 
 

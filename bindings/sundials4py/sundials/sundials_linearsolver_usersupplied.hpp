@@ -16,8 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -43,6 +43,9 @@ struct SUNLinearSolverFunctionTable
      NULL means the solver had no free operation at all. */
   SUNErrCode (*original_free)(SUNLinearSolver){nullptr};
 };
+
+/* Matrix and adapt-controller bindings need no equivalent sidecar: unlike the
+   solver APIs, they have no setters that retain Python callback objects. */
 
 /*
  * Free operation installed in place of a solver's own whenever a Python function
@@ -127,4 +130,4 @@ inline int sunlinearsolver_psolvefn_wrapper(Args... args)
     5>(&SUNLinearSolverFunctionTable::PSolveFn, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP

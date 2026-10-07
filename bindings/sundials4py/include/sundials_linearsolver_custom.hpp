@@ -18,8 +18,8 @@
  * SUNLinearSolver.
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
-#define _SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
+#ifndef SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
+#define SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -85,8 +85,7 @@ public:
     try
     {
       solver_ = make_handle(self, sunctx_owner_, solver_type_);
-      materialization_count_++;
-      state_ = HandleState::materialized;
+      state_  = HandleState::materialized;
     }
     catch (...)
     {
@@ -98,7 +97,7 @@ public:
     return solver_;
   }
 
-  int _materialization_count() const { return materialization_count_; }
+  bool _is_materialized() const { return state_ == HandleState::materialized; }
 
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx() const
   {
@@ -122,9 +121,9 @@ public:
 private:
   struct Content
   {
-    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS(0x53554e4c53505931ULL);
+    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS;
 
-    SUNLinearSolver_Type solver_type{SUNLINEARSOLVER_DIRECT};
+    SUNLinearSolver_Type solver_type{SUNLINEARSOLVER_NONE};
 
     // Keeps the Python object that owns the vector returned by resid() alive,
     // because SUNLinSolResid() hands back a borrowed pointer its caller may
@@ -149,6 +148,7 @@ private:
     const bool has_set_scaling_vectors =
       method_overridden(impl, "set_scaling_vectors");
     const bool has_set_zero_guess = method_overridden(impl, "set_zero_guess");
+    const bool has_set_options    = method_overridden(impl, "set_options");
     const bool has_initialize     = method_overridden(impl, "initialize");
     const bool has_setup          = method_overridden(impl, "setup");
     const bool has_num_iters      = method_overridden(impl, "num_iters");
@@ -184,6 +184,7 @@ private:
     {
       S->ops->setzeroguess = custom_linsol_setzeroguess;
     }
+    if (has_set_options) { S->ops->setoptions = custom_linsol_setoptions; }
     if (has_initialize) { S->ops->initialize = custom_linsol_initialize; }
     if (has_setup) { S->ops->setup = custom_linsol_setup; }
     if (has_num_iters) { S->ops->numiters = custom_linsol_numiters; }
@@ -197,9 +198,30 @@ private:
 
   static Content* get_content(SUNLinearSolver S)
   {
-    return custom_content_cast<Content>(S);
+    if (!S || !S->ops || S->ops->getid != custom_linsol_getid || !S->content)
+    {
+      return nullptr;
+    }
+    return static_cast<Content*>(S->content);
   }
 
+public:
+  static nb::object _python_object_for(SUNLinearSolver S) noexcept
+  {
+    try
+    {
+      Content* content = get_content(S);
+      if (!content) { return nb::object(); }
+      nb::object impl = content->weak_impl();
+      return impl.is_none() ? nb::object() : impl;
+    }
+    catch (...)
+    {
+      return nb::object();
+    }
+  }
+
+private:
   static nb::object get_impl(SUNLinearSolver S)
   {
     return custom_content_impl(get_content(S), label);
@@ -228,12 +250,30 @@ private:
   static SUNLinearSolver_Type custom_linsol_gettype(SUNLinearSolver S)
   {
     Content* content = get_content(S);
-    return content ? content->solver_type : SUNLINEARSOLVER_DIRECT;
+    return content ? content->solver_type : SUNLINEARSOLVER_NONE;
   }
 
   static SUNLinearSolver_ID custom_linsol_getid(SUNLinearSolver)
   {
     return SUNLINEARSOLVER_CUSTOM;
+  }
+
+  static SUNErrCode custom_linsol_setoptions(SUNLinearSolver S, const char* LSid,
+                                             const char* file_name, int argc,
+                                             char* argv[])
+  {
+    try
+    {
+      nb::gil_scoped_acquire gil;
+      std::vector<std::string> args;
+      args.reserve(static_cast<size_t>(argc));
+      for (int i = 0; i < argc; i++) { args.emplace_back(argv[i]); }
+      return static_cast<SUNErrCode>(nb::cast<int>(get_impl(S).attr(
+        "set_options")(LSid ? LSid : "", file_name ? file_name : "", args)));
+    }
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.set_options",
+                                 SUN_ERR_EXT_FAIL)
   }
 
   static SUNErrCode custom_linsol_setatimes(SUNLinearSolver S, void* A_data,
@@ -249,8 +289,10 @@ private:
       // (function, data) pair, and invalidate whatever occupied this slot
       // before. Converting to a plain Python callable keeps SUNDIALS' opaque
       // A_data out of the subclass's interface entirely.
-      auto state = content ? content->callbacks.install("atimes", ATimes, A_data)
-                           : nullptr;
+      auto state = content
+                     ? content->callbacks.install(NativeCallbackSlot::atimes,
+                                                  ATimes, A_data)
+                     : nullptr;
 
       nb::object atimes = nb::none();
       if (state)
@@ -266,7 +308,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_atimes")(atimes)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.set_atimes",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -284,9 +327,13 @@ private:
       // SUNDIALS sets both preconditioner halves in one call, so both slots are
       // replaced (and any previous adapters revoked) together.
       auto setup_state =
-        content ? content->callbacks.install("psetup", Pset, P_data) : nullptr;
+        content
+          ? content->callbacks.install(NativeCallbackSlot::psetup, Pset, P_data)
+          : nullptr;
       auto solve_state =
-        content ? content->callbacks.install("psolve", Psol, P_data) : nullptr;
+        content
+          ? content->callbacks.install(NativeCallbackSlot::psolve, Psol, P_data)
+          : nullptr;
 
       nb::object psetup = nb::none();
       nb::object psolve = nb::none();
@@ -312,7 +359,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(impl.attr("set_preconditioner")(psetup, psolve)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.set_preconditioner",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -326,7 +374,8 @@ private:
         "set_scaling_vectors")(nb::cast(s1, nb::rv_policy::reference),
                                nb::cast(s2, nb::rv_policy::reference))));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.set_scaling_vectors",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -339,7 +388,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(S).attr("set_zero_guess")(onoff)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.set_zero_guess",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -351,7 +401,8 @@ private:
       return static_cast<SUNErrCode>(
         nb::cast<int>(get_impl(S).attr("initialize")()));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.initialize",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -362,8 +413,8 @@ private:
       nb::gil_scoped_acquire gil;
       return nb::cast<int>(get_impl(S).attr("setup")(matrix_arg(A)));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
-                                 SUN_ERR_EXT_FAIL)
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.setup", SUN_ERR_EXT_FAIL)
   }
 
   static int custom_linsol_solve(SUNLinearSolver S, SUNMatrix A, N_Vector x,
@@ -376,8 +427,8 @@ private:
         "solve")(matrix_arg(A), nb::cast(x, nb::rv_policy::reference),
                  nb::cast(b, nb::rv_policy::reference), tol));
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
-                                 SUN_ERR_EXT_FAIL)
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.solve", SUN_ERR_EXT_FAIL)
   }
 
   static int custom_linsol_numiters(SUNLinearSolver S)
@@ -387,7 +438,8 @@ private:
       nb::gil_scoped_acquire gil;
       return nb::cast<int>(get_impl(S).attr("num_iters")());
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.num_iters",
                                  SUN_ERR_EXT_FAIL)
   }
 
@@ -398,7 +450,8 @@ private:
       nb::gil_scoped_acquire gil;
       return nb::cast<sunrealtype>(get_impl(S).attr("res_norm")());
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__,
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.res_norm",
                                  SUN_RCONST(0.0))
   }
 
@@ -420,7 +473,8 @@ private:
       if (content) { content->resid_owner = std::move(owner); }
       return resid;
     }
-    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr, __func__, nullptr)
+    SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
+                                 "CustomSUNLinearSolver.resid", nullptr)
   }
 
   static SUNErrCode custom_linsol_free(SUNLinearSolver S)
@@ -437,9 +491,8 @@ private:
   SUNLinearSolver_Type solver_type_;
   std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>> solver_;
   HandleState state_{HandleState::unmaterialized};
-  int materialization_count_{0};
 };
 
 } // namespace sundials4py
 
-#endif // _SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
+#endif // SUNDIALS4PY_LINEARSOLVER_CUSTOM_HPP
