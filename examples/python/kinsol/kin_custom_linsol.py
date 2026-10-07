@@ -186,12 +186,7 @@ class MyMatrix(CustomSUNMatrix):
 
 
 class MyLinearSolver(CustomSUNLinearSolver):
-    """A SUNLinearSolver implemented in Python, using the Thomas algorithm.
-
-    Reference implementations worth reading alongside this template:
-      src/sunlinsol/band/sunlinsol_band.c           (direct, general banded)
-      src/sunlinsol/spgmr/sunlinsol_spgmr.c          (iterative, matrix-free)
-    """
+    """A SUNLinearSolver implemented in Python, using the Thomas algorithm."""
 
     def __init__(self, matrix, sunctx):
         self.n = matrix.n
