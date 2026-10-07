@@ -270,7 +270,7 @@ public:
 
       if (!s2inv_.get())
       {
-        s2inv_ = std::move(sundials::experimental::N_VectorView(N_VClone(s2)));
+        s2inv_ = sundials::experimental::N_VectorView(N_VClone(s2));
       }
 
       // SUNLinearSolver API wants s2inv_
