@@ -165,13 +165,13 @@ def test_custom_sunmatrix_matvec(sunctx):
     assert A.calls["matvec"] == 1
 
 
-def test_custom_sunmatrix_clone_uses_python_clone(sunctx):
+def test_custom_sunmatrix_clone_returns_native_handle(sunctx):
     # Purpose:
-    # Custom sunmatrix clone uses python clone.
+    # SUNMatClone dispatches to Python but returns the owning native handle.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SUNMatClone(A)
 
-    assert isinstance(B, DiagonalMatrix)
+    assert not isinstance(B, DiagonalMatrix)
     assert A.calls["clone"] == 1
     assert SUNMatGetID(B) == SUNMATRIX_CUSTOM
     assert SUNMatScaleAddI(3.0, B) == SUN_SUCCESS

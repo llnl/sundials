@@ -71,13 +71,6 @@ void bind_sunmatrix(nb::module_& m)
       SUNMatrix clone = SUNMatClone(A);
       if (!clone) { return nb::none(); }
 
-      nb::object impl = CustomSUNMatrix::_python_object_for(clone);
-      if (impl.is_valid())
-      {
-        SUNMatDestroy(clone);
-        return impl;
-      }
-
       return nb::cast(
         our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
           clone));
