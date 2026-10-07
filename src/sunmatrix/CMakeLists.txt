@@ -32,7 +32,7 @@ if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
   message(STATUS "Added SUNDIALS_ENABLE_SUNMATRIX_GINKGO module")
   add_library(sundials_sunmatrixginkgo INTERFACE)
   target_link_libraries(sundials_sunmatrixginkgo INTERFACE sundials_core
-                                                            Ginkgo::ginkgo)
+                                                           Ginkgo::ginkgo)
   target_include_directories(
     sundials_sunmatrixginkgo
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -44,7 +44,7 @@ if(SUNDIALS_ENABLE_SUNMATRIX_GINKGO)
           ${PROJECT_SOURCE_DIR}/include/sunmatrix/sunmatrix_ginkgobatch.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunmatrix")
   set_target_properties(sundials_sunmatrixginkgo PROPERTIES EXPORT_NAME
-                                                              sunmatrixginkgo)
+                                                            sunmatrixginkgo)
   install(TARGETS sundials_sunmatrixginkgo EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunmatrixginkgo;${_SUNDIALS_INSTALLED_COMPONENTS}"

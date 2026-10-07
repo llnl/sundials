@@ -36,7 +36,7 @@ if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
   message(STATUS "Added SUNDIALS_ENABLE_SUNLINSOL_GINKGO module")
   add_library(sundials_sunlinsolginkgo INTERFACE)
   target_link_libraries(sundials_sunlinsolginkgo INTERFACE sundials_core
-                                                            Ginkgo::ginkgo)
+                                                           Ginkgo::ginkgo)
   target_include_directories(
     sundials_sunlinsolginkgo
     INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -48,7 +48,7 @@ if(SUNDIALS_ENABLE_SUNLINSOL_GINKGO)
           ${PROJECT_SOURCE_DIR}/include/sunlinsol/sunlinsol_ginkgobatch.hpp
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sunlinsol")
   set_target_properties(sundials_sunlinsolginkgo PROPERTIES EXPORT_NAME
-                                                              sunlinsolginkgo)
+                                                            sunlinsolginkgo)
   install(TARGETS sundials_sunlinsolginkgo EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "sunlinsolginkgo;${_SUNDIALS_INSTALLED_COMPONENTS}"
