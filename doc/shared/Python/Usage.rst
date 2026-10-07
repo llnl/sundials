@@ -212,11 +212,13 @@ Lifetime of Objects Retained by SUNDIALS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Some SUNDIALS functions retain pointers to objects supplied by the
-application, such as matrices, linear and nonlinear solvers, and adaptivity
-controllers. The Python application must keep each supplied object alive for as
-long as the SUNDIALS integrator or solver may use it. This requirement applies
-to both native sundials4py objects and Python subclasses of the custom SUNDIALS
-object interfaces.
+application. Examples include the package-level ``*SetLinearSolver`` and
+``*SetNonlinearSolver`` functions and ARKODE's ``*SetAdaptController``
+functions. The Python application must keep each supplied matrix, linear or
+nonlinear solver, or adaptivity controller alive for as long as the SUNDIALS
+integrator or solver may use it. This requirement applies to both native
+sundials4py objects and Python subclasses of the custom SUNDIALS object
+interfaces.
 
 Store retained objects in variables whose lifetime covers all SUNDIALS calls
 that may use them. Do not rely on a temporary object passed directly to a
