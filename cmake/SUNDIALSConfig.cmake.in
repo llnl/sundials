@@ -84,6 +84,10 @@ if("@SUNDIALS_ENABLE_MPI@" AND NOT TARGET MPI::MPI_C)
 endif()
 
 if("@SUNDIALS_ENABLE_OPENMP@" AND NOT TARGET OpenMP::OpenMP_C)
+  get_property(LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
+  if(NOT "C" IN_LIST LANGUAGES)
+    enable_language(C)
+  endif()
   find_dependency(OpenMP)
 endif()
 
