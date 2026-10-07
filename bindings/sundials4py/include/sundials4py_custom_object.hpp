@@ -52,19 +52,8 @@ namespace sundials4py {
  *----------------------------------------------------------------------------*/
 
 /*
- * GIL acquisition that is safe to use from a destructor.
- *
- * Custom object content is destroyed from SUNDIALS' C free/destroy operations,
- * which may run on a thread that does not hold the GIL, and may also run while
- * the interpreter is being torn down (for example when a SUNContext held by a
- * module-level Python object is collected during finalization). nanobind does
- * not permit acquiring the GIL or touching Python objects once its internals
- * have been dismantled, so this helper reports whether Python is still usable
- * instead of unconditionally acquiring.
- *
- * Callers that find Python unavailable must skip destruction of any nb::object
- * state. Leaking a handful of references as the process exits is the correct
- * trade: the alternative is undefined behavior during finalization.
+ * GIL acquisition safe for destructors during interpreter shutdown. If Python
+ * is already unavailable, callers must leave their nb::object state untouched.
  */
 class ShutdownSafeGIL
 {
