@@ -23,6 +23,7 @@ class Estimator(CustomSUNDomEigEstimator):
         self.max_iters = None
         self.atimes = None
         self.rhs = None
+        self.rhs_point = None
         self.estimate_calls = 0
         super().__init__(sunctx)
 
@@ -36,6 +37,10 @@ class Estimator(CustomSUNDomEigEstimator):
 
     def set_max_iters(self, max_iters):
         self.max_iters = max_iters
+        return SUN_SUCCESS
+
+    def set_rhs_linearization_point(self, t, vector):
+        self.rhs_point = (t, vector)
         return SUN_SUCCESS
 
     def estimate(self):
@@ -52,9 +57,12 @@ class IncompleteEstimator(CustomSUNDomEigEstimator):
 
 def test_custom_domeigestimator_dispatch(sunctx):
     estimator = Estimator(sunctx)
+    vector = N_VNew_Serial(1, sunctx)
 
     assert SUNDomEigEstimator_SetMaxIters(estimator, 12) == SUN_SUCCESS
+    assert SUNDomEigEstimator_SetRhsLinearizationPoint(estimator, 2.0, vector) == SUN_SUCCESS
     assert estimator.max_iters == 12
+    assert estimator.rhs_point == (2.0, vector)
     assert SUNDomEigEstimator_Estimate(estimator) == (SUN_SUCCESS, 4.0, -0.5)
     assert SUNDomEigEstimator_GetNumIters(estimator) == (SUN_SUCCESS, 3)
 
