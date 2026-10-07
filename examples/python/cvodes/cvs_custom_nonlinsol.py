@@ -94,12 +94,6 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
     exactly (no truncation error, since F really is a quadratic), then solve
     the quadratic directly for its root.
 
-    This is specific to a right-hand side that is (at most) quadratic in y --
-    it is not a general substitute for Newton iteration. For a general
-    right-hand side, see the modified-Newton sketch this file used to carry;
-    reference implementations of that approach are:
-      src/sunnonlinsol/newton/sunnonlinsol_newton.c
-      src/sunnonlinsol/fixedpoint/sunnonlinsol_fixedpoint.c
     """
 
     def __init__(self, template_vector, sunctx):
