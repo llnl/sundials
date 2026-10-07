@@ -495,13 +495,12 @@ int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   UserData* udata = (UserData*)user_data;
-  auto Jgko       = static_cast<SUNGkoMatrixType*>(J->content)->GkoMtx();
-
-  sunrealtype* Jdata = Jgko->get_values();
 
 #if defined(USE_CUDA) || defined(USE_HIP)
   return Jac_gpu(y, J, udata);
 #else
+  auto Jgko          = static_cast<SUNGkoMatrixType*>(J->content)->GkoMtx();
+  sunrealtype* Jdata = Jgko->get_values();
   sunrealtype* ydata = N_VGetArrayPointer(y);
   j_kernel(ydata, Jdata, udata->a.get(), udata->b.get(), udata->ep.get(),
            udata->neq, udata->num_batches, udata->batch_size, udata->nnzper);
