@@ -207,15 +207,6 @@ class MyLinearSolver(CustomSUNLinearSolver):
         # report num_iters() and res_norm().
         super().__init__(sunctx, SUNLINEARSOLVER_DIRECT)
 
-    # -- optional: one-time setup -------------------------------------------
-
-    def initialize(self):
-        # Called once before the first setup()/solve(). Override this if the
-        # solver has state that must be established after construction but
-        # before use -- for example, checking that the matrix shape is one
-        # you can handle.
-        return SUN_SUCCESS
-
     def setup(self, A):
         # Factor the matrix: the forward elimination pass of the Thomas
         # algorithm, which turns the tridiagonal system into a bidiagonal one
