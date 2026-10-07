@@ -181,9 +181,9 @@ enum class ActiveMemMode
      invalid. */
   none,
 
-  /* A SUNDIALS package or other native caller drove the custom vtable
-     and supplied its own integrator memory. */
-  integrator,
+  /* SUNDIALS or another native caller drove the custom vtable and supplied
+     its own memory. */
+  sundials,
 
   /* A hand-written sundials4py wrapper was the caller, so the relevant pointer
      is the object's `python` function table, matching the pre-existing native
@@ -195,7 +195,7 @@ inline const char* active_mem_mode_name(ActiveMemMode mode)
 {
   switch (mode)
   {
-  case ActiveMemMode::integrator: return "integrator";
+  case ActiveMemMode::sundials: return "sundials";
   case ActiveMemMode::direct_binding: return "direct-binding";
   default: return "none";
   }
@@ -242,7 +242,7 @@ private:
 inline ActiveMemMode current_install_mode()
 {
   return DirectBindingScope::active() ? ActiveMemMode::direct_binding
-                                      : ActiveMemMode::integrator;
+                                      : ActiveMemMode::sundials;
 }
 
 /*------------------------------------------------------------------------------

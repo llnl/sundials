@@ -257,7 +257,7 @@ private:
   {
     if (!mem) { return ActiveMemMode::none; }
     return mem == NLS->python ? ActiveMemMode::direct_binding
-                              : ActiveMemMode::integrator;
+                              : ActiveMemMode::sundials;
   }
 
   static SUNNonlinearSolver_Type custom_nls_gettype(SUNNonlinearSolver NLS)
