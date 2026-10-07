@@ -109,12 +109,7 @@ class NonlinearBVP:
 
 
 class MyMatrix(CustomSUNMatrix):
-    """A tridiagonal SUNMatrix implemented in Python.
-
-    Reference implementations worth reading alongside this template:
-      src/sunmatrix/band/sunmatrix_band.c
-      src/sunmatrix/sparse/sunmatrix_sparse.c
-    """
+    """A tridiagonal SUNMatrix implemented in Python."""
 
     def __init__(self, n, sunctx):
         # Three arrays, all length n for uniform indexing: sub[i] is the
