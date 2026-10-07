@@ -139,6 +139,7 @@ private:
 
     // Common optional operations are shared; the estimate operation is selected
     // by controller type because H and MRI controllers have different C APIs.
+    // Keep the content under RAII until the native shell is ready to own it.
     std::unique_ptr<Content> content(new Content);
     content->weak_impl       = nb::weakref(impl);
     content->sunctx_owner    = std::move(sunctx_owner);
