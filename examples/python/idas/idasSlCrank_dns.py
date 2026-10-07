@@ -58,8 +58,8 @@ class SliderCrankDAE:
         q = pi / 2.0
         p = np.arcsin(-a)
         x = np.cos(p)
-        yy = N_VGetArrayPointer(yyvec)
-        yp = N_VGetArrayPointer(ypvec)
+        yy = N_VGetNumpyArray(yyvec)
+        yp = N_VGetNumpyArray(ypvec)
         yy[:] = 0.0
         yp[:] = 0.0
         yy[0] = q
@@ -97,9 +97,9 @@ class SliderCrankDAE:
 
     def residual(self, t, yyvec, ypvec, rvec, user_data):
         a, J1, m2, J2 = self.a, self.J1, self.m2, self.J2
-        yy = N_VGetArrayPointer(yyvec)
-        yp = N_VGetArrayPointer(ypvec)
-        rr = N_VGetArrayPointer(rvec)
+        yy = N_VGetNumpyArray(yyvec)
+        yp = N_VGetNumpyArray(ypvec)
+        rr = N_VGetNumpyArray(rvec)
         q, x, p = yy[0], yy[1], yy[2]
         qd, xd, pd = yy[3], yy[4], yy[5]
         lam1, lam2 = yy[6], yy[7]
@@ -121,8 +121,8 @@ class SliderCrankDAE:
 
     def rhsQ(self, t, yyvec, ypvec, qdotvec, user_data):
         J1, m2, J2 = self.J1, self.m2, self.J2
-        yy = N_VGetArrayPointer(yyvec)
-        qdot = N_VGetArrayPointer(qdotvec)
+        yy = N_VGetNumpyArray(yyvec)
+        qdot = N_VGetNumpyArray(qdotvec)
         v1, v2, v3 = yy[3], yy[4], yy[5]
         qdot[0] = 0.5 * (J1 * v1 * v1 + m2 * v2 * v2 + J2 * v3 * v3)
         return 0
@@ -156,7 +156,7 @@ def main():
     assert q is not None
 
     # Consistent IC
-    id_arr = N_VGetArrayPointer(id)
+    id_arr = N_VGetNumpyArray(id)
     id_arr[:6] = 1.0
     id_arr[6:] = 0.0
     dae.set_initial_conditions(yy, yp)
@@ -205,7 +205,7 @@ def main():
     print("---------------------------------------------------------------------")
 
     # Time stepping loop (C example style)
-    yarr = N_VGetArrayPointer(yy)
+    yarr = N_VGetNumpyArray(yy)
     tout = TEND / NOUT
     tret = 0.0
     while True:
@@ -250,7 +250,7 @@ def main():
 
     status, tret = IDAGetQuad(ida.get(), q)
     print("--------------------------------------------")
-    print(f"  G = {N_VGetArrayPointer(q)[0]}")
+    print(f"  G = {N_VGetNumpyArray(q)[0]}")
     print("--------------------------------------------\n")
 
 

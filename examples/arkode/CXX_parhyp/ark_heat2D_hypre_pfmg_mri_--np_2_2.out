@@ -42,16 +42,16 @@
           t                     ||u||_rms      
  ----------------------------------------------
  0.000000000000000e+00    3.691406249999997e-01
- 1.000000000000000e-01    5.162013348264493e-02
- 2.000000000000000e-01    7.426099612039279e-03
- 3.000000000000000e-01    1.067221239940204e-03
- 4.000000000000000e-01    1.533637906727211e-04
- 5.000000000000000e-01    2.203889796615632e-05
- 6.000000000000000e-01    3.167064041329392e-06
- 7.000000000000000e-01    4.551178478885111e-07
- 7.999999999999999e-01    6.540199134588134e-08
- 8.999999999999999e-01    9.398525108647772e-09
- 1.000000000000000e+00    1.350608783621281e-09
+ 1.000000000000000e-01    5.161995112389606e-02
+ 2.000000000000000e-01    7.426073344548000e-03
+ 3.000000000000000e-01    1.067217474654533e-03
+ 4.000000000000000e-01    1.533632498726524e-04
+ 5.000000000000000e-01    2.203882084600790e-05
+ 6.000000000000000e-01    3.167053653303435e-06
+ 7.000000000000000e-01    4.551165236032850e-07
+ 7.999999999999999e-01    6.540211283856680e-08
+ 8.999999999999999e-01    9.398567633398420e-09
+ 1.000000000000000e+00    1.350615093778756e-09
  ----------------------------------------------
 
 Final slow integrator statistics:
@@ -60,16 +60,16 @@ Final slow integrator statistics:
   Fi RHS evals     = 7355
   NLS iters        = 3355
   NLS fails        = 0
-  LS iters         = 10603
+  LS iters         = 9484
   LS fails         = 0
   LS setups        = 50
-  Jv products      = 10603
+  Jv products      = 9484
 
-  Avg LS iters per NLS iter      = 3.160358
+  Avg LS iters per NLS iter      = 2.826826
 
   Preconditioner setups = 50
-  Preconditioner solves = 10603
-  PFMG iters            = 10603
+  Preconditioner solves = 9484
+  PFMG iters            = 9484
 
 Final fast integrator statistics:
   Steps            = 3002
@@ -78,15 +78,15 @@ Final fast integrator statistics:
   RHS evals        = 39685
   NLS iters        = 23675
   NLS fails        = 0
-  LS iters         = 13062
+  LS iters         = 12325
   LS fails         = 0
   LS setups        = 0
-  Jv products      = 13062
+  Jv products      = 12325
 
   Avg NLS iters per step attempt = 7.886409
-  Avg LS iters per NLS iter      = 0.551721
+  Avg LS iters per NLS iter      = 0.520591
 
   Preconditioner setups = 0
   Preconditioner solves = 0
-  PFMG iters            = 10603
+  PFMG iters            = 9484
 

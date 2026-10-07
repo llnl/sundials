@@ -152,7 +152,7 @@ Error weight function
 As an alternative to providing the relative and absolute tolerances,
 the user may provide a function of type :c:type:`ARKEwtFn` to compute a
 vector *ewt* containing the weights in the WRMS norm
-:math:`\|v\|_{WRMS} = \left(\dfrac{1}{n} \displaystyle \sum_{i=1}^n \left(ewt_i\; v_i\right)^2
+:math:`\|v\|_{\text{WRMS}} = \left(\dfrac{1}{n} \displaystyle \sum_{i=1}^n \left(ewt_i\; v_i\right)^2
 \right)^{1/2}`.  These weights will be used in place of those defined
 in :numref:`ARKODE.Mathematics.Error.Norm`.
 
@@ -200,7 +200,7 @@ As an alternative to providing the scalar or vector absolute residual
 tolerances (when the IVP units differ from the solution units), the
 user may provide a function of type :c:type:`ARKRwtFn` to compute a
 vector *rwt* containing the weights in the WRMS norm
-:math:`\|v\|_{WRMS} = \left(\dfrac{1}{n} \displaystyle \sum_{i=1}^n \left(rwt_i\; v_i\right)^2
+:math:`\|v\|_{\text{WRMS}} = \left(\dfrac{1}{n} \displaystyle \sum_{i=1}^n \left(rwt_i\; v_i\right)^2
 \right)^{1/2}`.  These weights will be used in place of those defined
 in :numref:`ARKODE.Mathematics.Error.Norm`.
 

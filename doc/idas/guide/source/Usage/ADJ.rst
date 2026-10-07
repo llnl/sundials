@@ -1261,11 +1261,12 @@ These may be accomplished through calling the following functions:
 
 .. c:function:: int IDASetEpsLinB(void * ida_mem, int which, sunrealtype eplifacB)
 
-   The function :c:func:`IDASetEpsLinB` specifies the factor by  which the
-   Krylov linear solver's convergence test constant is reduced  from the
-   nonlinear iteration test constant. (See :numref:`IDAS.Mathematics.ivp_sol`).
-   This routine can be used in both the cases wherethe backward problem does
-   and does not depend on the forward sensitivities.
+   The function :c:func:`IDASetEpsLinB` specifies the factor :math:`\epsilon_L`
+   by which the Krylov linear solver's convergence test constant is reduced from
+   the nonlinear iteration test constant. (See
+   :numref:`IDAS.Mathematics.ivp_sol`). This routine can be used in both the
+   cases where the backward problem does and does not depend on the forward
+   sensitivities.
 
    **Arguments:**
      * ``ida_mem`` -- pointer to the IDAS memory block.
@@ -1297,7 +1298,9 @@ These may be accomplished through calling the following functions:
    The function :c:func:`IDASetLSNormFactorB` specifies the factor to use when
    converting from the integrator tolerance (WRMS norm) to the linear solver
    tolerance (L2 norm) for Newton linear system solves e.g.,  ``tol_L2 = fac *
-   tol_WRMS``.  This routine can be used in both the cases wherethe backward
+   tol_WRMS``. See :numref:`SUNLinSol.IDAS.Iterative.Tolerance` for how this
+   tolerance is used in the linear solver convergence test. This routine can be
+   used in both the cases where the backward
    problem  does and does not depend on the forward sensitivities.
 
    **Arguments:**
@@ -1306,8 +1309,8 @@ These may be accomplished through calling the following functions:
      * ``nrmfac`` -- the norm conversion factor. If ``nrmfac`` is:
 
        - :math:`> 0` then the provided value is used.
-       - :math:`= 0` then the conversion factor is computed using the vector length i.e., ``nrmfac = N_VGetLength(y)`` default.
-       - :math:`< 0` then the conversion factor is computed using the vector dot product ``nrmfac = N_VDotProd(v,v)`` where all the entries of ``v`` are one.
+       - :math:`= 0` then the conversion factor is computed using the vector length i.e., ``nrmfac = sqrt(N_VGetLength(y))`` default.
+       - :math:`< 0` then the conversion factor is computed using the vector dot product ``nrmfac = sqrt(N_VDotProd(v,v))`` where all the entries of ``v`` are one.
 
    **Return value:**
      * ``IDALS_SUCCESS`` -- The optional value has been successfully set.

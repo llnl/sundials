@@ -285,7 +285,9 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
   /* Jdata is column-major */
   sunrealtype* Jdata = SUNDenseMatrix_Data(J);
 
-  Jdata[1] = SUN_RCONST(1.0);
+  Jdata[0] = ZERO;
+  Jdata[1] = ZERO;
+  Jdata[2] = SUN_RCONST(1.0);
   Jdata[3] = -Drag;
 
   return (0);

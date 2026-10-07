@@ -114,7 +114,7 @@ This vector is used in all error and convergence tests, which use a
 weighted RMS norm on all error-like vectors :math:`v`:
 
 .. math::
-    \|v\|_{WRMS} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; ewt_i)^2 \right)^{1/2},
+    \|v\|_{\text{WRMS}} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; ewt_i)^2 \right)^{1/2},
 
 where :math:`N` is the problem dimension.
 
@@ -207,7 +207,7 @@ convergence tests, which similarly use a weighted RMS norm on all
 residual-like vectors :math:`v`:
 
 .. math::
-    \|v\|_{WRMS} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; rwt_i)^2 \right)^{1/2},
+    \|v\|_{\text{WRMS}} = \left( \frac{1}{N} \sum_{i=1}^N (v_i\; rwt_i)^2 \right)^{1/2},
 
 where :math:`N` is the problem dimension.
 
@@ -1276,7 +1276,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       allowed when using a time-stepping module that supports temporal adaptivity.
 
       By default, ARKODE estimates the initial step size to be
-      :math:`h = \sqrt{\dfrac{2}{\left\| \ddot{y}\right\|}}`, where
+      :math:`h = \sqrt{\dfrac{2}{\left\| \ddot{y}\right\|_{\text{WRMS}}}}`, where
       :math:`\ddot{y}` is estimate of the second derivative of the solution
       at :math:`t_0`.
 
@@ -2127,15 +2127,15 @@ tolerance.
 
    .. c:enumerator:: ARK_ACCUMERROR_MAX
 
-      Computes :math:`\text{reltol} \max\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{WRMS}`
+      Computes :math:`\text{reltol} \max\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{\text{WRMS}}`
 
    .. c:enumerator:: ARK_ACCUMERROR_SUM
 
-      Computes :math:`\text{reltol} \sum\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{WRMS}`
+      Computes :math:`\text{reltol} \sum\limits_{i \in \mathcal{S}} \|y_i - \tilde{y}_i\|_{\text{WRMS}}`
 
    .. c:enumerator:: ARK_ACCUMERROR_AVG
 
-      Computes :math:`\frac{\text{reltol}}{\Delta t_{\mathcal{S}}} \sum\limits_{i \in \mathcal{S}} h_i \|y_i - \tilde{y}_i\|_{WRMS}`,
+      Computes :math:`\frac{\text{reltol}}{\Delta t_{\mathcal{S}}} \sum\limits_{i \in \mathcal{S}} h_i \|y_i - \tilde{y}_i\|_{\text{WRMS}}`,
       where :math:`h_i` is the step size used when computing :math:`y_i`, and
       :math:`\Delta t_{\mathcal{S}}` denotes the elapsed time over which
       :math:`\mathcal{S}` is taken.
@@ -2458,7 +2458,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
 
 .. c:function:: int ARKodeSetNonlinConvCoef(void* arkode_mem, sunrealtype nlscoef)
 
-   Specifies the safety factor :math:`\epsilon` used within the nonlinear
+   Specifies the safety factor :math:`\epsilon_N` used within the nonlinear
    solver convergence test :eq:`ARKODE_NonlinearTolerance`.
 
    :param arkode_mem: pointer to the ARKODE memory block.
@@ -3195,14 +3195,19 @@ the Newton and mass matrix linear systems, it is expected that the
 user will supply different *psetup* and *psolve* function for each.
 
 Also, as described in :numref:`ARKODE.Mathematics.Error.Linear`, the
-ARKLS interface requires that iterative linear solvers stop when
-the norm of the preconditioned residual satisfies
+ARKLS interface targets a preconditioned residual satisfying
 
 .. math::
-   \|r\| \le \frac{\epsilon_L \epsilon}{10}
+   \|\tilde{r}\|_{2} \le tol.
 
-where the default :math:`\epsilon_L = 0.05` may be modified by
-the user through the :c:func:`ARKodeSetEpsLin` function.
+where :math:`\tilde{r}` is the scaled linear residual. The tolerance is
+:math:`tol = C \epsilon_L \epsilon_N` where :math:`\epsilon_L` is the linear
+tolerance factor (the default is 0.05 and may be modified by calling
+:c:func:`ARKodeSetEpsLin`), :math:`\epsilon_N` is the nonlinear solver
+tolerance, and :math:`C = \sqrt{N}` where :math:`N` is the vector length (but
+this factor may be modified with :c:func:`ARKodeSetLSNormFactor` for other
+norms). If the solver does not support scaling, the tolerance is modified as
+described in :numref:`SUNLinSol.Iterative.Tolerance`.
 
 
 .. c:function:: int ARKodeSetPreconditioner(void* arkode_mem, ARKLsPrecSetupFn psetup, ARKLsPrecSolveFn psolve)
@@ -3311,6 +3316,9 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
+   .. versionchanged:: 7.9.0 (ARKODE 6.9.0)
+
+      A bug was fixed where the input value was scaled by 0.1.
 
 .. c:function:: int ARKodeSetMassEpsLin(void* arkode_mem, sunrealtype eplifac)
 
@@ -3345,26 +3353,29 @@ the user through the :c:func:`ARKodeSetEpsLin` function.
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
-Since iterative linear solver libraries typically consider linear residual
-tolerances using the :math:`L_2` norm, whereas ARKODE focuses on errors
-measured in the WRMS norm :eq:`ARKODE_WRMS_NORM`, the ARKLS interface internally
-converts between these quantities when interfacing with linear solvers,
+Since iterative linear solver libraries may consider linear residual
+tolerances using the :math:`L_2` norm, whereas ARKODE sets an integrator-level
+target in the WRMS norm :eq:`ARKODE_WRMS_NORM`, the ARKLS interface can convert
+between these quantities when interfacing with linear solvers,
 
 .. math::
-   \text{tol}_{L2} = \textit{nrmfac}\ \ \text{tol}_{WRMS}.
+   \text{tol}_{L2} = \textit{nrmfac}\ \ \text{tol}_{\text{WRMS}}.
    :label: ARKODE_NRMFAC
 
 Prior to the introduction of :c:func:`N_VGetLength` in SUNDIALS v5.0.0 the
 value of :math:`nrmfac` was computed using the vector dot product.  Now, the
 functions :c:func:`ARKodeSetLSNormFactor` and :c:func:`ARKodeSetMassLSNormFactor`
 allow for additional user control over these conversion factors.
+For the full linear solver convergence test, including the use of scaling
+vectors when supported, see :numref:`SUNLinSol.Iterative.Tolerance`.
 
 
 .. c:function:: int ARKodeSetLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for Newton linear system
-   solves.
+   solves.  See :numref:`SUNLinSol.Iterative.Tolerance` for how this tolerance is
+   used in the linear solver convergence test.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param nrmfac: the norm conversion factor. If *nrmfac* is:
@@ -3400,7 +3411,8 @@ allow for additional user control over these conversion factors.
 
    Specifies the factor to use when converting from the integrator tolerance
    (WRMS norm) to the linear solver tolerance (L2 norm) for mass matrix linear
-   system solves.
+   system solves.  See :numref:`SUNLinSol.Iterative.Tolerance` for how this
+   tolerance is used in the linear solver convergence test.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param nrmfac: the norm conversion factor. If *nrmfac* is:

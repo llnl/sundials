@@ -43,7 +43,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   /* Krylov subspace vectors */
   N_Vector* V;
-  N_Vector q, rhs_linY, Fy, work;
+  N_Vector rhs_linY, Fy, work;
 
   int kry_dim;                  /* Krylov subspace dimension */
   int num_warmups;              /* Number of preprocessing iterations */

@@ -75,7 +75,7 @@ class LotkaVolterraODE:
         Returns:
             0 on success
         """
-        y = N_VGetArrayPointer(yvec)  # Returns a numpy ndarray view of the data
+        y = N_VGetNumpyArray(yvec)  # Returns a numpy ndarray view of the data
         y[0] = 1.0  # Initial prey population
         y[1] = 1.0  # Initial predator population
         return 0
@@ -96,8 +96,8 @@ class LotkaVolterraODE:
             negative value for an unrecoverable error (integration will halt)
         """
         p = self.p
-        y = N_VGetArrayPointer(yvec)  # Returns a numpy ndarray view of the data
-        ydot = N_VGetArrayPointer(ydotvec)
+        y = N_VGetNumpyArray(yvec)  # Returns a numpy ndarray view of the data
+        ydot = N_VGetNumpyArray(ydotvec)
 
         # Compute the derivatives
         ydot[0] = p[0] * y[0] - p[1] * y[0] * y[1]  # du/dt: prey dynamics
@@ -122,7 +122,7 @@ class LotkaVolterraODE:
             negative value for an unrecoverable error (integration will halt)
         """
         p = self.p
-        y = N_VGetArrayPointer(yvec)  # Returns a numpy ndarray view of the data
+        y = N_VGetNumpyArray(yvec)  # Returns a numpy ndarray view of the data
         Jdata = SUNDenseMatrix_Data(J)  # Returns a numpy ndarray view of the data
 
         # Compute partial derivatives
@@ -229,7 +229,7 @@ def main():
 
     # Set the current output time and get access to the underlying array data for output
     tret = 0.0
-    yarr = N_VGetArrayPointer(y)  # Returns a numpy ndarray view of the data
+    yarr = N_VGetNumpyArray(y)  # Returns a numpy ndarray view of the data
 
     # Print header with problem information
     print("\nLotka-Volterra ODE (CVODE):")
