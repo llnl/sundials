@@ -233,7 +233,6 @@ int arkLsFree(ARKodeMem ark_mem);
 int arkLsMassInitialize(ARKodeMem ark_mem);
 int arkLsMassSetup(ARKodeMem ark_mem, sunrealtype t, N_Vector vtemp1,
                    N_Vector vtemp2, N_Vector vtemp3);
-int arkLsMassMult(void* arkode_mem, N_Vector v, N_Vector Mv);
 int arkLsMassSolve(ARKodeMem ark_mem, N_Vector b, sunrealtype nlscoef);
 int arkLsMassFree(ARKodeMem ark_mem);
 
@@ -249,12 +248,8 @@ int arkLs_AccessMassMem(ARKodeMem ark_mem, const char* fname,
                         ARKLsMassMem* arkls_mem);
 
 /* Set/get routines called by time-stepper module */
-int arkLSSetLinearSolver(ARKodeMem ark_mem, SUNLinearSolver LS, SUNMatrix A);
-int arkLSSetMassLinearSolver(ARKodeMem ark_mem, SUNLinearSolver LS, SUNMatrix M,
-                             sunbooleantype time_dep);
 int arkLSSetUserData(ARKodeMem ark_mem, void* user_data);
 int arkLSSetMassUserData(ARKodeMem ark_mem, void* user_data);
-int arkLSGetCurrentMassMatrix(ARKodeMem ark_mem, SUNMatrix* M);
 
 /*---------------------------------------------------------------
   Error Messages

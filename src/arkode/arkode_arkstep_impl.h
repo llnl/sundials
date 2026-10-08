@@ -231,7 +231,6 @@ int arkStep_GetNonlinSolvStats(ARKodeMem ark_mem, long int* nniters,
                                long int* nnfails);
 int arkStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int arkStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
-int arkStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);
 int arkStep_Resize(ARKodeMem ark_mem, N_Vector y0, sunrealtype hscale,
                    sunrealtype t0, ARKVecResizeFn resize, void* resize_data);
 int arkStep_ComputeState(ARKodeMem ark_mem, N_Vector zcor, N_Vector z);
