@@ -243,11 +243,10 @@ cuda:
 hip:
   - changed-files:
       - any-glob-to-any-file:
-          - '**/*hip*/**'
-          - '**/*hip*'
-          - '**/*HIP*'
-          - '**/*.hip'
-          - '**/*.hip.hpp'
+          - '**/hip/**'
+          - '**/*[_.-]hip*'
+          - '**/*[_.]HIP*'
+          - 'cmake/SundialsSetupHIP.cmake'
 
 sycl-dpcpp:
   - changed-files:
