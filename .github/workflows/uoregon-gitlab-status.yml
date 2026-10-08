@@ -191,10 +191,14 @@ timeout-minutes: 125
                         | if $branch == "develop" then
                             select(.ref == "develop")
                           else
-                            select(
                               .ref == $branch
-                              or ((.ref // "") | startswith($prefix))
-                            )
+                              or (
+                                ($prefix != "")
+                                and (
+                                  .ref == ($prefix | rtrimstr("_"))
+                                  or ((.ref // "") | startswith($prefix))
+                                )
+                              )
                           end
                       ]
                       | sort_by(.id)
