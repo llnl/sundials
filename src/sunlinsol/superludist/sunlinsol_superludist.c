@@ -106,7 +106,6 @@ SUNLinearSolver SUNLinSol_SuperLUDIST(N_Vector y, SUNMatrix A, gridinfo_t* grid,
   S->ops->setup      = SUNLinSolSetup_SuperLUDIST;
   S->ops->solve      = SUNLinSolSolve_SuperLUDIST;
   S->ops->lastflag   = SUNLinSolLastFlag_SuperLUDIST;
-  S->ops->space      = SUNLinSolSpace_SuperLUDIST;
   S->ops->free       = SUNLinSolFree_SuperLUDIST;
 
   /* Create content */
@@ -310,18 +309,6 @@ SUNErrCode SUNLinSolFree_SuperLUDIST(SUNLinearSolver S)
   /* free the actual SUNLinSol */
   free(S);
   S = NULL;
-
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNLinSolSpace_SuperLUDIST(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S,
-                                      long int* leniwLS, long int* lenrwLS)
-{
-  /* since the SuperLU_DIST structures are opaque objects, we
-     omit those from these results */
-
-  *leniwLS = 2; /* last_flag, N */
-  *lenrwLS = 1; /* berr */
 
   return SUN_SUCCESS;
 }

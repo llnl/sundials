@@ -35,11 +35,10 @@ implementation detail for the interested reader.
    Function name                   KINSOL  KINLS  KINBBDPRE
    ==============================  ======  =====  =========
    :c:func:`N_VGetVectorID`
-   :c:func:`N_VGetLength`          4
+   :c:func:`N_VGetLength`          3
    :c:func:`N_VClone`              x       x
    :c:func:`N_VCloneEmpty`
    :c:func:`N_VDestroy`            x       x
-   :c:func:`N_VSpace`              x       2
    :c:func:`N_VGetArrayPointer`    1       x
    :c:func:`N_VSetArrayPointer`    1
    :c:func:`N_VLinearSum`          x       x
@@ -53,7 +52,7 @@ implementation detail for the interested reader.
    :c:func:`N_VMaxNorm`            x
    :c:func:`N_VMin`                x
    :c:func:`N_VWL2Norm`            x       x
-   :c:func:`N_VL1Norm`             3
+   :c:func:`N_VL1Norm`             2
    :c:func:`N_VConstrMask`         x
    :c:func:`N_VMinQuotient`        x
    :c:func:`N_VLinearCombination`  x       x
@@ -62,17 +61,14 @@ implementation detail for the interested reader.
 
 Special cases (numbers match markings in table):
 
-#. These routines are only required if an internal difference-quotient routine
+1. These routines are only required if an internal difference-quotient routine
    for constructing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or
    :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` Jacobian matrices is used.
 
-#. This routine is optional, and is only used in estimating space requirements
-   for IDA modules for user feedback.
-
-#. These routines are only required if the internal difference-quotient routine
+2. These routines are only required if the internal difference-quotient routine
    for approximating the Jacobian-vector product is used.
 
-#. This routine is only used when an iterative ``SUNLinearSolver`` module that
+3. This routine is only used when an iterative ``SUNLinearSolver`` module that
    does not support the :c:func:`SUNLinSolSetScalingVectors` routine is supplied to KINSOL.
 
 Each ``SUNLinearSolver`` object may require additional ``N_Vector`` routines not

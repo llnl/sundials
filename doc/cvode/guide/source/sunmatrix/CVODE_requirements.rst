@@ -53,15 +53,11 @@ interested reader.
    +---------------------------+-----------------+-----------------+-----------------+
    | :c:func:`SUNMatScaleAddI` | x               | x               | x               |
    +---------------------------+-----------------+-----------------+-----------------+
-   | :c:func:`SUNMatSpace`     | :math:`\dagger` | :math:`\dagger` | :math:`\dagger` |
-   +---------------------------+-----------------+-----------------+-----------------+
 
-The matrix functions listed with a :math:`\dagger` symbol are optionally used,
-in that these are only called if they are implemented in the ``SUNMatrix``
-module that is being used (i.e. their function pointers are non-``NULL``). The
-matrix functions listed in :numref:`SUNMatrix.Description` that are *not* used by CVODE are:
-:c:func:`SUNMatScaleAdd` and :c:func:`SUNMatMatvec`. Therefore a user-supplied ``SUNMatrix``
-module for CVODE could omit these functions.
+The matrix functions listed in :numref:`SUNMatrix.Description` that are *not*
+used by CVODE are: :c:func:`SUNMatScaleAdd` and :c:func:`SUNMatMatvec`.
+Therefore a user-supplied ``SUNMatrix`` module for CVODE could omit these
+functions.
 
 We note that the CVBANDPRE and CVBBDPRE preconditioner modules
 are hard-coded to use the SUNDIALS-supplied band ``SUNMatrix`` type,

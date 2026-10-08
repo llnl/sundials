@@ -622,7 +622,7 @@ implementation detail for the interested reader.
 .. _SUNDomEigEst.Intended.Usage:
 .. table:: List of SUNDomEigEst functions called by a SUNDIALS module dominant eigenvalue
            estimator interface.  Functions marked with "X" are required;
-           exactly one of the functions marked with “@” must be provided;
+           exactly one of the functions marked with "@" must be provided;
            functions marked with "O" are only called if they are non-``NULL`` and
            functions marked with "N/A" are not applicable in the ``SUNDomEigEstimator``
            implementation that is being used.

@@ -222,7 +222,6 @@ int main(int argc, char* argv[])
                                            ProbData.myid);
   fails += Test_SUNLinSolSetZeroGuess(LS, ProbData.myid);
   fails += Test_SUNLinSolInitialize(LS, ProbData.myid);
-  fails += Test_SUNLinSolSpace(LS, ProbData.myid);
   fails += SUNLinSol_SPGMRSetGSType(LS, gstype);
   if (fails)
   {

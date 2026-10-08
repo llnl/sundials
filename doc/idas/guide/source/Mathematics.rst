@@ -55,12 +55,12 @@ Prior to integrating a DAE initial-value problem, an important requirement is
 that the pair of vectors :math:`y_0` and :math:`\dot{y}_0` are both initialized
 to satisfy the DAE residual :math:`F(t_0,y_0, \dot{y}_0) = 0`.  For a class of
 problems that includes so-called semi-explicit index-one systems, IDAS provides a
-routine that computes consistent initial conditions from a user’s initial guess
+routine that computes consistent initial conditions from a user's initial guess
 :cite:p:`BHP:98`.  For this, the user must identify sub-vectors of :math:`y`
 (not necessarily contiguous), denoted :math:`y_d` and :math:`y_a`, which are its
 differential and algebraic parts, respectively, such that :math:`F` depends on
 :math:`\dot{y}_d` but not on any components of :math:`\dot{y}_a`. The assumption
-that the system is “index one” means that for a given :math:`t` and :math:`y_d`,
+that the system is "index one" means that for a given :math:`t` and :math:`y_d`,
 the system :math:`F(t,y,\dot{y}) = 0` defines :math:`y_a` uniquely. In this
 case, a solver within IDAS computes :math:`y_a` and :math:`\dot{y}_d` at :math:`t
 = t_0`, given :math:`y_d` and an initial guess for :math:`y_a`. A second
@@ -113,7 +113,7 @@ solution and on the relative and absolute tolerances input by the user, namely
    :label: IDAS_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component :math:`y_i`, a
-vector whose WRMS norm is 1 is regarded as “small.”
+vector whose WRMS norm is 1 is regarded as "small."
 
 .. _IDAS.Mathematics.nls:
 
@@ -426,7 +426,7 @@ to :math:`h_{\text{min}} \leq |h| \leq h_{\text{max}}` with the defaults
 
 Normally, IDAS takes steps until a user-defined output value :math:`t =
 t_{\text{out}}` is overtaken, and then computes :math:`y(t_{\text{out}})` by
-interpolation. However, a “one step” mode option is available, where control
+interpolation. However, a "one step" mode option is available, where control
 returns to the calling program after each step. There are also options to force
 IDAS not to integrate past a given stopping point :math:`t = t_{\text{stop}}`.
 
@@ -594,7 +594,7 @@ interest to compute integral quantities of the form
     :label: IDAS_QUAD
 
 The most effective approach to compute :math:`z(t)` is to extend the original
-problem with the additional ODEs (obtained by applying Leibnitz’s
+problem with the additional ODEs (obtained by applying Leibnitz's
 differentiation rule):
 
 .. math:: \dot z = q(t,y,\dot{y},p) \, , \quad z(t_0) = 0 \, .
@@ -602,7 +602,7 @@ differentiation rule):
 Note that this is equivalent to using a quadrature method based on the
 underlying linear multistep polynomial representation for :math:`y(t)`.
 
-This can be done at the “user level” by simply exposing to IDAS the extended DAE
+This can be done at the "user level" by simply exposing to IDAS the extended DAE
 system :eq:`IDAS_DAE_p` + :eq:`IDAS_QUAD`. However, in the context of an implicit
 integration solver, this approach is not desirable since the nonlinear solver
 module will require the Jacobian (or Jacobian-vector product) of this extended
@@ -610,9 +610,9 @@ DAE. Moreover, since the additional states, :math:`z`, do not enter the
 right-hand side of the ODE :eq:`IDAS_QUAD` and therefore the residual of the extended
 DAE system does not depend on :math:`z`, it is much more efficient to treat the
 ODE system :eq:`IDAS_QUAD` separately from the original DAE system :eq:`IDAS_DAE_p` by
-“taking out” the additional states :math:`z` from the nonlinear system
+"taking out" the additional states :math:`z` from the nonlinear system
 :eq:`IDAS_DAE_nls` that must be solved in the correction step of the LMM. Instead,
-“corrected” values :math:`z_n` are computed explicitly as
+"corrected" values :math:`z_n` are computed explicitly as
 
 .. math::
    z_n = \frac{1}{\alpha_{n,0}} \left(
@@ -692,7 +692,7 @@ sensitivity system for the vector :math:`{\hat y} = [y, s_1, \ldots , s_{N_s}]`.
 
 -  *Simultaneous Corrector* In this method :cite:p:`MaPe:97`, the discretization
    is applied simultaneously to both the original equations :eq:`IDAS_DAE_p` and the
-   sensitivity systems :eq:`IDAS_sens_eqns` resulting in an “extended” nonlinear
+   sensitivity systems :eq:`IDAS_sens_eqns` resulting in an "extended" nonlinear
    system :math:`{\hat G}({\hat y}_n) = 0` where :math:`{\hat y_n} = [ y_n,
    \ldots, s_i, \ldots ]`. This combined nonlinear system can be solved using a
    modified Newton method as in :eq:`IDAS_DAE_Newtoncorr` by solving the corrector
@@ -881,7 +881,7 @@ as integrands for :math:`\bar z`, where :math:`q_y`, :math:`q_{\dot{y}}`, and
 :eq:`IDAS_QUAD`.
 
 As with the quadrature variables :math:`z`, the new variables :math:`\bar z` are
-also excluded from any nonlinear solver phase and “corrected” values :math:`\bar
+also excluded from any nonlinear solver phase and "corrected" values :math:`\bar
 z_n` are obtained through explicit formulas.
 
 
@@ -1192,7 +1192,7 @@ It is easy to see that, except for situations in which the number of parameters
 
 A much more efficient alternative is to compute Hessian-vector products using a
 so-called *forward-over-adjoint* approach. This method is based on using the
-same “trick” as the one used in computing gradients of pointwise functionals
+same "trick" as the one used in computing gradients of pointwise functionals
 with the adjoint method, namely applying a formal directional forward derivation
 to the gradient of :eq:`IDAS_dGdp` (or the equivalent one for a pointwise functional
 :math:`g(T, y(T))`). With that, the cost of computing a full Hessian is roughly

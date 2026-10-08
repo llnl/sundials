@@ -40,7 +40,6 @@ modules:
       - "^SUNLinSolResNorm_.*"
       - "^SUNLinSolResid_.*"
       - "^SUNLinSolLastFlag_.*"
-      - "^SUNLinSolSpace_.*"
       - "^SUNLinSolFree_.*"
   sunlinsol_band:
     path: sunlinsol/sunlinsol_band_generated.hpp

@@ -40,7 +40,6 @@ contains
   integer function smoke_tests() result(ret)
     implicit none
 
-    integer(kind=myindextype) :: lenrw(1), leniw(1)     ! real and int work space size
     integer(kind=myindextype) :: ival                   ! integer work value
     real(c_double)            :: rval                   ! real work value
     real(c_double)            :: x1data(N1), x2data(N2) ! vector data array
@@ -72,7 +71,6 @@ contains
 
     ! test generic vector functions
     ival = FN_VGetVectorID_MPIManyVector(x)
-    call FN_VSpace_MPIManyVector(x, lenrw, leniw)
     ival = FN_VGetCommunicator(x)
     ival = FN_VGetLength_MPIManyVector(x)
 

@@ -205,7 +205,6 @@ module farkode_mod
  public :: FARKodeComputeState
  public :: FARKodeGetNumRhsEvals
  public :: FARKodeGetNumStepAttempts
- public :: FARKodeGetWorkSpace
  public :: FARKodeGetNumSteps
  public :: FARKodeGetLastStep
  public :: FARKodeGetCurrentStep
@@ -241,7 +240,6 @@ module farkode_mod
  public :: FARKodeGetJac
  public :: FARKodeGetJacTime
  public :: FARKodeGetJacNumSteps
- public :: FARKodeGetLinWorkSpace
  public :: FARKodeGetNumJacEvals
  public :: FARKodeGetNumPrecEvals
  public :: FARKodeGetNumPrecSolves
@@ -254,7 +252,6 @@ module farkode_mod
  public :: FARKodeGetLinReturnFlagName
  public :: FARKodeGetCurrentMassMatrix
  public :: FARKodeGetResWeights
- public :: FARKodeGetMassWorkSpace
  public :: FARKodeGetNumMassSetups
  public :: FARKodeGetNumMassMultSetups
  public :: FARKodeGetNumMassMult
@@ -284,11 +281,9 @@ module farkode_mod
  public :: FARKodeGetNumRelaxSolveIters
  public :: FARKodeCreateSUNStepper
  public :: FARKBandPrecInit
- public :: FARKBandPrecGetWorkSpace
  public :: FARKBandPrecGetNumRhsEvals
  public :: FARKBBDPrecInit
  public :: FARKBBDPrecReInit
- public :: FARKBBDPrecGetWorkSpace
  public :: FARKBBDPrecGetNumGfnEvals
 
  integer, parameter :: swig_cmem_own_bit = 0
@@ -326,7 +321,6 @@ module farkode_mod
  public :: FARKodeButcherTable_Alloc
  public :: FARKodeButcherTable_Create
  public :: FARKodeButcherTable_Copy
- public :: FARKodeButcherTable_Space
  public :: FARKodeButcherTable_Free
  public :: FARKodeButcherTable_Write
  public :: FARKodeButcherTable_IsStifflyAccurate
@@ -378,8 +372,6 @@ module farkode_mod
     ARKODE_ESDIRK437L2SA_7_3_4, ARKODE_ESDIRK547L2SA_7_4_5, ARKODE_ESDIRK547L2SA2_7_4_5, ARKODE_GKC21_ESDIRK_3_1_2, &
     ARKODE_BACKWARD_EULER_1_1, ARKODE_IMPLICIT_MIDPOINT_1_2, ARKODE_IMPLICIT_TRAPEZOIDAL_2_2, ARKODE_SSP_DIRK_3_1_2, &
     ARKODE_SSP_LSPUM_SDIRK_3_1_2, ARKODE_ESDIRK_4_2_3, ARKODE_ARS222_ESDIRK_3_1_2, ARKODE_MAX_DIRK_NUM
- integer(C_INT), parameter, public :: ARKODE_ARK2_DIRK_3_1_2 = ARKODE_GKC21_ESDIRK_3_1_2
- integer(C_INT), parameter, public :: ARKODE_ASCHER_SDIRK_3_1_2 = ARKODE_ARS222_ESDIRK_3_1_2
  public :: FARKodeButcherTable_LoadDIRK
  public :: FARKodeButcherTable_LoadDIRKByName
  public :: FARKodeButcherTable_DIRKIDToName
@@ -434,8 +426,6 @@ module farkode_mod
     ARKODE_RALSTON_EULER_2_1_2, ARKODE_EXPLICIT_MIDPOINT_EULER_2_1_2, ARKODE_RALSTON_3_1_2, ARKODE_TSITOURAS_7_4_5, &
     ARKODE_SSP_ERK_3_1_2, ARKODE_SSP_ERK_4_1_2, ARKODE_SSP_ERK_4_2_3, ARKODE_SSP_ERK_10_3_4, ARKODE_SSP_LSPUM_ERK_3_1_2, &
     ARKODE_ARS222_ERK_3_1_2, ARKODE_KUTTA_RK4a_4_4, ARKODE_KUTTA_RK4b_4_4, ARKODE_MAX_ERK_NUM
- integer(C_INT), parameter, public :: ARKODE_ARK2_ERK_3_1_2 = ARKODE_GKC21_ERK_3_1_2
- integer(C_INT), parameter, public :: ARKODE_ASCHER_ERK_3_1_2 = ARKODE_ARS222_ERK_3_1_2
  public :: FARKodeButcherTable_LoadERK
  public :: FARKodeButcherTable_LoadERKByName
  public :: FARKodeButcherTable_ERKIDToName
@@ -487,7 +477,6 @@ module farkode_mod
  public :: FARKodeSPRKTable_LoadByName
  public :: FARKodeSPRKTable_Copy
  public :: FARKodeSPRKTable_Write
- public :: FARKodeSPRKTable_Space
  public :: FARKodeSPRKTable_Free
  public :: FARKodeSPRKTable_ToButcher
  integer(C_INT), parameter, public :: ARKLS_SUCCESS = 0_C_INT
@@ -1209,16 +1198,6 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FARKodeGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKodeGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FARKodeGetNumSteps(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetNumSteps") &
 result(fresult)
@@ -1552,16 +1531,6 @@ type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
 
-function swigc_FARKodeGetLinWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKodeGetLinWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FARKodeGetNumJacEvals(farg1, farg2) &
 bind(C, name="_wrap_FARKodeGetNumJacEvals") &
 result(fresult)
@@ -1667,16 +1636,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FARKodeGetMassWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKodeGetMassWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -1940,16 +1899,6 @@ integer(C_INT64_T), intent(in) :: farg4
 integer(C_INT) :: fresult
 end function
 
-function swigc_FARKBandPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKBandPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
 function swigc_FARKBandPrecGetNumRhsEvals(farg1, farg2) &
 bind(C, name="_wrap_FARKBandPrecGetNumRhsEvals") &
 result(fresult)
@@ -1983,16 +1932,6 @@ type(C_PTR), value :: farg1
 integer(C_INT64_T), intent(in) :: farg2
 integer(C_INT64_T), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
-integer(C_INT) :: fresult
-end function
-
-function swigc_FARKBBDPrecGetWorkSpace(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKBBDPrecGetWorkSpace") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -2177,14 +2116,6 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR) :: fresult
 end function
-
-subroutine swigc_FARKodeButcherTable_Space(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKodeButcherTable_Space")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-end subroutine
 
 subroutine swigc_FARKodeButcherTable_Free(farg1) &
 bind(C, name="_wrap_FARKodeButcherTable_Free")
@@ -2422,14 +2353,6 @@ bind(C, name="_wrap_FARKodeSPRKTable_Write")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
-end subroutine
-
-subroutine swigc_FARKodeSPRKTable_Space(farg1, farg2, farg3) &
-bind(C, name="_wrap_FARKodeSPRKTable_Space")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 end subroutine
 
 subroutine swigc_FARKodeSPRKTable_Free(farg1) &
@@ -3857,25 +3780,6 @@ fresult = swigc_FARKodeGetNumStepAttempts(farg1, farg2)
 swig_result = fresult
 end function
 
-function FARKodeGetWorkSpace(arkode_mem, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = arkode_mem
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FARKodeGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FARKodeGetNumSteps(arkode_mem, nsteps) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4487,25 +4391,6 @@ fresult = swigc_FARKodeGetJacNumSteps(farg1, farg2)
 swig_result = fresult
 end function
 
-function FARKodeGetLinWorkSpace(arkode_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = arkode_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FARKodeGetLinWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FARKodeGetNumJacEvals(arkode_mem, njevals) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -4693,25 +4578,6 @@ type(C_PTR) :: farg2
 farg1 = arkode_mem
 farg2 = c_loc(rweight)
 fresult = swigc_FARKodeGetResWeights(farg1, farg2)
-swig_result = fresult
-end function
-
-function FARKodeGetMassWorkSpace(arkode_mem, lenrwmls, leniwmls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwmls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwmls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = arkode_mem
-farg2 = c_loc(lenrwmls(1))
-farg3 = c_loc(leniwmls(1))
-fresult = swigc_FARKodeGetMassWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -5180,25 +5046,6 @@ fresult = swigc_FARKBandPrecInit(farg1, farg2, farg3, farg4)
 swig_result = fresult
 end function
 
-function FARKBandPrecGetWorkSpace(arkode_mem, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = arkode_mem
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FARKBandPrecGetWorkSpace(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
 function FARKBandPrecGetNumRhsEvals(arkode_mem, nfevalsbp) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
@@ -5271,25 +5118,6 @@ farg2 = mudq
 farg3 = mldq
 farg4 = dqrely
 fresult = swigc_FARKBBDPrecReInit(farg1, farg2, farg3, farg4)
-swig_result = fresult
-end function
-
-function FARKBBDPrecGetWorkSpace(arkode_mem, lenrwbbdp, leniwbbdp) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(C_PTR) :: arkode_mem
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwbbdp
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwbbdp
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = arkode_mem
-farg2 = c_loc(lenrwbbdp(1))
-farg3 = c_loc(leniwbbdp(1))
-fresult = swigc_FARKBBDPrecGetWorkSpace(farg1, farg2, farg3)
 swig_result = fresult
 end function
 
@@ -5580,21 +5408,6 @@ farg1 = b
 fresult = swigc_FARKodeButcherTable_Copy(farg1)
 swig_result = fresult
 end function
-
-subroutine FARKodeButcherTable_Space(b, liw, lrw)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR) :: b
-integer(C_INT64_T), dimension(*), target, intent(inout) :: liw
-integer(C_INT64_T), dimension(*), target, intent(inout) :: lrw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = b
-farg2 = c_loc(liw(1))
-farg3 = c_loc(lrw(1))
-call swigc_FARKodeButcherTable_Space(farg1, farg2, farg3)
-end subroutine
 
 subroutine FARKodeButcherTable_Free(b)
 use, intrinsic :: ISO_C_BINDING
@@ -5981,21 +5794,6 @@ type(C_PTR) :: farg2
 farg1 = sprk_table
 farg2 = outfile
 call swigc_FARKodeSPRKTable_Write(farg1, farg2)
-end subroutine
-
-subroutine FARKodeSPRKTable_Space(sprk_storage, liw, lrw)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR) :: sprk_storage
-integer(C_INT64_T), dimension(*), target, intent(inout) :: liw
-integer(C_INT64_T), dimension(*), target, intent(inout) :: lrw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = sprk_storage
-farg2 = c_loc(liw(1))
-farg3 = c_loc(lrw(1))
-call swigc_FARKodeSPRKTable_Space(farg1, farg2, farg3)
 end subroutine
 
 subroutine FARKodeSPRKTable_Free(sprk_storage)

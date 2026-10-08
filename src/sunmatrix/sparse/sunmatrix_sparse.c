@@ -93,7 +93,6 @@ SUNMatrix SUNSparseMatrix(sunindextype M, sunindextype N, sunindextype NNZ,
   A->ops->scaleaddi                = SUNMatScaleAddI_Sparse;
   A->ops->matvec                   = SUNMatMatvec_Sparse;
   A->ops->mathermitiantransposevec = SUNMatHermitianTransposeVec_Sparse;
-  A->ops->space                    = SUNMatSpace_Sparse;
 
   /* Create content */
   content = NULL;
@@ -953,17 +952,6 @@ SUNErrCode SUNMatHermitianTransposeVec_Sparse(SUNMatrix A, N_Vector x, N_Vector 
   }
   else { SUNCheckCall(MatTransposeVec_SparseCSR(A, x, y)); }
 
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNMatSpace_Sparse(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(A->sunctx);
-  SUNAssert(SUNMatGetID(A) == SUNMATRIX_SPARSE, SUN_ERR_ARG_WRONGTYPE);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = SM_NNZ_S(A);
-  *leniw = 10 + SM_NP_S(A) + SM_NNZ_S(A);
   return SUN_SUCCESS;
 }
 

@@ -36,13 +36,12 @@ implementation detail for the interested reader.
    \                                          IDAS  IDALS  IDABBDPRE  IDAA
    =========================================  ====  =====  =========  ====
    :c:func:`N_VGetVectorID`
-   :c:func:`N_VGetLength`                      4
+   :c:func:`N_VGetLength`                      3
    :c:func:`N_VClone`                          x     x      x          x
    :c:func:`N_VCloneEmpty`                     1
    :c:func:`N_VDestroy`                        x     x      x          x
    :c:func:`N_VCloneVectorArray`               x     x
    :c:func:`N_VDestroyVectorArray`             x     x
-   :c:func:`N_VSpace`                          x     2
    :c:func:`N_VGetArrayPointer`                1     x
    :c:func:`N_VSetArrayPointer`                1
    :c:func:`N_VLinearSum`                      x     x      x
@@ -62,7 +61,7 @@ implementation detail for the interested reader.
    :c:func:`N_VCompare`                        x
    :c:func:`N_VLinearCombination`              x
    :c:func:`N_VScaleAddMulti`                  x
-   :c:func:`N_VDotProdMulti`                   3
+   :c:func:`N_VDotProdMulti`                   2
    :c:func:`N_VLinearSumVectorArray`           x
    :c:func:`N_VScaleVectorArray`               x
    :c:func:`N_VConstVectorArray`               x
@@ -72,21 +71,17 @@ implementation detail for the interested reader.
    :c:func:`N_VLinearCombinationVectorArray`   x
    =========================================  ====  =====  =========  ====
 
-
 Special cases (numbers match markings in table):
 
-#. These routines are only required if an internal difference-quotient routine for constructing
+1. These routines are only required if an internal difference-quotient routine for constructing
    :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` Jacobian matrices is used.
 
-#. This routine is optional, and is only used in estimating space requirements for IDAS modules for
-   user feedback.
-
-#. The optional function ``N_VDotProdMulti`` is only used when Classical Gram-Schmidt is enabled
+2. The optional function ``N_VDotProdMulti`` is only used when Classical Gram-Schmidt is enabled
    with SPGMR or SPFGMR. The remaining operations from Tables :numref:`NVectors.Ops.Fused` and
    :numref:`NVectors.Ops.Array` not listed above are unused and a user-supplied
    ``N_Vector`` module for IDAS could omit these operations.
 
-#. This routine is only used when an iterative or matrix iterative ``SUNLinearSolver`` module is
+3. This routine is only used when an iterative or matrix iterative ``SUNLinearSolver`` module is
    supplied to IDAS.
 
 Of the functions listed in :numref:`NVectors.Ops`, :c:func:`N_VDotProd`

@@ -83,7 +83,6 @@ SUNLinearSolver SUNLinSol_Band(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
   S->ops->setup      = SUNLinSolSetup_Band;
   S->ops->solve      = SUNLinSolSolve_Band;
   S->ops->lastflag   = SUNLinSolLastFlag_Band;
-  S->ops->space      = SUNLinSolSpace_Band;
   S->ops->free       = SUNLinSolFree_Band;
 
   /* Create content */
@@ -193,16 +192,6 @@ sunindextype SUNLinSolLastFlag_Band(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return LASTFLAG(S);
-}
-
-SUNErrCode SUNLinSolSpace_Band(SUNLinearSolver S, long int* lenrwLS,
-                               long int* leniwLS)
-{
-  SUNFunctionBegin(S->sunctx);
-  SUNAssert(SUNLinSolGetID(S) == SUNLINEARSOLVER_BAND, SUN_ERR_ARG_WRONGTYPE);
-  *leniwLS = 2 + BAND_CONTENT(S)->N;
-  *lenrwLS = 0;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_Band(SUNLinearSolver S)

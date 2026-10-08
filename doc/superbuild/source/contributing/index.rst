@@ -118,7 +118,7 @@ off line in the commit message:
    Signed-off-by: Jane Doe <jdoe@address.com>
 
 
-Replacing Jane Doe’s details with your name and email address.
+Replacing Jane Doe's details with your name and email address.
 
 If you've set ``user.name`` and ``user.email`` in your Git configuration, you can
 automatically add a sign off line at the end of the commit message by using the

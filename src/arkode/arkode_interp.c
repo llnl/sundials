@@ -36,18 +36,16 @@
   ---------------------------------------------------------------*/
 
 int arkInterpResize(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
-                    void* resize_data, sunindextype lrw_diff,
-                    sunindextype liw_diff, N_Vector tmpl)
+                    void* resize_data, N_Vector tmpl)
 {
   if (interp == NULL) { return (ARK_SUCCESS); }
-  return ((int)interp->ops->resize(ark_mem, interp, resize, resize_data,
-                                   lrw_diff, liw_diff, tmpl));
+  return ((int)interp->ops->resize(ark_mem, interp, resize, resize_data, tmpl));
 }
 
-void arkInterpFree(ARKodeMem ark_mem, ARKInterp interp)
+void arkInterpFree(ARKInterp interp)
 {
   if (interp == NULL) { return; }
-  interp->ops->free(ark_mem, interp);
+  interp->ops->free(interp);
   return;
 }
 
@@ -150,10 +148,6 @@ ARKInterp arkInterpCreate_Hermite(ARKodeMem ark_mem, int degree)
   /* set maximum interpolant degree */
   content->degree = SUNMIN(ARK_INTERP_MAX_DEGREE, degree);
 
-  /* update workspace sizes */
-  ark_mem->lrw += 2;
-  ark_mem->liw += 5;
-
   /* initialize time values */
   content->told = ark_mem->tcur;
   content->tnew = ark_mem->tcur;
@@ -168,33 +162,27 @@ ARKInterp arkInterpCreate_Hermite(ARKodeMem ark_mem, int degree)
   This routine resizes the internal vectors.
   ---------------------------------------------------------------*/
 int arkInterpResize_Hermite(ARKodeMem ark_mem, ARKInterp interp,
-                            ARKVecResizeFn resize, void* resize_data,
-                            sunindextype lrw_diff, sunindextype liw_diff,
-                            N_Vector y0)
+                            ARKVecResizeFn resize, void* resize_data, N_Vector y0)
 {
   /* resize vectors */
   if (interp == NULL) { return (ARK_SUCCESS); }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &HINT_FOLD(interp)))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &HINT_FOLD(interp)))
   {
     return (ARK_MEM_FAIL);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &HINT_YOLD(interp)))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &HINT_YOLD(interp)))
   {
     return (ARK_MEM_FAIL);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &HINT_FA(interp)))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &HINT_FA(interp)))
   {
     return (ARK_MEM_FAIL);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &HINT_FB(interp)))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &HINT_FB(interp)))
   {
     return (ARK_MEM_FAIL);
   }
@@ -212,7 +200,7 @@ int arkInterpResize_Hermite(ARKodeMem ark_mem, ARKInterp interp,
 
   This routine frees the Hermite ARKInterp structure.
   ---------------------------------------------------------------*/
-void arkInterpFree_Hermite(ARKodeMem ark_mem, ARKInterp interp)
+void arkInterpFree_Hermite(ARKInterp interp)
 {
   /* if interpolation structure is NULL, just return */
   if (interp == NULL) { return; }
@@ -222,28 +210,24 @@ void arkInterpFree_Hermite(ARKodeMem ark_mem, ARKInterp interp)
   {
     if (HINT_FOLD(interp) != NULL)
     {
-      arkFreeVec(ark_mem, &(HINT_FOLD(interp)));
+      arkFreeVec(&(HINT_FOLD(interp)));
       HINT_FOLD(interp) = NULL;
     }
     if (HINT_YOLD(interp) != NULL)
     {
-      arkFreeVec(ark_mem, &(HINT_YOLD(interp)));
+      arkFreeVec(&(HINT_YOLD(interp)));
       HINT_YOLD(interp) = NULL;
     }
     if (HINT_FA(interp) != NULL)
     {
-      arkFreeVec(ark_mem, &(HINT_FA(interp)));
+      arkFreeVec(&(HINT_FA(interp)));
       HINT_FA(interp) = NULL;
     }
     if (HINT_FB(interp) != NULL)
     {
-      arkFreeVec(ark_mem, &(HINT_FB(interp)));
+      arkFreeVec(&(HINT_FB(interp)));
       HINT_FB(interp) = NULL;
     }
-
-    /* update work space sizes */
-    ark_mem->lrw -= 2;
-    ark_mem->liw -= 5;
 
     free(interp->content);
     interp->content = NULL;
@@ -339,7 +323,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FOLD(interp))))
     {
-      arkInterpFree(ark_mem, interp);
+      arkInterpFree(interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -347,7 +331,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_YOLD(interp))))
     {
-      arkInterpFree(ark_mem, interp);
+      arkInterpFree(interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -355,7 +339,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FA(interp))))
     {
-      arkInterpFree(ark_mem, interp);
+      arkInterpFree(interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -363,7 +347,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FB(interp))))
     {
-      arkInterpFree(ark_mem, interp);
+      arkInterpFree(interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -853,10 +837,6 @@ ARKInterp arkInterpCreate_Lagrange(ARKodeMem ark_mem, int degree)
   /* initial t roundoff value */
   content->tround = FUZZ_FACTOR * ark_mem->uround;
 
-  /* update workspace sizes */
-  ark_mem->lrw += content->nmax + 1;
-  ark_mem->liw += content->nmax + 2;
-
   return (interp);
 }
 
@@ -867,7 +847,6 @@ ARKInterp arkInterpCreate_Lagrange(ARKodeMem ark_mem, int degree)
   ---------------------------------------------------------------*/
 int arkInterpResize_Lagrange(ARKodeMem ark_mem, ARKInterp I,
                              ARKVecResizeFn resize, void* resize_data,
-                             sunindextype lrw_diff, sunindextype liw_diff,
                              N_Vector y0)
 {
   int i;
@@ -878,8 +857,7 @@ int arkInterpResize_Lagrange(ARKodeMem ark_mem, ARKInterp I,
   {
     for (i = 0; i < LINT_NMAXALLOC(I); i++)
     {
-      if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                        &(LINT_YJ(I, i))))
+      if (!arkResizeVec(ark_mem, resize, resize_data, y0, &(LINT_YJ(I, i))))
       {
         return (ARK_MEM_FAIL);
       }
@@ -897,7 +875,7 @@ int arkInterpResize_Lagrange(ARKodeMem ark_mem, ARKInterp I,
 
   This routine frees the Lagrange ARKInterp structure.
   ---------------------------------------------------------------*/
-void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp I)
+void arkInterpFree_Lagrange(ARKInterp I)
 {
   int i;
 
@@ -913,7 +891,7 @@ void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp I)
       {
         if (LINT_YJ(I, i) != NULL)
         {
-          arkFreeVec(ark_mem, &(LINT_YJ(I, i)));
+          arkFreeVec(&(LINT_YJ(I, i)));
           LINT_YJ(I, i) = NULL;
         }
       }
@@ -925,10 +903,6 @@ void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp I)
       free(LINT_THIST(I));
       LINT_THIST(I) = NULL;
     }
-
-    /* update work space sizes */
-    ark_mem->lrw -= (LINT_NMAX(I) + 1);
-    ark_mem->liw -= (LINT_NMAX(I) + 2);
 
     free(I->content);
     I->content = NULL;
@@ -1042,7 +1016,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
       {
         if (LINT_YJ(I, i) != NULL)
         {
-          arkFreeVec(ark_mem, &(LINT_YJ(I, i)));
+          arkFreeVec(&(LINT_YJ(I, i)));
           LINT_YJ(I, i) = NULL;
         }
       }
@@ -1057,7 +1031,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
     LINT_THIST(I) = (sunrealtype*)malloc(LINT_NMAX(I) * sizeof(sunrealtype));
     if (LINT_THIST(I) == NULL)
     {
-      arkInterpFree(ark_mem, I);
+      arkInterpFree(I);
       return (ARK_MEM_FAIL);
     }
   }
@@ -1068,7 +1042,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
     LINT_YHIST(I) = (N_Vector*)malloc(LINT_NMAX(I) * sizeof(N_Vector));
     if (LINT_YHIST(I) == NULL)
     {
-      arkInterpFree(ark_mem, I);
+      arkInterpFree(I);
       return (ARK_MEM_FAIL);
     }
     for (i = 0; i < LINT_NMAX(I); i++)
@@ -1076,7 +1050,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
       LINT_YJ(I, i) = NULL;
       if (!arkAllocVec(ark_mem, ark_mem->yn, &(LINT_YJ(I, i))))
       {
-        arkInterpFree(ark_mem, I);
+        arkInterpFree(I);
         return (ARK_MEM_FAIL);
       }
     }

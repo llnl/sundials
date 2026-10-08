@@ -351,10 +351,6 @@ void* IDACreate(SUNContext sunctx)
   IDA_mem->ida_lsoff    = SUNFALSE;
   IDA_mem->ida_steptol  = SUNRpowerR(IDA_mem->ida_uround, TWOTHIRDS);
 
-  /* Initialize lrw and liw */
-  IDA_mem->ida_lrw = 25 + 5 * MXORDP1;
-  IDA_mem->ida_liw = 38;
-
   /* No mallocs have been done yet */
   IDA_mem->ida_VatolMallocDone = SUNFALSE;
   IDA_mem->ida_idMallocDone    = SUNFALSE;
@@ -385,7 +381,6 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
   int retval;
   IDAMem IDA_mem;
   sunbooleantype nvectorOK, allocOK;
-  sunindextype lrw1, liw1;
   SUNNonlinearSolver NLS;
 
   /* Check ida_mem */
@@ -435,17 +430,6 @@ int IDAInit(void* ida_mem, IDAResFn res, sunrealtype t0, N_Vector yy0,
     SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
     return (IDA_ILL_INPUT);
   }
-
-  /* Set space requirements for one N_Vector */
-
-  if (yy0->ops->nvspace != NULL) { N_VSpace(yy0, &lrw1, &liw1); }
-  else
-  {
-    lrw1 = 0;
-    liw1 = 0;
-  }
-  IDA_mem->ida_lrw1 = lrw1;
-  IDA_mem->ida_liw1 = liw1;
 
   /* Allocate the vectors (using yy0 as a template) */
 
@@ -762,9 +746,7 @@ int IDASVtolerances(void* ida_mem, sunrealtype reltol, N_Vector abstol)
 
   if (!(IDA_mem->ida_VatolMallocDone))
   {
-    IDA_mem->ida_Vatol = N_VClone(IDA_mem->ida_ewt);
-    IDA_mem->ida_lrw += IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw += IDA_mem->ida_liw1;
+    IDA_mem->ida_Vatol           = N_VClone(IDA_mem->ida_ewt);
     IDA_mem->ida_VatolMallocDone = SUNTRUE;
   }
 
@@ -854,9 +836,6 @@ int IDARootInit(void* ida_mem, int nrtfn, IDARootFn g)
     IDA_mem->ida_rootdir = NULL;
     free(IDA_mem->ida_gactive);
     IDA_mem->ida_gactive = NULL;
-
-    IDA_mem->ida_lrw -= 3 * (IDA_mem->ida_nrtfn);
-    IDA_mem->ida_liw -= 3 * (IDA_mem->ida_nrtfn);
   }
 
   /* If IDARootInit() was called with nrtfn == 0, then set ida_nrtfn to
@@ -892,9 +871,6 @@ int IDARootInit(void* ida_mem, int nrtfn, IDARootFn g)
         IDA_mem->ida_rootdir = NULL;
         free(IDA_mem->ida_gactive);
         IDA_mem->ida_gactive = NULL;
-
-        IDA_mem->ida_lrw -= 3 * nrt;
-        IDA_mem->ida_liw -= 3 * nrt;
 
         IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
                         MSG_ROOT_FUNC_NULL);
@@ -1022,9 +998,6 @@ int IDARootInit(void* ida_mem, int nrtfn, IDARootFn g)
 
   /* Set default values for gactive (all active) */
   for (i = 0; i < nrt; i++) { IDA_mem->ida_gactive[i] = SUNTRUE; }
-
-  IDA_mem->ida_lrw += 3 * nrt;
-  IDA_mem->ida_liw += 3 * nrt;
 
   SUNDIALS_MARK_FUNCTION_END(IDA_PROFILER);
   return (IDA_SUCCESS);
@@ -1768,9 +1741,6 @@ static sunbooleantype IDACheckNvector(N_Vector tmpl)
  * If all memory allocations are successful, IDAAllocVectors returns
  * SUNTRUE. Otherwise all allocated memory is freed and IDAAllocVectors
  * returns SUNFALSE.
- * This routine also sets the optional outputs lrw and liw, which are
- * (respectively) the lengths of the real and integer work spaces
- * allocated here.
  */
 
 static sunbooleantype IDAAllocVectors(IDAMem IDA_mem, N_Vector tmpl)
@@ -1889,10 +1859,6 @@ static sunbooleantype IDAAllocVectors(IDAMem IDA_mem, N_Vector tmpl)
     }
   }
 
-  /* Update solver workspace lengths  */
-  IDA_mem->ida_lrw += (maxcol + 10) * IDA_mem->ida_lrw1;
-  IDA_mem->ida_liw += (maxcol + 10) * IDA_mem->ida_liw1;
-
   /* Store the value of maxord used here */
   IDA_mem->ida_maxord_alloc = IDA_mem->ida_maxord;
 
@@ -1934,31 +1900,22 @@ static void IDAFreeVectors(IDAMem IDA_mem)
     IDA_mem->ida_phi[j] = NULL;
   }
 
-  IDA_mem->ida_lrw -= (maxcol + 10) * IDA_mem->ida_lrw1;
-  IDA_mem->ida_liw -= (maxcol + 10) * IDA_mem->ida_liw1;
-
   if (IDA_mem->ida_VatolMallocDone)
   {
     N_VDestroy(IDA_mem->ida_Vatol);
     IDA_mem->ida_Vatol = NULL;
-    IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw -= IDA_mem->ida_liw1;
   }
 
   if (IDA_mem->ida_constraints)
   {
     N_VDestroy(IDA_mem->ida_constraints);
     IDA_mem->ida_constraints = NULL;
-    IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw -= IDA_mem->ida_liw1;
   }
 
   if (IDA_mem->ida_idMallocDone)
   {
     N_VDestroy(IDA_mem->ida_id);
     IDA_mem->ida_id = NULL;
-    IDA_mem->ida_lrw -= IDA_mem->ida_lrw1;
-    IDA_mem->ida_liw -= IDA_mem->ida_liw1;
   }
 }
 

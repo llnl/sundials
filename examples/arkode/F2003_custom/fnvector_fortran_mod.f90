@@ -67,7 +67,6 @@ contains
     ops%nvconst = c_funloc(FN_VConst_Fortran)
     ops%nvdotprod = c_funloc(FN_VDotProd_Fortran)
     ops%nvclone = c_funloc(FN_VClone_Fortran)
-    ops%nvspace = c_funloc(FN_VSpace_Fortran)
     ops%nvlinearsum = c_funloc(FN_VLinearSum_Fortran)
     ops%nvprod = c_funloc(FN_VProd_Fortran)
     ops%nvdiv = c_funloc(FN_VDiv_Fortran)
@@ -129,7 +128,6 @@ contains
     ops%nvconst = c_funloc(FN_VConst_Fortran)
     ops%nvdotprod = c_funloc(FN_VDotProd_Fortran)
     ops%nvclone = c_funloc(FN_VClone_Fortran)
-    ops%nvspace = c_funloc(FN_VSpace_Fortran)
     ops%nvlinearsum = c_funloc(FN_VLinearSum_Fortran)
     ops%nvprod = c_funloc(FN_VProd_Fortran)
     ops%nvdiv = c_funloc(FN_VDiv_Fortran)
@@ -289,25 +287,6 @@ contains
 
   end function FN_VClone_Fortran
 
-  ! ----------------------------------------------------------------
-  subroutine FN_VSpace_Fortran(sunvec_x, lrw, liw) bind(C)
-    implicit none
-    type(N_Vector)      :: sunvec_x
-    integer(c_int64_t)  :: lrw(1)
-    integer(c_int64_t)  :: liw(1)
-    type(FVec), pointer :: x
-
-    ! extract Fortran vector structure to work with
-    x => FN_VGetFVec(sunvec_x)
-
-    ! set output arguments and return
-    lrw(1) = (x%length1)*(x%length2)
-    liw(1) = 3
-    return
-
-  end subroutine FN_VSpace_Fortran
-
-  ! ----------------------------------------------------------------
   subroutine FN_VLinearSum_Fortran(a, sunvec_x, b, sunvec_y, sunvec_z) &
     bind(C)
 

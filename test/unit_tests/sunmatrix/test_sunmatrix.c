@@ -648,40 +648,6 @@ int Test_SUNMatHermitianTransposeVec(SUNMatrix A, SUNMatrix AT, N_Vector x,
   return (0);
 }
 
-/* ----------------------------------------------------------------------
- * SUNMatSpace Test
- * --------------------------------------------------------------------*/
-int Test_SUNMatSpace(SUNMatrix A, int myid)
-{
-  int failure;
-  double start_time, stop_time;
-  long int lenrw, leniw;
-
-  start_time = get_time();
-  failure    = SUNMatSpace(A, &lenrw, &leniw);
-  sync_device(A);
-  stop_time = get_time();
-
-  if (failure)
-  {
-    TEST_STATUS(">>> FAILED test -- SUNMatSpace \n", myid);
-    PRINT_TIME("    SUNMatSpace Time: %22.15e \n \n", stop_time - start_time);
-    return (1);
-  }
-  else
-  {
-    TEST_STATUS2("    PASSED test -- SUNMatSpace lenrw=%li ", lenrw, myid);
-    TEST_STATUS2("leniw=%li\n", leniw, myid);
-  }
-
-  if (myid == 0)
-  {
-    PRINT_TIME("    SUNMatSpace Time: %22.15e \n \n", stop_time - start_time);
-  }
-
-  return (0);
-}
-
 /* ======================================================================
  * Private functions
  * ====================================================================*/

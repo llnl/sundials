@@ -169,10 +169,6 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   step_mem->explicit_rhs = (fse == NULL) ? SUNFALSE : SUNTRUE;
   step_mem->implicit_rhs = (fsi == NULL) ? SUNFALSE : SUNTRUE;
 
-  /* Update the ARKODE workspace requirements */
-  ark_mem->liw += 49; /* fcn/data ptr, int, long int, sunindextype, sunbooleantype */
-  ark_mem->lrw += 14;
-
   /* Create a default Newton NLS object (just in case; will be deleted if
      the user attaches a nonlinear solver) */
   step_mem->NLS    = NULL;
@@ -229,7 +225,6 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
     ARKodeFree((void**)&ark_mem);
     return (NULL);
   }
-  ark_mem->lrw += step_mem->nfusedopvecs;
   step_mem->Xvecs = NULL;
   step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs, sizeof(N_Vector));
   if (step_mem->Xvecs == NULL)
@@ -239,7 +234,6 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
     ARKodeFree((void**)&ark_mem);
     return (NULL);
   }
-  ark_mem->liw += step_mem->nfusedopvecs;
 
   /* Initialize adaptivity parameters */
   step_mem->inner_rtol_factor     = ONE;
@@ -404,27 +398,17 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
 {
   ARKodeMRIStepMem step_mem;
   SUNNonlinearSolver NLS;
-  sunindextype lrw1, liw1, lrw_diff, liw_diff;
   int retval;
 
   /* access ARKodeMRIStepMem structure */
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Determine change in vector sizes */
-  lrw1 = liw1 = 0;
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  lrw_diff      = lrw1 - ark_mem->lrw1;
-  liw_diff      = liw1 - ark_mem->liw1;
-  ark_mem->lrw1 = lrw1;
-  ark_mem->liw1 = liw1;
-
   /* Resize Fse */
   if (step_mem->Fse)
   {
     if (!arkResizeVecArray(resize, resize_data, step_mem->nstages_allocated, y0,
-                           &(step_mem->Fse), lrw_diff, &(ark_mem->lrw),
-                           liw_diff, &(ark_mem->liw)))
+                           &(step_mem->Fse)))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -437,8 +421,7 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   if (step_mem->Fsi && !step_mem->unify_Fs)
   {
     if (!arkResizeVecArray(resize, resize_data, step_mem->nstages_allocated, y0,
-                           &(step_mem->Fsi), lrw_diff, &(ark_mem->lrw),
-                           liw_diff, &(ark_mem->liw)))
+                           &(step_mem->Fsi)))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -449,8 +432,7 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   /* Resize the nonlinear solver interface vectors (if applicable) */
   if (step_mem->sdata != NULL)
   {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->sdata))
+    if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->sdata))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -459,8 +441,7 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   }
   if (step_mem->zpred != NULL)
   {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->zpred))
+    if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->zpred))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -469,8 +450,7 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   }
   if (step_mem->zcor != NULL)
   {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->zcor))
+    if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->zcor))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -509,8 +489,7 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   }
 
   /* Resize the inner stepper vectors */
-  retval = mriStepInnerStepper_Resize(step_mem->stepper, resize, resize_data,
-                                      lrw_diff, liw_diff, y0);
+  retval = mriStepInnerStepper_Resize(step_mem->stepper, resize, resize_data, y0);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -577,7 +556,6 @@ int mriStep_ComputeState(ARKodeMem ark_mem, N_Vector zcor, N_Vector z)
   ---------------------------------------------------------------*/
 void mriStep_Free(ARKodeMem ark_mem)
 {
-  sunindextype Cliw, Clrw;
   ARKodeMRIStepMem step_mem;
 
   /* nothing to do if ark_mem is already NULL */
@@ -591,34 +569,27 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the coupling structure and derived quantities */
     if (step_mem->MRIC != NULL)
     {
-      MRIStepCoupling_Space(step_mem->MRIC, &Cliw, &Clrw);
       MRIStepCoupling_Free(step_mem->MRIC);
       step_mem->MRIC = NULL;
-      ark_mem->liw -= Cliw;
-      ark_mem->lrw -= Clrw;
       if (step_mem->stagetypes)
       {
         free(step_mem->stagetypes);
         step_mem->stagetypes = NULL;
-        ark_mem->liw -= (step_mem->stages + 1);
       }
       if (step_mem->stage_map)
       {
         free(step_mem->stage_map);
         step_mem->stage_map = NULL;
-        ark_mem->liw -= step_mem->stages;
       }
       if (step_mem->Ae_row)
       {
         free(step_mem->Ae_row);
         step_mem->Ae_row = NULL;
-        ark_mem->lrw -= step_mem->stages;
       }
       if (step_mem->Ai_row)
       {
         free(step_mem->Ai_row);
         step_mem->Ai_row = NULL;
-        ark_mem->lrw -= step_mem->stages;
       }
     }
 
@@ -640,34 +611,30 @@ void mriStep_Free(ARKodeMem ark_mem)
     /* free the sdata, zpred and zcor vectors */
     if (step_mem->sdata != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->sdata);
+      arkFreeVec(&step_mem->sdata);
       step_mem->sdata = NULL;
     }
     if (step_mem->zpred != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zpred);
+      arkFreeVec(&step_mem->zpred);
       step_mem->zpred = NULL;
     }
     if (step_mem->zcor != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->zcor);
+      arkFreeVec(&step_mem->zcor);
       step_mem->zcor = NULL;
     }
 
     /* free the RHS vectors */
     if (step_mem->Fse)
     {
-      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse),
-                      ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                      &(ark_mem->liw));
+      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse));
       if (step_mem->unify_Fs) { step_mem->Fsi = NULL; }
     }
 
     if (step_mem->Fsi)
     {
-      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi),
-                      ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                      &(ark_mem->liw));
+      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi));
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -675,13 +642,11 @@ void mriStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->cvals);
       step_mem->cvals = NULL;
-      ark_mem->lrw -= (step_mem->nfusedopvecs);
     }
     if (step_mem->Xvecs != NULL)
     {
       free(step_mem->Xvecs);
       step_mem->Xvecs = NULL;
-      ark_mem->liw -= (step_mem->nfusedopvecs);
     }
     step_mem->nfusedopvecs = 0;
 
@@ -1029,11 +994,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     /* allocate/fill derived quantities from MRIC structure */
 
     /* stage map */
-    if (step_mem->stage_map)
-    {
-      free(step_mem->stage_map);
-      ark_mem->liw -= step_mem->stages;
-    }
+    if (step_mem->stage_map) { free(step_mem->stage_map); }
     step_mem->stage_map = (int*)calloc(step_mem->MRIC->stages,
                                        sizeof(*step_mem->stage_map));
     if (step_mem->stage_map == NULL)
@@ -1042,7 +1003,6 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
                       MSG_ARK_MEM_FAIL);
       return (ARK_MEM_FAIL);
     }
-    ark_mem->liw += step_mem->MRIC->stages;
     retval = mriStepCoupling_GetStageMap(step_mem->MRIC, step_mem->stage_map,
                                          &(step_mem->nstages_active));
     if (retval != ARK_SUCCESS)
@@ -1053,11 +1013,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* stage types */
-    if (step_mem->stagetypes)
-    {
-      free(step_mem->stagetypes);
-      ark_mem->liw -= step_mem->stages;
-    }
+    if (step_mem->stagetypes) { free(step_mem->stagetypes); }
     step_mem->stagetypes = (int*)calloc(step_mem->MRIC->stages + 1,
                                         sizeof(*step_mem->stagetypes));
     if (step_mem->stagetypes == NULL)
@@ -1066,18 +1022,13 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
                       MSG_ARK_MEM_FAIL);
       return (ARK_MEM_FAIL);
     }
-    ark_mem->liw += (step_mem->MRIC->stages + 1);
     for (j = 0; j <= step_mem->MRIC->stages; j++)
     {
       step_mem->stagetypes[j] = mriStepCoupling_GetStageType(step_mem->MRIC, j);
     }
 
     /* explicit RK coefficient row */
-    if (step_mem->Ae_row)
-    {
-      free(step_mem->Ae_row);
-      ark_mem->lrw -= step_mem->stages;
-    }
+    if (step_mem->Ae_row) { free(step_mem->Ae_row); }
     step_mem->Ae_row = (sunrealtype*)calloc(step_mem->MRIC->stages,
                                             sizeof(*step_mem->Ae_row));
     if (step_mem->Ae_row == NULL)
@@ -1086,14 +1037,9 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
                       MSG_ARK_MEM_FAIL);
       return (ARK_MEM_FAIL);
     }
-    ark_mem->lrw += step_mem->MRIC->stages;
 
     /* implicit RK coefficient row */
-    if (step_mem->Ai_row)
-    {
-      free(step_mem->Ai_row);
-      ark_mem->lrw -= step_mem->stages;
-    }
+    if (step_mem->Ai_row) { free(step_mem->Ai_row); }
     step_mem->Ai_row = (sunrealtype*)calloc(step_mem->MRIC->stages,
                                             sizeof(*step_mem->Ai_row));
     if (step_mem->Ai_row == NULL)
@@ -1102,7 +1048,6 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
                       MSG_ARK_MEM_FAIL);
       return (ARK_MEM_FAIL);
     }
-    ark_mem->lrw += step_mem->MRIC->stages;
 
     /* Allocate reusable arrays for fused vector operations */
     int fused_workspace_size =
@@ -1114,13 +1059,11 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
       {
         free(step_mem->cvals);
         step_mem->cvals = NULL;
-        ark_mem->lrw -= step_mem->nfusedopvecs;
       }
       if (step_mem->Xvecs)
       {
         free(step_mem->Xvecs);
         step_mem->Xvecs = NULL;
-        ark_mem->liw -= step_mem->nfusedopvecs;
       }
       step_mem->nfusedopvecs = 0;
 
@@ -1142,8 +1085,6 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
         return (ARK_MEM_FAIL);
       }
       step_mem->nfusedopvecs = fused_workspace_size;
-      ark_mem->lrw += fused_workspace_size;
-      ark_mem->liw += fused_workspace_size;
     }
 
     /* Retrieve/store method and embedding orders now that tables are finalized */
@@ -1170,24 +1111,19 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
       {
         if (step_mem->explicit_rhs)
         {
-          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse),
-                          ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                          &(ark_mem->liw));
+          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fse));
           if (step_mem->unify_Fs) { step_mem->Fsi = NULL; }
         }
         if (step_mem->implicit_rhs)
         {
-          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi),
-                          ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                          &(ark_mem->liw));
+          arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi));
           if (step_mem->unify_Fs) { step_mem->Fse = NULL; }
         }
       }
       if (step_mem->explicit_rhs && !step_mem->unify_Fs)
       {
         if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fse), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+                              &(step_mem->Fse)))
         {
           return (ARK_MEM_FAIL);
         }
@@ -1195,8 +1131,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
       if (step_mem->implicit_rhs && !step_mem->unify_Fs)
       {
         if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fsi), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+                              &(step_mem->Fsi)))
         {
           return (ARK_MEM_FAIL);
         }
@@ -1204,8 +1139,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
       if (step_mem->unify_Fs)
       {
         if (!arkAllocVecArray(step_mem->nstages_active, ark_mem->ewt,
-                              &(step_mem->Fse), ark_mem->lrw1, &(ark_mem->lrw),
-                              ark_mem->liw1, &(ark_mem->liw)))
+                              &(step_mem->Fse)))
         {
           return (ARK_MEM_FAIL);
         }
@@ -3312,7 +3246,6 @@ int mriStep_AccessStepMem(ARKodeMem ark_mem, const char* fname,
 int mriStep_SetCoupling(ARKodeMem ark_mem)
 {
   ARKodeMRIStepMem step_mem;
-  sunindextype Cliw, Clrw;
   ARKODE_MRITableID table_id = ARKODE_MRI_NONE;
 
   /* access ARKodeMRIStepMem structure */
@@ -3407,11 +3340,6 @@ int mriStep_SetCoupling(ARKodeMem ark_mem)
                     "An error occurred in constructing coupling table.");
     return (ARK_INVALID_TABLE);
   }
-
-  /* note coupling structure space requirements */
-  MRIStepCoupling_Space(step_mem->MRIC, &Cliw, &Clrw);
-  ark_mem->liw += Cliw;
-  ark_mem->lrw += Clrw;
 
   /* set [redundant] stored values for stage numbers and
      method/embedding orders */
@@ -4929,19 +4857,7 @@ int mriStepInnerStepper_ResetSUNStepper(MRIStepInnerStepper stepper,
 int mriStepInnerStepper_AllocVecs(MRIStepInnerStepper stepper, int count,
                                   N_Vector tmpl)
 {
-  sunindextype lrw1, liw1;
-
   if (stepper == NULL) { return ARK_ILL_INPUT; }
-
-  /* Set space requirements for one N_Vector */
-  if (tmpl->ops->nvspace) { N_VSpace(tmpl, &lrw1, &liw1); }
-  else
-  {
-    lrw1 = 0;
-    liw1 = 0;
-  }
-  stepper->lrw1 = lrw1;
-  stepper->liw1 = liw1;
 
   /* Set the number of forcing vectors and allocate vectors */
   stepper->nforcing = count;
@@ -4950,13 +4866,9 @@ int mriStepInnerStepper_AllocVecs(MRIStepInnerStepper stepper, int count,
   {
     if (stepper->nforcing_allocated)
     {
-      arkFreeVecArray(stepper->nforcing_allocated, &(stepper->forcing),
-                      stepper->lrw1, &(stepper->lrw), stepper->liw1,
-                      &(stepper->liw));
+      arkFreeVecArray(stepper->nforcing_allocated, &(stepper->forcing));
     }
-    if (!arkAllocVecArray(stepper->nforcing, tmpl, &(stepper->forcing),
-                          stepper->lrw1, &(stepper->lrw), stepper->liw1,
-                          &(stepper->liw)))
+    if (!arkAllocVecArray(stepper->nforcing, tmpl, &(stepper->forcing)))
     {
       mriStepInnerStepper_FreeVecs(stepper);
       return (ARK_MEM_FAIL);
@@ -4990,14 +4902,12 @@ int mriStepInnerStepper_AllocVecs(MRIStepInnerStepper stepper, int count,
 
 /* Resize MRI forcing and fused op workspace vectors if necessary */
 int mriStepInnerStepper_Resize(MRIStepInnerStepper stepper, ARKVecResizeFn resize,
-                               void* resize_data, sunindextype lrw_diff,
-                               sunindextype liw_diff, N_Vector tmpl)
+                               void* resize_data, N_Vector tmpl)
 {
   if (stepper == NULL) { return ARK_ILL_INPUT; }
 
   if (!arkResizeVecArray(resize, resize_data, stepper->nforcing_allocated, tmpl,
-                         &(stepper->forcing), lrw_diff, &(stepper->lrw),
-                         liw_diff, &(stepper->liw)))
+                         &(stepper->forcing)))
   {
     return (ARK_MEM_FAIL);
   }
@@ -5010,8 +4920,7 @@ int mriStepInnerStepper_FreeVecs(MRIStepInnerStepper stepper)
 {
   if (stepper == NULL) { return ARK_ILL_INPUT; }
 
-  arkFreeVecArray(stepper->nforcing_allocated, &(stepper->forcing),
-                  stepper->lrw1, &(stepper->lrw), stepper->liw1, &(stepper->liw));
+  arkFreeVecArray(stepper->nforcing_allocated, &(stepper->forcing));
 
   if (stepper->vecs != NULL)
   {
@@ -5155,16 +5064,8 @@ int mriStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
       if ((step_mem->nfusedopvecs - nvecs) < (2 * step_mem->MRIC->stages + 2))
       {
         /* free current work space */
-        if (step_mem->cvals != NULL)
-        {
-          free(step_mem->cvals);
-          ark_mem->lrw -= step_mem->nfusedopvecs;
-        }
-        if (step_mem->Xvecs != NULL)
-        {
-          free(step_mem->Xvecs);
-          ark_mem->liw -= step_mem->nfusedopvecs;
-        }
+        if (step_mem->cvals != NULL) { free(step_mem->cvals); }
+        if (step_mem->Xvecs != NULL) { free(step_mem->Xvecs); }
 
         /* allocate reusable arrays for fused vector operations */
         step_mem->nfusedopvecs = 2 * step_mem->MRIC->stages + 2 + nvecs;
@@ -5173,13 +5074,11 @@ int mriStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
         step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                                sizeof(sunrealtype));
         if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->lrw += step_mem->nfusedopvecs;
 
         step_mem->Xvecs = NULL;
         step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
                                             sizeof(N_Vector));
         if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->liw += step_mem->nfusedopvecs;
       }
     }
   }

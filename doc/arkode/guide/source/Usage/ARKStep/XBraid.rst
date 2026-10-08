@@ -62,7 +62,6 @@ and the steps necessary to modify an existing code that already uses ARKODE's
 ARKStep time-stepping module to also use XBraid.
 
 
-
 .. _ARKODE.Usage.ARKStep.SUNBraidInterface:
 
 SUNBraid Interface
@@ -85,7 +84,6 @@ The ARKBraid interface, built on the SUNBraidApp and SUNBraidVector structures,
 provides all the functionality needed combine ARKODE and XBraid for
 parallel-in-time integration. As such, only a minimal number of changes are
 necessary to update an existing code that uses ARKODE to also use XBraid.
-
 
 
 .. _ARKODE.Usage.ARKStep.SUNBraidApp:
@@ -144,7 +142,6 @@ The SUNBraidApp operations are define below in
 :numref:`ARKODE.Usage.ARKStep.SUNBraidOps`.
 
 
-
 .. _ARKODE.Usage.ARKStep.SUNBraidOps:
 
 SUNBraidOps
@@ -176,7 +173,6 @@ example usage of the function.
       if (flag != SUNBRAID_SUCCESS) return flag;
 
 
-
 .. _ARKODE.Usage.ARKStep.SUNBraidApp_Utilities:
 
 SUNBraidApp Utility Functions
@@ -203,7 +199,6 @@ instance.
       if (flag != SUNBRAID_SUCCESS) return flag;
 
 
-
 .. c:function:: int SUNBraidApp_FreeEmpty(braid_App *app)
 
    This function destroys an empty SUNBraidApp instance.
@@ -224,7 +219,6 @@ instance.
       implementation should free its content before calling
       :c:func:`SUNBraidApp_FreeEmpty()` to deallocate the base SUNBraidApp
       structure.
-
 
 
 .. _ARKODE.Usage.ARKStep.SUNBraidVector:
@@ -274,7 +268,6 @@ utility functions are provided.
       :c:func:`SUNBraidVector_Free()`.
 
 
-
 .. c:function:: int SUNBraidVector_GetNVector(SUNBraidVector u, N_Vector *y)
 
    This function retrieves the wrapped N_Vector from the SUNBraidVector.
@@ -291,7 +284,6 @@ utility functions are provided.
       /* Create new vector wrapper */
       flag = SUNBraidVector_GetNVector(u, y_ptr);
       if (flag != SUNBRAID_SUCCESS) return flag;
-
 
 
 Finally, the SUNBraid interface defines the following vector operations acting
@@ -314,7 +306,6 @@ N_Vector operations.
    :retval SUNBRAID_ALLOCFAIL: if a memory allocation fails.
 
 
-
 .. c:function:: int SUNBraidVector_Free(braid_App app, braid_Vector u)
 
    This function destroys the SUNBraidVector and the wrapped N_Vector
@@ -324,7 +315,6 @@ N_Vector operations.
    :param u: input, the SUNBraidVector to destroy.
 
    :retval SUNBRAID_SUCCESS: if successful.
-
 
 
 .. c:function:: int SUNBraidVector_Sum(braid_App app, braid_Real alpha, braid_Vector x, braid_Real beta, braid_Vector y)
@@ -343,7 +333,6 @@ N_Vector operations.
    :retval SUNBRAID_MEMFAIL: if either of the wrapped N_Vectors are ``NULL``.
 
 
-
 .. c:function:: int SUNBraidVector_SpatialNorm(braid_App app, braid_Vector u, braid_Real *norm_ptr)
 
    This function computes the 2-norm of the vector *u* using
@@ -356,7 +345,6 @@ N_Vector operations.
    :retval SUNBRAID_SUCCESS: if successful.
    :retval SUNBRAID_ILLINPUT: if *u* is ``NULL``.
    :retval SUNBRAID_MEMFAIL: if the wrapped N_Vector is ``NULL``.
-
 
 
 .. c:function:: int SUNBraidVector_BufSize(braid_App app, braid_Int *size_ptr, braid_BufferStatus bstatus)
@@ -374,7 +362,6 @@ N_Vector operations.
                       or :c:func:`N_VBufSize()`.
 
 
-
 .. c:function:: int SUNBraidVector_BufPack(braid_App app, braid_Vector u, void *buffer, braid_BufferStatus bstatus)
 
    This function packs the message buffer for exchanging vector data using
@@ -389,7 +376,6 @@ N_Vector operations.
    :retval SUNBRAID_SUCCESS: if successful.
    :retval SUNBRAID_ILLINPUT: if *u* is ``NULL``.
    :retval otherwise: An error flag from :c:func:`N_VBufPack()`.
-
 
 
 .. c:function:: int SUNBraidVector_BufUnpack(braid_App app, void *buffer, braid_Vector *u_ptr, braid_BufferStatus bstatus)
@@ -409,7 +395,6 @@ N_Vector operations.
    :retval SUNBRAID_ALLOCFAIL: if a memory allocation fails.
    :retval otherwise: an error flag from :c:func:`SUNBraidApp_GetVecTmpl` and
                       :c:func:`N_VBufUnpack()`.
-
 
 
 .. _ARKODE.Usage.ARKStep.SUNBraidReturnCodes:
@@ -442,7 +427,6 @@ The SUNBraid interface return values are given in
    +--------------------------+------------+-------------------------------------+
 
 
-
 .. _ARKODE.Usage.ARKStep.ARKBraid:
 
 ARKBraid Interface
@@ -464,7 +448,6 @@ wish to create their own SUNBraidApp implementation using ARKODE,
 functions available to the user.
 
 
-
 .. _ARKODE.Usage.ARKStep.ARKBraid_InitDealloc:
 
 ARKBraid Initialization and Deallocation Functions
@@ -475,7 +458,6 @@ initialize, and destroy an ARKBraid instance. Each user-callable function
 returns ``SUNBRAID_SUCCESS`` (i.e., 0) on a successful call and a negative value
 if an error occurred. The possible return codes are given in
 :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
-
 
 
 .. c:function:: int ARKBraid_Create(void *arkode_mem, braid_App *app)
@@ -497,7 +479,6 @@ if an error occurred. The possible return codes are given in
       construct an XBraid interface to other of ARKODE time-stepping modules
       (e.g., ERKStep or MRIStep), those are not currently supported by this
       implementation.
-
 
 
 .. c:function:: int ARKBraid_BraidInit(MPI_Comm comm_w, MPI_Comm comm_t, sunrealtype tstart, sunrealtype tstop, sunindextype ntime, braid_App app, braid_Core *core)
@@ -533,7 +514,6 @@ if an error occurred. The possible return codes are given in
       with the XBraid function ``braid_Destroy()``.
 
 
-
 .. c:function:: int ARKBraid_Free(braid_App *app)
 
    This function deallocates an ARKBraid instance.
@@ -541,7 +521,6 @@ if an error occurred. The possible return codes are given in
    :param app: input, a pointer to an ARKBraid instance.
 
    :retval SUNBRAID_SUCCESS: if successful.
-
 
 
 .. _ARKODE.Usage.ARKStep.ARKBraid_Set:
@@ -555,7 +534,6 @@ XBraid interface functions. Each user-callable function returns
 ``SUNBRAID_SUCCESS`` (i.e., 0) on a successful call and a negative value if an
 error occurred. The possible return codes are given in
 :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
-
 
 
 .. c:function:: int ARKBraid_SetStepFn(braid_App app, braid_PtFcnStep step)
@@ -576,7 +554,6 @@ error occurred. The possible return codes are given in
       This function must be called prior to :c:func:`ARKBraid_BraidInit()`.
 
 
-
 .. c:function:: int ARKBraid_SetInitFn(braid_App app, braid_PtFcnInit init)
 
    This function sets the vector initialization function provided to XBraid
@@ -593,7 +570,6 @@ error occurred. The possible return codes are given in
    .. note::
 
       This function must be called prior to :c:func:`ARKBraid_BraidInit()`.
-
 
 
 .. c:function:: int ARKBraid_SetSpatialNormFn(braid_App app, braid_PtFcnSpatialNorm snorm)
@@ -614,7 +590,6 @@ error occurred. The possible return codes are given in
       This function must be called prior to :c:func:`ARKBraid_BraidInit()`.
 
 
-
 .. c:function:: int ARKBraid_SetAccessFn(braid_App app, braid_PtFcnAccess access)
 
    This function sets the user access function provided to XBraid (default
@@ -633,7 +608,6 @@ error occurred. The possible return codes are given in
       This function must be called prior to :c:func:`ARKBraid_BraidInit()`.
 
 
-
 .. _ARKODE.Usage.ARKStep.ARKBraid_Get:
 
 ARKBraid Get Functions
@@ -644,7 +618,6 @@ data from an ARKBraid instance. Each user-callable function returns
 ``SUNBRAID_SUCCESS`` (i.e., 0) on a successful call and a negative value if an
 error occurred. The possible return codes are given in
 :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
-
 
 
 .. c:function:: int ARKBraid_GetVecTmpl(braid_App app, N_Vector *tmpl)
@@ -661,7 +634,6 @@ error occurred. The possible return codes are given in
    :retval SUNBRAID_MEMFAIL: if the *app* content or ARKODE memory is ``NULL``.
 
 
-
 .. c:function:: int ARKBraid_GetARKodeMem(braid_App app, void **arkode_mem)
 
    This function returns the ARKODE memory structure pointer attached with
@@ -674,25 +646,6 @@ error occurred. The possible return codes are given in
    :retval SUNBRAID_ILLINPUT: if *app* is ``NULL``.
    :retval SUNBRAID_MEMFAIL: if the *app* content or ARKODE memory is ``NULL``.
 
-
-
-.. c:function:: int ARKBraid_GetARKStepMem(braid_App app, void **arkode_mem)
-
-   This function returns the ARKStep memory structure pointer attached with
-   :c:func:`ARKBraid_Create()`.
-
-   :param app: input, an ARKBraid instance.
-   :param arkode_mem: output, a pointer to the ARKStep memory structure.
-
-   :retval SUNBRAID_SUCCESS: if successful.
-   :retval SUNBRAID_ILLINPUT: if *app* is ``NULL``.
-   :retval SUNBRAID_MEMFAIL: if the *app* content or ARKStep memory is ``NULL``.
-
-   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
-
-      Use :c:func:`ARKBraid_GetARKodeMem` instead.
-
-
 .. c:function:: int ARKBraid_GetUserData(braid_App app, void **user_data)
 
    This function returns the user data pointer attached with
@@ -704,7 +657,6 @@ error occurred. The possible return codes are given in
    :retval SUNBRAID_SUCCESS: if successful.
    :retval SUNBRAID_ILLINPUT: if *app* is ``NULL``.
    :retval SUNBRAID_MEMFAIL: if the *app* content or ARKODE memory is ``NULL``.
-
 
 
 .. c:function:: int ARKBraid_GetLastBraidFlag(braid_App app, int *last_flag)
@@ -720,7 +672,6 @@ error occurred. The possible return codes are given in
    :retval SUNBRAID_MEMFAIL: if the *app* content is ``NULL``.
 
 
-
 .. c:function:: int ARKBraid_GetLastARKodeFlag(braid_App app, int *last_flag)
 
    This function returns the return value from the most recent ARKODE function
@@ -732,25 +683,6 @@ error occurred. The possible return codes are given in
    :retval SUNBRAID_SUCCESS: if successful.
    :retval SUNBRAID_ILLINPUT: if *app* is ``NULL``.
    :retval SUNBRAID_MEMFAIL: if the *app* content is ``NULL``.
-
-
-
-.. c:function:: int ARKBraid_GetLastARKStepFlag(braid_App app, int *last_flag)
-
-   This function returns the return value from the most recent ARKStep function
-   call.
-
-   :param app: input, an ARKBraid instance.
-   :param last_flag: output, the ARKStep return value.
-
-   :retval SUNBRAID_SUCCESS: if successful.
-   :retval SUNBRAID_ILLINPUT: if *app* is ``NULL``.
-   :retval SUNBRAID_MEMFAIL: if the *app* content is ``NULL``.
-
-   .. deprecated:: 7.1.0 (ARKODE 6.1.0)
-
-      Use :c:func:`ARKBraid_GetLastARKodeFlag` instead.
-
 
 .. c:function:: int ARKBraid_GetSolution(braid_App app, sunrealtype *tout, N_Vector yout)
 
@@ -774,8 +706,6 @@ error occurred. The possible return codes are given in
       from the ARKBraid structure with :c:func:`ARKBraid_GetUserData()`.
 
 
-
-
 .. _ARKODE.Usage.ARKStep.ARKBraid_Interface:
 
 ARKBraid Interface Functions
@@ -788,7 +718,6 @@ functions defined in :numref:`ARKODE.Usage.ARKStep.ARKBraid_Set`. Each default
 interface function returns ``SUNBRAID_SUCCESS`` (i.e., 0) on a successful call
 and a negative value if an error occurred. The possible return codes are given
 in :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
-
 
 
 .. c:function:: int ARKBraid_Step(braid_App app, braid_Vector ustop, braid_Vector fstop, braid_Vector u, braid_StepStatus status)
@@ -812,14 +741,13 @@ in :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
    :retval SUNBRAID_BRAIDFAIL: if an XBraid function fails. The return value can be
                                retrieved with :c:func:`ARKBraid_GetLastBraidFlag()`.
    :retval SUNBRAID_SUNFAIL: if a SUNDIALS function fails. The return value can be
-                             retrieved with :c:func:`ARKBraid_GetLastARKStepFlag()`.
+                             retrieved with :c:func:`ARKBraid_GetLastARKodeFlag()`.
 
    .. note::
 
       If providing a non-default implementation of the step function the utility
       function :c:func:`ARKBraid_TakeStep()` should be used to advance the input
       vector *u* to the new time.
-
 
 
 .. c:function:: int ARKBraid_Init(braid_App app, sunrealtype t, braid_Vector *u_ptr)
@@ -848,7 +776,6 @@ in :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
       returned by this function.
 
 
-
 .. c:function:: int ARKBraid_Access(braid_App app, braid_Vector u, braid_AccessStatus astatus)
 
    This is the default access function provided to XBraid. The access function
@@ -869,7 +796,6 @@ in :numref:`ARKODE.Usage.ARKStep.SUNBraidReturnCodes.Table`.
    :retval SUNBRAID_ALLOCFAIL: if allocating storage for the final solution fails.
    :retval SUNBRAID_BRAIDFAIL: if an XBraid function fails. The return value can be
                                retrieved with :c:func:`ARKBraid_GetLastBraidFlag()`.
-
 
 
 .. _ARKODE.Usage.ARKStep.ARKBraid_Skeleton:
@@ -958,8 +884,6 @@ steps are **bold**.
 #. *Finalize MPI*
 
 
-
-
 .. _ARKODE.Usage.ARKStep.ARKBraid_Utility:
 
 Advanced ARKBraid Utility Functions
@@ -969,7 +893,6 @@ This section describes utility functions utilized in the ARKODE + XBraid
 interfacing. These functions are used internally by the above ARKBraid interface
 functions but are exposed to the user to assist in advanced usage of
 ARKODE and XBraid that requires defining a custom SUNBraidApp implementation.
-
 
 
 .. c:function:: int ARKBraid_TakeStep(void *arkode_mem, sunrealtype tstart, sunrealtype tstop, N_Vector y, int *ark_flag)

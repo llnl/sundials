@@ -866,12 +866,9 @@ static void PrintErrOutput(sunrealtype tol_factor)
 
 static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
 {
-  long int lenrw, leniw, lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf, nje, nfeLS;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  check_retval(&retval, "CVodeGetWorkSpace", 1);
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   check_retval(&retval, "CVodeGetNumSteps", 1);
   retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
@@ -886,8 +883,6 @@ static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
   check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
   printf("\n Final statistics for this run:\n\n");
-  printf(" CVode real workspace length              = %4ld \n", lenrw);
-  printf(" CVode integer workspace length           = %4ld \n", leniw);
   printf(" Number of steps                          = %4ld \n", nst);
   printf(" Number of f-s                            = %4ld \n", nfe);
   printf(" Number of setups                         = %4ld \n", nsetups);
@@ -903,19 +898,13 @@ static void PrintFinalStats(void* cvode_mem, int miter, sunrealtype ero)
       check_retval(&retval, "CVodeGetNumJacEvals", 1);
       retval = CVodeGetNumLinRhsEvals(cvode_mem, &nfeLS);
       check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
-      retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-      check_retval(&retval, "CVodeGetLinWorkSpace", 1);
     }
     else
     {
       nje    = nsetups;
       retval = CVDiagGetNumRhsEvals(cvode_mem, &nfeLS);
       check_retval(&retval, "CVDiagGetNumRhsEvals", 1);
-      retval = CVDiagGetWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-      check_retval(&retval, "CVDiagGetWorkSpace", 1);
     }
-    printf(" Linear solver real workspace length      = %4ld \n", lenrwLS);
-    printf(" Linear solver integer workspace length   = %4ld \n", leniwLS);
     printf(" Number of Jacobian evaluations           = %4ld \n", nje);
     printf(" Number of f evals. in linear solver      = %4ld \n\n", nfeLS);
   }

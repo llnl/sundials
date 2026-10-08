@@ -51,7 +51,7 @@
 
 ###
 # Trigger a build-and-test pipeline for a machine.
-# Comment the jobs for machines you don’t need.
+# Comment the jobs for machines you don't need.
 ###
 
 # DANE

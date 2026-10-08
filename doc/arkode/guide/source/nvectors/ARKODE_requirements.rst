@@ -26,10 +26,9 @@ table also shows, for each function, which ARKODE module uses the function.
 The ARKStep, ERKStep, MRIStep, and SPRKStep columns show function usage
 within the main time-stepping modules and the shared ARKODE infrastructure,
 while the remaining columns show function usage within the ARKLS linear solver
-interface, within constraint-handling (i.e., when :c:func:`ARKStepSetConstraints`
-and :c:func:`ERKStepSetConstraints` are used), relaxation (i.e., when
-:c:func:`ARKStepSetRelaxFn`, :c:func:`ERKStepSetRelaxFn` and related are used),
-the ARKBANDPRE and ARKBBDPRE preconditioner modules.
+interface, within constraint-handling (i.e., when :c:func:`ARKodeSetConstraints`
+is used), relaxation (i.e., when :c:func:`ARKodeSetRelaxFn` and related are
+used), the ARKBANDPRE and ARKBBDPRE preconditioner modules.
 
 Note that for ARKLS we only list the ``N_Vector`` routines used
 directly by ARKLS, each ``SUNLinearSolver`` module may have additional
@@ -49,7 +48,6 @@ Therefore a user-supplied ``N_Vector`` module for ARKODE could safely
 omit these functions from their implementation (although
 some may be needed by ``SUNNonlinearSolver`` or ``SUNLinearSolver``
 modules).
-
 
 .. tabularcolumns:: |\Y{0.20}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|\Y{0.10}|
 
@@ -80,11 +78,11 @@ modules).
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
    | :c:func:`N_VGetArrayPointer`             |         |         |         |          | 1     |             |            | X       |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
-   | :c:func:`N_VGetLength`                   |         |         |         |          | 4     |             |            |         |
+   | :c:func:`N_VGetLength`                   |         |         |         |          | 3     |             |            |         |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
    | :c:func:`N_VInv`                         | X       | X       | X       | X        |       |             |            |         |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
-   | :c:func:`N_VLinearCombination`\ :sup:`3` | X       | X       | X       | X        |       |             |            |         |
+   | :c:func:`N_VLinearCombination`\ :sup:`2` | X       | X       | X       | X        |       |             |            |         |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
    | :c:func:`N_VLinearSum`                   | X       | X       | X       | X        | X     |             | X          |         |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
@@ -100,11 +98,8 @@ modules).
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
    | :c:func:`N_VSetArrayPointer`             |         |         |         |          | 1     |             |            |         |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
-   | :c:func:`N_VSpace`\ :sup:`2`             | X       | X       | X       | X        | X     |             |            | X       |
-   +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
    | :c:func:`N_VWrmsNorm`                    | X       | X       | X       | X        | X     |             |            | X       |
    +------------------------------------------+---------+---------+---------+----------+-------+-------------+------------+---------+
-
 
 Special cases (numbers match markings in table):
 
@@ -112,11 +107,8 @@ Special cases (numbers match markings in table):
    :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` modules,
    where the default difference-quotient Jacobian approximation is used.
 
-2. The :c:func:`N_VSpace()` function is only informational, and will
-   only be called if provided by the ``N_Vector`` implementation.
-
-3. The :c:func:`N_VLinearCombination()` function is in fact optional;
+2. The :c:func:`N_VLinearCombination()` function is in fact optional;
    if it is not supplied then :c:func:`N_VLinearSum()` will be used instead.
 
-4. The :c:func:`N_VGetLength()` function is only required when an iterative or
+3. The :c:func:`N_VGetLength()` function is only required when an iterative or
    matrix iterative ``SUNLinearSolver`` module is used.

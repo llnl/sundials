@@ -40,13 +40,12 @@ interested reader.
   \                                         CVODES CVLS CVDIAG CVBANDPRE CVBBDPRE CVODEA
   ========================================= ====== ==== ====== ========= ======== ======
   :c:func:`N_VGetVectorID`
-  :c:func:`N_VGetLength`                             4
+  :c:func:`N_VGetLength`                             3
   :c:func:`N_VClone`                          x      x    x                         x
   :c:func:`N_VCloneEmpty`                            1
   :c:func:`N_VDestroy`                        x      x    x                         x
   :c:func:`N_VCloneVectorArray`               x                                     x
   :c:func:`N_VDestroyVectorArray`             x                                     x
-  :c:func:`N_VSpace`                          x      2
   :c:func:`N_VGetArrayPointer`                       1           x         x
   :c:func:`N_VSetArrayPointer`                       1
   :c:func:`N_VLinearSum`                      x      x    x                         x
@@ -66,7 +65,7 @@ interested reader.
   :c:func:`N_VInvTest`                                    x
   :c:func:`N_VLinearCombination`              x
   :c:func:`N_VScaleAddMulti`                  x
-  :c:func:`N_VDotProdMulti`                   3      3
+  :c:func:`N_VDotProdMulti`                   2      2
   :c:func:`N_VLinearSumVectorArray`           x
   :c:func:`N_VScaleVectorArray`               x
   :c:func:`N_VConstVectorArray`               x
@@ -75,21 +74,17 @@ interested reader.
   :c:func:`N_VLinearCombinationVectorArray`   x
   ========================================= ====== ==== ====== ========= ======== ======
 
-
 Special cases (numbers match markings in table):
 
 1. These routines are only required if an internal difference-quotient routine
    for constructing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or
    :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` Jacobian matrices is used.
 
-2. This routine is optional, and is only used in estimating space requirements
-   for CVODES modules for user feedback.
-
-3. The optional function :c:func:`N_VDotProdMulti` is only used in the
+2. The optional function :c:func:`N_VDotProdMulti` is only used in the
    ``SUNNONLINSOL_FIXEDPOINT`` module, or when Classical
    Gram-Schmidt is enabled with SPGMR or SPFGMR.
 
-4. This routine is only used when an iterative or matrix iterative
+3. This routine is only used when an iterative or matrix iterative
    ``SUNLinearSolver`` module is supplied to CVODES.
 
 Each ``SUNLinearSolver`` object may require additional ``N_Vector`` routines not

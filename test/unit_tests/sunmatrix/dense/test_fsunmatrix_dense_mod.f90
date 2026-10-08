@@ -42,7 +42,6 @@ contains
     type(SUNMatrix), pointer :: A, B               ! SUNMatrix
     type(N_Vector), pointer :: x, y               ! NVectors
     real(c_double), pointer :: matdat(:)          ! matrix data pointer
-    integer(c_long)          :: lenrw(1), leniw(1) ! matrix real and int work space size
     integer(c_long)          :: val
 
     fails = 0
@@ -78,7 +77,6 @@ contains
     fails = fails + FSUNMatScaleAdd_Dense(ONE, A, B)
     fails = fails + FSUNMatScaleAddI_Dense(ONE, A)
     fails = fails + FSUNMatMatvec_Dense(A, x, y)
-    fails = fails + FSUNMatSpace_Dense(A, lenrw, leniw)
 
     !======= Cleanup ===========
     call FSUNMatDestroy_Dense(A)
@@ -144,7 +142,6 @@ contains
     fails = fails + Test_FSUNMatScaleAdd(A, I, 0)
     fails = fails + Test_FSUNMatScaleAddI(A, I, 0)
     fails = fails + Test_FSUNMatMatvec(A, x, y, 0)
-    fails = fails + Test_FSUNMatSpace(A, 0)
 
     ! cleanup
     call FSUNMatDestroy(A)
@@ -154,7 +151,7 @@ contains
 
   end function unit_tests
 
-end module
+end module test_fsunmatrix_dense
 
 program main
   !======== Inclusions ==========

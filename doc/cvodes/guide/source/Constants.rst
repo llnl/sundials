@@ -126,12 +126,12 @@ CVODES output constants
    |                                  |      | during one internal time step or minimum step size     |
    |                                  |      | was reached.                                           |
    +----------------------------------+------+--------------------------------------------------------+
-   | ``CV_LINIT_FAIL``                | -5   | The linear solver’s initialization function failed.    |
+   | ``CV_LINIT_FAIL``                | -5   | The linear solver's initialization function failed.    |
    +----------------------------------+------+--------------------------------------------------------+
-   | ``CV_LSETUP_FAIL``               | -6   | The linear solver’s setup function failed in an        |
+   | ``CV_LSETUP_FAIL``               | -6   | The linear solver's setup function failed in an        |
    |                                  |      | unrecoverable manner.                                  |
    +----------------------------------+------+--------------------------------------------------------+
-   | ``CV_LSOLVE_FAIL``               | -7   | The linear solver’s solve function failed in an        |
+   | ``CV_LSOLVE_FAIL``               | -7   | The linear solver's solve function failed in an        |
    |                                  |      | unrecoverable manner.                                  |
    +----------------------------------+------+--------------------------------------------------------+
    | ``CV_RHSFUNC_FAIL``              | -8   | The right-hand side function failed in an              |
@@ -149,9 +149,9 @@ CVODES output constants
    | ``CV_RTFUNC_FAIL``               | -12  | The rootfinding function failed in an unrecoverable    |
    |                                  |      | manner.                                                |
    +----------------------------------+------+--------------------------------------------------------+
-   | ``CV_NLS_INIT_FAIL``             | -13  | The nonlinear solver’s init routine failed.            |
+   | ``CV_NLS_INIT_FAIL``             | -13  | The nonlinear solver's init routine failed.            |
    +----------------------------------+------+--------------------------------------------------------+
-   | ``CV_NLS_SETUP_FAIL``            | -14  | The nonlinear solver’s setup routine failed.           |
+   | ``CV_NLS_SETUP_FAIL``            | -14  | The nonlinear solver's setup routine failed.           |
    +----------------------------------+------+--------------------------------------------------------+
    | ``CV_CONSTR_FAIL``               | -15  | The inequality constraints were violated and the       |
    |                                  |      | solver was unable to recover.                          |

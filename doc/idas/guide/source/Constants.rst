@@ -119,12 +119,12 @@ IDAS output constants
   |                                   |      | during one internal time step or minimum step size     |
   |                                   |      | was reached.                                           |
   +-----------------------------------+------+--------------------------------------------------------+
-  | ``IDA_LINIT_FAIL``                | -5   | The linear solver’s initialization function failed.    |
+  | ``IDA_LINIT_FAIL``                | -5   | The linear solver's initialization function failed.    |
   +-----------------------------------+------+--------------------------------------------------------+
-  | ``IDA_LSETUP_FAIL``               | -6   | The linear solver’s setup function failed in an        |
+  | ``IDA_LSETUP_FAIL``               | -6   | The linear solver's setup function failed in an        |
   |                                   |      | unrecoverable manner.                                  |
   +-----------------------------------+------+--------------------------------------------------------+
-  | ``IDA_LSOLVE_FAIL``               | -7   | The linear solver’s solve function failed in an        |
+  | ``IDA_LSOLVE_FAIL``               | -7   | The linear solver's solve function failed in an        |
   |                                   |      | unrecoverable manner.                                  |
   +-----------------------------------+------+--------------------------------------------------------+
   | ``IDA_RES_FAIL``                  | -8   | The user-provided residual function failed in an       |
@@ -149,9 +149,9 @@ IDAS output constants
   |                                   |      | or linear solver solve function had a recoverable      |
   |                                   |      | failure, but ``IDACalcIC`` could not recover.          |
   +-----------------------------------+------+--------------------------------------------------------+
-  | ``IDA_NLS_INIT_FAIL``             | -15  | The nonlinear solver’s init routine failed.            |
+  | ``IDA_NLS_INIT_FAIL``             | -15  | The nonlinear solver's init routine failed.            |
   +-----------------------------------+------+--------------------------------------------------------+
-  | ``IDA_NLS_SETUP_FAIL``            | -16  | The nonlinear solver’s setup routine failed.           |
+  | ``IDA_NLS_SETUP_FAIL``            | -16  | The nonlinear solver's setup routine failed.           |
   +-----------------------------------+------+--------------------------------------------------------+
   | ``IDA_MEM_NULL``                  | -20  | The ``ida_mem`` argument was ``NULL``.                 |
   +-----------------------------------+------+--------------------------------------------------------+

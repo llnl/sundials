@@ -62,11 +62,9 @@ A more complete description of the this ``content`` field is given below:
   multiplication; will be ``NULL`` until the routine ``SUNMatMatvecSetup``
   routine is called
 
-
 The header file to include when using this module is ``sunmatrix/sunmatrix_slunrloc.h``.
 The installed module library to link to is ``libsundials_sunmatrixslunrloc`` *.lib*
 where *.lib* is typically ``.so`` for shared libraries and ``.a`` for static libraries.
-
 
 .. _SUNMatrix.SLUNRloc.Functions:
 
@@ -74,7 +72,6 @@ SUNMATRIX_SLUNRLOC Functions
 ----------------------------------
 
 The SUNMATRIX_SLUNRLOC module provides the following user-callable routines:
-
 
 .. c:function:: SUNMatrix SUNMatrix_SLUNRloc(SuperMatrix *Asuper, gridinfo_t *grid, SUNContext sunctx)
 
@@ -84,32 +81,27 @@ The SUNMATRIX_SLUNRLOC module provides the following user-callable routines:
    2D process grid structure. It returns a ``SUNMatrix`` object if ``Asuper`` is
    compatible else it returns ``NULL``.
 
-
 .. c:function:: void SUNMatrix_SLUNRloc_Print(SUNMatrix A, FILE *fp)
 
    This function prints the underlying ``SuperMatrix`` content. It is useful for
    debugging. Its arguments are the ``SUNMatrix`` object and a ``FILE`` pointer
    to print to. It returns void.
 
-
 .. c:function:: SuperMatrix* SUNMatrix_SLUNRloc_SuperMatrix(SUNMatrix A)
 
    This function returns the underlying ``SuperMatrix`` of ``A``. Its
    only argument is the ``SUNMatrix`` object to access.
-
 
 .. c:function:: gridinfo_t* SUNMatrix_SLUNRloc_ProcessGrid(SUNMatrix A)
 
    This function returns the SuperLU_DIST 2D process grid associated with
    ``A``. Its only argument is the ``SUNMatrix`` object to access.
 
-
 .. c:function:: sunbooleantype SUNMatrix_SLUNRloc_OwnData(SUNMatrix A)
 
    This function returns true if the ``SUNMatrix`` object is responsible
    for freeing the underlying ``SuperMatrix``, otherwise it returns false.
    Its only argument is the ``SUNMatrix`` object to access.
-
 
 The SUNMATRIX_SLUNRLOC module also defines implementations of all generic
 ``SUNMatrix`` operations listed in :numref:`SUNMatrix.ops`:
@@ -119,9 +111,6 @@ The SUNMATRIX_SLUNRLOC module also defines implementations of all generic
 * ``SUNMatClone_SLUNRloc``
 
 * ``SUNMatDestroy_SLUNRloc``
-
-* ``SUNMatSpace_SLUNRloc`` -- this only returns information for the storage within
-  the matrix interface, i.e. storage for ``row_to_proc``
 
 * ``SUNMatZero_SLUNRloc``
 
