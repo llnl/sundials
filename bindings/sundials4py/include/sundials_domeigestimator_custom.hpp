@@ -55,7 +55,11 @@ public:
 
 private:
   struct Content : CustomContentBase
-  {};
+  {
+    // The native estimator borrows the initial guess vector supplied by the
+    // Python setter, so retain its wrapper until the next setter call.
+    nb::object initial_guess_owner;
+  };
 
   static constexpr const char* label = "CustomSUNDomEigEstimator";
 
@@ -96,10 +100,14 @@ public:
 
 private:
   static nb::object get_impl(SUNDomEigEstimator dee)
-  { return custom_content_impl(get_content(dee), label); }
+  {
+    return custom_content_impl(get_content(dee), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomSUNDomEigEstimator>(impl, name); }
+  {
+    return custom_method_overridden<CustomSUNDomEigEstimator>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl)
   {

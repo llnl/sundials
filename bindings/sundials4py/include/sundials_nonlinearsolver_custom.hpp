@@ -140,10 +140,14 @@ public:
 
 private:
   static nb::object get_impl(SUNNonlinearSolver NLS)
-  { return custom_content_impl(get_content(NLS), label); }
+  {
+    return custom_content_impl(get_content(NLS), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomSUNNonlinearSolver>(impl, name); }
+  {
+    return custom_method_overridden<CustomSUNNonlinearSolver>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl)
   {
@@ -177,14 +181,14 @@ private:
     state = NativeCallbackRegistry::prepare(SysFn, nullptr);
     if (!state) { return nb::none(); }
 
-    return nb::cpp_function(
-      [content, state, what](N_Vector y, N_Vector F) -> int
-      {
-        require_valid_callback(state.get(), what);
-        void* mem = require_active_mem(content, what);
-        return state->fn(y, F, mem);
-      },
-      nb::arg("y"), nb::arg("F"));
+    return nb::cpp_function(sundials4py::scoped(
+                              [content, state, what](N_Vector y, N_Vector F) -> int
+                              {
+                                require_valid_callback(state.get(), what);
+                                void* mem = require_active_mem(content, what);
+                                return state->fn(y, F, mem);
+                              }),
+                            nb::arg("y"), nb::arg("F"));
   }
 
   static SUNErrCode custom_nls_setsysfn(SUNNonlinearSolver NLS,

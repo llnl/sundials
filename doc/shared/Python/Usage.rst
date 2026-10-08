@@ -556,18 +556,20 @@ conventions described in :ref:`Python.Usage.Differences`:
 
 * Native ``N_Vector`` and ``SUNMatrix`` arguments are borrowed, non-owning
   views and are guaranteed to remain valid only for the duration of the method
-  call. Operations documented as retaining an argument, such as scaling-vector
-  and dominant-eigenvalue-estimator initial-guess setters, retain its Python
-  owner until the object is reconfigured or destroyed.
+  call. ``set_scaling_vectors`` and
+  ``CustomSUNDomEigEstimator.set_initial_guess`` keep the objects they receive
+  alive until the next call to the same setter or until the solver is
+  destroyed. Vectors created internally by SUNDIALS remain valid only as long
+  as the package that owns them.
 
 .. warning::
 
    Do not raise an exception to report a recoverable failure. For an operation
    returning a status code, an exception is converted to
    ``SUN_ERR_EXT_FAIL``. Void and scalar operations cannot directly report a
-   failure. In every case, an exception raised while a solver is running is
-   re-raised, with its original type and message, from the enclosing
-   sundials4py call. Results computed after the failure are not
+   failure. In every case, an exception raised during any sundials4py call is
+   re-raised, with its original type and message, from that call. Results
+   computed after the failure are not
    meaningful. Return a positive status code for recoverable failures such as a
    singular matrix or a nonconverged iteration.
 
@@ -581,9 +583,12 @@ until SUNDIALS destroys it. These native strong references are invisible to
 Python's cyclic garbage collector; avoid making a clone implementation retain a
 wrapper for its own native shell.
 
-Custom object instances are not safe for concurrent use. In particular, using
-one custom nonlinear solver from two threads at once raises ``RuntimeError``
-instead of allowing its active package-memory pointer to be replaced.
+Custom object instances are not safe for concurrent use. When SUNDIALS packages
+drive one custom nonlinear solver from two threads at once, the second entry
+raises ``RuntimeError`` instead of replacing the active package-memory pointer.
+Calls made directly from Python, such as ``SUNNonlinSolSolve`` on a custom
+solver, invoke the Python methods without this check; serialize them in your
+own code if needed.
 
 Custom operations cross the C++/Python boundary once per call. The committed
 benchmark in ``bindings/sundials4py/test/bench_custom_objects.py`` measures
@@ -623,10 +628,10 @@ prefix. Output vectors are represented by ``self``. For example,
 
 ``clone_empty()``, ``get_local_length()``,
 ``get_array_pointer()``, ``get_device_array_pointer()``, their corresponding
-setters, ``get_communicator()``, and ``space()`` are optional. When omitted,
-``clone_empty`` falls back to ``clone`` and ``get_local_length`` falls back to
-``get_length``. Array-pointer methods exchange integer addresses because the C
-interface uses raw pointers. A host-backed implementation may return
+setters, and ``get_communicator()`` are optional. When omitted, ``clone_empty``
+falls back to ``clone`` and ``get_local_length`` falls back to ``get_length``.
+Array-pointer methods exchange integer addresses because the C interface uses
+raw pointers. A host-backed implementation may return
 ``numpy_array.ctypes.data`` from ``get_array_pointer()``; this also enables
 ``N_VGetNumpyArray`` for that custom vector.
 
@@ -921,6 +926,12 @@ be retried, and less than 1 means it was more accurate than needed.
    * - ``set_defaults()``
      - Restore the controller parameters to their default values. Implements
        :c:func:`SUNAdaptController_SetDefaults`.
+   * - ``set_options(id, file_name, args)``
+     - Handle runtime configuration options. Implements
+       :c:func:`SUNAdaptController_SetOptions`.
+   * - ``write(file_address)``
+     - Write controller state to the C ``FILE*`` represented by the integer
+       address. Implements :c:func:`SUNAdaptController_Write`.
    * - ``set_error_bias(bias)``
      - Store the multiplier to apply to ``dsm`` before using it. The controller
        must apply the bias itself. Implements

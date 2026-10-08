@@ -283,7 +283,6 @@ class ProportionalController(CustomSUNHController):
 
 
 def test_custom_matrix_and_linear_solver_through_kinsol(sunctx):
-    # Contract: Custom matrix and linear solver through kinsol.
     # KINSOL Newton, with both the Jacobian matrix and the linear solver
     # implemented in Python.
     NEQ = AnalyticNonlinearSys.NEQ
@@ -380,7 +379,6 @@ def test_custom_linear_solver_callbacks_through_cvode(sunctx):
 
 
 def test_custom_nonlinear_solver_through_cvode(sunctx):
-    # Contract: Custom nonlinear solver through cvode.
     # CVODE BDF with a Python nonlinear solver and a native dense linear solver,
     # so the only custom object in the loop is the one under test.
     problem = AnalyticODE(lamb=-10.0)
@@ -418,7 +416,6 @@ def test_custom_nonlinear_solver_through_cvode(sunctx):
 
 
 def test_custom_adapt_controller_through_arkode(sunctx):
-    # Contract: Custom adapt controller through arkode.
     # ARKODE ERK with a Python time step controller.
     problem = AnalyticODE(lamb=-10.0)
     y = N_VNew_Serial(1, sunctx)
@@ -447,7 +444,6 @@ def test_custom_adapt_controller_through_arkode(sunctx):
 
 
 def test_custom_adapt_controller_survives_repeated_evolutions(sunctx):
-    # Contract: Custom adapt controller survives repeated evolutions.
     # An H controller must keep working across many ARKODE steps and a
     # reset, which is where a stale weak reference or a released handle shows up.
     problem = AnalyticODE(lamb=-10.0)

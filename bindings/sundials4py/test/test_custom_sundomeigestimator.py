@@ -12,10 +12,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 
+import gc
+import weakref
+
 import pytest
 from fixtures import *
 from sundials4py.arkode import *
 from sundials4py.core import *
+from test_custom_nvector import ArrayVector
 
 
 class Estimator(CustomSUNDomEigEstimator):
@@ -41,6 +45,9 @@ class Estimator(CustomSUNDomEigEstimator):
 
     def set_rhs_linearization_point(self, t, vector):
         self.rhs_point = (t, vector)
+        return SUN_SUCCESS
+
+    def set_initial_guess(self, _vector):
         return SUN_SUCCESS
 
     def estimate(self):
@@ -77,6 +84,34 @@ def test_custom_domeigestimator_dispatch(sunctx):
     assert estimator.rhs_point == (2.0, vector)
     assert SUNDomEigEstimator_Estimate(estimator) == (SUN_SUCCESS, 4.0, -0.5)
     assert SUNDomEigEstimator_GetNumIters(estimator) == (SUN_SUCCESS, 3)
+
+
+def test_custom_domeigestimator_initial_guess_retains_temporary_owner(sunctx):
+    # Contract: Initial-guess setter retains a temporary custom vector owner.
+    estimator = Estimator(sunctx)
+
+    # Exercise the native-wrapper conversion path with a temporary vector too.
+    assert SUNDomEigEstimator_SetInitialGuess(estimator, N_VNew_Serial(1, sunctx)) == SUN_SUCCESS
+
+    finalized = []
+    first = ArrayVector([1.0], sunctx)
+    first_ref = weakref.ref(first)
+    weakref.finalize(first, finalized.append, "first")
+    assert SUNDomEigEstimator_SetInitialGuess(estimator, first) == SUN_SUCCESS
+    del first
+    gc.collect()
+    assert first_ref() is not None
+    assert finalized == []
+
+    second = ArrayVector([2.0], sunctx)
+    second_ref = weakref.ref(second)
+    weakref.finalize(second, finalized.append, "second")
+    assert SUNDomEigEstimator_SetInitialGuess(estimator, second) == SUN_SUCCESS
+    del second
+    gc.collect()
+    assert first_ref() is None
+    assert second_ref() is not None
+    assert finalized == ["first"]
 
 
 def test_custom_domeigestimator_callback_adapters(sunctx, nvec):

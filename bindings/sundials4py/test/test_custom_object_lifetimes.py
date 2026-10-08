@@ -33,7 +33,7 @@ import numpy as np
 import pytest
 from fixtures import *
 from sundials4py.core import *
-from sundials4py.test import SUNMat_TestDestroyCloneOnNativeThread
+from sundials4py.test import SUNMat_TestDestroyCloneOnNativeThread, SUNMat_TestHandleAddress
 
 
 class DiagonalMatrix(CustomSUNMatrix):
@@ -275,9 +275,9 @@ def test_destruction_from_a_worker_thread(sunctx):
 
 def test_destruction_from_a_native_thread_clears_strong_owner(sunctx):
     A = DiagonalMatrix([1.0, 2.0], sunctx)
-    clone_ref = SUNMat_TestDestroyCloneOnNativeThread(A)
-    collect()
-    assert clone_ref() is None
+    clone, old_address, _blocker = SUNMat_TestDestroyCloneOnNativeThread(A)
+    new_address = SUNMat_TestHandleAddress(clone)
+    assert new_address != old_address
 
 
 def test_custom_linear_solver_handle_is_released_with_its_object(sunctx):

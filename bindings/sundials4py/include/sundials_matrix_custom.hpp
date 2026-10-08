@@ -77,9 +77,6 @@ private:
 
   struct Content : CustomContentBase
   {
-    /* Non-owning pointer used only to clear a SUNDIALS-created clone's
-       back-reference before its strong Python reference is released. */
-    CustomSUNMatrix* owner{nullptr};
     bool has_is_compatible{false};
   };
 
@@ -150,10 +147,14 @@ public:
 
 private:
   static nb::object get_impl(SUNMatrix A)
-  { return custom_content_impl(get_content(A), label); }
+  {
+    return custom_content_impl(get_content(A), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomSUNMatrix>(impl, name); }
+  {
+    return custom_method_overridden<CustomSUNMatrix>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl)
   {
@@ -219,6 +220,9 @@ private:
   static void custom_matrix_destroy(SUNMatrix A);
 
   static SUNErrCode custom_matrix_zero(SUNMatrix A);
+
+  static SUNErrCode custom_matrix_space(SUNMatrix A, long int* lenrw,
+                                        long int* leniw);
 
   static SUNErrCode custom_matrix_copy(SUNMatrix A, SUNMatrix B);
 

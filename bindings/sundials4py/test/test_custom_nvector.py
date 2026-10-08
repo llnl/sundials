@@ -19,6 +19,7 @@ from numpy.testing import assert_allclose
 from sundials4py.arkode import *
 from sundials4py.core import *
 from sundials4py.cvodes import *
+from sundials4py.idas import *
 from sundials4py.kinsol import *
 from sundials4py.test import N_VTestHandleAddress, N_VTestStrongClone
 
@@ -326,6 +327,27 @@ def test_custom_nvector_integrates_with_arkode(sunctx):
     assert status == ARK_SUCCESS
     assert tret == pytest.approx(1.0)
     assert y.data[0] == pytest.approx(np.exp(-1.0), rel=2e-6)
+
+
+def test_cvode_quadrature_init_without_nvspace(sunctx):
+    """CVodeQuadInit accepts a custom vector without the deprecated N_VSpace."""
+    y = ArrayVector([1.0], sunctx)
+    yq = ArrayVector([0.0], sunctx)
+    cvode = CVodeCreate(CV_BDF, sunctx)
+
+    assert CVodeInit(cvode.get(), lambda t, y, yd, _: SUN_SUCCESS, 0.0, y) == CV_SUCCESS
+    assert CVodeQuadInit(cvode.get(), lambda t, y, yqdot, _: SUN_SUCCESS, yq) == CV_SUCCESS
+
+
+def test_ida_quadrature_init_without_nvspace(sunctx):
+    """IDAQuadInit accepts a custom vector without the deprecated N_VSpace."""
+    y = ArrayVector([1.0], sunctx)
+    yp = ArrayVector([0.0], sunctx)
+    yq = ArrayVector([0.0], sunctx)
+    ida = IDACreate(sunctx)
+
+    assert IDAInit(ida.get(), lambda t, y, yp, res, _: SUN_SUCCESS, 0.0, y, yp) == IDA_SUCCESS
+    assert IDAQuadInit(ida.get(), lambda t, y, yp, yqdot, _: SUN_SUCCESS, yq) == IDA_SUCCESS
 
 
 def test_void_operation_exception_reaches_cvode_caller(sunctx):

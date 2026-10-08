@@ -13,7 +13,9 @@ namespace sundials4py {
 
 std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>> CustomSUNNonlinearSolver::make_handle(
   nb::handle impl)
-{ return make_handle(impl, sunctx_owner_, solver_type_); }
+{
+  return make_handle(impl, sunctx_owner_, solver_type_);
+}
 
 std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>> CustomSUNNonlinearSolver::make_handle(
   nb::handle impl,
@@ -187,8 +189,8 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setsysfns(
     // Hybrid solvers receive both forms and choose per iteration.
     std::shared_ptr<NativeCallbackState<SUNNonlinSolSysFn>> root_state;
     std::shared_ptr<NativeCallbackState<SUNNonlinSolSysFn>> fixed_state;
-    nb::object root = make_sys_fn(content, root_fn,
-                                  "root-find nonlinear system", root_state);
+    nb::object root        = make_sys_fn(content, root_fn,
+                                         "root-find nonlinear system", root_state);
     nb::object fixed_point = make_sys_fn(content, fixed_point_fn,
                                          "fixed-point nonlinear system",
                                          fixed_state);
@@ -227,16 +229,21 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setlsetupfn(
     {
       // The C signature returns the updated Jacobian status through a pointer,
       // which becomes the second element of a Python tuple.
-      setup = nb::cpp_function(
-        [content, state](sunbooleantype jbad) -> std::tuple<int, sunbooleantype>
-        {
-          require_valid_callback(state.get(), "linear solver setup");
-          void* mem = require_active_mem(content, "linear solver setup");
-          sunbooleantype jcur = SUNFALSE;
-          int status          = state->fn(jbad, &jcur, mem);
-          return std::make_tuple(status, jcur);
-        },
-        nb::arg("jbad"));
+      setup =
+        nb::cpp_function(sundials4py::scoped(
+                           [content, state](sunbooleantype jbad)
+                             -> std::tuple<int, sunbooleantype>
+                           {
+                             require_valid_callback(state.get(),
+                                                    "linear solver setup");
+                             void* mem =
+                               require_active_mem(content,
+                                                  "linear solver setup");
+                             sunbooleantype jcur = SUNFALSE;
+                             int status          = state->fn(jbad, &jcur, mem);
+                             return std::make_tuple(status, jcur);
+                           }),
+                         nb::arg("jbad"));
     }
     SUNErrCode status =
       static_cast<SUNErrCode>(nb::cast<int>(impl.attr("set_lsetup_fn")(setup)));
@@ -267,14 +274,18 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setlsolvefn(
     nb::object solve = nb::none();
     if (state)
     {
-      solve = nb::cpp_function(
-        [content, state](N_Vector b) -> int
-        {
-          require_valid_callback(state.get(), "linear solver solve");
-          void* mem = require_active_mem(content, "linear solver solve");
-          return state->fn(b, mem);
-        },
-        nb::arg("b"));
+      solve =
+        nb::cpp_function(sundials4py::scoped(
+                           [content, state](N_Vector b) -> int
+                           {
+                             require_valid_callback(state.get(),
+                                                    "linear solver solve");
+                             void* mem =
+                               require_active_mem(content,
+                                                  "linear solver solve");
+                             return state->fn(b, mem);
+                           }),
+                         nb::arg("b"));
     }
     SUNErrCode status =
       static_cast<SUNErrCode>(nb::cast<int>(impl.attr("set_lsolve_fn")(solve)));
@@ -309,14 +320,17 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setctestfn(
     {
       // `delta` rather than `del`, which is a Python keyword and so could not
       // be passed by name.
-      ctest = nb::cpp_function(
-        [NLS, state](N_Vector y, N_Vector delta, sunrealtype tol,
-                     N_Vector ewt) -> int
-        {
-          require_valid_callback(state.get(), "convergence test");
-          return state->fn(NLS, y, delta, tol, ewt, state->data);
-        },
-        nb::arg("y"), nb::arg("delta"), nb::arg("tol"), nb::arg("ewt"));
+      ctest = nb::cpp_function(sundials4py::scoped(
+                                 [NLS, state](N_Vector y, N_Vector delta,
+                                              sunrealtype tol, N_Vector ewt) -> int
+                                 {
+                                   require_valid_callback(state.get(),
+                                                          "convergence test");
+                                   return state->fn(NLS, y, delta, tol, ewt,
+                                                    state->data);
+                                 }),
+                               nb::arg("y"), nb::arg("delta"), nb::arg("tol"),
+                               nb::arg("ewt"));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(impl.attr("set_conv_test_fn")(ctest)));
@@ -347,15 +361,19 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setnormfn(
     nb::object norm = nb::none();
     if (state)
     {
-      norm = nb::cpp_function(
-        [state](N_Vector delta, N_Vector w) -> std::tuple<SUNErrCode, sunrealtype>
-        {
-          require_valid_callback(state.get(), "convergence-test norm");
-          sunrealtype delnrm = SUN_RCONST(0.0);
-          SUNErrCode status  = state->fn(delta, w, &delnrm, state->data);
-          return std::make_tuple(status, delnrm);
-        },
-        nb::arg("delta"), nb::arg("w"));
+      norm =
+        nb::cpp_function(sundials4py::scoped(
+                           [state](N_Vector delta, N_Vector w)
+                             -> std::tuple<SUNErrCode, sunrealtype>
+                           {
+                             require_valid_callback(state.get(),
+                                                    "convergence-test norm");
+                             sunrealtype delnrm = SUN_RCONST(0.0);
+                             SUNErrCode status  = state->fn(delta, w, &delnrm,
+                                                            state->data);
+                             return std::make_tuple(status, delnrm);
+                           }),
+                         nb::arg("delta"), nb::arg("w"));
     }
     SUNErrCode status =
       static_cast<SUNErrCode>(nb::cast<int>(impl.attr("set_norm_fn")(norm)));
@@ -388,14 +406,14 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setgetupdatenormfn(
     nb::object get_update_norm = nb::none();
     if (state)
     {
-      get_update_norm = nb::cpp_function(
+      get_update_norm = nb::cpp_function(sundials4py::scoped(
         [state]() -> std::tuple<SUNErrCode, sunrealtype>
         {
           require_valid_callback(state.get(), "update-norm getter");
           sunrealtype delnrm = SUN_RCONST(0.0);
           SUNErrCode status  = state->fn(&delnrm, state->data);
           return std::make_tuple(status, delnrm);
-        });
+        }));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(impl.attr("set_get_update_norm_fn")(get_update_norm)));
@@ -426,14 +444,14 @@ SUNErrCode CustomSUNNonlinearSolver::custom_nls_setgetconvratefn(
     nb::object get_conv_rate = nb::none();
     if (state)
     {
-      get_conv_rate = nb::cpp_function(
+      get_conv_rate = nb::cpp_function(sundials4py::scoped(
         [state]() -> std::tuple<SUNErrCode, sunrealtype>
         {
           require_valid_callback(state.get(), "convergence-rate getter");
           sunrealtype crate = SUN_RCONST(0.0);
           SUNErrCode status = state->fn(&crate, state->data);
           return std::make_tuple(status, crate);
-        });
+        }));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(impl.attr("set_get_conv_rate_fn")(get_conv_rate)));

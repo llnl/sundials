@@ -67,6 +67,21 @@ class MRIController(CustomSUNMRIController):
         return SUN_SUCCESS
 
 
+class OptionWriteController(HController):
+    def __init__(self, sunctx):
+        self.options = None
+        self.write_address = None
+        super().__init__(sunctx)
+
+    def set_options(self, controller_id, file_name, args):
+        self.options = (controller_id, file_name, args)
+        return SUN_SUCCESS
+
+    def write(self, file_address):
+        self.write_address = file_address
+        return SUN_SUCCESS
+
+
 class IncompleteHController(CustomSUNHController):
     # Missing estimate_step() should prevent native handle materialization.
     pass
@@ -112,6 +127,28 @@ def test_custom_hcontroller_optional_methods(sunctx):
     assert C.calls["set_defaults"] == 1
     assert C.bias == 1.25
     assert C.last_update_h == (0.5, 0.75)
+
+
+def test_custom_hcontroller_set_options_and_write(sunctx, tmp_path):
+    C = OptionWriteController(sunctx)
+    status, fptr = SUNFileOpen(str(tmp_path / "controller.txt"), "w")
+    assert status == SUN_SUCCESS
+
+    args = ["program", "controller.option"]
+    assert SUNAdaptController_SetOptions(C, "controller", "", len(args), args) == SUN_SUCCESS
+    assert C.options == ("controller", "", args)
+    assert SUNAdaptController_Write(C, fptr) == SUN_SUCCESS
+    assert isinstance(C.write_address, int)
+    assert C.write_address != 0
+
+
+def test_custom_hcontroller_default_options_and_write(sunctx, tmp_path):
+    C = HController(sunctx)
+    status, fptr = SUNFileOpen(str(tmp_path / "controller.txt"), "w")
+    assert status == SUN_SUCCESS
+
+    assert SUNAdaptController_SetOptions(C, "", "", 1, ["program"]) == SUN_SUCCESS
+    assert SUNAdaptController_Write(C, fptr) == SUN_SUCCESS
 
 
 def test_custom_mricontroller_type_estimate_and_optional_update(sunctx):

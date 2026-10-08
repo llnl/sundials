@@ -47,6 +47,11 @@
 
 #include "sundials4py_core_types.hpp"
 
+#if defined(Py_GIL_DISABLED)
+#error \
+  "sundials4py custom objects rely on the GIL; free-threaded builds require a synchronization redesign"
+#endif
+
 namespace sundials4py {
 
 /*------------------------------------------------------------------------------
@@ -130,11 +135,27 @@ inline void record_pending_exception(const std::exception& error) noexcept
     }
     pending_custom_exception() = PyObject_CallFunction(type, "s",
                                                        builtin_error->what());
+    if (!pending_custom_exception())
+    {
+      PyErr_Clear();
+      pending_custom_exception() =
+        PyObject_CallFunction(PyExc_RuntimeError,
+                              "s", "sundials4py: failed to construct the pending exception");
+      if (!pending_custom_exception()) { PyErr_Clear(); }
+    }
   }
   else
   {
     pending_custom_exception() = PyObject_CallFunction(PyExc_RuntimeError, "s",
                                                        error.what());
+    if (!pending_custom_exception())
+    {
+      PyErr_Clear();
+      pending_custom_exception() =
+        PyObject_CallFunction(PyExc_RuntimeError,
+                              "s", "sundials4py: failed to construct the pending exception");
+      if (!pending_custom_exception()) { PyErr_Clear(); }
+    }
   }
 }
 
@@ -147,7 +168,8 @@ inline void record_pending_exception(const std::exception& error) noexcept
  */
 inline void report_custom_exception(SUNContext sunctx, const char* operation,
                                     const std::exception& error,
-                                    const char* file, int line) noexcept
+                                    const char* file, int line,
+                                    bool record_pending = true) noexcept
 {
   try
   {
@@ -158,7 +180,7 @@ inline void report_custom_exception(SUNContext sunctx, const char* operation,
        Scalar and void operations have no reliable error return, so the
        enclosing CustomExceptionScope re-raises this exception after native
        control returns. */
-    record_pending_exception(error);
+    if (record_pending) { record_pending_exception(error); }
 
     std::string message = std::string("exception in ") + operation + ":\n" +
                           error.what();
@@ -192,7 +214,9 @@ inline bool& capture_custom_exceptions()
 }
 
 inline bool custom_exception_pending() noexcept
-{ return capture_custom_exceptions() && pending_custom_exception() != nullptr; }
+{
+  return capture_custom_exceptions() && pending_custom_exception() != nullptr;
+}
 
 /*
  * Exception state is scoped in the binding callable, after nanobind has
@@ -256,7 +280,9 @@ auto scoped_impl(F f, R (F::*)(Args...) const)
 
 template<typename F>
 auto scoped(F f)
-{ return scoped_impl(std::move(f), &F::operator()); }
+{
+  return scoped_impl(std::move(f), &F::operator());
+}
 
 template<typename R, typename... Args>
 auto scoped(R (*fn)(Args...))
@@ -279,10 +305,11 @@ void scoped_def(nb::module_& module, Name&& name, F&& fn, Args&&... args)
 
 inline void report_custom_unknown_exception(SUNContext sunctx,
                                             const char* operation,
-                                            const char* file, int line) noexcept
+                                            const char* file, int line,
+                                            bool record_pending = true) noexcept
 {
   const std::runtime_error error("unknown non-standard C++ exception");
-  report_custom_exception(sunctx, operation, error, file, line);
+  report_custom_exception(sunctx, operation, error, file, line, record_pending);
 }
 
 /* Every trampoline supplies its own failure sentinel, since SUNDIALS callback
@@ -402,7 +429,9 @@ public:
 
 private:
   static constexpr std::size_t index(NativeCallbackSlot slot) noexcept
-  { return static_cast<std::size_t>(slot); }
+  {
+    return static_cast<std::size_t>(slot);
+  }
 
   static constexpr std::size_t slot_count =
     static_cast<std::size_t>(NativeCallbackSlot::getconvratefn) + 1;
@@ -451,6 +480,12 @@ inline void require_valid_callback(const NativeCallbackStateBase* state,
  *----------------------------------------------------------------------------*/
 
 /*
+ * All custom-object state is accessed while holding the GIL, which provides
+ * the required synchronization. This includes ActiveMemScope,
+ * CustomObjectBase materialization state, NativeCallbackRegistry, the
+ * pending-exception slot, and CustomObjectBase::raw_handle_. Do not add locks
+ * that remain held across calls into Python: those calls may release the GIL.
+ *
  * RAII scope that records the active memory pointer for the duration of one
  * custom setup()/solve() call.
  *
@@ -648,6 +683,11 @@ struct CustomContentBase
   nb::object strong_impl;
   std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner;
   NativeCallbackRegistry callbacks;
+
+  // For C-owned clone shells: where the implementation caches this shell,
+  // and the shell itself. Cleared under the GIL in custom_content_destroy.
+  void** raw_handle_slot{nullptr};
+  void* raw_handle{nullptr};
 };
 
 /*
@@ -697,6 +737,11 @@ void custom_content_destroy(ContentT*& content)
        as the process exits. */
     content = nullptr;
     return;
+  }
+
+  if (content->raw_handle_slot && *content->raw_handle_slot == content->raw_handle)
+  {
+    *content->raw_handle_slot = nullptr;
   }
 
   // Revoke every adapter first: a subclass may still hold Python callables that

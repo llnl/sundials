@@ -1190,7 +1190,12 @@ int CVodeQuadInit(void* cvode_mem, CVQuadRhsFn fQ, N_Vector yQ0)
   cv_mem = (CVodeMem)cvode_mem;
 
   /* Set space requirements for one N_Vector */
-  N_VSpace(yQ0, &lrw1Q, &liw1Q);
+  if (yQ0->ops->nvspace) { N_VSpace(yQ0, &lrw1Q, &liw1Q); }
+  else
+  {
+    lrw1Q = 0;
+    liw1Q = 0;
+  }
   cv_mem->cv_lrw1Q = lrw1Q;
   cv_mem->cv_liw1Q = liw1Q;
 

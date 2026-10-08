@@ -109,6 +109,13 @@ class RejectingCallbackLinearSolver(CallbackLinearSolver):
         return SUN_SUCCESS
 
 
+class NonRetainingScalingLinearSolver(CopyLinearSolver):
+    # The native custom-object content, rather than the Python implementation,
+    # must retain scaling-vector wrappers supplied to the setter.
+    def set_scaling_vectors(self, _s1, _s2):
+        return SUN_SUCCESS
+
+
 class IncompleteLinearSolver(CustomSUNLinearSolver):
     # Omitting solve() exercises the required-method validation path.
     def __init__(self, sunctx):
@@ -188,6 +195,37 @@ def test_custom_sunlinearsolver_optional_methods(sunctx):
     assert LS.calls["set_options"] == 1
     assert LS.last_options == ("numpy", "options.ini", ["a", "b"])
     assert LS.zero_guess
+
+
+def test_custom_sunlinearsolver_scaling_vectors_retain_temporary_owners(sunctx):
+    # Contract: Scaling-vector setter retains temporary vector owners.
+    LS = NonRetainingScalingLinearSolver(sunctx)
+
+    # Exercise the native-wrapper conversion path with a temporary vector too.
+    assert (
+        SUNLinSolSetScalingVectors(LS, N_VNew_Serial(1, sunctx), N_VNew_Serial(1, sunctx))
+        == SUN_SUCCESS
+    )
+
+    finalized = []
+    first = ArrayVector([1.0], sunctx)
+    first_ref = weakref.ref(first)
+    weakref.finalize(first, finalized.append, "first")
+    assert SUNLinSolSetScalingVectors(LS, first, N_VNew_Serial(1, sunctx)) == SUN_SUCCESS
+    del first
+    gc.collect()
+    assert first_ref() is not None
+    assert finalized == []
+
+    second = ArrayVector([2.0], sunctx)
+    second_ref = weakref.ref(second)
+    weakref.finalize(second, finalized.append, "second")
+    assert SUNLinSolSetScalingVectors(LS, second, N_VNew_Serial(1, sunctx)) == SUN_SUCCESS
+    del second
+    gc.collect()
+    assert first_ref() is None
+    assert second_ref() is not None
+    assert finalized == ["first"]
 
 
 def test_custom_sunlinearsolver_set_atimes_receives_python_adapter(sunctx):

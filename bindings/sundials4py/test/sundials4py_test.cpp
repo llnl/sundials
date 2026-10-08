@@ -39,11 +39,15 @@ namespace {
 
 int test_conv_callback_one(SUNNonlinearSolver, N_Vector, N_Vector, sunrealtype,
                            N_Vector, void*)
-{ return SUN_SUCCESS; }
+{
+  return SUN_SUCCESS;
+}
 
 int test_conv_callback_two(SUNNonlinearSolver, N_Vector, N_Vector, sunrealtype,
                            N_Vector, void*)
-{ return SUN_ERR_EXT_FAIL; }
+{
+  return SUN_ERR_EXT_FAIL;
+}
 
 } // namespace
 
@@ -61,7 +65,7 @@ void bind_test(nb::module_& m)
 
   sundials4py::scoped_def(
     m, "SUNMat_TestDestroyCloneOnNativeThread",
-    [](SUNMatrix matrix)
+    [](SUNMatrix matrix) -> std::tuple<nb::object, std::uintptr_t, nb::capsule>
     {
       SUNMatrix clone = SUNMatClone(matrix);
       if (!clone) { throw sundials4py::error_returned("SUNMatClone failed"); }
@@ -73,16 +77,32 @@ void bind_test(nb::module_& m)
         throw nb::type_error("matrix is not a custom SUNMatrix");
       }
 
-      nb::weakref implementation_ref(implementation);
-      implementation.reset();
+      const auto old_address = reinterpret_cast<std::uintptr_t>(clone);
+      SUNMatrix blocker      = nullptr;
+      SUNContext sunctx      = matrix->sunctx;
       {
         nb::gil_scoped_release release;
-        std::thread([clone] { SUNMatDestroy(clone); }).join();
+        std::thread(
+          [clone, sunctx, &blocker]
+          {
+            SUNMatDestroy(clone);
+            blocker = SUNMatNewEmpty(sunctx);
+          })
+          .join();
       }
-      return implementation_ref;
+
+      // Occupy the allocator slot just released by the clone so that a fresh
+      // materialization cannot coincidentally receive the same address.
+      if (!blocker)
+      {
+        throw sundials4py::error_returned("SUNMatNewEmpty failed");
+      }
+      nb::capsule keepalive(blocker, [](void* ptr) noexcept
+                            { SUNMatDestroy(reinterpret_cast<SUNMatrix>(ptr)); });
+      return std::make_tuple(std::move(implementation), old_address,
+                             std::move(keepalive));
     },
-    nb::arg("matrix"),
-    "Clone a custom matrix and destroy its native handle on a native thread.");
+    nb::arg("matrix"), "Return a custom matrix clone after destroying its native handle on a native thread.");
 
   sundials4py::scoped_def(
     m, "SUNMat_TestHandleAddress",
@@ -133,8 +153,8 @@ void bind_test(nb::module_& m)
   sundials4py::scoped_def(
     m, "SUNNonlinSol_TestSetupFromPackage",
     [](SUNNonlinearSolver solver, N_Vector y)
-    { return solver->ops->setup(solver, y, solver); }, nb::arg("solver"),
-    nb::arg("y"));
+    { return solver->ops->setup(solver, y, solver); },
+    nb::arg("solver"), nb::arg("y"));
 
   sundials4py::scoped_def(
     m, "SUNNonlinSol_TestSolveFromPackage",

@@ -9,11 +9,17 @@
 
 #include "sundials4py.hpp"
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 namespace sundials4py {
 
 std::shared_ptr<std::remove_pointer_t<SUNAdaptController>> CustomSUNAdaptController::make_handle(
   nb::handle impl)
-{ return make_handle(impl, sunctx_owner_, controller_type_); }
+{
+  return make_handle(impl, sunctx_owner_, controller_type_);
+}
 
 std::shared_ptr<std::remove_pointer_t<SUNAdaptController>> CustomSUNAdaptController::make_handle(
   nb::handle impl,
@@ -26,6 +32,8 @@ std::shared_ptr<std::remove_pointer_t<SUNAdaptController>> CustomSUNAdaptControl
   // lookup leaves no C allocation to unwind.
   const bool has_reset            = method_overridden(impl, "reset");
   const bool has_set_defaults     = method_overridden(impl, "set_defaults");
+  const bool has_set_options      = method_overridden(impl, "set_options");
+  const bool has_write            = method_overridden(impl, "write");
   const bool has_set_error_bias   = method_overridden(impl, "set_error_bias");
   const bool has_update_h         = method_overridden(impl, "update_h");
   const bool has_update_mri_h_tol = method_overridden(impl, "update_mri_h_tol");
@@ -54,7 +62,9 @@ std::shared_ptr<std::remove_pointer_t<SUNAdaptController>> CustomSUNAdaptControl
   }
 
   if (has_reset) { C->ops->reset = custom_controller_reset; }
+  if (has_set_options) { C->ops->setoptions = custom_controller_setoptions; }
   if (has_set_defaults) { C->ops->setdefaults = custom_controller_setdefaults; }
+  if (has_write) { C->ops->write = custom_controller_write; }
   if (has_set_error_bias)
   {
     C->ops->seterrorbias = custom_controller_seterrorbias;
@@ -121,12 +131,40 @@ SUNErrCode CustomSUNAdaptController::custom_controller_estimatesteptol(
 }
 
 SUNErrCode CustomSUNAdaptController::custom_controller_reset(SUNAdaptController C)
-{ return call_status(C, "reset", "CustomSUNAdaptController.reset"); }
+{
+  return call_status(C, "reset", "CustomSUNAdaptController.reset");
+}
 
 SUNErrCode CustomSUNAdaptController::custom_controller_setdefaults(
   SUNAdaptController C)
 {
   return call_status(C, "set_defaults", "CustomSUNAdaptController.set_defaults");
+}
+
+SUNErrCode CustomSUNAdaptController::custom_controller_setoptions(
+  SUNAdaptController C, const char* id, const char* file_name, int argc,
+  char* argv[])
+{
+  try
+  {
+    nb::gil_scoped_acquire gil;
+    if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
+    std::vector<std::string> args;
+    args.reserve(static_cast<size_t>(argc));
+    for (int i = 0; i < argc; ++i) { args.emplace_back(argv[i]); }
+    return static_cast<SUNErrCode>(nb::cast<int>(get_impl(C).attr(
+      "set_options")(id ? id : "", file_name ? file_name : "", args)));
+  }
+  SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr,
+                               "CustomSUNAdaptController.set_options",
+                               SUN_ERR_EXT_FAIL)
+}
+
+SUNErrCode CustomSUNAdaptController::custom_controller_write(SUNAdaptController C,
+                                                             FILE* outfile)
+{
+  return call_status(C, "write", "CustomSUNAdaptController.write",
+                     reinterpret_cast<std::uintptr_t>(outfile));
 }
 
 SUNErrCode CustomSUNAdaptController::custom_controller_seterrorbias(

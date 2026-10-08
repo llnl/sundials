@@ -104,7 +104,8 @@ namespace nanobind::detail {
           ::sundials4py::report_custom_exception(custom ? custom->sunctx().get()    \
                                                         : nullptr,                  \
                                                  WHAT, error, __FILE__,             \
-                                                 __LINE__);                         \
+                                                 __LINE__,                          \
+                                                 /*record_pending=*/false);         \
           return false;                                                             \
         }                                                                           \
         catch (...)                                                                 \
@@ -113,7 +114,8 @@ namespace nanobind::detail {
                                                            ? custom->sunctx().get() \
                                                            : nullptr,               \
                                                          WHAT, __FILE__,            \
-                                                         __LINE__);                 \
+                                                         __LINE__,                  \
+                                                         /*record_pending=*/false); \
           return false;                                                             \
         }                                                                           \
         return value != nullptr;                                                    \
@@ -131,10 +133,7 @@ namespace nanobind::detail {
       {                                                                             \
         ptr = value;                                                                \
       }                                                                             \
-      else                                                                          \
-      {                                                                             \
-        ptr = &value;                                                               \
-      }                                                                             \
+      else { ptr = &value; }                                                        \
                                                                                     \
       /* Preserve the Python subclass when C++ passes a borrowed custom handle   \
          back through a callback. Ownership transfers must continue through the  \
@@ -151,7 +150,9 @@ namespace nanobind::detail {
                                                                                     \
     template<typename T_>                                                           \
     bool can_cast() const noexcept                                                  \
-    { return std::is_pointer_v<T_> || (value != nullptr); }                         \
+    {                                                                               \
+      return std::is_pointer_v<T_> || (value != nullptr);                           \
+    }                                                                               \
                                                                                     \
     operator Type*() { return value; }                                              \
                                                                                     \

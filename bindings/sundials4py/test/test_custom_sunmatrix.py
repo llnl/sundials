@@ -143,7 +143,7 @@ class WrongContextMatrix(DiagonalMatrix):
 
 
 def test_custom_sunmatrix_converts_for_handwritten_bindings(sunctx):
-    # Contract: Custom sunmatrix converts for handwritten bindings.
+    # A custom matrix must materialize transparently at a handwritten C API.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
 
     assert not A._is_materialized()
@@ -168,7 +168,7 @@ def test_custom_sunmatrix_slots_materialize_and_dispatch(sunctx):
 
 
 def test_custom_sunmatrix_required_methods_are_validated(sunctx):
-    # Contract: Custom sunmatrix required methods are validated.
+    # Materialization must reject an incomplete operation table without caching it.
     A = IncompleteMatrix(sunctx)
 
     with pytest.raises(TypeError, match=r"must override zero\(\)"):
@@ -189,7 +189,7 @@ def test_custom_sunmatrix_only_requires_zero(sunctx):
 
 
 def test_custom_sunmatrix_copy_scaleadd_and_scaleaddi(sunctx):
-    # Contract: Custom sunmatrix copy scaleadd and scaleaddi.
+    # In-place algebra dispatches to the Python object and updates its storage.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = DiagonalMatrix([3.0, 4.0], sunctx)
 
@@ -207,7 +207,7 @@ def test_custom_sunmatrix_copy_scaleadd_and_scaleaddi(sunctx):
 
 
 def test_custom_sunmatrix_matvec(sunctx):
-    # Contract: Custom sunmatrix matvec.
+    # Matrix-vector products receive compatible custom vectors and write the output.
     A = DiagonalMatrix([2.0, 3.0], sunctx)
     x = N_VNew_Serial(2, sunctx)
     y = N_VNew_Serial(2, sunctx)
@@ -250,7 +250,7 @@ def test_custom_sunmatrix_clone_rejects_different_context(sunctx):
 
 
 def test_custom_sunmatrix_optional_matvecsetup_detection(sunctx):
-    # Contract: Custom sunmatrix optional matvecsetup detection.
+    # Only an overridden optional method is installed in the native operation table.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([1.0, 2.0], sunctx)
 
@@ -260,7 +260,7 @@ def test_custom_sunmatrix_optional_matvecsetup_detection(sunctx):
 
 
 def test_optional_vtable_is_fixed_when_handle_is_materialized(sunctx, monkeypatch):
-    # Contract: Optional vtable is fixed when handle is materialized.
+    # Monkey-patching after materialization cannot change native slot availability.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([1.0, 2.0], sunctx)
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
@@ -288,7 +288,7 @@ def test_optional_vtable_is_fixed_when_handle_is_materialized(sunctx, monkeypatc
 
 
 def test_custom_sunmatrix_optional_hermitian_matvec_detection(sunctx):
-    # Contract: Custom sunmatrix optional hermitian matvec detection.
+    # Hermitian products dispatch only when the subclass opted in before materializing.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = HermitianDiagonalMatrix([1.0, 2.0], sunctx)
     x = N_VNew_Serial(2, sunctx)
@@ -302,7 +302,7 @@ def test_custom_sunmatrix_optional_hermitian_matvec_detection(sunctx):
 
 
 def test_custom_sunmatrix_rejects_mismatched_custom_operand_types(sunctx):
-    # Contract: Custom sunmatrix rejects mismatched custom operand types.
+    # A custom matrix cannot silently operate on an incompatible Python vector type.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([3.0, 4.0], sunctx)
 
@@ -311,7 +311,7 @@ def test_custom_sunmatrix_rejects_mismatched_custom_operand_types(sunctx):
 
 
 def test_native_sunmatrix_conversion_still_works(sunctx):
-    # Contract: Native sunmatrix conversion still works.
+    # Installing the custom caster must preserve ordinary native-wrapper conversion.
     A = SUNDenseMatrix(2, 2, sunctx)
 
     assert SUNMatGetID(A) == SUNMATRIX_DENSE
@@ -319,7 +319,7 @@ def test_native_sunmatrix_conversion_still_works(sunctx):
 
 
 def test_custom_sunmatrix_converts_for_generated_optional_bindings(sunctx):
-    # Contract: Custom sunmatrix converts for generated optional bindings.
+    # Generated wrappers use the same transparent custom-object conversion path.
     x = N_VNew_Serial(2, sunctx)
     LS = SUNLinSol_PCG(x, SUN_PREC_NONE, 0, sunctx)
     A = DiagonalMatrix([1.0, 2.0], sunctx)
@@ -329,7 +329,7 @@ def test_custom_sunmatrix_converts_for_generated_optional_bindings(sunctx):
 
 
 def test_generated_optional_bindings_still_accept_none(sunctx):
-    # Contract: Generated optional bindings still accept none.
+    # The custom caster must not alter nullable arguments in generated wrappers.
     x = N_VNew_Serial(2, sunctx)
     LS = SUNLinSol_PCG(x, SUN_PREC_NONE, 0, sunctx)
 

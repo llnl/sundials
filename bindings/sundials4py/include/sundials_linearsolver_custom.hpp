@@ -95,6 +95,10 @@ private:
     // because SUNLinSolResid() hands back a borrowed pointer its caller may
     // read after the trampoline has returned.
     nb::object resid_owner;
+
+    // Scaling vectors are borrowed by the native solver and may be temporary
+    // Python objects, so retain each object until the next setter call.
+    nb::object scaling_owners[2];
   };
 
   static constexpr const char* label = "CustomSUNLinearSolver";
@@ -137,10 +141,14 @@ public:
 
 private:
   static nb::object get_impl(SUNLinearSolver S)
-  { return custom_content_impl(get_content(S), label); }
+  {
+    return custom_content_impl(get_content(S), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomSUNLinearSolver>(impl, name); }
+  {
+    return custom_method_overridden<CustomSUNLinearSolver>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl)
   {

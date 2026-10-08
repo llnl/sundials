@@ -69,9 +69,6 @@ private:
 
   struct Content : CustomContentBase
   {
-    /* Non-owning pointer used only to clear a SUNDIALS-created clone's
-       back-reference before its strong Python reference is released. */
-    CustomNVector* owner{nullptr};
     bool has_is_compatible{false};
   };
 
@@ -153,10 +150,14 @@ public:
 
 private:
   static nb::object get_impl(N_Vector v)
-  { return custom_content_impl(get_content(v), label); }
+  {
+    return custom_content_impl(get_content(v), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomNVector>(impl, name); }
+  {
+    return custom_method_overridden<CustomNVector>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl)
   {
@@ -191,7 +192,9 @@ private:
   }
 
   static nb::object arg(N_Vector v)
-  { return nb::cast(v, nb::rv_policy::reference); }
+  {
+    return nb::cast(v, nb::rv_policy::reference);
+  }
 
   static nb::object operand(nb::handle self, N_Vector owner, N_Vector v,
                             const char* operation)
@@ -314,8 +317,6 @@ private:
 
   static void custom_destroy(N_Vector v);
 
-  static void custom_space(N_Vector v, sunindextype* lrw, sunindextype* liw);
-
   static sunrealtype* custom_get_array_pointer(N_Vector v);
 
   static sunrealtype* custom_get_device_array_pointer(N_Vector v);
@@ -393,7 +394,9 @@ private:
   }
 
   static std::vector<sunrealtype> real_values(const sunrealtype* values, int count)
-  { return std::vector<sunrealtype>(values, values + count); }
+  {
+    return std::vector<sunrealtype>(values, values + count);
+  }
 
   static SUNErrCode custom_linear_combination(int nvec, sunrealtype* c,
                                               N_Vector* X, N_Vector z);

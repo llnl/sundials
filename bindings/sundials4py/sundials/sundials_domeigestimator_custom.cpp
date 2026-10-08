@@ -13,7 +13,9 @@ namespace sundials4py {
 
 std::shared_ptr<std::remove_pointer_t<SUNDomEigEstimator>> CustomSUNDomEigEstimator::make_handle(
   nb::handle impl)
-{ return make_handle(impl, sunctx_owner_); }
+{
+  return make_handle(impl, sunctx_owner_);
+}
 
 std::shared_ptr<std::remove_pointer_t<SUNDomEigEstimator>> CustomSUNDomEigEstimator::make_handle(
   nb::handle impl, std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner)
@@ -100,13 +102,14 @@ SUNErrCode CustomSUNDomEigEstimator::custom_set_atimes(SUNDomEigEstimator dee,
     nb::object callback = nb::none();
     if (state)
     {
-      callback = nb::cpp_function(
-        [state](N_Vector x, N_Vector y) -> int
-        {
-          require_valid_callback(state.get(), "ATimes");
-          return state->fn(state->data, x, y);
-        },
-        nb::arg("x"), nb::arg("y"));
+      callback = nb::cpp_function(sundials4py::scoped(
+                                    [state](N_Vector x, N_Vector y) -> int
+                                    {
+                                      require_valid_callback(state.get(),
+                                                             "ATimes");
+                                      return state->fn(state->data, x, y);
+                                    }),
+                                  nb::arg("x"), nb::arg("y"));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(get_impl(dee).attr("set_atimes")(callback)));
@@ -135,13 +138,14 @@ SUNErrCode CustomSUNDomEigEstimator::custom_set_rhs(SUNDomEigEstimator dee,
     nb::object callback = nb::none();
     if (state)
     {
-      callback = nb::cpp_function(
-        [state](sunrealtype t, N_Vector y, N_Vector ydot) -> int
-        {
-          require_valid_callback(state.get(), "RHS");
-          return state->fn(t, y, ydot, state->data);
-        },
-        nb::arg("t"), nb::arg("y"), nb::arg("ydot"));
+      callback =
+        nb::cpp_function(sundials4py::scoped(
+                           [state](sunrealtype t, N_Vector y, N_Vector ydot) -> int
+                           {
+                             require_valid_callback(state.get(), "RHS");
+                             return state->fn(t, y, ydot, state->data);
+                           }),
+                         nb::arg("t"), nb::arg("y"), nb::arg("ydot"));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(get_impl(dee).attr("set_rhs")(callback)));
@@ -208,9 +212,24 @@ SUNErrCode CustomSUNDomEigEstimator::custom_set_rel_tol(SUNDomEigEstimator dee,
 SUNErrCode CustomSUNDomEigEstimator::custom_set_initial_guess(SUNDomEigEstimator dee,
                                                               N_Vector q)
 {
-  return call_status(dee, "set_initial_guess",
-                     "CustomSUNDomEigEstimator.set_initial_guess",
-                     nb::cast(q, nb::rv_policy::reference));
+  try
+  {
+    nb::gil_scoped_acquire gil;
+    if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
+    Content* content = get_content(dee);
+    if (!content) { throw nb::type_error("invalid custom estimator content"); }
+    nb::object owner = nb::cast(q, nb::rv_policy::reference);
+    auto status      = static_cast<SUNErrCode>(
+      nb::cast<int>(get_impl(dee).attr("set_initial_guess")(owner)));
+    if (status == SUN_SUCCESS)
+    {
+      content->initial_guess_owner = std::move(owner);
+    }
+    return status;
+  }
+  SUNDIALS4PY_CATCH_AND_REPORT(dee ? dee->sunctx : nullptr,
+                               "CustomSUNDomEigEstimator.set_initial_guess",
+                               SUN_ERR_EXT_FAIL)
 }
 
 SUNErrCode CustomSUNDomEigEstimator::custom_initialize(SUNDomEigEstimator dee)

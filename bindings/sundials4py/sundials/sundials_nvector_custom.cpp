@@ -13,7 +13,9 @@ namespace sundials4py {
 
 std::shared_ptr<std::remove_pointer_t<N_Vector>> CustomNVector::make_handle(
   nb::handle impl)
-{ return make_handle(impl, sunctx_owner_, Ownership::weak); }
+{
+  return make_handle(impl, sunctx_owner_, Ownership::weak);
+}
 
 N_Vector CustomNVector::create_raw_handle(
   nb::handle impl,
@@ -24,7 +26,6 @@ N_Vector CustomNVector::create_raw_handle(
 
   const bool has_is_compatible = method_overridden(impl, "is_compatible");
   const bool has_clone_empty   = method_overridden(impl, "clone_empty");
-  const bool has_space         = method_overridden(impl, "space");
   const bool has_get_array     = method_overridden(impl, "get_array_pointer");
   const bool has_get_device    = method_overridden(impl,
                                                    "get_device_array_pointer");
@@ -67,28 +68,29 @@ N_Vector CustomNVector::create_raw_handle(
   CustomNVector* owner = nullptr;
   if (ownership == Ownership::strong)
   {
-    owner          = nb::cast<CustomNVector*>(impl);
-    content->owner = owner;
+    owner = nb::cast<CustomNVector*>(impl);
   }
   content->sunctx_owner      = std::move(sunctx_owner);
   content->has_is_compatible = has_is_compatible;
   if (ownership == Ownership::weak) { content->weak_impl = nb::weakref(impl); }
-  else
-  {
-    content->strong_impl = nb::borrow<nb::object>(impl);
-  }
+  else { content->strong_impl = nb::borrow<nb::object>(impl); }
 
   N_Vector v = N_VNewEmpty(content->sunctx_owner.get());
   if (!v) { throw error_returned("N_VNewEmpty failed"); }
 
   v->content = content.release();
-  if (owner) { owner->raw_handle_ = v; }
+  if (owner)
+  {
+    owner->raw_handle_           = v;
+    auto* raw_content            = static_cast<Content*>(v->content);
+    raw_content->raw_handle_slot = &owner->raw_handle_;
+    raw_content->raw_handle      = v;
+  }
   v->ops->nvgetvectorid = custom_get_vector_id;
   v->ops->nvclone       = custom_clone;
   v->ops->nvcloneempty  = has_clone_empty ? custom_clone_empty : custom_clone;
   v->ops->nvdestroy     = custom_destroy;
-  if (has_space) { v->ops->nvspace = custom_space; }
-  v->ops->nvgetlength      = custom_get_length;
+  v->ops->nvgetlength   = custom_get_length;
   v->ops->nvgetlocallength = has_get_local_length ? custom_get_local_length
                                                   : custom_get_length;
   v->ops->nvlinearsum      = custom_linear_sum;
@@ -163,6 +165,7 @@ N_Vector CustomNVector::clone_impl(N_Vector v, const char* name,
   try
   {
     nb::gil_scoped_acquire gil;
+    if (custom_exception_pending()) { return nullptr; }
     nb::object impl        = get_impl(v);
     nb::object cloned_impl = impl.attr(name)();
     if (!nb::isinstance<CustomNVector>(cloned_impl))
@@ -200,7 +203,6 @@ N_Vector CustomNVector::clone_raw_handle(
 
   auto* owner = nb::cast<CustomNVector*>(impl);
   std::unique_ptr<Content> content(new Content);
-  content->owner             = owner;
   content->sunctx_owner      = std::move(sunctx_owner);
   content->has_is_compatible = source_content->has_is_compatible;
   content->strong_impl       = nb::borrow<nb::object>(impl);
@@ -213,8 +215,11 @@ N_Vector CustomNVector::clone_raw_handle(
     throw error_returned("N_VCopyOps failed");
   }
 
-  v->content         = content.release();
-  owner->raw_handle_ = v;
+  v->content                   = content.release();
+  owner->raw_handle_           = v;
+  auto* raw_content            = static_cast<Content*>(v->content);
+  raw_content->raw_handle_slot = &owner->raw_handle_;
+  raw_content->raw_handle      = v;
   return v;
 }
 
@@ -229,49 +234,27 @@ std::shared_ptr<std::remove_pointer_t<N_Vector>> CustomNVector::make_handle(
 }
 
 N_Vector_ID CustomNVector::custom_get_vector_id(N_Vector)
-{ return SUNDIALS_NVEC_CUSTOM; }
+{
+  return SUNDIALS_NVEC_CUSTOM;
+}
 
 N_Vector CustomNVector::custom_clone(N_Vector v)
-{ return clone_impl(v, "clone", "CustomNVector.clone"); }
+{
+  return clone_impl(v, "clone", "CustomNVector.clone");
+}
 
 N_Vector CustomNVector::custom_clone_empty(N_Vector v)
-{ return clone_impl(v, "clone_empty", "CustomNVector.clone_empty"); }
+{
+  return clone_impl(v, "clone_empty", "CustomNVector.clone_empty");
+}
 
 void CustomNVector::custom_destroy(N_Vector v)
 {
   if (!v) { return; }
   Content* content = get_content(v);
-  if (content && content->owner && content->owner->raw_handle_ == v)
-  {
-    content->owner->raw_handle_ = nullptr;
-  }
   custom_content_destroy(content);
   v->content = nullptr;
   N_VFreeEmpty(v);
-}
-
-void CustomNVector::custom_space(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = 0;
-  *liw = 0;
-  try
-  {
-    nb::gil_scoped_acquire gil;
-    auto result = nb::cast<std::tuple<sunindextype, sunindextype>>(
-      get_impl(v).attr("space")());
-    *lrw = std::get<0>(result);
-    *liw = std::get<1>(result);
-  }
-  catch (const std::exception& error)
-  {
-    report_custom_exception(v ? v->sunctx : nullptr, "CustomNVector.space",
-                            error, __FILE__, __LINE__);
-  }
-  catch (...)
-  {
-    report_custom_unknown_exception(v ? v->sunctx : nullptr,
-                                    "CustomNVector.space", __FILE__, __LINE__);
-  }
 }
 
 sunrealtype* CustomNVector::custom_get_array_pointer(N_Vector v)
@@ -331,7 +314,9 @@ void CustomNVector::custom_linear_sum(sunrealtype a, N_Vector x, sunrealtype b,
 }
 
 void CustomNVector::custom_const(sunrealtype c, N_Vector z)
-{ call_void(z, "const", "CustomNVector.const", c); }
+{
+  call_void(z, "const", "CustomNVector.const", c);
+}
 
 void CustomNVector::custom_prod(N_Vector x, N_Vector y, N_Vector z)
 {
@@ -346,8 +331,7 @@ void CustomNVector::custom_prod(N_Vector x, N_Vector y, N_Vector z)
 void CustomNVector::custom_div(N_Vector x, N_Vector y, N_Vector z)
 {
   call_void_with(z, "CustomNVector.div",
-                 [&](nb::handle self)
-                 {
+                 [&](nb::handle self) {
                    self.attr("div")(operand(self, z, x, "div"),
                                     operand(self, z, y, "div"));
                  });
@@ -355,34 +339,38 @@ void CustomNVector::custom_div(N_Vector x, N_Vector y, N_Vector z)
 
 void CustomNVector::custom_scale(sunrealtype c, N_Vector x, N_Vector z)
 {
-  call_void_with(z, "CustomNVector.scale", [&](nb::handle self)
+  call_void_with(z, "CustomNVector.scale",
+                 [&](nb::handle self)
                  { self.attr("scale")(c, operand(self, z, x, "scale")); });
 }
 
 void CustomNVector::custom_abs(N_Vector x, N_Vector z)
 {
-  call_void_with(z, "CustomNVector.abs", [&](nb::handle self)
+  call_void_with(z, "CustomNVector.abs",
+                 [&](nb::handle self)
                  { self.attr("abs")(operand(self, z, x, "abs")); });
 }
 
 void CustomNVector::custom_inv(N_Vector x, N_Vector z)
 {
-  call_void_with(z, "CustomNVector.inv", [&](nb::handle self)
+  call_void_with(z, "CustomNVector.inv",
+                 [&](nb::handle self)
                  { self.attr("inv")(operand(self, z, x, "inv")); });
 }
 
 void CustomNVector::custom_add_const(N_Vector x, sunrealtype b, N_Vector z)
 {
-  call_void_with(z, "CustomNVector.add_const", [&](nb::handle self)
-                 { self.attr("add_const")(operand(self, z, x, "add_const"), b); });
+  call_void_with(z, "CustomNVector.add_const",
+                 [&](nb::handle self) {
+                   self.attr("add_const")(operand(self, z, x, "add_const"), b);
+                 });
 }
 
 sunrealtype CustomNVector::custom_dot_prod(N_Vector x, N_Vector y)
 {
   return call_value_with<sunrealtype>(x, "CustomNVector.dot_prod",
                                       std::numeric_limits<sunrealtype>::quiet_NaN(),
-                                      [&](nb::handle self)
-                                      {
+                                      [&](nb::handle self) {
                                         return self.attr("dot_prod")(
                                           operand(self, x, y, "dot_prod"));
                                       });
@@ -398,8 +386,7 @@ sunrealtype CustomNVector::custom_wrms_norm(N_Vector x, N_Vector w)
 {
   return call_value_with<sunrealtype>(x, "CustomNVector.wrms_norm",
                                       std::numeric_limits<sunrealtype>::infinity(),
-                                      [&](nb::handle self)
-                                      {
+                                      [&](nb::handle self) {
                                         return self.attr("wrms_norm")(
                                           operand(self, x, w, "wrms_norm"));
                                       });
@@ -429,8 +416,7 @@ sunrealtype CustomNVector::custom_wl2_norm(N_Vector x, N_Vector w)
 {
   return call_value_with<sunrealtype>(x, "CustomNVector.wl2_norm",
                                       std::numeric_limits<sunrealtype>::infinity(),
-                                      [&](nb::handle self)
-                                      {
+                                      [&](nb::handle self) {
                                         return self.attr("wl2_norm")(
                                           operand(self, x, w, "wl2_norm"));
                                       });
@@ -444,15 +430,15 @@ sunrealtype CustomNVector::custom_l1_norm(N_Vector x)
 
 void CustomNVector::custom_compare(sunrealtype c, N_Vector x, N_Vector z)
 {
-  call_void_with(z, "CustomNVector.compare", [&](nb::handle self)
+  call_void_with(z, "CustomNVector.compare",
+                 [&](nb::handle self)
                  { self.attr("compare")(c, operand(self, z, x, "compare")); });
 }
 
 sunbooleantype CustomNVector::custom_inv_test(N_Vector x, N_Vector z)
 {
   return call_value_with<sunbooleantype>(z, "CustomNVector.inv_test", SUNFALSE,
-                                         [&](nb::handle self)
-                                         {
+                                         [&](nb::handle self) {
                                            return self.attr("inv_test")(
                                              operand(self, z, x, "inv_test"));
                                          });
@@ -652,8 +638,7 @@ sunrealtype CustomNVector::custom_dot_prod_local(N_Vector x, N_Vector y)
 {
   return call_value_with<sunrealtype>(x, "CustomNVector.dot_prod_local",
                                       std::numeric_limits<sunrealtype>::quiet_NaN(),
-                                      [&](nb::handle self)
-                                      {
+                                      [&](nb::handle self) {
                                         return self.attr("dot_prod_local")(
                                           operand(self, x, y, "dot_prod_local"));
                                       });
@@ -683,8 +668,7 @@ sunbooleantype CustomNVector::custom_inv_test_local(N_Vector x, N_Vector z)
 {
   return call_value_with<sunbooleantype>(z, "CustomNVector.inv_test_local",
                                          SUNFALSE,
-                                         [&](nb::handle self)
-                                         {
+                                         [&](nb::handle self) {
                                            return self.attr("inv_test_local")(
                                              operand(self, z, x,
                                                      "inv_test_local"));
@@ -722,8 +706,7 @@ sunrealtype CustomNVector::custom_wsqrsum_local(N_Vector x, N_Vector w)
 {
   return call_value_with<sunrealtype>(x, "CustomNVector.wsqrsum_local",
                                       std::numeric_limits<sunrealtype>::infinity(),
-                                      [&](nb::handle self)
-                                      {
+                                      [&](nb::handle self) {
                                         return self.attr("wsqrsum_local")(
                                           operand(self, x, w, "wsqrsum_local"));
                                       });
@@ -766,8 +749,7 @@ SUNErrCode CustomNVector::custom_dot_prod_multi_all_reduce(int nvec, N_Vector x,
   return vector_array_reduction(x, nvec, dots,
                                 std::numeric_limits<sunrealtype>::quiet_NaN(),
                                 "CustomNVector.dot_prod_multi_all_reduce",
-                                [&](nb::object impl)
-                                {
+                                [&](nb::object impl) {
                                   return impl.attr("dot_prod_multi_all_reduce")(
                                     real_values(dots, nvec));
                                 });
@@ -801,7 +783,9 @@ SUNErrCode CustomNVector::custom_buf_unpack(N_Vector x, void* buffer)
 }
 
 void CustomNVector::custom_print(N_Vector x)
-{ call_void(x, "print", "CustomNVector.print"); }
+{
+  call_void(x, "print", "CustomNVector.print");
+}
 
 void CustomNVector::custom_print_file(N_Vector x, FILE* outfile)
 {

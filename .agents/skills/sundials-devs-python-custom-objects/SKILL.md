@@ -195,6 +195,15 @@ different conversion behavior across modules.
 Materialization errors occur inside a `noexcept` caster. Follow the established
 caster's error-state behavior and verify the actual Python exception users see;
 do not assume a C++ exception message will survive nanobind overload handling.
+Type casters report conversion failures to the `SUNContext` but never record
+them as pending exceptions; the conversion failure already surfaces as a
+`TypeError`.
+
+Design rule: all custom-object state is accessed only while holding the GIL,
+which provides the required synchronization. This includes materialization state, callback
+registries, pending exceptions, active nonlinear-solver memory, and cached raw
+handles. Do not add locks that remain held across calls into Python, since
+those calls may release the GIL; free-threaded Python builds are not supported.
 
 ## 7. Wrap callback setters when the object receives native callbacks
 

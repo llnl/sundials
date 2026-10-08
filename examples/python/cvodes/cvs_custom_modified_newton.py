@@ -57,6 +57,10 @@ class ModifiedNewtonSolver(CustomSUNNonlinearSolver):
         self.conv_test_fn = None
         self.max_iters = 4
         self.cur_iter = 0
+        self.num_iters = 0
+        self.num_conv_fails = 0
+        self.total_num_iters = 0
+        self.total_num_conv_fails = 0
         self.calls = {"solve": 0, "lsetup": 0, "lsolve": 0, "conv_test": 0}
         super().__init__(sunctx, SUNNONLINEARSOLVER_ROOTFIND)
 
@@ -87,13 +91,17 @@ class ModifiedNewtonSolver(CustomSUNNonlinearSolver):
         return SUN_SUCCESS, self.cur_iter
 
     def get_num_iters(self):
-        return SUN_SUCCESS, self.calls["solve"]
+        return SUN_SUCCESS, self.num_iters
 
     def get_num_conv_fails(self):
-        return SUN_SUCCESS, 0
+        return SUN_SUCCESS, self.num_conv_fails
 
     def solve(self, y0, y, w, tol, call_lsetup):
         self.calls["solve"] += 1
+        # The SUNNonlinearSolver getters report statistics for the most recent
+        # solve. CVODE accumulates those values into its integrator statistics.
+        self.num_iters = 0
+        self.num_conv_fails = 0
         N_VScale(1.0, y0, y)
         jbad = bool(call_lsetup)
 
@@ -101,27 +109,45 @@ class ModifiedNewtonSolver(CustomSUNNonlinearSolver):
             status, _ = self.lsetup_fn(jbad)
             self.calls["lsetup"] += 1
             if status != SUN_SUCCESS:
+                if status == SUN_NLS_CONV_RECVR:
+                    self.num_conv_fails += 1
+                    self.total_num_conv_fails += 1
                 return status
 
-        for self.cur_iter in range(self.max_iters):
-            status = self.sys_fn(y, self.delta)
-            if status != SUN_SUCCESS:
-                return status
+        iteration_started = False
+        try:
+            for self.cur_iter in range(self.max_iters):
+                iteration_started = True
+                status = self.sys_fn(y, self.delta)
+                if status != SUN_SUCCESS:
+                    if status == SUN_NLS_CONV_RECVR:
+                        self.num_conv_fails += 1
+                    return status
 
-            status = self.lsolve_fn(self.delta)
-            self.calls["lsolve"] += 1
-            if status != SUN_SUCCESS:
-                return status
+                status = self.lsolve_fn(self.delta)
+                self.calls["lsolve"] += 1
+                if status != SUN_SUCCESS:
+                    if status == SUN_NLS_CONV_RECVR:
+                        self.num_conv_fails += 1
+                    return status
 
-            N_VLinearSum(1.0, y, -1.0, self.delta, y)
-            status = self.conv_test_fn(y, self.delta, tol, w)
-            self.calls["conv_test"] += 1
-            if status == SUN_SUCCESS:
-                return SUN_SUCCESS
-            if status != SUN_NLS_CONTINUE:
-                return status
+                N_VLinearSum(1.0, y, -1.0, self.delta, y)
+                status = self.conv_test_fn(y, self.delta, tol, w)
+                self.calls["conv_test"] += 1
+                if status == SUN_SUCCESS:
+                    return SUN_SUCCESS
+                if status != SUN_NLS_CONTINUE:
+                    if status == SUN_NLS_CONV_RECVR:
+                        self.num_conv_fails += 1
+                    return status
 
-        return SUN_NLS_CONV_RECVR
+            self.num_conv_fails += 1
+            return SUN_NLS_CONV_RECVR
+        finally:
+            if iteration_started:
+                self.num_iters = self.cur_iter + 1
+                self.total_num_iters += self.num_iters
+            self.total_num_conv_fails += self.num_conv_fails
 
 
 def main():
@@ -148,7 +174,13 @@ def main():
     assert status == CV_SUCCESS
     computed = float(N_VGetNumpyArray(y)[0])
     exact = float(problem.solution(tret))
-    return computed, exact, dict(nonlinear_solver.calls)
+    status, nni = CVodeGetNumNonlinSolvIters(cvode.get())
+    assert status == CV_SUCCESS
+    calls = dict(nonlinear_solver.calls)
+    calls["num_iters"] = nonlinear_solver.total_num_iters
+    calls["num_conv_fails"] = nonlinear_solver.total_num_conv_fails
+    calls["cvode_num_iters"] = nni
+    return computed, exact, calls
 
 
 def test_cvs_custom_modified_newton():
@@ -158,6 +190,8 @@ def test_cvs_custom_modified_newton():
     assert calls["lsetup"] > 0
     assert calls["lsolve"] > 0
     assert calls["conv_test"] > 0
+    assert calls["num_iters"] >= calls["solve"]
+    assert calls["cvode_num_iters"] == calls["num_iters"]
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@
 #ifndef SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
 #define SUNDIALS4PY_ADAPTCONTROLLER_CUSTOM_HPP
 
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <tuple>
@@ -60,7 +61,9 @@ public:
   virtual ~CustomSUNAdaptController() = default;
 
   void validate(nb::handle self) const
-  { validate_required_methods(self, controller_type_); }
+  {
+    validate_required_methods(self, controller_type_);
+  }
 
   static SUNErrCode base_method_status(const char* name)
   {
@@ -118,10 +121,14 @@ public:
 
 private:
   static nb::object get_impl(SUNAdaptController C)
-  { return custom_content_impl(get_content(C), label); }
+  {
+    return custom_content_impl(get_content(C), label);
+  }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  { return custom_method_overridden<CustomSUNAdaptController>(impl, name); }
+  {
+    return custom_method_overridden<CustomSUNAdaptController>(impl, name);
+  }
 
   static void validate_required_methods(nb::handle impl,
                                         SUNAdaptController_Type controller_type)
@@ -151,14 +158,16 @@ private:
     SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
     sunrealtype DSM, sunrealtype dsm, sunrealtype* Hnew, sunrealtype* tolfacnew);
 
+  template<typename... Args>
   static SUNErrCode call_status(SUNAdaptController C, const char* name,
-                                const char* operation)
+                                const char* operation, Args&&... args)
   {
     try
     {
       nb::gil_scoped_acquire gil;
       if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
-      return static_cast<SUNErrCode>(nb::cast<int>(get_impl(C).attr(name)()));
+      return static_cast<SUNErrCode>(
+        nb::cast<int>(get_impl(C).attr(name)(std::forward<Args>(args)...)));
     }
     SUNDIALS4PY_CATCH_AND_REPORT(C ? C->sunctx : nullptr, operation,
                                  SUN_ERR_EXT_FAIL)
@@ -167,6 +176,13 @@ private:
   static SUNErrCode custom_controller_reset(SUNAdaptController C);
 
   static SUNErrCode custom_controller_setdefaults(SUNAdaptController C);
+
+  static SUNErrCode custom_controller_setoptions(SUNAdaptController C,
+                                                 const char* id,
+                                                 const char* file_name,
+                                                 int argc, char* argv[]);
+
+  static SUNErrCode custom_controller_write(SUNAdaptController C, FILE* outfile);
 
   static SUNErrCode custom_controller_seterrorbias(SUNAdaptController C,
                                                    sunrealtype bias);

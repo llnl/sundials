@@ -7,13 +7,17 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
+#include <limits>
+
 #include "sundials4py.hpp"
 
 namespace sundials4py {
 
 std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>> CustomSUNLinearSolver::make_handle(
   nb::handle impl)
-{ return make_handle(impl, sunctx_owner_, solver_type_); }
+{
+  return make_handle(impl, sunctx_owner_, solver_type_);
+}
 
 std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>> CustomSUNLinearSolver::make_handle(
   nb::handle impl,
@@ -82,7 +86,9 @@ SUNLinearSolver_Type CustomSUNLinearSolver::custom_linsol_gettype(SUNLinearSolve
 }
 
 SUNLinearSolver_ID CustomSUNLinearSolver::custom_linsol_getid(SUNLinearSolver)
-{ return SUNLINEARSOLVER_CUSTOM; }
+{
+  return SUNLINEARSOLVER_CUSTOM;
+}
 
 SUNErrCode CustomSUNLinearSolver::custom_linsol_setoptions(SUNLinearSolver S,
                                                            const char* LSid,
@@ -125,13 +131,14 @@ SUNErrCode CustomSUNLinearSolver::custom_linsol_setatimes(SUNLinearSolver S,
     nb::object atimes = nb::none();
     if (state)
     {
-      atimes = nb::cpp_function(
-        [state](N_Vector x, N_Vector y) -> int
-        {
-          require_valid_callback(state.get(), "ATimes");
-          return state->fn(state->data, x, y);
-        },
-        nb::arg("x"), nb::arg("y"));
+      atimes = nb::cpp_function(sundials4py::scoped(
+                                  [state](N_Vector x, N_Vector y) -> int
+                                  {
+                                    require_valid_callback(state.get(),
+                                                           "ATimes");
+                                    return state->fn(state->data, x, y);
+                                  }),
+                                nb::arg("x"), nb::arg("y"));
     }
     SUNErrCode status =
       static_cast<SUNErrCode>(nb::cast<int>(impl.attr("set_atimes")(atimes)));
@@ -167,22 +174,27 @@ SUNErrCode CustomSUNLinearSolver::custom_linsol_setpreconditioner(
     nb::object psolve = nb::none();
     if (setup_state)
     {
-      psetup = nb::cpp_function(
+      psetup = nb::cpp_function(sundials4py::scoped(
         [setup_state]() -> int
         {
           require_valid_callback(setup_state.get(), "preconditioner setup");
           return setup_state->fn(setup_state->data);
-        });
+        }));
     }
     if (solve_state)
     {
-      psolve = nb::cpp_function(
-        [solve_state](N_Vector r, N_Vector z, sunrealtype tol, int lr) -> int
-        {
-          require_valid_callback(solve_state.get(), "preconditioner solve");
-          return solve_state->fn(solve_state->data, r, z, tol, lr);
-        },
-        nb::arg("r"), nb::arg("z"), nb::arg("tol"), nb::arg("lr"));
+      psolve =
+        nb::cpp_function(sundials4py::scoped(
+                           [solve_state](N_Vector r, N_Vector z,
+                                         sunrealtype tol, int lr) -> int
+                           {
+                             require_valid_callback(solve_state.get(),
+                                                    "preconditioner solve");
+                             return solve_state->fn(solve_state->data, r, z,
+                                                    tol, lr);
+                           }),
+                         nb::arg("r"), nb::arg("z"), nb::arg("tol"),
+                         nb::arg("lr"));
     }
     SUNErrCode status = static_cast<SUNErrCode>(
       nb::cast<int>(impl.attr("set_preconditioner")(psetup, psolve)));
@@ -205,9 +217,17 @@ SUNErrCode CustomSUNLinearSolver::custom_linsol_setscalingvectors(
   {
     nb::gil_scoped_acquire gil;
     if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
-    return static_cast<SUNErrCode>(nb::cast<int>(get_impl(S).attr(
-      "set_scaling_vectors")(nb::cast(s1, nb::rv_policy::reference),
-                             nb::cast(s2, nb::rv_policy::reference))));
+    Content* content = get_content(S);
+    nb::object o1    = s1 ? nb::cast(s1, nb::rv_policy::reference) : nb::none();
+    nb::object o2    = s2 ? nb::cast(s2, nb::rv_policy::reference) : nb::none();
+    auto status      = static_cast<SUNErrCode>(
+      nb::cast<int>(get_impl(S).attr("set_scaling_vectors")(o1, o2)));
+    if (status == SUN_SUCCESS && content)
+    {
+      content->scaling_owners[0] = std::move(o1);
+      content->scaling_owners[1] = std::move(o2);
+    }
+    return status;
   }
   SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
                                "CustomSUNLinearSolver.set_scaling_vectors",
@@ -288,11 +308,15 @@ sunrealtype CustomSUNLinearSolver::custom_linsol_resnorm(SUNLinearSolver S)
   try
   {
     nb::gil_scoped_acquire gil;
-    if (custom_exception_pending()) { return SUN_RCONST(0.0); }
+    if (custom_exception_pending())
+    {
+      return std::numeric_limits<sunrealtype>::infinity();
+    }
     return nb::cast<sunrealtype>(get_impl(S).attr("res_norm")());
   }
   SUNDIALS4PY_CATCH_AND_REPORT(S ? S->sunctx : nullptr,
-                               "CustomSUNLinearSolver.res_norm", SUN_RCONST(0.0))
+                               "CustomSUNLinearSolver.res_norm",
+                               std::numeric_limits<sunrealtype>::infinity())
 }
 
 N_Vector CustomSUNLinearSolver::custom_linsol_resid(SUNLinearSolver S)
