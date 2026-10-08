@@ -42,7 +42,7 @@ class DenseArrayMatrix(CustomSUNMatrix):
         super().__init__(sunctx)
 
     def clone(self):
-        return DenseArrayMatrix(*self.data.shape, self.sunctx)
+        return type(self)(*self.data.shape, self.sunctx)
 
     def zero(self):
         self.data[:] = 0.0
@@ -92,6 +92,61 @@ class NumpyLinearSolver(CustomSUNLinearSolver):
         except np.linalg.LinAlgError:
             # A singular matrix is a recoverable failure, not a Python error.
             return 1
+        return SUN_SUCCESS
+
+
+class PackageDrivenIterativeSolver(CustomSUNLinearSolver):
+    """A tiny iterative solver that exercises package-installed adapters.
+
+    The numerical problem is scalar, so one preconditioned update is enough.
+    The important part of this test is that CVODE installs ``atimes`` and the
+    preconditioner through the package path, carrying CVODE's memory pointer
+    into the custom solver's Python callbacks.
+    """
+
+    def __init__(self, sunctx):
+        self.atimes = None
+        self.psetup = None
+        self.psolve = None
+        self.calls = {"atimes": 0, "psetup": 0, "psolve": 0, "setup": 0, "solve": 0}
+        super().__init__(sunctx, SUNLINEARSOLVER_ITERATIVE)
+
+    def initialize(self):
+        return SUN_SUCCESS
+
+    def set_atimes(self, atimes):
+        self.atimes = atimes
+        return SUN_SUCCESS
+
+    def set_preconditioner(self, psetup, psolve):
+        self.psetup = psetup
+        self.psolve = psolve
+        return SUN_SUCCESS
+
+    def solve(self, A, x, b, tol):
+        self.calls["solve"] += 1
+        if self.psetup is not None:
+            assert self.psetup() == SUN_SUCCESS
+            self.calls["psetup"] += 1
+        if self.atimes is not None:
+            trial = N_VClone(b)
+            assert self.atimes(x, trial) == SUN_SUCCESS
+            self.calls["atimes"] += 1
+        if self.psolve is not None:
+            assert self.psolve(b, x, tol, 0) == SUN_SUCCESS
+            self.calls["psolve"] += 1
+        else:
+            N_VScale(1.0, b, x)
+        return SUN_SUCCESS
+
+    def num_iters(self):
+        return 1
+
+    def res_norm(self):
+        return 0.0
+
+    def setup(self, A):
+        self.calls["setup"] += 1
         return SUN_SUCCESS
 
 
@@ -228,8 +283,7 @@ class ProportionalController(CustomSUNHController):
 
 
 def test_custom_matrix_and_linear_solver_through_kinsol(sunctx):
-    # Purpose:
-    # Custom matrix and linear solver through kinsol.
+    # Contract: Custom matrix and linear solver through kinsol.
     # KINSOL Newton, with both the Jacobian matrix and the linear solver
     # implemented in Python.
     NEQ = AnalyticNonlinearSys.NEQ
@@ -286,9 +340,47 @@ def test_custom_matrix_and_linear_solver_through_kinsol(sunctx):
     assert LS.calls["solve"] >= 1
 
 
+def test_custom_linear_solver_callbacks_through_cvode(sunctx):
+    """CVODE drives a custom solver's package-installed callback adapters."""
+    y = N_VNew_Serial(1, sunctx)
+    N_VGetArrayPointer(y)[0] = 1.0
+
+    def rhs(t, state, derivative, _):
+        N_VGetArrayPointer(derivative)[0] = -N_VGetArrayPointer(state)[0]
+        return SUN_SUCCESS
+
+    def jtimes(v, jv, t, state, fy, _, tmp):
+        N_VScale(-1.0, v, jv)
+        return SUN_SUCCESS
+
+    def psetup(t, state, fy, jok, gamma, _):
+        return SUN_SUCCESS, 1
+
+    def psolve(t, state, fy, r, z, gamma, delta, lr, _):
+        N_VScale(1.0, r, z)
+        return SUN_SUCCESS
+
+    cvode = CVodeCreate(CV_BDF, sunctx)
+    assert CVodeInit(cvode.get(), rhs, 0.0, y) == CV_SUCCESS
+    assert CVodeSStolerances(cvode.get(), 1.0e-7, 1.0e-10) == CV_SUCCESS
+
+    solver = PackageDrivenIterativeSolver(sunctx)
+    assert CVodeSetLinearSolver(cvode.get(), solver, None) == CV_SUCCESS
+    assert CVodeSetJacTimes(cvode.get(), None, jtimes) == CV_SUCCESS
+    assert CVodeSetPreconditioner(cvode.get(), psetup, psolve) == CV_SUCCESS
+
+    status, tret = CVode(cvode.get(), 0.2, y, CV_NORMAL)
+    assert status == CV_SUCCESS
+    assert tret == pytest.approx(0.2)
+    assert N_VGetArrayPointer(y)[0] == pytest.approx(np.exp(-0.2), rel=1.0e-5)
+    assert solver.calls["solve"] > 0
+    assert solver.calls["atimes"] > 0
+    assert solver.calls["psetup"] > 0
+    assert solver.calls["psolve"] > 0
+
+
 def test_custom_nonlinear_solver_through_cvode(sunctx):
-    # Purpose:
-    # Custom nonlinear solver through cvode.
+    # Contract: Custom nonlinear solver through cvode.
     # CVODE BDF with a Python nonlinear solver and a native dense linear solver,
     # so the only custom object in the loop is the one under test.
     problem = AnalyticODE(lamb=-10.0)
@@ -326,8 +418,7 @@ def test_custom_nonlinear_solver_through_cvode(sunctx):
 
 
 def test_custom_adapt_controller_through_arkode(sunctx):
-    # Purpose:
-    # Custom adapt controller through arkode.
+    # Contract: Custom adapt controller through arkode.
     # ARKODE ERK with a Python time step controller.
     problem = AnalyticODE(lamb=-10.0)
     y = N_VNew_Serial(1, sunctx)
@@ -356,8 +447,7 @@ def test_custom_adapt_controller_through_arkode(sunctx):
 
 
 def test_custom_adapt_controller_survives_repeated_evolutions(sunctx):
-    # Purpose:
-    # Custom adapt controller survives repeated evolutions.
+    # Contract: Custom adapt controller survives repeated evolutions.
     # An H controller must keep working across many ARKODE steps and a
     # reset, which is where a stale weak reference or a released handle shows up.
     problem = AnalyticODE(lamb=-10.0)

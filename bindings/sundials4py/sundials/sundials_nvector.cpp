@@ -162,7 +162,10 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
   auto device           = check_jax_array(v, data, copy_array);
   auto jax              = nb::module_::import_("jax");
   if (copy_array) { data.attr("block_until_ready")(); }
-  else { jax.attr("effects_barrier")(); }
+  else
+  {
+    jax.attr("effects_barrier")();
+  }
 
   auto source_address =
     nb::cast<std::uintptr_t>(data.attr("unsafe_buffer_pointer")());
@@ -195,7 +198,10 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
         std::memcpy(destination, source, length * sizeof(sunrealtype));
       }
     }
-    else { replace_host_array_pointer(v, source, std::move(data)); }
+    else
+    {
+      replace_host_array_pointer(v, source, std::move(data));
+    }
     return;
   }
 
@@ -255,12 +261,15 @@ nb::object get_jax_array(N_Vector v)
 
 void bind_nvector(nb::module_& m)
 {
-  nb::class_<CustomNVector>(m, "CustomNVector", nb::dynamic_attr())
+  nb::class_<CustomNVector>(m, "CustomNVector", nb::dynamic_attr(),
+                            nb::is_weak_referenceable())
     .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>>(),
          nb::arg("sunctx"))
     .def("_is_materialized", &CustomNVector::_is_materialized)
+    .def("validate", [](CustomNVector& self) { self.validate(nb::find(&self)); })
     .def_prop_ro("sunctx", &CustomNVector::sunctx,
                  nb::sig("def sunctx(self) -> object"))
+    .def("is_compatible", [](CustomNVector&, nb::handle) { return false; })
     .def("clone",
          [](CustomNVector&) -> nb::object
          {
@@ -292,13 +301,15 @@ void bind_nvector(nb::module_& m)
     .def("set_device_array_pointer", [](CustomNVector&, std::uintptr_t)
          { CustomNVector::base_method("set_device_array_pointer"); })
     .def("get_communicator",
-         [](CustomNVector&) {
+         [](CustomNVector&)
+         {
            return CustomNVector::base_method_value<SUNComm>("get_communicator");
          })
     .def("get_length", [](CustomNVector&)
          { return CustomNVector::base_method_value<sunindextype>("get_length"); })
     .def("get_local_length",
-         [](CustomNVector&) {
+         [](CustomNVector&)
+         {
            return CustomNVector::base_method_value<sunindextype>(
              "get_local_length");
          })
@@ -326,7 +337,8 @@ void bind_nvector(nb::module_& m)
     .def("wrms_norm", [](CustomNVector&, N_Vector)
          { return CustomNVector::base_method_value<sunrealtype>("wrms_norm"); })
     .def("wrms_norm_mask",
-         [](CustomNVector&, N_Vector, N_Vector) {
+         [](CustomNVector&, N_Vector, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "wrms_norm_mask");
          })
@@ -341,21 +353,25 @@ void bind_nvector(nb::module_& m)
     .def("inv_test", [](CustomNVector&, N_Vector)
          { return CustomNVector::base_method_value<sunbooleantype>("inv_test"); })
     .def("constr_mask",
-         [](CustomNVector&, N_Vector, N_Vector) {
+         [](CustomNVector&, N_Vector, N_Vector)
+         {
            return CustomNVector::base_method_value<sunbooleantype>(
              "constr_mask");
          })
     .def("min_quotient",
-         [](CustomNVector&, N_Vector) {
+         [](CustomNVector&, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>("min_quotient");
          })
     .def("linear_combination",
-         [](CustomNVector&, nb::object, nb::object) {
+         [](CustomNVector&, nb::object, nb::object)
+         {
            return CustomNVector::base_method_value<SUNErrCode>(
              "linear_combination");
          })
     .def("scale_add_multi",
-         [](CustomNVector&, nb::object, nb::object, nb::object) {
+         [](CustomNVector&, nb::object, nb::object, nb::object)
+         {
            return CustomNVector::base_method_value<SUNErrCode>(
              "scale_add_multi");
          })
@@ -373,12 +389,14 @@ void bind_nvector(nb::module_& m)
              "linear_sum_vector_array");
          })
     .def("scale_vector_array",
-         [](CustomNVector&, nb::object, nb::object, nb::object) {
+         [](CustomNVector&, nb::object, nb::object, nb::object)
+         {
            return CustomNVector::base_method_value<SUNErrCode>(
              "scale_vector_array");
          })
     .def("const_vector_array",
-         [](CustomNVector&, sunrealtype, nb::object) {
+         [](CustomNVector&, sunrealtype, nb::object)
+         {
            return CustomNVector::base_method_value<SUNErrCode>(
              "const_vector_array");
          })
@@ -407,24 +425,28 @@ void bind_nvector(nb::module_& m)
              "linear_combination_vector_array");
          })
     .def("dot_prod_local",
-         [](CustomNVector&, N_Vector) {
+         [](CustomNVector&, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "dot_prod_local");
          })
     .def("max_norm_local",
-         [](CustomNVector&) {
+         [](CustomNVector&)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "max_norm_local");
          })
     .def("min_local", [](CustomNVector&)
          { return CustomNVector::base_method_value<sunrealtype>("min_local"); })
     .def("l1_norm_local",
-         [](CustomNVector&) {
+         [](CustomNVector&)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "l1_norm_local");
          })
     .def("inv_test_local",
-         [](CustomNVector&, N_Vector) {
+         [](CustomNVector&, N_Vector)
+         {
            return CustomNVector::base_method_value<sunbooleantype>(
              "inv_test_local");
          })
@@ -435,17 +457,20 @@ void bind_nvector(nb::module_& m)
              "constr_mask_local");
          })
     .def("min_quotient_local",
-         [](CustomNVector&, N_Vector) {
+         [](CustomNVector&, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "min_quotient_local");
          })
     .def("wsqrsum_local",
-         [](CustomNVector&, N_Vector) {
+         [](CustomNVector&, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "wsqrsum_local");
          })
     .def("wsqrsum_mask_local",
-         [](CustomNVector&, N_Vector, N_Vector) {
+         [](CustomNVector&, N_Vector, N_Vector)
+         {
            return CustomNVector::base_method_value<sunrealtype>(
              "wsqrsum_mask_local");
          })
@@ -475,12 +500,31 @@ void bind_nvector(nb::module_& m)
     .def("print_file", [](CustomNVector&, std::uintptr_t)
          { CustomNVector::base_method("print_file"); });
 
-  auto bind_clone = [&m](const char* name, auto clone_fn)
+  auto bind_clone = [&m](const char* name, const char* method, auto clone_fn)
   {
-    m.def(
-      name,
-      [clone_fn](N_Vector v) -> nb::object
+    sundials4py::scoped_def(
+      m, name,
+      [clone_fn, method](nb::handle source) -> nb::object
       {
+        // A custom Python clone is already the desired result. Calling the
+        // native clone first would allocate a shell only to destroy it again.
+        if (nb::isinstance<CustomNVector>(source))
+        {
+          try
+          {
+            return CustomNVector::clone_python(source, method);
+          }
+          catch (const std::exception& error)
+          {
+            auto* custom          = nb::cast<CustomNVector*>(source);
+            std::string operation = std::string("CustomNVector.") + method;
+            report_custom_exception(custom->sunctx().get(), operation.c_str(),
+                                    error, __FILE__, __LINE__);
+            throw;
+          }
+        }
+
+        N_Vector v     = nb::cast<N_Vector>(source);
         N_Vector clone = clone_fn(v);
         if (!clone) { return nb::none(); }
 
@@ -497,19 +541,18 @@ void bind_nvector(nb::module_& m)
       },
       nb::arg("w"));
   };
-  bind_clone("N_VClone", N_VClone);
-  bind_clone("N_VCloneEmpty", N_VCloneEmpty);
+  bind_clone("N_VClone", "clone", N_VClone);
+  bind_clone("N_VCloneEmpty", "clone_empty", N_VCloneEmpty);
 
 #include "sundials_nvector_generated.hpp"
 
-  m.def(
-    "N_VGetArrayPointer",
-    [](N_Vector v) { return nvector_detail::host_array(v); },
-    nb::rv_policy::reference);
+  sundials4py::scoped_def(
+    m, "N_VGetArrayPointer", [](N_Vector v)
+    { return nvector_detail::host_array(v); }, nb::rv_policy::reference);
 
 #ifndef SUNDIALS_NVECTOR_CUDA
-  m.def(
-    "N_VGetDeviceArrayPointer",
+  sundials4py::scoped_def(
+    m, "N_VGetDeviceArrayPointer",
     [](N_Vector v) -> std::uintptr_t
     {
       auto ptr = N_VGetDeviceArrayPointer(v);
@@ -526,21 +569,29 @@ void bind_nvector(nb::module_& m)
                                                &get_torch_tensor);
 #endif
 
-  m.def("N_VSetJaxArray", &set_jax_array, nb::arg("array"), nb::arg("v"),
-        nb::kw_only(), nb::arg("copy").none() = nb::none(),
-        "Set an N_Vector from a JAX array.\n\n"
-        "If copy is None, its value is inferred from array: jax.Array uses "
-        "copy=True and jax.ref.Ref uses copy=False. With copy=True, array "
-        "must be a one-dimensional jax.Array whose "
-        "length and floating-point dtype match the N_Vector. Its values are "
-        "copied into the existing N_Vector storage. With copy=False, array "
-        "must be a one-dimensional jax.ref.Ref; its storage is attached to "
-        "the N_Vector without copying, and the Ref is retained as its owner. "
-        "Only CPU storage is supported for serial N_Vectors, and only CUDA "
-        "storage is supported for CUDA N_Vectors.");
+  sundials4py::scoped_def(m, "N_VSetJaxArray", &set_jax_array, nb::arg("array"),
+                          nb::arg("v"), nb::kw_only(),
+                          nb::arg("copy").none() = nb::none(),
+                          "Set an N_Vector from a JAX array.\n\n"
+                          "If copy is None, its value is inferred from array: "
+                          "jax.Array uses "
+                          "copy=True and jax.ref.Ref uses copy=False. With "
+                          "copy=True, array "
+                          "must be a one-dimensional jax.Array whose "
+                          "length and floating-point dtype match the N_Vector. "
+                          "Its values are "
+                          "copied into the existing N_Vector storage. With "
+                          "copy=False, array "
+                          "must be a one-dimensional jax.ref.Ref; its storage "
+                          "is attached to "
+                          "the N_Vector without copying, and the Ref is "
+                          "retained as its owner. "
+                          "Only CPU storage is supported for serial N_Vectors, "
+                          "and only CUDA "
+                          "storage is supported for CUDA N_Vectors.");
 
-  m.def(
-    "N_VScaleAddMultiVectorArray",
+  sundials4py::scoped_def(
+    m, "N_VScaleAddMultiVectorArray",
     [](int nvec, int nsum, sundials4py::Array1d c_1d,
        std::vector<N_Vector> X_1d, std::vector<std::vector<N_Vector>> Y_2d,
        std::vector<std::vector<N_Vector>> Z_2d) -> SUNErrCode
@@ -565,8 +616,8 @@ void bind_nvector(nb::module_& m)
     nb::arg("nvec"), nb::arg("nsum"), nb::arg("c_1d"), nb::arg("X_1d"),
     nb::arg("Y_2d"), nb::arg("Z_2d"));
 
-  m.def(
-    "N_VLinearCombinationVectorArray",
+  sundials4py::scoped_def(
+    m, "N_VLinearCombinationVectorArray",
     [](int nvec, int nsum, sundials4py::Array1d c_1d,
        std::vector<std::vector<N_Vector>> X_2d,
        std::vector<N_Vector> Z_1d) -> SUNErrCode

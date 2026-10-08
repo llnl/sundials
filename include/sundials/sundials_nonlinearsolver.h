@@ -98,7 +98,6 @@ typedef SUNErrCode (*SUNNonlinSolGetConvRateFn)(sunrealtype* crate, void* mem);
 
 enum SUNNonlinearSolver_Type
 {
-  SUNNONLINEARSOLVER_NONE = -1,
   SUNNONLINEARSOLVER_ROOTFIND,
   SUNNONLINEARSOLVER_FIXEDPOINT,
   SUNNONLINEARSOLVER_HYBRID

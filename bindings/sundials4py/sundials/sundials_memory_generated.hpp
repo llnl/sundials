@@ -30,8 +30,8 @@ auto pyClassSUNMemoryHelper_Ops_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNMemoryHelper_Clone",
+sundials4py::scoped_def(
+  m, "SUNMemoryHelper_Clone",
   [](SUNMemoryHelper param_0)
     -> std::shared_ptr<std::remove_pointer_t<SUNMemoryHelper>>
   {
@@ -49,11 +49,13 @@ m.def(
   },
   nb::arg("param_0"));
 
-m.def("SUNMemoryHelper_SetDefaultQueue", SUNMemoryHelper_SetDefaultQueue,
-      nb::arg("param_0"), nb::arg("queue"));
+sundials4py::scoped_def(m, "SUNMemoryHelper_SetDefaultQueue",
+                        SUNMemoryHelper_SetDefaultQueue, nb::arg("param_0"),
+                        nb::arg("queue"));
 
-m.def("SUNMemoryHelper_ImplementsRequiredOps",
-      SUNMemoryHelper_ImplementsRequiredOps, nb::arg("param_0"));
+sundials4py::scoped_def(m, "SUNMemoryHelper_ImplementsRequiredOps",
+                        SUNMemoryHelper_ImplementsRequiredOps,
+                        nb::arg("param_0"));
 // #ifdef __cplusplus
 //
 // #endif

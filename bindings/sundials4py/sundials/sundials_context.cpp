@@ -45,60 +45,65 @@ void bind_suncontext(nb::module_& m)
 
   nb::class_<SUNContext_>(m, "SUNContext_");
 
-  m.def("SUNContext_PushErrHandler",
-        [](SUNContext sunctx,
-           std::function<std::remove_pointer_t<SUNErrHandlerFn>> err_fn)
-        {
-          if (!err_fn) { throw sundials4py::illegal_value("err_fn was None"); }
+  sundials4py::
+    scoped_def(m, "SUNContext_PushErrHandler",
+               [](SUNContext sunctx,
+                  std::function<std::remove_pointer_t<SUNErrHandlerFn>> err_fn)
+               {
+                 if (!err_fn)
+                 {
+                   throw sundials4py::illegal_value("err_fn was None");
+                 }
 
-          if (!sunctx->python)
-          {
-            sunctx->python = new SUNContextFunctionTable;
+                 if (!sunctx->python)
+                 {
+                   sunctx->python = new SUNContextFunctionTable;
 
-            // Only push the wrapper the first time this is called
-            SUNErrCode status =
-              SUNContext_PushErrHandler(sunctx, suncontext_errhandler_wrapper,
-                                        sunctx->python);
-            if (status)
-            {
-              throw sundials4py::error_returned(
-                "SUNContext_PushErrHandler returned an error");
-            }
-          }
+                   // Only push the wrapper the first time this is called
+                   SUNErrCode status =
+                     SUNContext_PushErrHandler(sunctx,
+                                               suncontext_errhandler_wrapper,
+                                               sunctx->python);
+                   if (status)
+                   {
+                     throw sundials4py::error_returned(
+                       "SUNContext_PushErrHandler returned an error");
+                   }
+                 }
 
-          auto fn_table = static_cast<SUNContextFunctionTable*>(sunctx->python);
+                 auto fn_table =
+                   static_cast<SUNContextFunctionTable*>(sunctx->python);
 
-          fn_table->err_handlers.push_back(nb::cast(err_fn));
+                 fn_table->err_handlers.push_back(nb::cast(err_fn));
 
-          return SUN_SUCCESS;
-        });
+                 return SUN_SUCCESS;
+               });
 
-  m.def("SUNContext_PopErrHandler",
-        [](SUNContext sunctx) -> SUNErrCode
-        {
-          if (!sunctx->python) { return SUN_SUCCESS; }
+  sundials4py::scoped_def(m, "SUNContext_PopErrHandler",
+                          [](SUNContext sunctx) -> SUNErrCode
+                          {
+                            if (!sunctx->python) { return SUN_SUCCESS; }
 
-          auto fn_table = static_cast<SUNContextFunctionTable*>(sunctx->python);
+                            auto fn_table = static_cast<SUNContextFunctionTable*>(
+                              sunctx->python);
 
-          if (fn_table->err_handlers.size() > 0)
-          {
-            // pop the python functions off the interface layer stack
-            fn_table->err_handlers.pop_back();
-          }
+                            if (fn_table->err_handlers.size() > 0)
+                            {
+                              // pop the python functions off the interface layer stack
+                              fn_table->err_handlers.pop_back();
+                            }
 
-          if (fn_table->err_handlers.size() == 0)
-          {
-            // now we can pop the suncontext_errhandler_wrapper off the C side stack
-            return SUNContext_PopErrHandler(sunctx);
-          }
+                            if (fn_table->err_handlers.size() == 0)
+                            {
+                              // now we can pop the suncontext_errhandler_wrapper off the C side stack
+                              return SUNContext_PopErrHandler(sunctx);
+                            }
 
-          return SUN_SUCCESS;
-        });
+                            return SUN_SUCCESS;
+                          });
 }
 
 } // namespace sundials4py
 
 extern "C" void SUNContextFunctionTable_Destroy(void* ptr)
-{
-  delete static_cast<SUNContextFunctionTable*>(ptr);
-}
+{ delete static_cast<SUNContextFunctionTable*>(ptr); }

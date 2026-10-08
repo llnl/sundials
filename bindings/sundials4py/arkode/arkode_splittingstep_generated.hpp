@@ -30,8 +30,8 @@ auto pyEnumARKODE_SplittingCoefficientsID =
 // #endif
 //
 
-m.def(
-  "SplittingStepCoefficients_Create",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_Create",
   [](int sequential_methods, int stages, int partitions, int order,
      sundials4py::Array1d alpha_1d, sundials4py::Array1d beta_1d)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
@@ -83,8 +83,8 @@ m.def(
   nb::arg("sequential_methods"), nb::arg("stages"), nb::arg("partitions"),
   nb::arg("order"), nb::arg("alpha_1d"), nb::arg("beta_1d"));
 
-m.def(
-  "SplittingStepCoefficients_Copy",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_Copy",
   [](SplittingStepCoefficients coefficients)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -103,11 +103,12 @@ m.def(
   },
   nb::arg("coefficients"));
 
-m.def("SplittingStepCoefficients_Write", SplittingStepCoefficients_Write,
-      nb::arg("coefficients"), nb::arg("outfile"));
+sundials4py::scoped_def(m, "SplittingStepCoefficients_Write",
+                        SplittingStepCoefficients_Write,
+                        nb::arg("coefficients"), nb::arg("outfile"));
 
-m.def(
-  "SplittingStepCoefficients_LoadCoefficients",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_LoadCoefficients",
   [](ARKODE_SplittingCoefficientsID id)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -126,8 +127,8 @@ m.def(
   },
   nb::arg("id"));
 
-m.def(
-  "SplittingStepCoefficients_LoadCoefficientsByName",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_LoadCoefficientsByName",
   [](const char* name)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -146,11 +147,11 @@ m.def(
   },
   nb::arg("name"));
 
-m.def("SplittingStepCoefficients_IDToName", SplittingStepCoefficients_IDToName,
-      nb::arg("id"));
+sundials4py::scoped_def(m, "SplittingStepCoefficients_IDToName",
+                        SplittingStepCoefficients_IDToName, nb::arg("id"));
 
-m.def(
-  "SplittingStepCoefficients_LieTrotter",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_LieTrotter",
   [](int partitions)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -169,8 +170,8 @@ m.def(
   },
   nb::arg("partitions"));
 
-m.def(
-  "SplittingStepCoefficients_Strang",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_Strang",
   [](int partitions)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -189,8 +190,8 @@ m.def(
   },
   nb::arg("partitions"));
 
-m.def(
-  "SplittingStepCoefficients_Parallel",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_Parallel",
   [](int partitions)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -209,8 +210,8 @@ m.def(
   },
   nb::arg("partitions"));
 
-m.def(
-  "SplittingStepCoefficients_SymmetricParallel",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_SymmetricParallel",
   [](int partitions)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -229,8 +230,8 @@ m.def(
   },
   nb::arg("partitions"));
 
-m.def(
-  "SplittingStepCoefficients_ThirdOrderSuzuki",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_ThirdOrderSuzuki",
   [](int partitions)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -249,8 +250,8 @@ m.def(
   },
   nb::arg("partitions"));
 
-m.def(
-  "SplittingStepCoefficients_TripleJump",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_TripleJump",
   [](int partitions, int order)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -270,8 +271,8 @@ m.def(
   },
   nb::arg("partitions"), nb::arg("order"));
 
-m.def(
-  "SplittingStepCoefficients_SuzukiFractal",
+sundials4py::scoped_def(
+  m, "SplittingStepCoefficients_SuzukiFractal",
   [](int partitions, int order)
     -> std::shared_ptr<std::remove_pointer_t<SplittingStepCoefficients>>
   {
@@ -291,11 +292,12 @@ m.def(
   },
   nb::arg("partitions"), nb::arg("order"));
 
-m.def("SplittingStepSetCoefficients", SplittingStepSetCoefficients,
-      nb::arg("arkode_mem"), nb::arg("coefficients"));
+sundials4py::scoped_def(m, "SplittingStepSetCoefficients",
+                        SplittingStepSetCoefficients, nb::arg("arkode_mem"),
+                        nb::arg("coefficients"));
 
-m.def(
-  "SplittingStepGetNumEvolves",
+sundials4py::scoped_def(
+  m, "SplittingStepGetNumEvolves",
   [](void* arkode_mem, int partition) -> std::tuple<int, long>
   {
     auto SplittingStepGetNumEvolves_adapt_modifiable_immutable_to_return =

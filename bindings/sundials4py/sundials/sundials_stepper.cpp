@@ -15,7 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This file is the entrypoint for the Python binding code for the
- * SUNDIALS SUNStepper class. It contains hand-written code 
+ * SUNDIALS SUNStepper class. It contains hand-written code
  * for functions that require special treatment, and includes the
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
@@ -39,8 +39,8 @@ void bind_sunstepper(nb::module_& m)
 
   nb::class_<SUNStepper_>(m, "SUNStepper_");
 
-  m.def(
-    "SUNStepper_SetEvolveFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetEvolveFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperEvolveFn>> fn) -> SUNErrCode
     {
@@ -51,12 +51,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetEvolveFn(stepper, sunstepper_evolve_wrapper);
       }
-      else { return SUNStepper_SetEvolveFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetEvolveFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetOneStepFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetOneStepFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperOneStepFn>> fn) -> SUNErrCode
     {
@@ -67,12 +70,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetOneStepFn(stepper, sunstepper_one_step_wrapper);
       }
-      else { return SUNStepper_SetOneStepFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetOneStepFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetFullRhsFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetFullRhsFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperFullRhsFn>> fn) -> SUNErrCode
     {
@@ -83,12 +89,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetFullRhsFn(stepper, sunstepper_full_rhs_wrapper);
       }
-      else { return SUNStepper_SetFullRhsFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetFullRhsFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetReInitFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetReInitFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperReInitFn>> fn) -> SUNErrCode
     {
@@ -99,12 +108,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetReInitFn(stepper, sunstepper_reinit_wrapper);
       }
-      else { return SUNStepper_SetReInitFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetReInitFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetResetFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetResetFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperResetFn>> fn) -> SUNErrCode
     {
@@ -115,12 +127,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetResetFn(stepper, sunstepper_reset_wrapper);
       }
-      else { return SUNStepper_SetResetFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetResetFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetResetCheckpointIndexFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetResetCheckpointIndexFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperResetCheckpointIndexFn>> fn)
       -> SUNErrCode
@@ -133,12 +148,15 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetResetCheckpointIndexFn(stepper,
                                                     sunstepper_reset_ckpt_idx_wrapper);
       }
-      else { return SUNStepper_SetResetCheckpointIndexFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetResetCheckpointIndexFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetStopTimeFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetStopTimeFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperSetStopTimeFn>> fn) -> SUNErrCode
     {
@@ -150,12 +168,15 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetStopTimeFn(stepper,
                                         sunstepper_set_stop_time_wrapper);
       }
-      else { return SUNStepper_SetStopTimeFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetStopTimeFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetStepDirectionFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetStepDirectionFn",
     [](SUNStepper stepper,
        std::function<std::remove_pointer_t<SUNStepperSetStepDirectionFn>> fn) -> SUNErrCode
     {
@@ -167,12 +188,15 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetStepDirectionFn(stepper,
                                              sunstepper_set_step_direction_wrapper);
       }
-      else { return SUNStepper_SetStepDirectionFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetStepDirectionFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetForcingFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetForcingFn",
     [](SUNStepper stepper, std::function<SUNStepperSetForcingStdFn> fn) -> SUNErrCode
     {
       if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
@@ -182,12 +206,15 @@ void bind_sunstepper(nb::module_& m)
       {
         return SUNStepper_SetForcingFn(stepper, sunstepper_set_forcing_wrapper);
       }
-      else { return SUNStepper_SetForcingFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetForcingFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 
-  m.def(
-    "SUNStepper_SetGetNumStepsFn",
+  sundials4py::scoped_def(
+    m, "SUNStepper_SetGetNumStepsFn",
     [](SUNStepper stepper, std::function<SUNStepperGetNumStepsStdFn> fn) -> SUNErrCode
     {
       if (!stepper->python) { stepper->python = new SUNStepperFunctionTable; }
@@ -198,7 +225,10 @@ void bind_sunstepper(nb::module_& m)
         return SUNStepper_SetGetNumStepsFn(stepper,
                                            sunstepper_get_num_steps_wrapper);
       }
-      else { return SUNStepper_SetGetNumStepsFn(stepper, nullptr); }
+      else
+      {
+        return SUNStepper_SetGetNumStepsFn(stepper, nullptr);
+      }
     },
     nb::arg("stepper"), nb::arg("fn").none());
 }
@@ -206,6 +236,4 @@ void bind_sunstepper(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNStepperFunctionTable_Destroy(void* ptr)
-{
-  delete static_cast<SUNStepperFunctionTable*>(ptr);
-}
+{ delete static_cast<SUNStepperFunctionTable*>(ptr); }

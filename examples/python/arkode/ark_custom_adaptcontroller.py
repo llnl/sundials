@@ -74,6 +74,7 @@ class MyController(CustomSUNHController):
         # Step size safety and error bias factors for an I-controller.
         self.safety = safety
         self.bias = 1.0
+        self.estimate_calls = 0
 
         # The base constructor takes only the context, and must be called after
         # your own state is in place: it makes the object convertible to a native
@@ -94,6 +95,8 @@ class MyController(CustomSUNHController):
         applies its own step size bounds and change ratio limits to whatever you
         return, so the controller does not need to enforce them itself.
         """
+        self.estimate_calls += 1
+
         # Guard the error measure away from zero: an exact step would
         # otherwise ask for an infinite increase.
         e = max(self.bias * dsm, 1.0e-10)
@@ -172,9 +175,13 @@ def main():
     print(f"nst      = {nst:6d}    nst_a   = {nst_a:6d}")
     print(f"nfe      = {nfe:6d}    netf    = {netf:6d}")
 
+    return float(computed), float(problem.solution(t)), controller.estimate_calls
+
 
 def test_ark_custom_adaptcontroller():
-    main()
+    computed, exact, controller_calls = main()
+    assert np.isclose(computed, exact, rtol=1.0e-5, atol=1.0e-7)
+    assert controller_calls > 0
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@
 #include "sundials4py_core_types.hpp"
 
 /* Machinery shared by the custom object families (callback revocation, shutdown
-   safety, override detection, tagged content). */
+   safety, override detection, and content lifetime). */
 #include "sundials4py_custom_object.hpp"
 
 /* The custom object base classes themselves. */

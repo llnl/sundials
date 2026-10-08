@@ -55,6 +55,18 @@ class IncompleteEstimator(CustomSUNDomEigEstimator):
     pass
 
 
+class RejectingEstimator(Estimator):
+    def __init__(self, sunctx):
+        self.reject_next = False
+        super().__init__(sunctx)
+
+    def set_atimes(self, fn):
+        self.atimes = fn
+        if self.reject_next:
+            return SUN_ERR_EXT_FAIL
+        return SUN_SUCCESS
+
+
 def test_custom_domeigestimator_dispatch(sunctx):
     estimator = Estimator(sunctx)
     vector = N_VNew_Serial(1, sunctx)
@@ -93,8 +105,30 @@ def test_custom_domeigestimator_callback_adapters(sunctx, nvec):
     assert calls[-1][0] == pytest.approx(1.25)
 
 
+def test_failed_domeigestimator_callback_update_preserves_previous(sunctx, nvec):
+    estimator = RejectingEstimator(sunctx)
+
+    def first(_, x, y):
+        return 1
+
+    def second(_, x, y):
+        return 2
+
+    assert SUNDomEigEstimator_SetATimes(estimator, first) == SUN_SUCCESS
+    previous = estimator.atimes
+    estimator.reject_next = True
+    assert SUNDomEigEstimator_SetATimes(estimator, second) == SUN_ERR_EXT_FAIL
+    rejected = estimator.atimes
+
+    assert previous(nvec, nvec) == 1
+    with pytest.raises(RuntimeError, match="no longer valid"):
+        rejected(nvec, nvec)
+
+
 def test_custom_domeigestimator_required_method_is_validated(sunctx):
     estimator = IncompleteEstimator(sunctx)
+    with pytest.raises(TypeError, match=r"must override estimate\(\)"):
+        estimator.validate()
     with pytest.raises(TypeError, match="SUNDomEigEstimator_Estimate"):
         SUNDomEigEstimator_Estimate(estimator)
     assert not estimator._is_materialized()

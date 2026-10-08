@@ -31,21 +31,24 @@ namespace nb = nanobind;
 using namespace sundials::experimental;
 
 #define BIND_IDA_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)          \
-  m.def(                                                                \
-    #NAME,                                                              \
+  sundials4py::scoped_def(                                              \
+    m, #NAME,                                                           \
     [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                   \
       auto fn_table    = get_idas_fn_table(ida_mem);                    \
       fn_table->MEMBER = nb::cast(fn);                                  \
       if (fn) { return NAME(ida_mem, WRAPPER); }                        \
-      else { return NAME(ida_mem, nullptr); }                           \
+      else                                                              \
+      {                                                                 \
+        return NAME(ida_mem, nullptr);                                  \
+      }                                                                 \
     },                                                                  \
     __VA_ARGS__)
 
 #define BIND_IDA_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,   \
                            MEMBER2, WRAPPER2, ...)                        \
-  m.def(                                                                  \
-    #NAME,                                                                \
+  sundials4py::scoped_def(                                                \
+    m, #NAME,                                                             \
     [](void* ida_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1, \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                \
     {                                                                     \
@@ -55,27 +58,33 @@ using namespace sundials::experimental;
       if (fn1 && fn2) { return NAME(ida_mem, WRAPPER1, WRAPPER2); }       \
       else if (fn1) { return NAME(ida_mem, WRAPPER1, nullptr); }          \
       else if (fn2) { return NAME(ida_mem, nullptr, WRAPPER2); }          \
-      else { return NAME(ida_mem, nullptr, nullptr); }                    \
+      else                                                                \
+      {                                                                   \
+        return NAME(ida_mem, nullptr, nullptr);                           \
+      }                                                                   \
     },                                                                    \
     __VA_ARGS__)
 
 #define BIND_IDAB_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)                    \
-  m.def(                                                                           \
-    #NAME,                                                                         \
+  sundials4py::scoped_def(                                                         \
+    m, #NAME,                                                                      \
     [](void* ida_mem, int which, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                              \
       void* user_data  = nullptr;                                                  \
       auto fn_table    = get_idas_fn_table(ida_mem, which);                        \
       fn_table->MEMBER = nb::cast(fn);                                             \
       if (fn) { return NAME(ida_mem, which, WRAPPER); }                            \
-      else { return NAME(ida_mem, which, nullptr); }                               \
+      else                                                                         \
+      {                                                                            \
+        return NAME(ida_mem, which, nullptr);                                      \
+      }                                                                            \
     },                                                                             \
     __VA_ARGS__)
 
 #define BIND_IDAB_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2,   \
                             MEMBER2, WRAPPER2, ...)                        \
-  m.def(                                                                   \
-    #NAME,                                                                 \
+  sundials4py::scoped_def(                                                 \
+    m, #NAME,                                                              \
     [](void* ida_mem, int which,                                           \
        std::function<std::remove_pointer_t<FN_TYPE1>> fn1,                 \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
@@ -87,7 +96,10 @@ using namespace sundials::experimental;
       if (fn1 && fn2) { return NAME(ida_mem, which, WRAPPER1, WRAPPER2); } \
       else if (fn1) { return NAME(ida_mem, which, WRAPPER1, nullptr); }    \
       else if (fn2) { return NAME(ida_mem, which, nullptr, WRAPPER2); }    \
-      else { return NAME(ida_mem, which, nullptr, nullptr); }              \
+      else                                                                 \
+      {                                                                    \
+        return NAME(ida_mem, which, nullptr, nullptr);                     \
+      }                                                                    \
     },                                                                     \
     __VA_ARGS__)
 
@@ -97,12 +109,48 @@ void bind_idas(nb::module_& m)
 {
 #include "idas_generated.hpp"
 
+  m.def(
+    "IDASolve",
+    [](void* mem, sunrealtype tout, N_Vector yret, N_Vector ypret, int itask)
+    {
+      CustomExceptionScope scope;
+      sunrealtype tret;
+      int flag = IDASolve(mem, tout, &tret, yret, ypret, itask);
+      scope.rethrow_if_pending();
+      return std::make_tuple(flag, tret);
+    },
+    nb::arg("ida_mem"), nb::arg("tout"), nb::arg("yret"), nb::arg("ypret"),
+    nb::arg("itask"), "Solver function");
+  m.def(
+    "IDASolveF",
+    [](void* mem, sunrealtype tout, N_Vector yret, N_Vector ypret, int itask)
+    {
+      CustomExceptionScope scope;
+      sunrealtype tret;
+      int ncheck;
+      int flag = IDASolveF(mem, tout, &tret, yret, ypret, itask, &ncheck);
+      scope.rethrow_if_pending();
+      return std::make_tuple(flag, tret, ncheck);
+    },
+    nb::arg("ida_mem"), nb::arg("tout"), nb::arg("yret"), nb::arg("ypret"),
+    nb::arg("itask"));
+  m.def(
+    "IDASolveB",
+    [](void* mem, sunrealtype tBout, int itaskB)
+    {
+      CustomExceptionScope scope;
+      int flag = IDASolveB(mem, tBout, itaskB);
+      scope.rethrow_if_pending();
+      return flag;
+    },
+    nb::arg("ida_mem"), nb::arg("tBout"), nb::arg("itaskB"));
+
   nb::class_<IDAView>(m, "IDAView")
     .def("get", nb::overload_cast<>(&IDAView::get, nb::const_),
          nb::rv_policy::reference);
 
-  m.def(
-    "IDASetOptions",
+  sundials4py::scoped_def(
+    m, "IDASetOptions",
     [](void* ida_mem, const std::string& idaid, const std::string& file_name,
        int argc, const std::vector<std::string>& args)
     {
@@ -123,14 +171,13 @@ void bind_idas(nb::module_& m)
     nb::arg("ida_mem"), nb::arg("idaid"), nb::arg("file_name"), nb::arg("argc"),
     nb::arg("args"));
 
-  m.def(
-    "IDACreate",
-    [](SUNContext sunctx)
-    { return std::make_shared<IDAView>(IDACreate(sunctx)); },
-    nb::arg("sunctx"), nb::keep_alive<0, 1>());
+  sundials4py::scoped_def(
+    m, "IDACreate", [](SUNContext sunctx)
+    { return std::make_shared<IDAView>(IDACreate(sunctx)); }, nb::arg("sunctx"),
+    nb::keep_alive<0, 1>());
 
-  m.def(
-    "IDAInit",
+  sundials4py::scoped_def(
+    m, "IDAInit",
     [](void* ida_mem, std::function<std::remove_pointer_t<IDAResFn>> res,
        sunrealtype t0, N_Vector yy0, N_Vector yp0)
     {
@@ -156,8 +203,8 @@ void bind_idas(nb::module_& m)
     nb::arg("ida_mem"), nb::arg("res"), nb::arg("t0"), nb::arg("yy0"),
     nb::arg("yp0"));
 
-  m.def(
-    "IDARootInit",
+  sundials4py::scoped_def(
+    m, "IDARootInit",
     [](void* ida_mem, int nrtfn,
        std::function<std::remove_pointer_t<IDARootStdFn>> fn)
     {
@@ -168,12 +215,15 @@ void bind_idas(nb::module_& m)
         fn_table->rootfn = nb::cast(fn);
         return IDARootInit(ida_mem, nrtfn, idas_rootfn_wrapper);
       }
-      else { return IDARootInit(ida_mem, nrtfn, nullptr); }
+      else
+      {
+        return IDARootInit(ida_mem, nrtfn, nullptr);
+      }
     },
     nb::arg("ida_mem"), nb::arg("nrtfn"), nb::arg("fn").none());
 
-  m.def(
-    "IDAQuadInit",
+  sundials4py::scoped_def(
+    m, "IDAQuadInit",
     [](void* ida_mem, std::function<std::remove_pointer_t<IDAQuadRhsFn>> resQ,
        N_Vector yQ0)
     {
@@ -184,7 +234,10 @@ void bind_idas(nb::module_& m)
         fn_table->resQ = nb::cast(resQ);
         return IDAQuadInit(ida_mem, idas_resQ_wrapper, yQ0);
       }
-      else { return IDAQuadInit(ida_mem, nullptr, yQ0); }
+      else
+      {
+        return IDAQuadInit(ida_mem, nullptr, yQ0);
+      }
     },
     nb::arg("ida_mem"), nb::arg("resQ").none(), nb::arg("yQ0"));
 
@@ -216,8 +269,8 @@ void bind_idas(nb::module_& m)
   // Sensitivity and quadrature sensitivity bindings
   //
 
-  m.def(
-    "IDAQuadSensInit",
+  sundials4py::scoped_def(
+    m, "IDAQuadSensInit",
     [](void* ida_mem, std::function<IDAQuadSensRhsStdFn> resQS,
        std::vector<N_Vector> yQS0)
     {
@@ -228,12 +281,15 @@ void bind_idas(nb::module_& m)
         fn_table->resQS = nb::cast(resQS);
         return IDAQuadSensInit(ida_mem, idas_resQS_wrapper, yQS0.data());
       }
-      else { return IDAQuadSensInit(ida_mem, nullptr, yQS0.data()); }
+      else
+      {
+        return IDAQuadSensInit(ida_mem, nullptr, yQS0.data());
+      }
     },
     nb::arg("ida_mem"), nb::arg("resQS").none(), nb::arg("yQS0"));
 
-  m.def(
-    "IDASensInit",
+  sundials4py::scoped_def(
+    m, "IDASensInit",
     [](void* ida_mem, int Ns, int ism, std::function<IDASensResStdFn> resS,
        std::vector<N_Vector> yS0, std::vector<N_Vector> ypS0)
     {
@@ -256,8 +312,8 @@ void bind_idas(nb::module_& m)
   // IDAS adjoint bindings
   ///
 
-  m.def(
-    "IDAInitB",
+  sundials4py::scoped_def(
+    m, "IDAInitB",
     [](void* ida_mem, int which,
        std::function<std::remove_pointer_t<IDAResFnB>> resB, sunrealtype tB0,
        N_Vector yyB0, N_Vector ypB0)
@@ -284,8 +340,8 @@ void bind_idas(nb::module_& m)
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resB").none(),
     nb::arg("tB0"), nb::arg("yyB0"), nb::arg("ypB0"));
 
-  m.def(
-    "IDAQuadInitB",
+  sundials4py::scoped_def(
+    m, "IDAQuadInitB",
     [](void* ida_mem, int which,
        std::function<std::remove_pointer_t<IDAQuadRhsFnB>> resQB, N_Vector yQBO)
     {
@@ -295,7 +351,10 @@ void bind_idas(nb::module_& m)
         fn_table->resQB = nb::cast(resQB);
         return IDAQuadInitB(ida_mem, which, idas_resQB_wrapper, yQBO);
       }
-      else { return IDAQuadInitB(ida_mem, which, nullptr, yQBO); }
+      else
+      {
+        return IDAQuadInitB(ida_mem, which, nullptr, yQBO);
+      }
     },
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resQB").none(),
     nb::arg("yQBO"));
@@ -316,8 +375,8 @@ void bind_idas(nb::module_& m)
                       nb::arg("ida_mem"), nb::arg("which"),
                       nb::arg("jsetupB").none(), nb::arg("jtimesB").none());
 
-  m.def(
-    "IDAInitBS",
+  sundials4py::scoped_def(
+    m, "IDAInitBS",
     [](void* ida_mem, int which, std::function<IDAResStdFnBS> resBS,
        sunrealtype tB0, N_Vector yyB0, N_Vector ypB0)
     {
@@ -343,8 +402,8 @@ void bind_idas(nb::module_& m)
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resBS").none(),
     nb::arg("tB0"), nb::arg("yyB0"), nb::arg("ypB0"));
 
-  m.def(
-    "IDAQuadInitBS",
+  sundials4py::scoped_def(
+    m, "IDAQuadInitBS",
     [](void* ida_mem, int which, std::function<IDAQuadRhsStdFnBS> resQBS,
        N_Vector yQBO)
     {
@@ -354,7 +413,10 @@ void bind_idas(nb::module_& m)
         fn_table->resQBS = nb::cast(resQBS);
         return IDAQuadInitBS(ida_mem, which, idas_resQBS_wrapper, yQBO);
       }
-      else { return IDAQuadInitBS(ida_mem, which, nullptr, yQBO); }
+      else
+      {
+        return IDAQuadInitBS(ida_mem, which, nullptr, yQBO);
+      }
     },
     nb::arg("ida_mem"), nb::arg("which"), nb::arg("resQBS").none(),
     nb::arg("yQBO"));
@@ -382,6 +444,4 @@ void bind_idas(nb::module_& m)
 
 // The destroy functions gets called in our C code by the integrator destructor
 extern "C" void idas_user_supplied_fn_table_destroy(void* ptr)
-{
-  delete static_cast<idas_user_supplied_fn_table*>(ptr);
-}
+{ delete static_cast<idas_user_supplied_fn_table*>(ptr); }

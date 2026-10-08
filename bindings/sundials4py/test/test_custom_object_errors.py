@@ -111,34 +111,34 @@ def assert_reported(sunctx, errors, operation, exception):
 
 
 def test_status_exception_is_reported_and_python_state_is_cleared(sunctx):
-    # Purpose:
-    # Status exception is reported and python state is cleared.
+    # Contract: Status exception is reported and python state is cleared.
     errors = record_errors(sunctx)
     A = FailingMatrix(sunctx)
 
-    assert SUNMatZero(A) == SUN_ERR_EXT_FAIL
+    with pytest.raises(ValueError, match="matrix zero boom"):
+        SUNMatZero(A)
     assert_reported(sunctx, errors, "CustomSUNMatrix.zero", "ValueError: matrix zero boom")
     assert SUNMatZero(A) == SUN_SUCCESS
 
 
 def test_pointer_exception_is_reported_and_python_state_is_cleared(sunctx):
-    # Purpose:
-    # Pointer exception is reported and python state is cleared.
+    # Contract: Pointer exception is reported and python state is cleared.
     errors = record_errors(sunctx)
     A = FailingMatrix(sunctx)
 
-    assert SUNMatClone(A) is None
+    with pytest.raises(LookupError, match="matrix clone boom"):
+        SUNMatClone(A)
     assert_reported(sunctx, errors, "CustomSUNMatrix.clone", "LookupError: matrix clone boom")
     assert SUNMatClone(A) is not None
 
 
 def test_real_scalar_exception_is_reported_and_python_state_is_cleared(sunctx):
-    # Purpose:
-    # Real scalar exception is reported and python state is cleared.
+    # Contract: Real scalar exception is reported and python state is cleared.
     errors = record_errors(sunctx)
     LS = FailingLinearSolver(sunctx)
 
-    assert SUNLinSolResNorm(LS) == 0.0
+    with pytest.raises(ArithmeticError, match="linear residual norm boom"):
+        SUNLinSolResNorm(LS)
     assert_reported(
         sunctx,
         errors,
@@ -149,14 +149,12 @@ def test_real_scalar_exception_is_reported_and_python_state_is_cleared(sunctx):
 
 
 def test_nonlinear_output_exception_is_reported_and_python_state_is_cleared(sunctx):
-    # Purpose:
-    # Nonlinear output exception is reported and python state is cleared.
+    # Contract: Nonlinear output exception is reported and python state is cleared.
     errors = record_errors(sunctx)
     NLS = FailingNonlinearSolver(sunctx)
 
-    status, value = SUNNonlinSolGetNumIters(NLS)
-    assert status == SUN_ERR_EXT_FAIL
-    assert value == 0
+    with pytest.raises(RuntimeError, match="nonlinear getter boom"):
+        SUNNonlinSolGetNumIters(NLS)
     assert_reported(
         sunctx,
         errors,
@@ -167,14 +165,12 @@ def test_nonlinear_output_exception_is_reported_and_python_state_is_cleared(sunc
 
 
 def test_controller_output_exception_is_reported_and_python_state_is_cleared(sunctx):
-    # Purpose:
-    # Controller output exception is reported and python state is cleared.
+    # Contract: Controller output exception is reported and python state is cleared.
     errors = record_errors(sunctx)
     C = FailingController(sunctx)
 
-    status, hnew = SUNAdaptController_EstimateStep(C, 2.0, 1, 1.0)
-    assert status == SUN_ERR_EXT_FAIL
-    assert hnew == 0.0
+    with pytest.raises(ZeroDivisionError, match="controller estimate boom"):
+        SUNAdaptController_EstimateStep(C, 2.0, 1, 1.0)
     assert_reported(
         sunctx,
         errors,
@@ -185,14 +181,14 @@ def test_controller_output_exception_is_reported_and_python_state_is_cleared(sun
 
 
 def test_error_handler_exception_does_not_cross_the_c_boundary(sunctx):
-    # Purpose:
-    # Error handler exception does not cross the c boundary.
+    # Contract: Error handler exception does not cross the c boundary.
     def failing_handler(line, operation, file, message, code, data, context):
         raise RuntimeError("error handler also failed")
 
     assert SUNContext_PushErrHandler(sunctx, failing_handler) == SUN_SUCCESS
     A = FailingMatrix(sunctx)
 
-    assert SUNMatZero(A) == SUN_ERR_EXT_FAIL
+    with pytest.raises(ValueError, match="matrix zero boom"):
+        SUNMatZero(A)
     assert SUNContext_PeekLastError(sunctx) == SUN_ERR_EXT_FAIL
     assert SUNMatZero(A) == SUN_SUCCESS

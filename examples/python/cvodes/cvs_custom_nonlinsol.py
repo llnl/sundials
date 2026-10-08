@@ -103,6 +103,7 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
 
         # Callable CVODE installs through the setter below.
         self.sys_fn = None
+        self.solve_calls = 0
 
         # ROOTFIND means "solve F(y) = 0", matching the correction equation
         # above.
@@ -137,6 +138,8 @@ class MyNonlinearSolver(CustomSUNNonlinearSolver):
         Return SUN_SUCCESS on convergence, or SUN_NLS_CONV_RECVR for a
         failure the integrator can recover from by shrinking its step.
         """
+        self.solve_calls += 1
+
         # Probe F at three points straddling the current correction guess c0
         # (CVODE always starts this at 0). Since F(c0+u) is exactly
         # A*u^2 + B*u + C for some A, B, C, these three values pin down all
@@ -236,9 +239,13 @@ def main():
     print("\nFinal Statistics..\n")
     print(f"nst      = {nst:6d}    nfe     = {nfe:6d}")
 
+    return float(computed), float(problem.solution(t)), NLS.solve_calls
+
 
 def test_cvs_custom_nonlinsol():
-    main()
+    computed, exact, solver_calls = main()
+    assert np.isclose(computed, exact, rtol=1.0e-5, atol=1.0e-7)
+    assert solver_calls > 0
 
 
 if __name__ == "__main__":

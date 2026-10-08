@@ -35,22 +35,26 @@ auto pyClass_generic_SUNMatrix =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNMatGetID", SUNMatGetID, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatGetID", SUNMatGetID, nb::arg("A"));
 
-m.def("SUNMatZero", SUNMatZero, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatZero", SUNMatZero, nb::arg("A"));
 
-m.def("SUNMatCopy", SUNMatCopy, nb::arg("A"), nb::arg("B"));
+sundials4py::scoped_def(m, "SUNMatCopy", SUNMatCopy, nb::arg("A"), nb::arg("B"));
 
-m.def("SUNMatScaleAdd", SUNMatScaleAdd, nb::arg("c"), nb::arg("A"), nb::arg("B"));
+sundials4py::scoped_def(m, "SUNMatScaleAdd", SUNMatScaleAdd, nb::arg("c"),
+                        nb::arg("A"), nb::arg("B"));
 
-m.def("SUNMatScaleAddI", SUNMatScaleAddI, nb::arg("c"), nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatScaleAddI", SUNMatScaleAddI, nb::arg("c"),
+                        nb::arg("A"));
 
-m.def("SUNMatMatvecSetup", SUNMatMatvecSetup, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatMatvecSetup", SUNMatMatvecSetup, nb::arg("A"));
 
-m.def("SUNMatMatvec", SUNMatMatvec, nb::arg("A"), nb::arg("x"), nb::arg("y"));
+sundials4py::scoped_def(m, "SUNMatMatvec", SUNMatMatvec, nb::arg("A"),
+                        nb::arg("x"), nb::arg("y"));
 
-m.def("SUNMatHermitianTransposeVec", SUNMatHermitianTransposeVec, nb::arg("A"),
-      nb::arg("x"), nb::arg("y"));
+sundials4py::scoped_def(m, "SUNMatHermitianTransposeVec",
+                        SUNMatHermitianTransposeVec, nb::arg("A"), nb::arg("x"),
+                        nb::arg("y"));
 // #ifdef __cplusplus
 //
 // #endif

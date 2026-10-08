@@ -35,15 +35,19 @@ void bind_sunmatrix(nb::module_& m)
   // CustomSUNMatrix is a Python-side base class. Its default methods raise
   // NotImplementedError, while subclasses provide the implementation that the
   // native SUNMatrix vtable calls through sundials4py_types.hpp.
-  nb::class_<CustomSUNMatrix>(m, "CustomSUNMatrix", nb::dynamic_attr())
+  nb::class_<CustomSUNMatrix>(m, "CustomSUNMatrix", nb::dynamic_attr(),
+                              nb::is_weak_referenceable())
     .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>>(),
          nb::arg("sunctx"))
     // This is intentionally private-facing: tests use it to verify that
     // transparent conversion materializes the native handle exactly once.
     .def("_is_materialized", &CustomSUNMatrix::_is_materialized)
+    .def("validate",
+         [](CustomSUNMatrix& self) { self.validate(nb::find(&self)); })
     .def_prop_ro("sunctx", &CustomSUNMatrix::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")
+    .def("is_compatible", [](CustomSUNMatrix&, nb::handle) { return false; })
     .def("clone", [](CustomSUNMatrix&)
          { return CustomSUNMatrix::base_method_status("clone"); })
     .def("zero", [](CustomSUNMatrix&)
@@ -59,17 +63,43 @@ void bind_sunmatrix(nb::module_& m)
     .def("matvecsetup", [](CustomSUNMatrix&)
          { return CustomSUNMatrix::base_method_status("matvecsetup"); })
     .def("hermitian_transpose_matvec",
-         [](CustomSUNMatrix&, nb::object, nb::object) {
+         [](CustomSUNMatrix&, nb::object, nb::object)
+         {
            return CustomSUNMatrix::base_method_status(
              "hermitian_transpose_matvec");
          });
 
-  m.def(
-    "SUNMatClone",
-    [](SUNMatrix A) -> nb::object
+  sundials4py::scoped_def(
+    m, "SUNMatClone",
+    [](nb::handle source) -> nb::object
     {
+      // Avoid creating a native shell for a Python clone that is immediately
+      // converted back into its Python implementation.
+      if (nb::isinstance<CustomSUNMatrix>(source))
+      {
+        try
+        {
+          return CustomSUNMatrix::clone_python(source, "clone");
+        }
+        catch (const std::exception& error)
+        {
+          auto* custom = nb::cast<CustomSUNMatrix*>(source);
+          report_custom_exception(custom->sunctx().get(), "CustomSUNMatrix.clone",
+                                  error, __FILE__, __LINE__);
+          throw;
+        }
+      }
+
+      SUNMatrix A     = nb::cast<SUNMatrix>(source);
       SUNMatrix clone = SUNMatClone(A);
       if (!clone) { return nb::none(); }
+
+      nb::object impl = CustomSUNMatrix::_python_object_for(clone);
+      if (impl.is_valid())
+      {
+        SUNMatDestroy(clone);
+        return impl;
+      }
 
       return nb::cast(
         our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(

@@ -16,7 +16,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This file is the entrypoint for the Python binding code for the
- * SUNDIALS SUNNonlinearSolver class. It contains hand-written code 
+ * SUNDIALS SUNNonlinearSolver class. It contains hand-written code
  * for functions that require special treatment, and includes the
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
@@ -39,11 +39,13 @@ void bind_sunnonlinearsolver(nb::module_& m)
   // operation trampolines; subclasses override only the SUNDIALS operations they
   // support, with solve() validated as mandatory at materialization time.
   nb::class_<CustomSUNNonlinearSolver>(m, "CustomSUNNonlinearSolver",
-                                       nb::dynamic_attr())
-    .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>,
-                  SUNNonlinearSolver_Type>(),
+                                       nb::dynamic_attr(),
+                                       nb::is_weak_referenceable())
+    .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>, int>(),
          nb::arg("sunctx"), nb::arg("solver_type"))
     .def("_is_materialized", &CustomSUNNonlinearSolver::_is_materialized)
+    .def("validate",
+         [](CustomSUNNonlinearSolver& self) { self.validate(nb::find(&self)); })
     .def_prop_ro("sunctx", &CustomSUNNonlinearSolver::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")
@@ -61,7 +63,8 @@ void bind_sunnonlinearsolver(nb::module_& m)
     .def("get_cur_iter", [](CustomSUNNonlinearSolver&)
          { return CustomSUNNonlinearSolver::base_method_int("get_cur_iter"); })
     .def("get_num_conv_fails",
-         [](CustomSUNNonlinearSolver&) {
+         [](CustomSUNNonlinearSolver&)
+         {
            return CustomSUNNonlinearSolver::base_method_int(
              "get_num_conv_fails");
          })
@@ -78,18 +81,21 @@ void bind_sunnonlinearsolver(nb::module_& m)
     .def("set_lsolve_fn", [](CustomSUNNonlinearSolver&, nb::object)
          { return CustomSUNNonlinearSolver::base_method_int("set_lsolve_fn"); })
     .def("set_conv_test_fn",
-         [](CustomSUNNonlinearSolver&, nb::object) {
+         [](CustomSUNNonlinearSolver&, nb::object)
+         {
            return CustomSUNNonlinearSolver::base_method_int("set_conv_test_fn");
          })
     .def("set_norm_fn", [](CustomSUNNonlinearSolver&, nb::object)
          { return CustomSUNNonlinearSolver::base_method_int("set_norm_fn"); })
     .def("set_get_update_norm_fn",
-         [](CustomSUNNonlinearSolver&, nb::object) {
+         [](CustomSUNNonlinearSolver&, nb::object)
+         {
            return CustomSUNNonlinearSolver::base_method_int(
              "set_get_update_norm_fn");
          })
     .def("set_get_conv_rate_fn",
-         [](CustomSUNNonlinearSolver&, nb::object) {
+         [](CustomSUNNonlinearSolver&, nb::object)
+         {
            return CustomSUNNonlinearSolver::base_method_int(
              "set_get_conv_rate_fn");
          })
@@ -99,8 +105,8 @@ void bind_sunnonlinearsolver(nb::module_& m)
 
 #include "sundials_nonlinearsolver_generated.hpp"
 
-  m.def(
-    "SUNNonlinSolSetOptions",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetOptions",
     [](SUNNonlinearSolver self, const std::string& id,
        const std::string& file_name, int argc,
        const std::vector<std::string>& args)
@@ -123,169 +129,337 @@ void bind_sunnonlinearsolver(nb::module_& m)
     nb::arg("self"), nb::arg("id"), nb::arg("file_name"), nb::arg("argc"),
     nb::arg("args"));
 
-  m.def(
-    "SUNNonlinSolSetup",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetup",
     [](SUNNonlinearSolver NLS, N_Vector y)
     {
-      // Announce that a hand-written binding -- not a SUNDIALS package -- is
-      // driving this call, so a custom solver's trampoline records the function
-      // table as direct-binding memory rather than mistaking it for integrator
-      // memory.
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        return nb::cast<int>(
+          impl.attr("setup")(nb::cast(y, nb::rv_policy::reference)));
+      }
       return SUNNonlinSolSetup(NLS, y, sunnonlinearsolver_function_table(NLS));
     },
     nb::arg("NLS"), nb::arg("y"));
 
-  m.def(
-    "SUNNonlinSolSolve",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSolve",
     [](SUNNonlinearSolver NLS, N_Vector y0, N_Vector y, N_Vector w,
        sunrealtype tol, sunbooleantype callLSetup)
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        return nb::cast<int>(impl.attr(
+          "solve")(nb::cast(y0, nb::rv_policy::reference),
+                   nb::cast(y, nb::rv_policy::reference),
+                   nb::cast(w, nb::rv_policy::reference), tol, callLSetup));
+      }
       return SUNNonlinSolSolve(NLS, y0, y, w, tol, callLSetup,
                                sunnonlinearsolver_function_table(NLS));
     },
     nb::arg("NLS"), nb::arg("y0"), nb::arg("y"), nb::arg("w"), nb::arg("tol"),
     nb::arg("callLSetup"));
 
-  m.def(
-    "SUNNonlinSolSetSysFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetSysFn",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> SysFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
-      auto fntable   = sunnonlinearsolver_function_table(NLS);
-      fntable->sysfn = nb::cast(SysFn);
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (SysFn)
+        {
+          adapter = nb::cpp_function([SysFn](N_Vector y, N_Vector F)
+                                     { return SysFn(y, F, nullptr); },
+                                     nb::arg("y"), nb::arg("F"));
+        }
+        return nb::cast<int>(impl.attr("set_sys_fn")(adapter));
+      }
+      auto fntable      = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn = fntable->sysfn;
+      fntable->sysfn    = nb::cast(SysFn);
+      SUNErrCode status;
       if (SysFn)
       {
-        return SUNNonlinSolSetSysFn(NLS, sunnonlinearsolver_sysfn_wrapper);
+        status = SUNNonlinSolSetSysFn(NLS, sunnonlinearsolver_sysfn_wrapper);
       }
-      else { return SUNNonlinSolSetSysFn(NLS, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetSysFn(NLS, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->sysfn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("SysFn").none());
 
-  m.def(
-    "SUNNonlinSolSetSysFns",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetSysFns",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> RootFn,
        std::function<std::remove_pointer_t<SUNNonlinSolSysFn>> FixedPointFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object root        = nb::none();
+        nb::object fixed_point = nb::none();
+        if (RootFn)
+        {
+          root = nb::cpp_function([RootFn](N_Vector y, N_Vector F)
+                                  { return RootFn(y, F, nullptr); },
+                                  nb::arg("y"), nb::arg("F"));
+        }
+        if (FixedPointFn)
+        {
+          fixed_point = nb::cpp_function([FixedPointFn](N_Vector y, N_Vector F)
+                                         { return FixedPointFn(y, F, nullptr); },
+                                         nb::arg("y"), nb::arg("F"));
+        }
+        return nb::cast<int>(impl.attr("set_sys_fns")(root, fixed_point));
+      }
       auto fntable             = sunnonlinearsolver_function_table(NLS);
+      nb::object old_root      = fntable->rootsysfn;
+      nb::object old_fixed     = fntable->fixedpointsysfn;
       fntable->rootsysfn       = nb::cast(RootFn);
       fntable->fixedpointsysfn = nb::cast(FixedPointFn);
-      return SUNNonlinSolSetSysFns(NLS,
-                                   RootFn
-                                     ? static_cast<SUNNonlinSolSysFn>(
+      SUNErrCode status =
+        SUNNonlinSolSetSysFns(NLS,
+                              RootFn ? static_cast<SUNNonlinSolSysFn>(
                                          sunnonlinearsolver_rootsysfn_wrapper)
                                      : nullptr,
-                                   FixedPointFn
-                                     ? static_cast<SUNNonlinSolSysFn>(
-                                         sunnonlinearsolver_fixedpointsysfn_wrapper)
-                                     : nullptr);
+                              FixedPointFn
+                                ? static_cast<SUNNonlinSolSysFn>(
+                                    sunnonlinearsolver_fixedpointsysfn_wrapper)
+                                : nullptr);
+      if (status != SUN_SUCCESS)
+      {
+        fntable->rootsysfn       = std::move(old_root);
+        fntable->fixedpointsysfn = std::move(old_fixed);
+      }
+      return status;
     },
     nb::arg("NLS"), nb::arg("RootFn").none(), nb::arg("FixedPointFn").none());
 
-  m.def(
-    "SUNNonlinSolSetLSetupFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetLSetupFn",
     [](SUNNonlinearSolver NLS,
        std::function<SUNNonlinSolLSetupStdFn> SetupFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (SetupFn)
+        {
+          adapter = nb::cpp_function([SetupFn](sunbooleantype jbad)
+                                     { return SetupFn(jbad, nullptr); },
+                                     nb::arg("jbad"));
+        }
+        return nb::cast<int>(impl.attr("set_lsetup_fn")(adapter));
+      }
       auto fntable      = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn = fntable->lsetupfn;
       fntable->lsetupfn = nb::cast(SetupFn);
+      SUNErrCode status;
       if (SetupFn)
       {
-        return SUNNonlinSolSetLSetupFn(NLS, sunnonlinearsolver_lsetupfn_wrapper);
+        status = SUNNonlinSolSetLSetupFn(NLS,
+                                         sunnonlinearsolver_lsetupfn_wrapper);
       }
-      else { return SUNNonlinSolSetLSetupFn(NLS, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetLSetupFn(NLS, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->lsetupfn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("SetupFn").none());
 
-  m.def(
-    "SUNNonlinSolSetLSolveFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetLSolveFn",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolLSolveFn>> SolveFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (SolveFn)
+        {
+          adapter = nb::cpp_function([SolveFn](N_Vector b)
+                                     { return SolveFn(b, nullptr); },
+                                     nb::arg("b"));
+        }
+        return nb::cast<int>(impl.attr("set_lsolve_fn")(adapter));
+      }
       auto fntable      = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn = fntable->lsolvefn;
       fntable->lsolvefn = nb::cast(SolveFn);
+      SUNErrCode status;
       if (SolveFn)
       {
-        return SUNNonlinSolSetLSolveFn(NLS, sunnonlinearsolver_lsolvefn_wrapper);
+        status = SUNNonlinSolSetLSolveFn(NLS,
+                                         sunnonlinearsolver_lsolvefn_wrapper);
       }
-      else { return SUNNonlinSolSetLSolveFn(NLS, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetLSolveFn(NLS, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->lsolvefn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("SolveFn").none());
 
-  m.def(
-    "SUNNonlinSolSetNormFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetNormFn",
     [](SUNNonlinearSolver NLS,
        std::function<SUNNonlinSolNormStdFn> NormFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
-      auto fntable    = sunnonlinearsolver_function_table(NLS);
-      fntable->normfn = nb::cast(NormFn);
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (NormFn)
+        {
+          adapter = nb::cpp_function([NormFn](N_Vector delta, N_Vector w)
+                                     { return NormFn(delta, w, nullptr); },
+                                     nb::arg("delta"), nb::arg("w"));
+        }
+        return nb::cast<int>(impl.attr("set_norm_fn")(adapter));
+      }
+      auto fntable      = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn = fntable->normfn;
+      fntable->normfn   = nb::cast(NormFn);
+      SUNErrCode status;
       if (NormFn)
       {
-        return SUNNonlinSolSetNormFn(NLS, sunnonlinearsolver_normfn_wrapper,
-                                     fntable);
+        status = SUNNonlinSolSetNormFn(NLS, sunnonlinearsolver_normfn_wrapper,
+                                       fntable);
       }
-      else { return SUNNonlinSolSetNormFn(NLS, nullptr, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetNormFn(NLS, nullptr, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->normfn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("NormFn").none());
 
-  m.def(
-    "SUNNonlinSolSetGetUpdateNormFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetGetUpdateNormFn",
     [](SUNNonlinearSolver NLS,
        std::function<SUNNonlinSolGetUpdateNormStdFn> GetUpdateNormFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (GetUpdateNormFn)
+        {
+          adapter = nb::cpp_function([GetUpdateNormFn]()
+                                     { return GetUpdateNormFn(nullptr); });
+        }
+        return nb::cast<int>(impl.attr("set_get_update_norm_fn")(adapter));
+      }
       auto fntable             = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn        = fntable->getupdatenormfn;
       fntable->getupdatenormfn = nb::cast(GetUpdateNormFn);
+      SUNErrCode status;
       if (GetUpdateNormFn)
       {
-        return SUNNonlinSolSetGetUpdateNormFn(NLS,
-                                              sunnonlinearsolver_getupdatenormfn_wrapper,
-                                              fntable);
+        status =
+          SUNNonlinSolSetGetUpdateNormFn(NLS,
+                                         sunnonlinearsolver_getupdatenormfn_wrapper,
+                                         fntable);
       }
-      else { return SUNNonlinSolSetGetUpdateNormFn(NLS, nullptr, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetGetUpdateNormFn(NLS, nullptr, nullptr);
+      }
+      if (status != SUN_SUCCESS)
+      {
+        fntable->getupdatenormfn = std::move(old_fn);
+      }
+      return status;
     },
     nb::arg("NLS"), nb::arg("GetUpdateNormFn").none());
 
-  m.def(
-    "SUNNonlinSolSetConvTestFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetConvTestFn",
     [](SUNNonlinearSolver NLS,
        std::function<std::remove_pointer_t<SUNNonlinSolConvTestFn>> CTestFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (CTestFn)
+        {
+          adapter = nb::
+            cpp_function([NLS, CTestFn](N_Vector y, N_Vector delta,
+                                        sunrealtype tol, N_Vector ewt)
+                         { return CTestFn(NLS, y, delta, tol, ewt, nullptr); },
+                         nb::arg("y"), nb::arg("delta"), nb::arg("tol"),
+                         nb::arg("ewt"));
+        }
+        return nb::cast<int>(impl.attr("set_conv_test_fn")(adapter));
+      }
       auto fntable        = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn   = fntable->convtestfn;
       fntable->convtestfn = nb::cast(CTestFn);
+      SUNErrCode status;
       if (CTestFn)
       {
-        return SUNNonlinSolSetConvTestFn(NLS,
-                                         sunnonlinearsolver_convtestfn_wrapper,
-                                         fntable);
+        status = SUNNonlinSolSetConvTestFn(NLS,
+                                           sunnonlinearsolver_convtestfn_wrapper,
+                                           fntable);
       }
-      else { return SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->convtestfn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("CTestFn").none());
 
-  m.def(
-    "SUNNonlinSolSetGetConvRateFn",
+  sundials4py::scoped_def(
+    m, "SUNNonlinSolSetGetConvRateFn",
     [](SUNNonlinearSolver NLS,
        std::function<SUNNonlinSolGetConvRateStdFn> GetConvRateFn) -> SUNErrCode
     {
-      DirectBindingScope direct;
+      if (nb::object impl = CustomSUNNonlinearSolver::_python_object_for(NLS);
+          impl.is_valid())
+      {
+        nb::object adapter = nb::none();
+        if (GetConvRateFn)
+        {
+          adapter = nb::cpp_function([GetConvRateFn]()
+                                     { return GetConvRateFn(nullptr); });
+        }
+        return nb::cast<int>(impl.attr("set_get_conv_rate_fn")(adapter));
+      }
       auto fntable           = sunnonlinearsolver_function_table(NLS);
+      nb::object old_fn      = fntable->getconvratefn;
       fntable->getconvratefn = nb::cast(GetConvRateFn);
+      SUNErrCode status;
       if (GetConvRateFn)
       {
-        return SUNNonlinSolSetGetConvRateFn(NLS,
-                                            sunnonlinearsolver_getconvratefn_wrapper,
-                                            fntable);
+        status =
+          SUNNonlinSolSetGetConvRateFn(NLS,
+                                       sunnonlinearsolver_getconvratefn_wrapper,
+                                       fntable);
       }
-      else { return SUNNonlinSolSetGetConvRateFn(NLS, nullptr, nullptr); }
+      else
+      {
+        status = SUNNonlinSolSetGetConvRateFn(NLS, nullptr, nullptr);
+      }
+      if (status != SUN_SUCCESS) { fntable->getconvratefn = std::move(old_fn); }
+      return status;
     },
     nb::arg("NLS"), nb::arg("GetConvRateFn").none());
 }

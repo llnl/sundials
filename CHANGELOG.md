@@ -25,6 +25,19 @@ annotated templates.
 Fixed `SUNMatCopyOps` so it also copies the optional Hermitian-transpose
 matrix-vector operation.
 
+Fixed `SUNMatClone` to return safely when an implementation's clone operation
+fails and returns `NULL`.
+
+Fixed the sundials4py `SUNLinSolSetPreconditioner` binding so setup-only
+preconditioners are retained, the solve callback has the correct type, and
+either callback may be `None`.
+
+Fixed sundials4py generation so
+`SUNDomEigEstimator_SetRhsLinearizationPoint` is exposed.
+
+Fixed leaks of Python callback tables attached to native linear solvers,
+nonlinear solvers, and dominant eigenvalue estimators.
+
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
 

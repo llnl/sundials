@@ -23,8 +23,8 @@ auto pyClassSUNNonlinearSolverContent_Auto_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNNonlinSol_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSol_Auto",
   [](N_Vector y, int m, SUNNonlinSolAutoType initial_solver_type,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
@@ -46,13 +46,15 @@ m.def(
   nb::arg("y"), nb::arg("m"), nb::arg("initial_solver_type"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNNonlinSolSetSwitchingParameters_Auto",
-      SUNNonlinSolSetSwitchingParameters_Auto, nb::arg("NLS"),
-      nb::arg("newt_to_fp_threshold"), nb::arg("newt_to_fp_delay"),
-      nb::arg("fp_to_newt_threshold"), nb::arg("fp_to_newt_delay"));
+sundials4py::scoped_def(m, "SUNNonlinSolSetSwitchingParameters_Auto",
+                        SUNNonlinSolSetSwitchingParameters_Auto, nb::arg("NLS"),
+                        nb::arg("newt_to_fp_threshold"),
+                        nb::arg("newt_to_fp_delay"),
+                        nb::arg("fp_to_newt_threshold"),
+                        nb::arg("fp_to_newt_delay"));
 
-m.def(
-  "SUNNonlinSolGetFixedPointSolver_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetFixedPointSolver_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, SUNNonlinearSolver>
   {
     auto SUNNonlinSolGetFixedPointSolver_Auto_adapt_modifiable_immutable_to_return =
@@ -70,8 +72,8 @@ m.def(
   },
   nb::arg("NLS"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "SUNNonlinSolGetNewtonSolver_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetNewtonSolver_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, SUNNonlinearSolver>
   {
     auto SUNNonlinSolGetNewtonSolver_Auto_adapt_modifiable_immutable_to_return =
@@ -89,12 +91,12 @@ m.def(
   },
   nb::arg("NLS"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def("SUNNonlinSolGetActiveSolverType_Auto",
-      SUNNonlinSolGetActiveSolverType_Auto, nb::arg("NLS"),
-      nb::arg("active_solver_type"));
+sundials4py::scoped_def(m, "SUNNonlinSolGetActiveSolverType_Auto",
+                        SUNNonlinSolGetActiveSolverType_Auto, nb::arg("NLS"),
+                        nb::arg("active_solver_type"));
 
-m.def(
-  "SUNNonlinSolGetSwitchCount_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetSwitchCount_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long>
   {
     auto SUNNonlinSolGetSwitchCount_Auto_adapt_modifiable_immutable_to_return =
@@ -112,8 +114,8 @@ m.def(
   },
   nb::arg("NLS"));
 
-m.def(
-  "SUNNonlinSolGetTotalNumItersByType_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetTotalNumItersByType_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
   {
     auto SUNNonlinSolGetTotalNumItersByType_Auto_adapt_modifiable_immutable_to_return =
@@ -134,8 +136,8 @@ m.def(
   },
   nb::arg("NLS"));
 
-m.def(
-  "SUNNonlinSolGetTotalNumConvFailsByType_Auto",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetTotalNumConvFailsByType_Auto",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long, long>
   {
     auto SUNNonlinSolGetTotalNumConvFailsByType_Auto_adapt_modifiable_immutable_to_return =

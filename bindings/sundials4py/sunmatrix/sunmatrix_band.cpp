@@ -29,8 +29,8 @@ void bind_sunmatrix_band(nb::module_& m)
 {
 #include "sunmatrix_band_generated.hpp"
 
-  m.def(
-    "SUNBandMatrix_Data",
+  sundials4py::scoped_def(
+    m, "SUNBandMatrix_Data",
     [](SUNMatrix A)
     {
       auto ldata = static_cast<size_t>(SUNBandMatrix_LData(A));

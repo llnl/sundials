@@ -33,6 +33,7 @@ import numpy as np
 import pytest
 from fixtures import *
 from sundials4py.core import *
+from sundials4py.test import SUNMat_TestDestroyCloneOnNativeThread
 
 
 class DiagonalMatrix(CustomSUNMatrix):
@@ -75,7 +76,7 @@ class TrackedMatrix(DiagonalMatrix):
         super().__init__(diagonal, sunctx)
 
     def clone(self):
-        cloned = TrackedMatrix(self.diagonal.copy(), self.sunctx, self.clones)
+        cloned = type(self)(self.diagonal.copy(), self.sunctx, self.clones)
         self.clones.append(weakref.ref(cloned))
         return cloned
 
@@ -112,8 +113,7 @@ def collect():
 
 
 def test_failed_materialization_is_transactional_and_retryable(sunctx):
-    # Purpose:
-    # Failed materialization is transactional and retryable.
+    # Contract: Failed materialization is transactional and retryable.
     class Matrix(DiagonalMatrix):
         matvecsetup = FailOnceDescriptor(lambda self: SUN_SUCCESS)
 
@@ -127,8 +127,7 @@ def test_failed_materialization_is_transactional_and_retryable(sunctx):
 
 
 def test_reentrant_materialization_resets_state_and_allows_retry(sunctx):
-    # Purpose:
-    # Reentrant materialization resets state and allows retry.
+    # Contract: Reentrant materialization resets state and allows retry.
     descriptor = FailOnceDescriptor(lambda self: SUN_SUCCESS, reenter=True)
 
     class Matrix(DiagonalMatrix):
@@ -146,8 +145,7 @@ def test_reentrant_materialization_resets_state_and_allows_retry(sunctx):
 
 
 def test_dropping_an_unused_custom_object_releases_its_handle(sunctx):
-    # Purpose:
-    # Dropping an unused custom object releases its handle.
+    # Contract: Dropping an unused custom object releases its handle.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
     assert A._is_materialized()
@@ -161,8 +159,7 @@ def test_dropping_an_unused_custom_object_releases_its_handle(sunctx):
 
 
 def test_retaining_the_python_object_for_the_full_use_period_succeeds(sunctx):
-    # Purpose:
-    # Retaining the python object for the full use period succeeds.
+    # Contract: Retaining the python object for the full use period succeeds.
     # The supported pattern: the Python object outlives every native use of it.
     A = DiagonalMatrix([2.0, 3.0], sunctx)
     x = N_VNew_Serial(2, sunctx)
@@ -178,8 +175,7 @@ def test_retaining_the_python_object_for_the_full_use_period_succeeds(sunctx):
 
 
 def test_unretained_temporary_is_invalid_application_usage(sunctx):
-    # Purpose:
-    # Unretained temporary is invalid application usage.
+    # Contract: Unretained temporary is invalid application usage.
     # DOCUMENTS UNSUPPORTED USAGE. Passing a custom object that nothing retains
     # is safe only for the duration of the call it is passed to: the object is
     # collected as soon as the expression ends, and the native handle dies with
@@ -203,8 +199,7 @@ def test_unretained_temporary_is_invalid_application_usage(sunctx):
 
 
 def test_c_owned_clones_retain_and_release_their_implementation_once(sunctx):
-    # Purpose:
-    # C owned clones retain and release their implementation once.
+    # Contract: C owned clones retain and release their implementation once.
     A = TrackedMatrix([1.0, 2.0], sunctx)
     B = SUNMatClone(A)
 
@@ -223,8 +218,7 @@ def test_c_owned_clones_retain_and_release_their_implementation_once(sunctx):
 
 
 def test_clone_of_a_clone_releases_both_implementations(sunctx):
-    # Purpose:
-    # Clone of a clone releases both implementations.
+    # Contract: Clone of a clone releases both implementations.
     # A chain of C-owned clones must unwind completely; a missed release
     # anywhere in the chain would keep every earlier implementation alive.
     A = TrackedMatrix([1.0, 2.0], sunctx)
@@ -238,8 +232,7 @@ def test_clone_of_a_clone_releases_both_implementations(sunctx):
 
 
 def test_custom_object_keeps_its_context_alive():
-    # Purpose:
-    # Custom object keeps its context alive.
+    # Contract: Custom object keeps its context alive.
     # The context is reached through a shared_ptr stored both on the Python
     # object and in the native content, so dropping the caller's own reference
     # must not invalidate a matrix that is still in use.
@@ -257,8 +250,7 @@ def test_custom_object_keeps_its_context_alive():
 
 
 def test_destruction_from_a_worker_thread(sunctx):
-    # Purpose:
-    # Destruction from a worker thread.
+    # Contract: Destruction from a worker thread.
     # The destructor drops Python references, so it must be run with the GIL
     # held. Creating and destroying the object entirely on a worker thread
     # exercises that path on a thread state other than the main one.
@@ -281,9 +273,15 @@ def test_destruction_from_a_worker_thread(sunctx):
     assert errors == []
 
 
+def test_destruction_from_a_native_thread_clears_strong_owner(sunctx):
+    A = DiagonalMatrix([1.0, 2.0], sunctx)
+    clone_ref = SUNMat_TestDestroyCloneOnNativeThread(A)
+    collect()
+    assert clone_ref() is None
+
+
 def test_custom_linear_solver_handle_is_released_with_its_object(sunctx):
-    # Purpose:
-    # Custom linear solver handle is released with its object.
+    # Contract: Custom linear solver handle is released with its object.
     LS = TrivialLinearSolver(sunctx)
     x = N_VNew_Serial(2, sunctx)
     b = N_VNew_Serial(2, sunctx)
@@ -296,6 +294,53 @@ def test_custom_linear_solver_handle_is_released_with_its_object(sunctx):
     del LS
     collect()
     assert ref() is None
+
+
+class RetainedCallback:
+    def __call__(self, *args):
+        return SUN_SUCCESS
+
+
+def test_native_linear_solver_releases_python_callback_table(sunctx):
+    vector = N_VNew_Serial(1, sunctx)
+    solver = SUNLinSol_SPGMR(vector, SUN_PREC_NONE, 0, sunctx)
+    callback = RetainedCallback()
+    callback_ref = weakref.ref(callback)
+    assert SUNLinSolSetATimes(solver, callback) == SUN_SUCCESS
+    del callback
+    collect()
+    assert callback_ref() is not None
+    del solver
+    collect()
+    assert callback_ref() is None
+
+
+def test_native_nonlinear_solver_releases_python_callback_table(sunctx):
+    vector = N_VNew_Serial(1, sunctx)
+    solver = SUNNonlinSol_Newton(vector, sunctx)
+    callback = RetainedCallback()
+    callback_ref = weakref.ref(callback)
+    assert SUNNonlinSolSetSysFn(solver, callback) == SUN_SUCCESS
+    del callback
+    collect()
+    assert callback_ref() is not None
+    del solver
+    collect()
+    assert callback_ref() is None
+
+
+def test_native_domeig_estimator_releases_python_callback_table(sunctx):
+    vector = N_VNew_Serial(1, sunctx)
+    estimator = SUNDomEigEstimator_Power(vector, 2, 1.0, sunctx)
+    callback = RetainedCallback()
+    callback_ref = weakref.ref(callback)
+    assert SUNDomEigEstimator_SetATimes(estimator, callback) == SUN_SUCCESS
+    del callback
+    collect()
+    assert callback_ref() is not None
+    del estimator
+    collect()
+    assert callback_ref() is None
 
 
 # Run in a subprocess so that the interpreter really does finalize with live
@@ -349,11 +394,11 @@ print("ok")
 
 
 def test_interpreter_finalization_with_live_custom_objects():
-    # Purpose:
-    # Interpreter finalization with live custom objects.
+    # Contract: Interpreter finalization with live custom objects.
     result = subprocess.run(
         [sys.executable, "-c", _FINALIZATION_SCRIPT], capture_output=True, text=True
     )
 
     assert result.returncode == 0, result.stderr
     assert "ok" in result.stdout
+    assert "leaked" not in result.stderr

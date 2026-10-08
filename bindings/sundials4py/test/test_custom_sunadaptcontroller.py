@@ -73,8 +73,7 @@ class IncompleteHController(CustomSUNHController):
 
 
 def test_custom_hcontroller_type_and_estimate(sunctx):
-    # Purpose:
-    # Custom hcontroller type and estimate.
+    # Contract: Custom hcontroller type and estimate.
     C = HController(sunctx)
 
     assert not C._is_materialized()
@@ -88,9 +87,11 @@ def test_custom_hcontroller_type_and_estimate(sunctx):
 
 
 def test_custom_hcontroller_required_method_is_validated(sunctx):
-    # Purpose:
-    # Custom hcontroller required method is validated.
+    # Contract: Custom hcontroller required method is validated.
     C = IncompleteHController(sunctx)
+
+    with pytest.raises(TypeError, match=r"must override estimate_step\(\)"):
+        C.validate()
 
     with pytest.raises(TypeError, match="SUNAdaptController_GetType"):
         SUNAdaptController_GetType(C)
@@ -99,8 +100,7 @@ def test_custom_hcontroller_required_method_is_validated(sunctx):
 
 
 def test_custom_hcontroller_optional_methods(sunctx):
-    # Purpose:
-    # Custom hcontroller optional methods.
+    # Contract: Custom hcontroller optional methods.
     C = HController(sunctx)
 
     assert SUNAdaptController_Reset(C) == SUN_SUCCESS
@@ -115,8 +115,7 @@ def test_custom_hcontroller_optional_methods(sunctx):
 
 
 def test_custom_mricontroller_type_estimate_and_optional_update(sunctx):
-    # Purpose:
-    # Custom mricontroller type estimate and optional update.
+    # Contract: Custom mricontroller type estimate and optional update.
     C = MRIController(sunctx)
 
     assert SUNAdaptController_GetType(C) == SUN_ADAPTCONTROLLER_MRI_H_TOL
@@ -130,8 +129,7 @@ def test_custom_mricontroller_type_estimate_and_optional_update(sunctx):
 
 
 def test_native_sunadaptcontroller_conversion_still_works(sunctx):
-    # Purpose:
-    # Native sunadaptcontroller conversion still works.
+    # Contract: Native sunadaptcontroller conversion still works.
     C = SUNAdaptController_Soderlind(sunctx)
 
     assert SUNAdaptController_GetType(C) == SUN_ADAPTCONTROLLER_H

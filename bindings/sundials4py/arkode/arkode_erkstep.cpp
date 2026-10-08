@@ -53,8 +53,8 @@ void bind_arkode_erkstep(nb::module_& m)
   // ERKStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "ERKStepCreate",
+  sundials4py::scoped_def(
+    m, "ERKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
@@ -87,8 +87,8 @@ void bind_arkode_erkstep(nb::module_& m)
     nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
     nb::keep_alive<0, 4>());
 
-  m.def(
-    "ERKStepCreateAdjointStepper",
+  sundials4py::scoped_def(
+    m, "ERKStepCreateAdjointStepper",
     [](void* arkode_mem,
        std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_f, sunrealtype tf,
        N_Vector sf, SUNContext sunctx) -> std::tuple<int, SUNAdjointStepper>
@@ -96,9 +96,9 @@ void bind_arkode_erkstep(nb::module_& m)
       if (!adj_f) { throw sundials4py::illegal_value("adj_f was null"); }
 
       SUNAdjointStepper adj_stepper = nullptr;
-      int ark_status                = ERKStepCreateAdjointStepper(arkode_mem,
-                                                                  erkstep_adjf_wrapper, tf, sf,
-                                                                  sunctx, &adj_stepper);
+      int ark_status = ERKStepCreateAdjointStepper(arkode_mem,
+                                                   erkstep_adjf_wrapper, tf, sf,
+                                                   sunctx, &adj_stepper);
       if (ark_status != ARK_SUCCESS)
       {
         throw sundials4py::error_returned("Failed to create adjoint stepper");

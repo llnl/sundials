@@ -10,8 +10,8 @@ auto pyClass_SUNLinearSolverContent_SPBCGS =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNLinSol_SPBCGS",
+sundials4py::scoped_def(
+  m, "SUNLinSol_SPBCGS",
   [](N_Vector y, int pretype, int maxl,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>>
   {
@@ -31,11 +31,12 @@ m.def(
   nb::arg("y"), nb::arg("pretype"), nb::arg("maxl"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNLinSol_SPBCGSSetPrecType", SUNLinSol_SPBCGSSetPrecType, nb::arg("S"),
-      nb::arg("pretype"));
+sundials4py::scoped_def(m, "SUNLinSol_SPBCGSSetPrecType",
+                        SUNLinSol_SPBCGSSetPrecType, nb::arg("S"),
+                        nb::arg("pretype"));
 
-m.def("SUNLinSol_SPBCGSSetMaxl", SUNLinSol_SPBCGSSetMaxl, nb::arg("S"),
-      nb::arg("maxl"));
+sundials4py::scoped_def(m, "SUNLinSol_SPBCGSSetMaxl", SUNLinSol_SPBCGSSetMaxl,
+                        nb::arg("S"), nb::arg("maxl"));
 // #ifdef __cplusplus
 //
 // #endif

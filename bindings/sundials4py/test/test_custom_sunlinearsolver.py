@@ -16,12 +16,13 @@
 # -----------------------------------------------------------------
 
 import gc
-import sys
+import weakref
 
 import pytest
 from fixtures import *
 from numpy.testing import assert_allclose
 from sundials4py.core import *
+from test_custom_nvector import ArrayVector
 
 
 class CopyLinearSolver(CustomSUNLinearSolver):
@@ -96,6 +97,18 @@ class CallbackLinearSolver(CopyLinearSolver):
         return SUN_SUCCESS
 
 
+class RejectingCallbackLinearSolver(CallbackLinearSolver):
+    def __init__(self, sunctx):
+        self.reject_next = False
+        super().__init__(sunctx)
+
+    def set_atimes(self, atimes):
+        self.atimes = atimes
+        if self.reject_next:
+            return SUN_ERR_EXT_FAIL
+        return SUN_SUCCESS
+
+
 class IncompleteLinearSolver(CustomSUNLinearSolver):
     # Omitting solve() exercises the required-method validation path.
     def __init__(self, sunctx):
@@ -105,23 +118,19 @@ class IncompleteLinearSolver(CustomSUNLinearSolver):
 class ResidualLinearSolver(CopyLinearSolver):
     def __init__(self, sunctx):
         self.residual_refs = []
+        self.residual_finalized = []
         super().__init__(sunctx)
 
     def resid(self):
-        residual = N_VNew_Serial(1, self.sunctx)
-        self.residual_refs.append(residual)
+        residual = ArrayVector([0.0], self.sunctx)
+        index = len(self.residual_refs)
+        weakref.finalize(residual, self.residual_finalized.append, index)
+        self.residual_refs.append(weakref.ref(residual))
         return residual
 
 
-def refcount(obj):
-    # Keep pytest's assertion rewriting from retaining the object expression
-    # while sys.getrefcount() measures it.
-    return sys.getrefcount(obj)
-
-
 def test_custom_sunlinearsolver_type_id_and_lazy_materialization(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver type id and lazy materialization.
+    # Contract: Custom sunlinearsolver type id and lazy materialization.
     LS = CopyLinearSolver(sunctx, SUNLINEARSOLVER_MATRIX_ITERATIVE)
 
     assert not LS._is_materialized()
@@ -131,9 +140,11 @@ def test_custom_sunlinearsolver_type_id_and_lazy_materialization(sunctx):
 
 
 def test_custom_sunlinearsolver_required_solve_is_validated(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver required solve is validated.
+    # Contract: Custom sunlinearsolver required solve is validated.
     LS = IncompleteLinearSolver(sunctx)
+
+    with pytest.raises(TypeError, match=r"must override solve\(\)"):
+        LS.validate()
 
     with pytest.raises(TypeError, match="SUNLinSolGetType"):
         SUNLinSolGetType(LS)
@@ -142,8 +153,7 @@ def test_custom_sunlinearsolver_required_solve_is_validated(sunctx):
 
 
 def test_custom_sunlinearsolver_initialize_setup_and_solve(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver initialize setup and solve.
+    # Contract: Custom sunlinearsolver initialize setup and solve.
     LS = CopyLinearSolver(sunctx)
     x = N_VNew_Serial(2, sunctx)
     b = N_VNew_Serial(2, sunctx)
@@ -163,8 +173,7 @@ def test_custom_sunlinearsolver_initialize_setup_and_solve(sunctx):
 
 
 def test_custom_sunlinearsolver_optional_methods(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver optional methods.
+    # Contract: Custom sunlinearsolver optional methods.
     LS = CopyLinearSolver(sunctx)
     s1 = N_VNew_Serial(2, sunctx)
     s2 = N_VNew_Serial(2, sunctx)
@@ -182,8 +191,7 @@ def test_custom_sunlinearsolver_optional_methods(sunctx):
 
 
 def test_custom_sunlinearsolver_set_atimes_receives_python_adapter(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver set atimes receives python adapter.
+    # Contract: Custom sunlinearsolver set atimes receives python adapter.
     LS = CallbackLinearSolver(sunctx)
     x = N_VNew_Serial(2, sunctx)
     y = N_VNew_Serial(2, sunctx)
@@ -207,8 +215,7 @@ def test_custom_sunlinearsolver_set_atimes_receives_python_adapter(sunctx):
 
 
 def test_custom_sunlinearsolver_atimes_adapters_are_revoked(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver atimes adapters are revoked.
+    # Contract: Custom sunlinearsolver atimes adapters are revoked.
     LS = CallbackLinearSolver(sunctx)
     x = N_VNew_Serial(1, sunctx)
     y = N_VNew_Serial(1, sunctx)
@@ -232,9 +239,30 @@ def test_custom_sunlinearsolver_atimes_adapters_are_revoked(sunctx):
         current(x, y)
 
 
+def test_failed_callback_update_preserves_previous_adapter(sunctx):
+    LS = RejectingCallbackLinearSolver(sunctx)
+    x = N_VNew_Serial(1, sunctx)
+    y = N_VNew_Serial(1, sunctx)
+
+    def first(_, x, y):
+        return 1
+
+    def second(_, x, y):
+        return 2
+
+    assert SUNLinSolSetATimes(LS, first) == SUN_SUCCESS
+    previous = LS.atimes
+    LS.reject_next = True
+    assert SUNLinSolSetATimes(LS, second) == SUN_ERR_EXT_FAIL
+    rejected = LS.atimes
+
+    assert previous(x, y) == 1
+    with pytest.raises(RuntimeError, match="no longer valid"):
+        rejected(x, y)
+
+
 def test_custom_sunlinearsolver_set_preconditioner_receives_python_adapters(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver set preconditioner receives python adapters.
+    # Contract: Custom sunlinearsolver set preconditioner receives python adapters.
     LS = CallbackLinearSolver(sunctx)
     r = N_VNew_Serial(2, sunctx)
     z = N_VNew_Serial(2, sunctx)
@@ -264,8 +292,7 @@ def test_custom_sunlinearsolver_set_preconditioner_receives_python_adapters(sunc
 @pytest.mark.parametrize("with_setup", [False, True])
 @pytest.mark.parametrize("with_solve", [False, True])
 def test_custom_sunlinearsolver_preconditioner_nullability(sunctx, with_setup, with_solve):
-    # Purpose:
-    # Custom sunlinearsolver preconditioner nullability.
+    # Contract: Custom sunlinearsolver preconditioner nullability.
     LS = CallbackLinearSolver(sunctx)
 
     def psetup(_):
@@ -285,8 +312,7 @@ def test_custom_sunlinearsolver_preconditioner_nullability(sunctx, with_setup, w
 
 
 def test_custom_sunlinearsolver_preconditioner_adapters_are_revoked(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver preconditioner adapters are revoked.
+    # Contract: Custom sunlinearsolver preconditioner adapters are revoked.
     LS = CallbackLinearSolver(sunctx)
     r = N_VNew_Serial(1, sunctx)
     z = N_VNew_Serial(1, sunctx)
@@ -314,34 +340,39 @@ def test_custom_sunlinearsolver_preconditioner_adapters_are_revoked(sunctx):
 
 
 def test_custom_sunlinearsolver_resid_retains_and_replaces_owner(sunctx):
-    # Purpose:
-    # Custom sunlinearsolver resid retains and replaces owner.
+    # Contract: Custom sunlinearsolver resid retains and replaces owner.
     LS = ResidualLinearSolver(sunctx)
 
     first = SUNLinSolResid(LS)
     del first
     gc.collect()
-    first_owned_count = refcount(LS.residual_refs[0])
+    assert LS.residual_refs[0]() is not None
+    assert LS.residual_finalized == []
 
     second = SUNLinSolResid(LS)
     del second
     gc.collect()
-    first_released_count = refcount(LS.residual_refs[0])
-    assert first_released_count == first_owned_count - 1
-    second_owned_count = refcount(LS.residual_refs[1])
+    assert LS.residual_refs[0]() is None
+    assert LS.residual_refs[1]() is not None
+    assert LS.residual_finalized == [0]
 
     refs = LS.residual_refs
+    finalized = LS.residual_finalized
     del LS
     gc.collect()
-    second_released_count = refcount(refs[1])
-    assert second_released_count == second_owned_count - 1
+    assert refs[1]() is None
+    assert finalized == [0, 1]
 
 
 def test_native_sunlinearsolver_conversion_still_works(sunctx):
-    # Purpose:
-    # Native sunlinearsolver conversion still works.
+    # Contract: Native sunlinearsolver conversion still works.
     x = N_VNew_Serial(2, sunctx)
     LS = SUNLinSol_PCG(x, SUN_PREC_NONE, 0, sunctx)
 
     assert SUNLinSolGetID(LS) == SUNLINEARSOLVER_PCG
     assert SUNLinSolSetup(LS, None) == SUN_SUCCESS
+
+
+def test_custom_sunlinearsolver_rejects_invalid_type(sunctx):
+    with pytest.raises(ValueError, match="invalid SUNLinearSolver_Type"):
+        CopyLinearSolver(sunctx, -1)

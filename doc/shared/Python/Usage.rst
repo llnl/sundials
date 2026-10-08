@@ -448,7 +448,8 @@ to any SUNDIALS package exactly as a C implementation would be:
      - ``zero``
    * - ``CustomNVector``
      - :c:type:`N_Vector`
-     - ``clone``
+     - ``clone``, ``get_length``, and the standard arithmetic, reduction, and
+       test operations listed below
    * - ``CustomSUNLinearSolver``
      - :c:type:`SUNLinearSolver`
      - ``solve``
@@ -497,8 +498,6 @@ the two solver families:
    class MyMatrix(CustomSUNMatrix):
        def __init__(self, n, sunctx):
            self.data = np.zeros((n, n))
-           # Call the base constructor LAST: it makes the object convertible to
-           # a native handle, so the operations below must be ready to run.
            super().__init__(sunctx)
 
        def zero(self):
@@ -519,12 +518,12 @@ no explicit conversion step:
    status = KINSetLinearSolver(kin.get(), LS, A)
 
 The required operations listed in the table above are validated when the native
-handle is created, not at construction time, so constructing an incomplete
-subclass succeeds and the first SUNDIALS function it is passed to raises
-``TypeError`` instead. The message is the usual nanobind argument-conversion
-error, which reports the function that rejected the object but not the reason,
-so a ``TypeError`` naming a function that was given a subclass of one of these
-classes almost always means a required operation is missing.
+handle is created, not at construction time. Call ``obj.validate()`` after
+construction to check the class eagerly and receive a precise ``TypeError``
+naming every missing operation. If validation is deferred until the object is
+passed to SUNDIALS, nanobind may instead report a generic argument-conversion
+``TypeError`` while the detailed reason is sent to the ``SUNContext`` error
+handler.
 
 Every other operation of the interface is optional, and is detected by
 inspecting the subclass rather than by any registration step: overriding a
@@ -555,15 +554,22 @@ conventions described in :ref:`Python.Usage.Differences`:
   subclass when the native handle is borrowed. For example, a linear solver's
   ``setup(A)`` can access attributes on a ``CustomSUNMatrix`` directly.
 
+* Native ``N_Vector`` and ``SUNMatrix`` arguments are borrowed, non-owning
+  views and are guaranteed to remain valid only for the duration of the method
+  call. Operations documented as retaining an argument, such as scaling-vector
+  and dominant-eigenvalue-estimator initial-guess setters, retain its Python
+  owner until the object is reconfigured or destroyed.
+
 .. warning::
 
-   Do not raise an exception to report a recoverable failure. An exception that
-   escapes one of these methods is converted to the SUNDIALS error code
-   ``SUN_ERR_EXT_FAIL``, which is unrecoverable, and its type, message, and
-   traceback are reported through the object's :c:type:`SUNContext`. Return a
-   positive status code instead: a singular matrix or a nonconverged iteration
-   reported that way lets the calling package retry with a smaller step,
-   whereas an exception aborts the integration.
+   Do not raise an exception to report a recoverable failure. For an operation
+   returning a status code, an exception is converted to
+   ``SUN_ERR_EXT_FAIL``. Void and scalar operations cannot directly report a
+   failure. In every case, an exception raised while a solver is running is
+   re-raised, with its original type and message, from the enclosing
+   sundials4py call. Results computed after the failure are not
+   meaningful. Return a positive status code for recoverable failures such as a
+   singular matrix or a nonconverged iteration.
 
 The lifetime rules in :ref:`Python.Usage.Differences.Lifetimes` apply to these
 objects: the native handle holds only a weak reference back to the Python
@@ -571,7 +577,22 @@ object, so the application must keep the Python object alive for as long as
 SUNDIALS may use it. The one exception is a handle that SUNDIALS creates and
 owns itself; those hold a strong
 reference, so a cloned matrix or vector keeps its Python implementation alive
-until SUNDIALS destroys it.
+until SUNDIALS destroys it. These native strong references are invisible to
+Python's cyclic garbage collector; avoid making a clone implementation retain a
+wrapper for its own native shell.
+
+Custom object instances are not safe for concurrent use. In particular, using
+one custom nonlinear solver from two threads at once raises ``RuntimeError``
+instead of allowing its active package-memory pointer to be replaced.
+
+Custom operations cross the C++/Python boundary once per call. The committed
+benchmark in ``bindings/sundials4py/test/bench_custom_objects.py`` measures
+this cost for the current Python and platform; the no-argument dispatch case
+measured approximately 0.26 microseconds with CPython 3.14.7 on Apple arm64.
+For vectors of length 10 and 1000, operations with operands measured roughly
+1.0--1.5 microseconds of overhead because they also pay for argument conversion
+and type checks. Keep fine-grained numerical loops inside NumPy, SciPy, or
+another compiled array library so this fixed cost is amortized by useful work.
 
 
 .. _Python.Usage.CustomObjects.NVector:
@@ -579,12 +600,19 @@ until SUNDIALS destroys it.
 CustomNVector
 ^^^^^^^^^^^^^
 
-``CustomNVector(sunctx)`` implements the :c:type:`N_Vector` class. ``clone`` is
-universally required. Override the remaining operations required by the
-consuming package; the package-specific N_Vector chapters list those
-requirements. The standard vector operations are always installed in the
-native operation table so that a missing Python override reports an exception
-instead of dereferencing a null function pointer.
+``CustomNVector(sunctx)`` implements the :c:type:`N_Vector` class. Every custom
+vector must implement ``clone``, ``get_length``, ``linear_sum``, ``const``,
+``prod``, ``div``, ``scale``, ``abs``, ``inv``, ``add_const``, ``dot_prod``,
+``max_norm``, ``wrms_norm``, ``wrms_norm_mask``, ``min``, ``wl2_norm``,
+``l1_norm``, ``compare``, ``inv_test``, ``constr_mask``, and
+``min_quotient``. Materialization rejects an incomplete implementation and
+lists every missing operation.
+
+Operands must have the same concrete Python type. Implement
+``is_compatible(other)`` to explicitly allow an interoperable vector type.
+Every vector supplied to a package alongside a custom vector -- including
+tolerances, ``id``, constraints, and scaling vectors -- must have the same
+Python type, or be accepted by ``is_compatible()``.
 
 The method names are the C operation names in snake case without the ``N_V``
 prefix. Output vectors are represented by ``self``. For example,
@@ -593,8 +621,7 @@ prefix. Output vectors are represented by ``self``. For example,
 ``dot_prod(y)``, ``max_norm()``, and ``wrms_norm(w)`` return a scalar;
 ``inv_test(x)`` and ``constr_mask(c, m)`` return a ``sunbooleantype``.
 
-``get_length()`` and the standard arithmetic and reduction methods are needed
-by most integrators. ``clone_empty()``, ``get_local_length()``,
+``clone_empty()``, ``get_local_length()``,
 ``get_array_pointer()``, ``get_device_array_pointer()``, their corresponding
 setters, ``get_communicator()``, and ``space()`` are optional. When omitted,
 ``clone_empty`` falls back to ``clone`` and ``get_local_length`` falls back to
@@ -684,11 +711,14 @@ CustomSUNLinearSolver
 
 ``CustomSUNLinearSolver(sunctx, solver_type)`` implements the
 :c:type:`SUNLinearSolver` class. ``solver_type`` is one of
-``SUNLINEARSOLVER_DIRECT``, ``SUNLINEARSOLVER_ITERATIVE``, or
-``SUNLINEARSOLVER_MATRIX_ITERATIVE``, and tells the calling package how to use
-the solver: a direct solver is asked for an exact solve and its ``tol``
-argument is ignored, while an iterative solver is expected to honor ``tol`` and
-to report ``num_iters`` and ``res_norm``.
+``SUNLINEARSOLVER_DIRECT``, ``SUNLINEARSOLVER_ITERATIVE``,
+``SUNLINEARSOLVER_MATRIX_ITERATIVE``, or
+``SUNLINEARSOLVER_MATRIX_EMBEDDED``, and tells the calling package how to use
+the solver. ``SUNLINEARSOLVER_MATRIX_EMBEDDED`` is for a solver that manages
+its own matrix; packages pass ``A = None`` for this type. A direct solver is
+asked for an exact solve and its ``tol`` argument is ignored, while an
+iterative solver is expected to honor ``tol`` and to report ``num_iters`` and
+``res_norm``.
 
 Only ``solve`` is required.
 
@@ -812,10 +842,10 @@ ordinary Python callable. Store the callables and use them from ``setup`` or
      - ``lsolve_fn(b)`` solves the Newton linear system in place, overwriting
        ``b`` with the solution.
    * - ``set_conv_test_fn(conv_test_fn)``
-     - ``conv_test_fn(y, del, tol, ewt)`` returns ``SUN_SUCCESS`` when
+     - ``conv_test_fn(y, delta, tol, ewt)`` returns ``SUN_SUCCESS`` when
        converged, ``SUN_NLS_CONTINUE`` to keep iterating, or a failure code.
    * - ``set_norm_fn(norm_fn)``
-     - ``norm_fn(del, ewt)`` returns ``(status, norm)``.
+     - ``norm_fn(delta, ewt)`` returns ``(status, norm)``.
    * - ``set_get_update_norm_fn(fn)``
      - ``fn()`` returns ``(status, norm)`` for the last update.
    * - ``set_get_conv_rate_fn(fn)``
@@ -825,16 +855,29 @@ ordinary Python callable. Store the callables and use them from ``setup`` or
 
    The callables received from ``set_sys_fn``, ``set_sys_fns``,
    ``set_lsetup_fn``, and ``set_lsolve_fn`` are valid **only while SUNDIALS is
-   inside your** ``setup()`` **or** ``solve()``. These four callbacks take an
-   opaque memory pointer that the calling package supplies on entry, so outside
-   such a call there is no pointer to pass through; invoking one then raises
-   ``RuntimeError`` rather than using a stale pointer. The callables from the
-   remaining setters carry their own data and may be called at any time.
+   inside your** ``setup()`` **or** ``solve()`` when a SUNDIALS package installs
+   them. These callbacks use an opaque memory pointer supplied by the package;
+   invoking one outside that scope raises ``RuntimeError``. When the Python
+   ``SUNNonlinSolSet*`` bindings install them directly, no package memory is
+   needed and they remain ordinary Python callables. The callables from the
+   remaining setters carry their own data and may be called while the
+   integrator that installed them is alive; they are revoked when replaced or
+   when this solver is destroyed, but not when the integrator is freed.
 
-   Installing a callback also revokes the callable previously installed in that
-   slot, matching the semantics of the C setters. A revoked callable raises
-   ``RuntimeError`` instead of dispatching through a function pointer SUNDIALS
-   has already replaced.
+   Installing a native callback also revokes the callable previously installed
+   in that slot, matching the semantics of the C setters. A revoked callable
+   raises ``RuntimeError`` instead of dispatching through a function pointer
+   SUNDIALS has already replaced. Direct Python-to-Python nonlinear-solver
+   adapters own their callable and therefore remain safe after replacement.
+
+The same lifetime limitation applies to ``CustomSUNLinearSolver``
+``set_atimes`` and ``set_preconditioner`` adapters: they remain valid while the
+integrator that installed them is alive, and are revoked when replaced or when
+the solver is destroyed, but not when the integrator is freed.
+
+When a Python-implemented nonlinear solver is called directly from Python, its
+``solve`` method is invoked through the short-circuit path and exceptions are
+raised directly rather than converted to ``SUN_ERR_EXT_FAIL``.
 
 
 .. _Python.Usage.CustomObjects.SUNAdaptController:

@@ -33,8 +33,8 @@ void bind_arkode_forcingstep(nb::module_& m)
 {
 #include "arkode_forcingstep_generated.hpp"
 
-  m.def(
-    "ForcingStepCreate",
+  sundials4py::scoped_def(
+    m, "ForcingStepCreate",
     [](SUNStepper stepper1, SUNStepper stepper2, sunrealtype t0, N_Vector y0,
        SUNContext sunctx)
     {

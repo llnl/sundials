@@ -36,6 +36,13 @@ struct SUNDomEigEstimatorFunctionTable
   nb::object deerhs;
 };
 
+inline SUNDomEigEstimatorFunctionTable* domeigestimator_function_table(
+  SUNDomEigEstimator dee)
+{
+  if (!dee->python) { dee->python = new SUNDomEigEstimatorFunctionTable; }
+  return static_cast<SUNDomEigEstimatorFunctionTable*>(dee->python);
+}
+
 template<typename... Args>
 SUNErrCode sundomeigestimator_atimes_wrapper(Args... args)
 {

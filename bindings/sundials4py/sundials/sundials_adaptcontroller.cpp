@@ -36,18 +36,23 @@ void bind_sunadaptcontroller(nb::module_& m)
   // The shared base class owns the lazy native-handle machinery. The concrete
   // H and MRI subclasses below select the required estimate callback shape.
   nb::class_<CustomSUNAdaptController>(m, "CustomSUNAdaptController",
-                                       nb::dynamic_attr())
+                                       nb::dynamic_attr(),
+                                       nb::is_weak_referenceable())
     .def("_is_materialized", &CustomSUNAdaptController::_is_materialized)
+    .def("validate",
+         [](CustomSUNAdaptController& self) { self.validate(nb::find(&self)); })
     .def_prop_ro("sunctx", &CustomSUNAdaptController::sunctx,
                  nb::sig("def sunctx(self) -> object"),
                  "The SUNDIALS context owned by this object.")
     .def("estimate_step",
-         [](CustomSUNAdaptController&, sunrealtype, int, sunrealtype) {
+         [](CustomSUNAdaptController&, sunrealtype, int, sunrealtype)
+         {
            return CustomSUNAdaptController::base_method_status("estimate_step");
          })
     .def("estimate_step_tol",
          [](CustomSUNAdaptController&, sunrealtype, sunrealtype, int,
-            sunrealtype, sunrealtype) {
+            sunrealtype, sunrealtype)
+         {
            return CustomSUNAdaptController::base_method_status(
              "estimate_step_tol");
          })
@@ -56,7 +61,8 @@ void bind_sunadaptcontroller(nb::module_& m)
     .def("set_defaults", [](CustomSUNAdaptController&)
          { return CustomSUNAdaptController::base_method_status("set_defaults"); })
     .def("set_error_bias",
-         [](CustomSUNAdaptController&, sunrealtype) {
+         [](CustomSUNAdaptController&, sunrealtype)
+         {
            return CustomSUNAdaptController::base_method_status(
              "set_error_bias");
          })
@@ -64,7 +70,8 @@ void bind_sunadaptcontroller(nb::module_& m)
          { return CustomSUNAdaptController::base_method_status("update_h"); })
     .def("update_mri_h_tol",
          [](CustomSUNAdaptController&, sunrealtype, sunrealtype, sunrealtype,
-            sunrealtype) {
+            sunrealtype)
+         {
            return CustomSUNAdaptController::base_method_status(
              "update_mri_h_tol");
          });
@@ -81,8 +88,8 @@ void bind_sunadaptcontroller(nb::module_& m)
 
 #include "sundials_adaptcontroller_generated.hpp"
 
-  m.def(
-    "SUNAdaptController_SetOptions",
+  sundials4py::scoped_def(
+    m, "SUNAdaptController_SetOptions",
     [](SUNAdaptController self, const std::string& id,
        const std::string& file_name, int argc,
        const std::vector<std::string>& args)

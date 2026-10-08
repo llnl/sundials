@@ -20,6 +20,7 @@ import pytest
 from fixtures import *
 from numpy.testing import assert_allclose
 from sundials4py.core import *
+from sundials4py.test import SUNMat_TestHandleAddress, SUNMat_TestStrongClone
 
 
 class DiagonalMatrix(CustomSUNMatrix):
@@ -57,6 +58,39 @@ class DiagonalMatrix(CustomSUNMatrix):
     def matvec(self, x, y):
         self.calls["matvec"] += 1
         N_VGetArrayPointer(y)[:] = self.diagonal * N_VGetArrayPointer(x)
+        return SUN_SUCCESS
+
+
+class SlotsMatrix(CustomSUNMatrix):
+    """Matrix payload held in a slots-only Python subclass."""
+
+    __slots__ = ("data",)
+
+    def __init__(self, diagonal, sunctx):
+        self.data = np.asarray(diagonal, dtype=sunrealtype).copy()
+        super().__init__(sunctx)
+
+    def clone(self):
+        return type(self)(np.zeros_like(self.data), self.sunctx)
+
+    def zero(self):
+        self.data[:] = 0.0
+        return SUN_SUCCESS
+
+    def copy(self, dst):
+        dst.data[:] = self.data
+        return SUN_SUCCESS
+
+    def scaleadd(self, c, other):
+        self.data[:] = c * self.data + other.data
+        return SUN_SUCCESS
+
+    def scaleaddi(self, c):
+        self.data[:] = c * self.data + 1.0
+        return SUN_SUCCESS
+
+    def matvec(self, x, y):
+        N_VGetArrayPointer(y)[:] = self.data * N_VGetArrayPointer(x)
         return SUN_SUCCESS
 
 
@@ -99,9 +133,17 @@ class MinimalMatrix(CustomSUNMatrix):
         return SUN_SUCCESS
 
 
+class WrongContextMatrix(DiagonalMatrix):
+    def __init__(self, diagonal, sunctx, clone_context):
+        self.clone_context = clone_context
+        super().__init__(diagonal, sunctx)
+
+    def clone(self):
+        return DiagonalMatrix(self.diagonal.copy(), self.clone_context)
+
+
 def test_custom_sunmatrix_converts_for_handwritten_bindings(sunctx):
-    # Purpose:
-    # Custom sunmatrix converts for handwritten bindings.
+    # Contract: Custom sunmatrix converts for handwritten bindings.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
 
     assert not A._is_materialized()
@@ -114,10 +156,23 @@ def test_custom_sunmatrix_converts_for_handwritten_bindings(sunctx):
     assert_allclose(A.diagonal, [0.0, 0.0])
 
 
+def test_custom_sunmatrix_slots_materialize_and_dispatch(sunctx):
+    A = SlotsMatrix([1.0, 2.0], sunctx)
+    x = N_VNew_Serial(2, sunctx)
+    y = N_VNew_Serial(2, sunctx)
+    N_VGetArrayPointer(x)[:] = [3.0, 4.0]
+
+    assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
+    assert SUNMatMatvec(A, x, y) == SUN_SUCCESS
+    assert_allclose(N_VGetArrayPointer(y), [3.0, 8.0])
+
+
 def test_custom_sunmatrix_required_methods_are_validated(sunctx):
-    # Purpose:
-    # Custom sunmatrix required methods are validated.
+    # Contract: Custom sunmatrix required methods are validated.
     A = IncompleteMatrix(sunctx)
+
+    with pytest.raises(TypeError, match=r"must override zero\(\)"):
+        A.validate()
 
     with pytest.raises(TypeError, match="SUNMatGetID"):
         SUNMatGetID(A)
@@ -134,8 +189,7 @@ def test_custom_sunmatrix_only_requires_zero(sunctx):
 
 
 def test_custom_sunmatrix_copy_scaleadd_and_scaleaddi(sunctx):
-    # Purpose:
-    # Custom sunmatrix copy scaleadd and scaleaddi.
+    # Contract: Custom sunmatrix copy scaleadd and scaleaddi.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = DiagonalMatrix([3.0, 4.0], sunctx)
 
@@ -153,8 +207,7 @@ def test_custom_sunmatrix_copy_scaleadd_and_scaleaddi(sunctx):
 
 
 def test_custom_sunmatrix_matvec(sunctx):
-    # Purpose:
-    # Custom sunmatrix matvec.
+    # Contract: Custom sunmatrix matvec.
     A = DiagonalMatrix([2.0, 3.0], sunctx)
     x = N_VNew_Serial(2, sunctx)
     y = N_VNew_Serial(2, sunctx)
@@ -165,21 +218,39 @@ def test_custom_sunmatrix_matvec(sunctx):
     assert A.calls["matvec"] == 1
 
 
-def test_custom_sunmatrix_clone_returns_native_handle(sunctx):
-    # Purpose:
-    # SUNMatClone dispatches to Python but returns the owning native handle.
+def test_custom_sunmatrix_clone_returns_python_subclass(sunctx):
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SUNMatClone(A)
 
-    assert not isinstance(B, DiagonalMatrix)
+    assert isinstance(B, DiagonalMatrix)
     assert A.calls["clone"] == 1
     assert SUNMatGetID(B) == SUNMATRIX_CUSTOM
     assert SUNMatScaleAddI(3.0, B) == SUN_SUCCESS
 
 
+def test_custom_sunmatrix_clone_reuses_native_shell(sunctx):
+    A = DiagonalMatrix([1.0, 2.0], sunctx)
+    cloned, keepalive = SUNMat_TestStrongClone(A)
+
+    first = SUNMat_TestHandleAddress(cloned)
+    second = SUNMat_TestHandleAddress(cloned)
+    assert first == second
+
+
+def test_custom_sunmatrix_clone_rejects_different_context(sunctx):
+    errors = []
+    SUNContext_PushErrHandler(
+        sunctx, lambda line, function, file, message, code, data, context: errors.append(message)
+    )
+    _, other_context = SUNContext_Create(SUN_COMM_NULL)
+    A = WrongContextMatrix([1.0], sunctx, other_context)
+    with pytest.raises(ValueError, match="same SUNContext"):
+        SUNMatClone(A)
+    assert "same SUNContext" in errors[-1]
+
+
 def test_custom_sunmatrix_optional_matvecsetup_detection(sunctx):
-    # Purpose:
-    # Custom sunmatrix optional matvecsetup detection.
+    # Contract: Custom sunmatrix optional matvecsetup detection.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([1.0, 2.0], sunctx)
 
@@ -189,8 +260,7 @@ def test_custom_sunmatrix_optional_matvecsetup_detection(sunctx):
 
 
 def test_optional_vtable_is_fixed_when_handle_is_materialized(sunctx, monkeypatch):
-    # Purpose:
-    # Optional vtable is fixed when handle is materialized.
+    # Contract: Optional vtable is fixed when handle is materialized.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([1.0, 2.0], sunctx)
     assert SUNMatGetID(A) == SUNMATRIX_CUSTOM
@@ -218,8 +288,7 @@ def test_optional_vtable_is_fixed_when_handle_is_materialized(sunctx, monkeypatc
 
 
 def test_custom_sunmatrix_optional_hermitian_matvec_detection(sunctx):
-    # Purpose:
-    # Custom sunmatrix optional hermitian matvec detection.
+    # Contract: Custom sunmatrix optional hermitian matvec detection.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = HermitianDiagonalMatrix([1.0, 2.0], sunctx)
     x = N_VNew_Serial(2, sunctx)
@@ -233,17 +302,16 @@ def test_custom_sunmatrix_optional_hermitian_matvec_detection(sunctx):
 
 
 def test_custom_sunmatrix_rejects_mismatched_custom_operand_types(sunctx):
-    # Purpose:
-    # Custom sunmatrix rejects mismatched custom operand types.
+    # Contract: Custom sunmatrix rejects mismatched custom operand types.
     A = DiagonalMatrix([1.0, 2.0], sunctx)
     B = SetupDiagonalMatrix([3.0, 4.0], sunctx)
 
-    assert SUNMatCopy(A, B) == SUN_ERR_EXT_FAIL
+    with pytest.raises(TypeError, match="same Python type"):
+        SUNMatCopy(A, B)
 
 
 def test_native_sunmatrix_conversion_still_works(sunctx):
-    # Purpose:
-    # Native sunmatrix conversion still works.
+    # Contract: Native sunmatrix conversion still works.
     A = SUNDenseMatrix(2, 2, sunctx)
 
     assert SUNMatGetID(A) == SUNMATRIX_DENSE
@@ -251,8 +319,7 @@ def test_native_sunmatrix_conversion_still_works(sunctx):
 
 
 def test_custom_sunmatrix_converts_for_generated_optional_bindings(sunctx):
-    # Purpose:
-    # Custom sunmatrix converts for generated optional bindings.
+    # Contract: Custom sunmatrix converts for generated optional bindings.
     x = N_VNew_Serial(2, sunctx)
     LS = SUNLinSol_PCG(x, SUN_PREC_NONE, 0, sunctx)
     A = DiagonalMatrix([1.0, 2.0], sunctx)
@@ -262,8 +329,7 @@ def test_custom_sunmatrix_converts_for_generated_optional_bindings(sunctx):
 
 
 def test_generated_optional_bindings_still_accept_none(sunctx):
-    # Purpose:
-    # Generated optional bindings still accept none.
+    # Contract: Generated optional bindings still accept none.
     x = N_VNew_Serial(2, sunctx)
     LS = SUNLinSol_PCG(x, SUN_PREC_NONE, 0, sunctx)
 

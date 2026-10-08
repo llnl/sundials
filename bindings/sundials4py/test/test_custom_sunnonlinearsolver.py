@@ -15,10 +15,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 
+import threading
+
 import pytest
 from fixtures import *
 from numpy.testing import assert_allclose
 from sundials4py.core import *
+from sundials4py.test import (
+    SUNNonlinSol_TestSetConvTestFnFromPackage,
+    SUNNonlinSol_TestSetupFromPackage,
+    SUNNonlinSol_TestSolveFromPackage,
+)
 
 
 class CopyNonlinearSolver(CustomSUNNonlinearSolver):
@@ -129,6 +136,32 @@ class CallbackNonlinearSolver(CustomSUNNonlinearSolver):
         return SUN_SUCCESS
 
 
+class PackageConvergenceCallbackSolver(CallbackNonlinearSolver):
+    """Use the last successfully installed convergence adapter in solve().
+
+    The native setter is transactional: if the Python setter rejects a new
+    adapter, the package must continue calling the previous native adapter.
+    Keeping that successful adapter separately models the package-owned
+    function pointer while ``conv_test_fn`` exposes the most recent Python
+    object for checking that the rejected adapter was revoked.
+    """
+
+    def __init__(self, sunctx):
+        self.package_conv_test_fn = None
+        self.reject_next_conv_test = False
+        super().__init__(sunctx)
+
+    def set_conv_test_fn(self, conv_test_fn):
+        self.conv_test_fn = conv_test_fn
+        if self.reject_next_conv_test:
+            return SUN_ERR_EXT_FAIL
+        self.package_conv_test_fn = conv_test_fn
+        return SUN_SUCCESS
+
+    def solve(self, y0, y, w, tol, call_lsetup):
+        return self.package_conv_test_fn(y, y, tol, w)
+
+
 class IncompleteNonlinearSolver(CustomSUNNonlinearSolver):
     # Required-method validation should reject subclasses that inherit solve().
     def __init__(self, sunctx):
@@ -136,8 +169,7 @@ class IncompleteNonlinearSolver(CustomSUNNonlinearSolver):
 
 
 def test_custom_sunnonlinearsolver_type_and_lazy_materialization(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver type and lazy materialization.
+    # Contract: Custom sunnonlinearsolver type and lazy materialization.
     NLS = CopyNonlinearSolver(sunctx, SUNNONLINEARSOLVER_HYBRID)
 
     assert not NLS._is_materialized()
@@ -146,9 +178,11 @@ def test_custom_sunnonlinearsolver_type_and_lazy_materialization(sunctx):
 
 
 def test_custom_sunnonlinearsolver_required_solve_is_validated(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver required solve is validated.
+    # Contract: Custom sunnonlinearsolver required solve is validated.
     NLS = IncompleteNonlinearSolver(sunctx)
+
+    with pytest.raises(TypeError, match=r"must override solve\(\)"):
+        NLS.validate()
 
     with pytest.raises(TypeError, match="SUNNonlinSolGetType"):
         SUNNonlinSolGetType(NLS)
@@ -157,8 +191,7 @@ def test_custom_sunnonlinearsolver_required_solve_is_validated(sunctx):
 
 
 def test_custom_sunnonlinearsolver_setup_and_solve(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver setup and solve.
+    # Contract: Custom sunnonlinearsolver setup and solve.
     NLS = CopyNonlinearSolver(sunctx)
     y0 = N_VNew_Serial(2, sunctx)
     y = N_VNew_Serial(2, sunctx)
@@ -178,8 +211,7 @@ def test_custom_sunnonlinearsolver_setup_and_solve(sunctx):
 
 
 def test_custom_sunnonlinearsolver_optional_methods(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver optional methods.
+    # Contract: Custom sunnonlinearsolver optional methods.
     NLS = CopyNonlinearSolver(sunctx)
 
     assert SUNNonlinSolSetMaxIters(NLS, 12) == SUN_SUCCESS
@@ -191,8 +223,7 @@ def test_custom_sunnonlinearsolver_optional_methods(sunctx):
 
 
 def test_custom_sunnonlinearsolver_scoped_adapters_round_trip(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver scoped adapters round trip.
+    # Contract: Custom sunnonlinearsolver scoped adapters round trip.
     # sys, lsetup, and lsolve receive their memory pointer from the enclosing
     # setup()/solve() call, so their adapters are usable only from within one.
     NLS = CallbackNonlinearSolver(sunctx)
@@ -234,9 +265,9 @@ def test_custom_sunnonlinearsolver_scoped_adapters_round_trip(sunctx):
     assert_allclose(N_VGetArrayPointer(y), [2.0, 4.0])
 
 
-def test_custom_sunnonlinearsolver_scoped_adapter_rejects_use_outside_solve(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver scoped adapter rejects use outside solve.
+def test_custom_sunnonlinearsolver_direct_adapter_works_outside_solve(sunctx):
+    # Python-to-Python callback installation does not need an opaque native
+    # memory pointer, so the adapter remains usable outside setup()/solve().
     NLS = CallbackNonlinearSolver(sunctx)
     y = N_VNew_Serial(2, sunctx)
 
@@ -245,15 +276,11 @@ def test_custom_sunnonlinearsolver_scoped_adapter_rejects_use_outside_solve(sunc
 
     assert SUNNonlinSolSetSysFn(NLS, sys_fn) == SUN_SUCCESS
 
-    # No setup() or solve() is in progress, so there is no memory pointer to
-    # pass through and the adapter must refuse rather than guess.
-    with pytest.raises(RuntimeError, match="setup\\(\\) or solve\\(\\)"):
-        NLS.sys_fn(y, y)
+    assert NLS.sys_fn(y, y) == SUN_SUCCESS
 
 
 def test_custom_sunnonlinearsolver_scoped_adapters_nest(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver scoped adapters nest.
+    # Contract: Custom sunnonlinearsolver scoped adapters nest.
     # A package may call setup() from inside solve(); the inner scope must
     # restore the outer one rather than clear it.
     NLS = CallbackNonlinearSolver(sunctx)
@@ -280,9 +307,46 @@ def test_custom_sunnonlinearsolver_scoped_adapters_nest(sunctx):
     assert NLS.results["sys"] == SUN_SUCCESS
 
 
-def test_custom_sunnonlinearsolver_replacing_a_callback_revokes_the_old_adapter(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver replacing a callback revokes the old adapter.
+def test_custom_sunnonlinearsolver_rejects_concurrent_package_calls(sunctx):
+    entered = threading.Event()
+    release = threading.Event()
+    worker_errors = []
+
+    class BlockingSolver(CopyNonlinearSolver):
+        def solve(self, y0, y, w, tol, call_lsetup):
+            entered.set()
+            assert release.wait(5.0)
+            return super().solve(y0, y, w, tol, call_lsetup)
+
+    solver = BlockingSolver(sunctx)
+    y0 = N_VNew_Serial(1, sunctx)
+    y = N_VNew_Serial(1, sunctx)
+    w = N_VNew_Serial(1, sunctx)
+
+    def solve():
+        try:
+            assert (
+                SUNNonlinSol_TestSolveFromPackage(solver, y0, y, w, 1.0e-8, False) == SUN_SUCCESS
+            )
+        except BaseException as error:  # pragma: no cover - asserted below
+            worker_errors.append(error)
+
+    worker = threading.Thread(target=solve)
+    worker.start()
+    assert entered.wait(5.0)
+
+    with pytest.raises(RuntimeError, match="two threads"):
+        SUNNonlinSol_TestSetupFromPackage(solver, y0)
+
+    release.set()
+    worker.join(5.0)
+    assert not worker.is_alive()
+    assert worker_errors == []
+
+
+def test_custom_sunnonlinearsolver_replacing_direct_callback_is_safe(sunctx):
+    # Direct adapters own their Python callable, so a displaced adapter remains
+    # safe and independent of the newly installed callback.
     NLS = CallbackNonlinearSolver(sunctx)
     y = N_VNew_Serial(2, sunctx)
 
@@ -298,15 +362,31 @@ def test_custom_sunnonlinearsolver_replacing_a_callback_revokes_the_old_adapter(
     assert SUNNonlinSolSetSysFn(NLS, second) == SUN_SUCCESS
     assert NLS.sys_fn is not stale
 
-    # Calling the displaced adapter would dispatch through a function pointer
-    # SUNDIALS has already replaced, so it is revoked instead.
+    assert stale(y, y) == SUN_SUCCESS
+
+
+def test_failed_package_convergence_callback_update_preserves_previous(sunctx):
+    solver = PackageConvergenceCallbackSolver(sunctx)
+    y0 = N_VNew_Serial(1, sunctx)
+    y = N_VNew_Serial(1, sunctx)
+    w = N_VNew_Serial(1, sunctx)
+    assert SUNNonlinSol_TestSetConvTestFnFromPackage(solver, 1) == SUN_SUCCESS
+    previous = solver.conv_test_fn
+    solver.reject_next_conv_test = True
+    assert SUNNonlinSol_TestSetConvTestFnFromPackage(solver, 2) == SUN_ERR_EXT_FAIL
+    rejected = solver.conv_test_fn
+
+    # Enter through the package-style solve helper. The failed update must not
+    # replace the callback that the package already installed.
+    assert SUNNonlinSol_TestSolveFromPackage(solver, y0, y, w, 1.0e-8, False) == SUN_SUCCESS
+
     with pytest.raises(RuntimeError, match="no longer valid"):
-        stale(y, y)
+        rejected(y, y, 1.0e-8, w)
+    assert previous(y, y, 1.0e-8, w) == SUN_SUCCESS
 
 
 def test_custom_sunnonlinearsolver_data_carrying_adapters(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver data carrying adapters.
+    # Contract: Custom sunnonlinearsolver data carrying adapters.
     # These four callbacks arrive with their own data pointer, so their adapters
     # do not consult the active-memory scope and work outside setup()/solve().
     NLS = CallbackNonlinearSolver(sunctx)
@@ -345,8 +425,7 @@ def test_custom_sunnonlinearsolver_data_carrying_adapters(sunctx):
 
 
 def test_custom_sunnonlinearsolver_set_sys_fns_receives_both_adapters(sunctx):
-    # Purpose:
-    # Custom sunnonlinearsolver set sys fns receives both adapters.
+    # Contract: Custom sunnonlinearsolver set sys fns receives both adapters.
     NLS = CallbackNonlinearSolver(sunctx)
     y0 = N_VNew_Serial(2, sunctx)
     y = N_VNew_Serial(2, sunctx)
@@ -377,9 +456,13 @@ def test_custom_sunnonlinearsolver_set_sys_fns_receives_both_adapters(sunctx):
 
 
 def test_native_sunnonlinearsolver_conversion_still_works(sunctx):
-    # Purpose:
-    # Native sunnonlinearsolver conversion still works.
+    # Contract: Native sunnonlinearsolver conversion still works.
     y = N_VNew_Serial(2, sunctx)
     NLS = SUNNonlinSol_Newton(y, sunctx)
 
     assert SUNNonlinSolGetType(NLS) == SUNNONLINEARSOLVER_ROOTFIND
+
+
+def test_custom_sunnonlinearsolver_rejects_invalid_type(sunctx):
+    with pytest.raises(ValueError, match="invalid SUNNonlinearSolver_Type"):
+        CopyNonlinearSolver(sunctx, -1)

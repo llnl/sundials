@@ -52,60 +52,14 @@ namespace sundials4py {
  * handles materialized for a user-held object hold only a weak one.
  */
 class CustomSUNMatrix
+  : public CustomObjectBase<CustomSUNMatrix, std::remove_pointer_t<SUNMatrix>>
 {
 public:
-  enum class HandleState
-  {
-    unmaterialized,
-    materializing,
-    materialized
-  };
-
   explicit CustomSUNMatrix(std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx)
-    : sunctx_owner_(std::move(sunctx))
+    : CustomObjectBase(std::move(sunctx), "CustomSUNMatrix")
   {}
 
-  std::shared_ptr<std::remove_pointer_t<SUNMatrix>> _get_sundials_handle(
-    nb::handle self)
-  {
-    if (!sunctx_owner_)
-    {
-      throw nb::type_error(
-        "CustomSUNMatrix base constructor was not initialized");
-    }
-
-    if (state_ == HandleState::materializing)
-    {
-      throw std::runtime_error(
-        "reentrant CustomSUNMatrix native handle materialization");
-    }
-
-    if (state_ == HandleState::materialized) { return matrix_; }
-
-    // Materialization is transactional: failures leave the Python object in the
-    // unmaterialized state so a corrected subclass can be tried again.
-    state_ = HandleState::materializing;
-    try
-    {
-      matrix_ = make_handle(self, sunctx_owner_, Ownership::weak);
-      state_  = HandleState::materialized;
-    }
-    catch (...)
-    {
-      matrix_.reset();
-      state_ = HandleState::unmaterialized;
-      throw;
-    }
-
-    return matrix_;
-  }
-
-  bool _is_materialized() const { return state_ == HandleState::materialized; }
-
-  std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx() const
-  {
-    return sunctx_owner_;
-  }
+  void validate(nb::handle self) const { validate_required_methods(self); }
 
   static SUNErrCode base_method_status(const char* name)
   {
@@ -121,75 +75,29 @@ private:
     strong
   };
 
-  struct Content
+  struct Content : CustomContentBase
   {
-    SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS;
+    /* Non-owning pointer used only to clear a SUNDIALS-created clone's
+       back-reference before its strong Python reference is released. */
+    CustomSUNMatrix* owner{nullptr};
+    bool has_is_compatible{false};
   };
 
   static constexpr const char* label = "CustomSUNMatrix";
 
+  friend class CustomObjectBase<CustomSUNMatrix, std::remove_pointer_t<SUNMatrix>>;
+
+  std::shared_ptr<std::remove_pointer_t<SUNMatrix>> make_handle(nb::handle impl);
+
   static SUNMatrix create_raw_handle(
     nb::handle impl,
     std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner,
-    Ownership ownership)
-  {
-    validate_required_methods(impl);
-
-    // Complete every potentially throwing Python operation before allocating
-    // the native shell. Once A exists, the remaining assignments are noexcept.
-    const bool has_clone       = method_overridden(impl, "clone");
-    const bool has_copy        = method_overridden(impl, "copy");
-    const bool has_scaleadd    = method_overridden(impl, "scaleadd");
-    const bool has_scaleaddi   = method_overridden(impl, "scaleaddi");
-    const bool has_matvec      = method_overridden(impl, "matvec");
-    const bool has_matvecsetup = method_overridden(impl, "matvecsetup");
-    const bool has_hermitian   = method_overridden(impl,
-                                                   "hermitian_transpose_matvec");
-
-    std::unique_ptr<Content> content(new Content);
-    content->sunctx_owner = std::move(sunctx_owner);
-    // User-created handles should not extend the Python object's lifetime.
-    // Clones returned to SUNDIALS are C-owned, so they hold a strong reference.
-    if (ownership == Ownership::weak)
-    {
-      content->weak_impl = nb::weakref(impl);
-    }
-    else { content->strong_impl = nb::borrow<nb::object>(impl); }
-
-    SUNMatrix A = SUNMatNewEmpty(content->sunctx_owner.get());
-    if (!A) { throw error_returned("SUNMatNewEmpty failed"); }
-
-    // getid, destroy, and zero are universal. Other operations are exposed only
-    // when the subclass overrides them, allowing a minimal KINSOL/IDA matrix.
-    A->content      = content.release();
-    A->ops->getid   = custom_matrix_getid;
-    A->ops->destroy = custom_matrix_destroy;
-    A->ops->zero    = custom_matrix_zero;
-
-    if (has_clone) { A->ops->clone = custom_matrix_clone; }
-    if (has_copy) { A->ops->copy = custom_matrix_copy; }
-    if (has_scaleadd) { A->ops->scaleadd = custom_matrix_scaleadd; }
-    if (has_scaleaddi) { A->ops->scaleaddi = custom_matrix_scaleaddi; }
-    if (has_matvec) { A->ops->matvec = custom_matrix_matvec; }
-    if (has_matvecsetup) { A->ops->matvecsetup = custom_matrix_matvecsetup; }
-    if (has_hermitian)
-    {
-      A->ops->mathermitiantransposevec = custom_matrix_hermitian_transpose_matvec;
-    }
-
-    return A;
-  }
+    Ownership ownership);
 
   static std::shared_ptr<std::remove_pointer_t<SUNMatrix>> make_handle(
     nb::handle impl,
     std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner,
-    Ownership ownership)
-  {
-    SUNMatrix A = create_raw_handle(impl, std::move(sunctx_owner), ownership);
-    return sundials::experimental::our_make_shared<
-      std::remove_pointer_t<SUNMatrix>, sundials::experimental::SUNMatrixDeleter>(
-      A);
-  }
+    Ownership ownership);
 
   static Content* get_content(SUNMatrix A)
   {
@@ -201,6 +109,28 @@ private:
   }
 
 public:
+  static nb::object clone_python(nb::handle impl, const char* operation)
+  {
+    auto* source           = nb::cast<CustomSUNMatrix*>(impl);
+    nb::object cloned_impl = impl.attr(operation)();
+    if (!nb::isinstance<CustomSUNMatrix>(cloned_impl))
+    {
+      throw nb::type_error((std::string("CustomSUNMatrix.") + operation +
+                            "() must return a CustomSUNMatrix")
+                             .c_str());
+    }
+
+    auto* cloned = nb::cast<CustomSUNMatrix*>(cloned_impl);
+    if (!source->sunctx_owner_ || !cloned->sunctx_owner_)
+    {
+      throw nb::type_error(
+        "CustomSUNMatrix clone did not initialize the base constructor");
+    }
+    require_same_context(source->sunctx_owner_.get(), cloned->sunctx_owner_,
+                         (std::string("CustomSUNMatrix.") + operation).c_str());
+    return cloned_impl;
+  }
+
   /* Recover the Python implementation for borrowed custom handles. */
   static nb::object _python_object_for(SUNMatrix A) noexcept
   {
@@ -220,14 +150,10 @@ public:
 
 private:
   static nb::object get_impl(SUNMatrix A)
-  {
-    return custom_content_impl(get_content(A), label);
-  }
+  { return custom_content_impl(get_content(A), label); }
 
   static bool method_overridden(nb::handle impl, const char* name)
-  {
-    return custom_method_overridden<CustomSUNMatrix>(impl, name);
-  }
+  { return custom_method_overridden<CustomSUNMatrix>(impl, name); }
 
   static void validate_required_methods(nb::handle impl)
   {
@@ -237,30 +163,26 @@ private:
     }
   }
 
-  // The method name is taken by reference to its array type rather than as a
-  // `const char*`: nanobind's attribute-name cache is keyed on the string's
-  // address and only fills for arguments with a known array bound, so a decayed
-  // pointer falls back to allocating a fresh, non-interned str on every call.
-  template<size_t N>
-  static SUNErrCode call_status_method(SUNMatrix A, const char (&name)[N],
+  static SUNErrCode call_status_method(SUNMatrix A, const char* name,
                                        const char* operation)
   {
     try
     {
       nb::gil_scoped_acquire gil;
+      if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
       return static_cast<SUNErrCode>(nb::cast<int>(get_impl(A).attr(name)()));
     }
     SUNDIALS4PY_CATCH_AND_REPORT(A ? A->sunctx : nullptr, operation,
                                  SUN_ERR_EXT_FAIL)
   }
 
-  template<size_t N>
-  static int call_status_method(SUNMatrix A, const char (&name)[N], N_Vector x,
+  static int call_status_method(SUNMatrix A, const char* name, N_Vector x,
                                 N_Vector y, const char* operation)
   {
     try
     {
       nb::gil_scoped_acquire gil;
+      if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
       return nb::cast<int>(
         get_impl(A).attr(name)(nb::cast(x, nb::rv_policy::reference),
                                nb::cast(y, nb::rv_policy::reference)));
@@ -276,7 +198,9 @@ private:
     // same concrete Python type before exposing one object to another.
     impl_A = get_impl(A);
     impl_B = get_impl(B);
-    if (Py_TYPE(impl_A.ptr()) != Py_TYPE(impl_B.ptr()))
+    if (Py_TYPE(impl_A.ptr()) != Py_TYPE(impl_B.ptr()) &&
+        !(get_content(A)->has_is_compatible &&
+          nb::cast<bool>(impl_A.attr("is_compatible")(impl_B))))
     {
       throw nb::type_error(
         "custom SUNMatrix operands must have the same Python type");
@@ -284,117 +208,32 @@ private:
     return SUN_SUCCESS;
   }
 
-  static SUNMatrix_ID custom_matrix_getid(SUNMatrix)
-  {
-    return SUNMATRIX_CUSTOM;
-  }
+  static SUNMatrix_ID custom_matrix_getid(SUNMatrix);
 
-  static SUNMatrix custom_matrix_clone(SUNMatrix A)
-  {
-    try
-    {
-      nb::gil_scoped_acquire gil;
-      nb::object impl        = get_impl(A);
-      nb::object cloned_impl = impl.attr("clone")();
-      if (!nb::isinstance<CustomSUNMatrix>(cloned_impl))
-      {
-        throw nb::type_error(
-          "CustomSUNMatrix.clone() must return a CustomSUNMatrix");
-      }
+  static SUNMatrix custom_matrix_clone(SUNMatrix A);
 
-      auto* cloned = nb::cast<CustomSUNMatrix*>(cloned_impl);
-      if (!cloned->sunctx_owner_)
-      {
-        throw nb::type_error(
-          "CustomSUNMatrix clone did not initialize the base constructor");
-      }
-      // Native SUNDIALS owns clones, so the returned handle must keep its
-      // Python implementation alive until SUNMatDestroy is called.
-      return create_raw_handle(cloned_impl, cloned->sunctx_owner_,
-                               Ownership::strong);
-    }
-    SUNDIALS4PY_CATCH_AND_REPORT(A ? A->sunctx : nullptr,
-                                 "CustomSUNMatrix.clone", nullptr)
-  }
+  static SUNMatrix clone_raw_handle(
+    nb::handle impl, SUNMatrix source,
+    std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner);
 
-  static void custom_matrix_destroy(SUNMatrix A)
-  {
-    if (!A) { return; }
-    Content* content = get_content(A);
-    custom_content_destroy(content);
-    A->content = nullptr;
-    SUNMatFreeEmpty(A);
-  }
+  static void custom_matrix_destroy(SUNMatrix A);
 
-  static SUNErrCode custom_matrix_zero(SUNMatrix A)
-  {
-    return call_status_method(A, "zero", "CustomSUNMatrix.zero");
-  }
+  static SUNErrCode custom_matrix_zero(SUNMatrix A);
 
-  static SUNErrCode custom_matrix_copy(SUNMatrix A, SUNMatrix B)
-  {
-    try
-    {
-      nb::gil_scoped_acquire gil;
-      nb::object impl_A;
-      nb::object impl_B;
-      check_same_custom_type(A, B, impl_A, impl_B);
-      return static_cast<SUNErrCode>(nb::cast<int>(impl_A.attr("copy")(impl_B)));
-    }
-    SUNDIALS4PY_CATCH_AND_REPORT(A ? A->sunctx : nullptr,
-                                 "CustomSUNMatrix.copy", SUN_ERR_EXT_FAIL)
-  }
+  static SUNErrCode custom_matrix_copy(SUNMatrix A, SUNMatrix B);
 
-  static SUNErrCode custom_matrix_scaleadd(sunrealtype c, SUNMatrix A, SUNMatrix B)
-  {
-    try
-    {
-      nb::gil_scoped_acquire gil;
-      nb::object impl_A;
-      nb::object impl_B;
-      check_same_custom_type(A, B, impl_A, impl_B);
-      return static_cast<SUNErrCode>(
-        nb::cast<int>(impl_A.attr("scaleadd")(c, impl_B)));
-    }
-    SUNDIALS4PY_CATCH_AND_REPORT(A ? A->sunctx : nullptr,
-                                 "CustomSUNMatrix.scaleadd", SUN_ERR_EXT_FAIL)
-  }
+  static SUNErrCode custom_matrix_scaleadd(sunrealtype c, SUNMatrix A,
+                                           SUNMatrix B);
 
-  static SUNErrCode custom_matrix_scaleaddi(sunrealtype c, SUNMatrix A)
-  {
-    try
-    {
-      nb::gil_scoped_acquire gil;
-      return static_cast<SUNErrCode>(
-        nb::cast<int>(get_impl(A).attr("scaleaddi")(c)));
-    }
-    SUNDIALS4PY_CATCH_AND_REPORT(A ? A->sunctx : nullptr,
-                                 "CustomSUNMatrix.scaleaddi", SUN_ERR_EXT_FAIL)
-  }
+  static SUNErrCode custom_matrix_scaleaddi(sunrealtype c, SUNMatrix A);
 
-  static SUNErrCode custom_matrix_matvecsetup(SUNMatrix A)
-  {
-    return call_status_method(A, "matvecsetup", "CustomSUNMatrix.matvecsetup");
-  }
+  static SUNErrCode custom_matrix_matvecsetup(SUNMatrix A);
 
-  static SUNErrCode custom_matrix_matvec(SUNMatrix A, N_Vector x, N_Vector y)
-  {
-    return static_cast<SUNErrCode>(
-      call_status_method(A, "matvec", x, y, "CustomSUNMatrix.matvec"));
-  }
+  static SUNErrCode custom_matrix_matvec(SUNMatrix A, N_Vector x, N_Vector y);
 
   static SUNErrCode custom_matrix_hermitian_transpose_matvec(SUNMatrix A,
                                                              N_Vector x,
-                                                             N_Vector y)
-  {
-    return static_cast<SUNErrCode>(
-      call_status_method(A, "hermitian_transpose_matvec", x, y,
-                         "CustomSUNMatrix.hermitian_transpose_matvec"));
-  }
-
-  std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner_;
-  std::shared_ptr<std::remove_pointer_t<SUNMatrix>> matrix_;
-  HandleState state_{HandleState::unmaterialized};
+                                                             N_Vector y);
 };
 
 } // namespace sundials4py

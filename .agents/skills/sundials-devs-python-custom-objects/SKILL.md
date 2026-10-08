@@ -53,13 +53,19 @@ Python-facing protocol.
 Create `bindings/sundials4py/include/<object>_custom.hpp` with a C++ base class
 registered in the appropriate handwritten binding source.
 
-The base should hold:
+Derive the base from
+`CustomObjectBase<Derived, std::remove_pointer_t<NativeHandle>>`. The shared
+base holds:
 
 - a strong `shared_ptr` owner for its `SUNContext`;
 - immutable type information needed by enum-returning operations;
 - a cached `shared_ptr` to the lazily created native handle;
 - explicit `unmaterialized`, `materializing`, and `materialized` state;
-- a materialization counter when useful for focused tests.
+- the optional non-owning raw handle used by SUNDIALS-created clones.
+
+The derived class supplies a private `make_handle(self)` and friends its
+`CustomObjectBase` specialization. Keep family-specific immutable type
+information in the derived class.
 
 Register default methods for the complete Python interface. Required defaults
 should raise `NotImplementedError`; optional defaults exist so override
@@ -79,15 +85,15 @@ implementation of an installed method can affect later calls.
 ## 3. Make materialization transactional
 
 The custom type caster calls `_get_sundials_handle(self)` on first conversion.
-Implement this as a state machine:
+`CustomObjectBase` implements this state machine:
 
 1. Reject a missing base constructor/context.
 2. Reject reentry while state is `materializing`.
 3. Return the cached handle when already `materialized`.
 4. Set state to `materializing`.
 5. Build the handle into temporary RAII-managed state.
-6. Publish the handle, increment the count, and mark it `materialized` only
-   after construction succeeds.
+6. Publish the handle and mark it `materialized` only after construction
+   succeeds.
 7. On failure, clear the cached handle, restore `unmaterialized`, and rethrow.
 
 Perform required-method validation, optional-method discovery, weak-reference
@@ -102,10 +108,10 @@ lifetime mechanism.
 
 ## 4. Model ownership explicitly
 
-Use `SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS()` in the private content struct and
-give each family a unique tag. Recover content only through
-`custom_content_cast`; native implementations of the same C type can flow
-through the same binding and must not be interpreted as custom content.
+Derive the private content struct from `CustomContentBase`. Identify custom
+shells by their unique free or destroy operation before casting content;
+native implementations of the same C type can flow through the same binding and
+must not be interpreted as custom content.
 
 For a user-created object, store a weak reference from native content back to
 the Python implementation. The Python object owns its cached native handle, so
@@ -114,7 +120,10 @@ must retain the Python object while SUNDIALS retains its raw pointer.
 
 If SUNDIALS creates a new handle itself, such as through `clone`, give that
 handle a strong reference to its Python implementation. The native handle then
-owns the implementation and releases it during native destruction.
+owns the implementation and releases it during native destruction. Record that
+shell in the implementation's inherited `raw_handle_`, return it from later
+conversions through a non-owning aliasing `shared_ptr`, and clear it before the
+strong implementation reference is destroyed.
 
 For borrowed pointers returned by an operation, determine which object owns the
 pointee after the trampoline returns. If the Python method can return a
@@ -127,11 +136,18 @@ unconditionally destroy `nb::object` members.
 
 ## 5. Implement operation trampolines safely
 
+Declare family-specific trampolines and `make_handle` in the custom header, but
+define them in `bindings/sundials4py/sundials/<family>_custom.cpp` and add that
+source to `bindings/sundials4py/CMakeLists.txt`. Keeping the function addresses
+in one translation unit makes custom-shell identification reliable and avoids
+recompiling every operation body in every binding translation unit.
+
 Each C operation trampoline should:
 
 1. obtain the owning context from the native handle;
 2. acquire the GIL;
-3. validate and recover tagged custom content;
+3. identify the custom shell through its unique free/destroy operation and
+   recover its content;
 4. promote the weak implementation reference for the duration of the call;
 5. convert arguments with explicit reference policies where appropriate;
 6. invoke the Python method;
@@ -141,9 +157,15 @@ Each C operation trampoline should:
    operation's correct failure sentinel.
 
 The shared exception helper reports `SUN_ERR_EXT_FAIL` through the owning
-`SUNContext`. For Python exceptions, nanobind's `python_error::what()` preserves
-the exception type, message, and traceback. Never permit either the operation
-exception or a secondary error-handler exception to cross the C ABI.
+`SUNContext` and records the first exception during a Python-facing call.
+Wrap every Python-facing entry point in `CustomExceptionScope`, constructed
+after argument conversion, and call `rethrow_if_pending()` after the native
+call returns. Never use precall/postcall hooks for this state. While an
+exception is pending, do not call further Python operations. Choose scalar
+failure sentinels by caller semantics: positive infinity for norms and sums of
+squares, negative infinity for minima, quiet NaN where no direction is safe,
+and `SUNFALSE` for tests. Never permit either the operation exception or a
+secondary error-handler exception to cross the C ABI.
 
 Enum/type getters should normally return values cached in native content and
 avoid Python calls. Destroy/free operations should be null-safe and should not
@@ -158,7 +180,12 @@ must:
 - recognize the new custom base only if native conversion fails;
 - lazily materialize and borrow the cached raw handle for the call;
 - preserve existing `None` behavior for nullable pointer arguments;
-- leave C-to-Python conversion using the native wrapper representation.
+- return the original Python subclass for borrowed custom handles; use the
+  native wrapper representation for native handles and ownership transfers.
+
+For operand-taking custom vector and matrix operations, require the same exact
+Python type by default. Permit cross-type operation only through an explicit
+`is_compatible(other)` override captured at materialization.
 
 Include the new custom header before the caster definitions in
 `sundials4py_types.hpp`. The caster must be visible consistently in every
@@ -178,8 +205,9 @@ wrapper pattern.
 For custom object interfaces, add these safeguards:
 
 - Wrap each C function/data pair as a normal Python callable.
-- Store its `NativeCallbackState` in the custom content's registry.
-- Invalidate the previous state whenever a slot is replaced or unset.
+- Prepare a new `NativeCallbackState` without changing the registry.
+- Call the Python setter, then commit the new state only on success. A failed
+  setter must leave the previous state valid and revoke the prepared adapter.
 - Treat independently nullable callbacks independently; test every supported
   combination rather than collapsing “setup only” into “neither.”
 - Invalidate all outstanding adapters before destroying custom content.
@@ -187,16 +215,18 @@ For custom object interfaces, add these safeguards:
   pointer.
 
 Some callbacks receive an opaque package-memory pointer only when the object's
-`setup` or `solve` operation runs. For those, use `ActiveMemScope` and record
-whether entry came from an integrator or a direct Python binding. The adapter
-must reject calls outside the active scope and calls made under the wrong mode.
-Do not infer provenance solely by comparing opaque pointer values.
+`setup` or `solve` operation runs. Short-circuit calls from the handwritten
+Python bindings to a Python custom object: invoke the Python setter, setup, or
+solve method directly and adapt the callback signature without routing through
+the C vtable. Calls entering from a SUNDIALS package use `ActiveMemScope` to
+make the package pointer available to callback adapters. Reject adapter calls
+outside that scope and reject concurrent use of one custom solver instance from
+different threads.
 
 If callback tables are also attached to native implementations through a
-`python` field, ensure every native free path destroys that table. When
-`SUN*Free()` delegates to `ops->free` and bypasses generic cleanup, interpose on
-the original free operation, clear the `python` pointer before delegation,
-destroy the table safely under the GIL, and then call the saved operation.
+`python` field, the core `SUN*Free`/destroy dispatcher must destroy and clear
+that table before delegating to the implementation's free operation. Do not
+replace native operation-table entries from the binding layer.
 
 ## 8. Integrate generated and handwritten bindings
 

@@ -25,18 +25,20 @@
  *   ShutdownSafeGIL           interpreter-finalization-safe GIL acquisition
  *   NativeCallbackState       revocable capture of C function/data pairs
  *   NativeCallbackRegistry    per-vtable-slot ownership of the above
- *   ActiveMemMode/Scope       explicit tracking of the SUNDIALS "mem" pointer
+ *   ActiveMemScope            tracking of the SUNDIALS "mem" pointer
  *   custom_method_overridden  optional-operation detection via the MRO
  *----------------------------------------------------------------------------*/
 
 #ifndef SUNDIALS4PY_CUSTOM_OBJECT_HPP
 #define SUNDIALS4PY_CUSTOM_OBJECT_HPP
 
-#include <map>
+#include <array>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <type_traits>
 #include <utility>
 
@@ -95,6 +97,47 @@ void shutdown_safe_delete(T* state)
  * Exception translation at C callback boundaries
  *----------------------------------------------------------------------------*/
 
+inline PyObject*& pending_custom_exception();
+inline bool& capture_custom_exceptions();
+
+/* Record the first exception in the active Python-facing call. The caller must
+   hold the GIL. */
+inline void record_pending_exception(const std::exception& error) noexcept
+{
+  if (!capture_custom_exceptions() || pending_custom_exception()) { return; }
+
+  if (const auto* python_error = dynamic_cast<const nb::python_error*>(&error))
+  {
+    pending_custom_exception() = python_error->value().inc_ref().ptr();
+  }
+  else if (const auto* builtin_error =
+             dynamic_cast<const nb::builtin_exception*>(&error))
+  {
+    PyObject* type = PyExc_RuntimeError;
+    switch (builtin_error->type())
+    {
+    case nb::exception_type::stop_iteration: type = PyExc_StopIteration; break;
+    case nb::exception_type::index_error: type = PyExc_IndexError; break;
+    case nb::exception_type::key_error: type = PyExc_KeyError; break;
+    case nb::exception_type::value_error: type = PyExc_ValueError; break;
+    case nb::exception_type::type_error: type = PyExc_TypeError; break;
+    case nb::exception_type::buffer_error: type = PyExc_BufferError; break;
+    case nb::exception_type::import_error: type = PyExc_ImportError; break;
+    case nb::exception_type::attribute_error:
+      type = PyExc_AttributeError;
+      break;
+    default: break;
+    }
+    pending_custom_exception() = PyObject_CallFunction(type, "s",
+                                                       builtin_error->what());
+  }
+  else
+  {
+    pending_custom_exception() = PyObject_CallFunction(PyExc_RuntimeError, "s",
+                                                       error.what());
+  }
+}
+
 /*
  * Report a C++ exception through the owning SUNContext without allowing a
  * second exception (for example, from a Python error handler) to escape the C
@@ -110,6 +153,12 @@ inline void report_custom_exception(SUNContext sunctx, const char* operation,
   {
     ShutdownSafeGIL gil;
     if (!gil.python_available()) { return; }
+
+    /* Preserve the first exception raised during the enclosing SUNDIALS call.
+       Scalar and void operations have no reliable error return, so the
+       enclosing CustomExceptionScope re-raises this exception after native
+       control returns. */
+    record_pending_exception(error);
 
     std::string message = std::string("exception in ") + operation + ":\n" +
                           error.what();
@@ -127,6 +176,105 @@ inline void report_custom_exception(SUNContext sunctx, const char* operation,
       PyErr_Clear();
     }
   }
+}
+
+/* One owned exception reference per thread. Only access this with the GIL. */
+inline PyObject*& pending_custom_exception()
+{
+  static thread_local PyObject* exception = nullptr;
+  return exception;
+}
+
+inline bool& capture_custom_exceptions()
+{
+  static thread_local bool capture = false;
+  return capture;
+}
+
+inline bool custom_exception_pending() noexcept
+{ return capture_custom_exceptions() && pending_custom_exception() != nullptr; }
+
+/*
+ * Exception state is scoped in the binding callable, after nanobind has
+ * converted all arguments.  A scope saves the enclosing state so nested
+ * solver/binding calls neither clear the outer exception nor disable its
+ * capture mode.  Only the first exception in one scope is retained by
+ * report_custom_exception().
+ */
+class CustomExceptionScope
+{
+public:
+  CustomExceptionScope()
+    : saved_pending_(std::exchange(pending_custom_exception(), nullptr)),
+      saved_capture_(std::exchange(capture_custom_exceptions(), true))
+  {}
+
+  ~CustomExceptionScope()
+  {
+    /* If the native call unwound with a C++ exception, no rethrow consumed the
+       captured reference.  Drop it before restoring the enclosing scope. */
+    Py_XDECREF(std::exchange(pending_custom_exception(), saved_pending_));
+    capture_custom_exceptions() = saved_capture_;
+  }
+
+  void rethrow_if_pending()
+  {
+    if (PyObject* exception = std::exchange(pending_custom_exception(), nullptr))
+    {
+      PyErr_SetRaisedException(exception);
+      throw nb::python_error();
+    }
+  }
+
+  CustomExceptionScope(const CustomExceptionScope&)            = delete;
+  CustomExceptionScope& operator=(const CustomExceptionScope&) = delete;
+
+private:
+  PyObject* saved_pending_;
+  bool saved_capture_;
+};
+
+template<typename F, typename R, typename... Args>
+auto scoped_impl(F f, R (F::*)(Args...) const)
+{
+  return [f = std::move(f)](Args... args) -> R
+  {
+    CustomExceptionScope scope;
+    if constexpr (std::is_void_v<R>)
+    {
+      f(std::forward<Args>(args)...);
+      scope.rethrow_if_pending();
+    }
+    else
+    {
+      R result = f(std::forward<Args>(args)...);
+      scope.rethrow_if_pending();
+      return result;
+    }
+  };
+}
+
+template<typename F>
+auto scoped(F f)
+{ return scoped_impl(std::move(f), &F::operator()); }
+
+template<typename R, typename... Args>
+auto scoped(R (*fn)(Args...))
+{
+  return scoped([fn](Args... args) -> R
+                { return fn(std::forward<Args>(args)...); });
+}
+
+/*
+ * All generated and handwritten Python functions go through this adapter.
+ * Keeping the wrapping at the module-definition boundary ensures argument
+ * conversion happens before CustomExceptionScope is constructed.
+ */
+template<typename Name, typename F, typename... Args>
+void scoped_def(nb::module_& module, Name&& name, F&& fn, Args&&... args)
+{
+  module.def(std::forward<Name>(name), scoped(std::forward<F>(fn)),
+             std::forward<Args>(args)...);
 }
 
 inline void report_custom_unknown_exception(SUNContext sunctx,
@@ -152,87 +300,6 @@ inline void report_custom_unknown_exception(SUNContext sunctx,
                                                    __FILE__, __LINE__);        \
     return FAILURE;                                                            \
   }
-
-/*------------------------------------------------------------------------------
- * Explicit active-memory modes
- *----------------------------------------------------------------------------*/
-
-/*
- * Several SUNNonlinearSolver callbacks take an opaque "mem" pointer that is only
- * supplied to the solver when SUNDIALS enters setup() or solve(). There are two
- * distinct providers of that pointer, and confusing them would hand a package's
- * private memory to a callback expecting the binding's function table (or the
- * reverse), so the provider is tracked explicitly rather than inferred.
- */
-enum class ActiveMemMode
-{
-  /* No setup()/solve() call is in progress; mem-dependent callbacks are
-     invalid. */
-  none,
-
-  /* SUNDIALS or another native caller drove the custom vtable and supplied
-     its own memory. */
-  sundials,
-
-  /* A hand-written sundials4py wrapper was the caller, so the relevant pointer
-     is the object's `python` function table, matching the pre-existing native
-     callback wrappers. */
-  direct_binding
-};
-
-inline const char* active_mem_mode_name(ActiveMemMode mode)
-{
-  switch (mode)
-  {
-  case ActiveMemMode::sundials: return "sundials";
-  case ActiveMemMode::direct_binding: return "direct-binding";
-  default: return "none";
-  }
-}
-
-/*
- * Marks the dynamic extent during which a hand-written sundials4py wrapper --
- * rather than a SUNDIALS package -- is driving a custom object.
- *
- * Callback setters have no memory argument from which to infer their caller, so
- * the hand-written bindings mark their dynamic extent. Setup and solve can and
- * do determine provenance directly by comparing their `mem` input with the
- * object's Python function table.
- */
-class DirectBindingScope
-{
-public:
-  DirectBindingScope() : saved_(flag()) { flag() = true; }
-
-  ~DirectBindingScope() { flag() = saved_; }
-
-  DirectBindingScope(const DirectBindingScope&)            = delete;
-  DirectBindingScope& operator=(const DirectBindingScope&) = delete;
-
-  static bool active() { return flag(); }
-
-private:
-  /* The flag lives inside an inline function rather than being a
-     `static thread_local` data member: Apple clang emits the thread-local
-     wrapper routine for an inline static data member with strong external
-     linkage, so every translation unit that includes this header contributes a
-     definition and the link fails with a duplicate symbol. A function-local
-     thread_local in an inline function has the vague linkage we actually want. */
-  static bool& flag()
-  {
-    static thread_local bool active = false;
-    return active;
-  }
-
-  bool saved_;
-};
-
-/* The mode a callback installed right now should later be invoked under. */
-inline ActiveMemMode current_install_mode()
-{
-  return DirectBindingScope::active() ? ActiveMemMode::direct_binding
-                                      : ActiveMemMode::sundials;
-}
 
 /*------------------------------------------------------------------------------
  * Revocable native callback state
@@ -265,11 +332,6 @@ struct NativeCallbackState : NativeCallbackStateBase
 {
   Fn fn{nullptr};
   void* data{nullptr};
-
-  // Which provider's memory this callback expects, for the subset of callbacks
-  // whose data pointer only arrives at call time. Callbacks that
-  // carry an explicit data pointer ignore this.
-  ActiveMemMode required_mode{ActiveMemMode::none};
 };
 
 /* A closed set makes misspelled registry slots a compile-time error. */
@@ -301,28 +363,31 @@ class NativeCallbackRegistry
 {
 public:
   template<typename Fn>
-  std::shared_ptr<NativeCallbackState<Fn>> install(NativeCallbackSlot slot,
-                                                   Fn fn, void* data)
+  static std::shared_ptr<NativeCallbackState<Fn>> prepare(Fn fn, void* data)
   {
-    invalidate(slot);
     if (!fn) { return nullptr; }
 
-    auto state           = std::make_shared<NativeCallbackState<Fn>>();
-    state->fn            = fn;
-    state->data          = data;
-    state->required_mode = current_install_mode();
-    state->valid         = true;
-    slots_[slot]         = state;
+    auto state   = std::make_shared<NativeCallbackState<Fn>>();
+    state->fn    = fn;
+    state->data  = data;
+    state->valid = true;
     return state;
+  }
+
+  void commit(NativeCallbackSlot slot,
+              std::shared_ptr<NativeCallbackStateBase> state)
+  {
+    auto& entry = slots_[index(slot)];
+    if (entry) { entry->valid = false; }
+    entry = std::move(state);
   }
 
   /* Revoke the state held for one slot, if any. */
   void invalidate(NativeCallbackSlot slot)
   {
-    auto it = slots_.find(slot);
-    if (it == slots_.end()) { return; }
-    if (it->second) { it->second->valid = false; }
-    slots_.erase(it);
+    auto& entry = slots_[index(slot)];
+    if (entry) { entry->valid = false; }
+    entry.reset();
   }
 
   /* Revoke every slot; called when the custom object is destroyed. */
@@ -330,13 +395,39 @@ public:
   {
     for (auto& entry : slots_)
     {
-      if (entry.second) { entry.second->valid = false; }
+      if (entry) { entry->valid = false; }
+      entry.reset();
     }
-    slots_.clear();
   }
 
 private:
-  std::map<NativeCallbackSlot, std::shared_ptr<NativeCallbackStateBase>> slots_;
+  static constexpr std::size_t index(NativeCallbackSlot slot) noexcept
+  { return static_cast<std::size_t>(slot); }
+
+  static constexpr std::size_t slot_count =
+    static_cast<std::size_t>(NativeCallbackSlot::getconvratefn) + 1;
+  std::array<std::shared_ptr<NativeCallbackStateBase>, slot_count> slots_{};
+};
+
+struct PreparedCallback
+{
+  explicit PreparedCallback(std::shared_ptr<NativeCallbackStateBase> value)
+    : state(std::move(value))
+  {}
+
+  ~PreparedCallback()
+  {
+    if (!committed && state) { state->valid = false; }
+  }
+
+  void commit(NativeCallbackRegistry& registry, NativeCallbackSlot slot)
+  {
+    registry.commit(slot, state);
+    committed = true;
+  }
+
+  std::shared_ptr<NativeCallbackStateBase> state;
+  bool committed{false};
 };
 
 /*
@@ -360,8 +451,8 @@ inline void require_valid_callback(const NativeCallbackStateBase* state,
  *----------------------------------------------------------------------------*/
 
 /*
- * RAII scope that records the active memory pointer and mode for the duration
- * of one custom setup()/solve() call.
+ * RAII scope that records the active memory pointer for the duration of one
+ * custom setup()/solve() call.
  *
  * Nesting is supported (a package may call setup() from inside solve()) because
  * the previous value is saved and restored, and restoration happens on every
@@ -369,27 +460,33 @@ inline void require_valid_callback(const NativeCallbackStateBase* state,
  *
  * Templated on the content type so that each object family can keep its own
  * private content struct; the only requirement is that it expose the members
- * `active_mem_mode` and `active_mem`.
+ * `active_mem` and `active_mem_owner`.
  */
 template<typename ContentT>
 class ActiveMemScope
 {
 public:
-  ActiveMemScope(ContentT* content, ActiveMemMode mode, void* mem) noexcept
-    : content_(content)
+  ActiveMemScope(ContentT* content, void* mem) : content_(content)
   {
     if (!content_) { return; }
-    saved_mode_               = content_->active_mem_mode;
-    saved_mem_                = content_->active_mem;
-    content_->active_mem_mode = mode;
-    content_->active_mem      = mem;
+    if (content_->active_mem &&
+        content_->active_mem_owner != std::this_thread::get_id())
+    {
+      throw std::runtime_error(
+        "[sundials4py] a custom SUNNonlinearSolver may not be used from two "
+        "threads at once");
+    }
+    saved_mem_                 = content_->active_mem;
+    saved_owner_               = content_->active_mem_owner;
+    content_->active_mem       = mem;
+    content_->active_mem_owner = std::this_thread::get_id();
   }
 
   ~ActiveMemScope() noexcept
   {
     if (!content_) { return; }
-    content_->active_mem_mode = saved_mode_;
-    content_->active_mem      = saved_mem_;
+    content_->active_mem       = saved_mem_;
+    content_->active_mem_owner = saved_owner_;
   }
 
   ActiveMemScope(const ActiveMemScope&)            = delete;
@@ -397,18 +494,16 @@ public:
 
 private:
   ContentT* content_{nullptr};
-  ActiveMemMode saved_mode_{ActiveMemMode::none};
   void* saved_mem_{nullptr};
+  std::thread::id saved_owner_{};
 };
 
 /*
- * Fetch the active memory pointer, rejecting the call outright when no scope is
- * open or the open scope came from the wrong provider. Returning a wrong-but-
- * plausible pointer here would corrupt an integrator, so this is a hard error.
+ * Fetch the active memory pointer, rejecting the call when no scope is open or
+ * when another thread owns it.
  */
 template<typename ContentT>
-void* require_active_mem(ContentT* content, ActiveMemMode required,
-                         const char* what)
+void* require_active_mem(ContentT* content, const char* what)
 {
   if (!content)
   {
@@ -417,7 +512,7 @@ void* require_active_mem(ContentT* content, ActiveMemMode required,
       " callback was invoked on a custom object with no native content");
   }
 
-  if (content->active_mem_mode == ActiveMemMode::none)
+  if (!content->active_mem)
   {
     throw std::runtime_error(
       std::string("[sundials4py] the ") + what +
@@ -425,14 +520,11 @@ void* require_active_mem(ContentT* content, ActiveMemMode required,
       "setup() or solve(); no such call is currently active");
   }
 
-  if (content->active_mem_mode != required)
+  if (content->active_mem_owner != std::this_thread::get_id())
   {
     throw std::runtime_error(
-      std::string("[sundials4py] the ") + what + " callback requires " +
-      active_mem_mode_name(required) + " memory, but this solver was entered in " +
-      active_mem_mode_name(content->active_mem_mode) +
-      " mode; the callback and the caller disagree about which memory pointer "
-      "is in play");
+      std::string("[sundials4py] the ") + what +
+      " callback was invoked from a thread other than the active solver call");
   }
 
   return content->active_mem;
@@ -463,38 +555,100 @@ bool custom_method_overridden(nb::handle impl, const char* name)
   if (!concrete.is_valid()) { nb::raise_python_error(); }
 
   nb::object base = nb::type<BaseClass>().attr(name);
-  int same        = PyObject_RichCompareBool(concrete.ptr(), base.ptr(), Py_EQ);
-  if (same < 0) { nb::raise_python_error(); }
-  return same == 0;
+  return !concrete.is(base);
+}
+
+inline void require_same_context(
+  SUNContext expected,
+  const std::shared_ptr<std::remove_pointer_t<SUNContext>>& actual,
+  const char* operation)
+{
+  if (actual.get() != expected)
+  {
+    throw nb::value_error((std::string(operation) +
+                           "() must construct its result with the same "
+                           "SUNContext as the object being cloned")
+                            .c_str());
+  }
 }
 
 /*------------------------------------------------------------------------------
- * Custom content
+ * Shared custom-object materialization state and native content
  *----------------------------------------------------------------------------*/
 
-/*
- * Members every custom content struct is expected to provide, so that the
- * helpers below can be shared without any compile-time member detection (the
- * bindings are built as C++17, where detection idioms are noticeably clumsier
- * than the small cost of a uniform layout).
- *
- * Families that never take ownership of a handle simply leave `strong_impl`
- * empty; families with no native callbacks leave `callbacks` untouched.
- */
-#define SUNDIALS4PY_CUSTOM_CONTENT_MEMBERS                                    \
-  /* Set for handles the user owns: SUNDIALS must not keep the Python       \
-     object alive, or attaching a solver would create an immortal cycle. */ \
-  nb::object weak_impl;                                                       \
-                                                                              \
-  /* Set for handles SUNDIALS owns outright (e.g. SUNMatClone results),     \
-     where the Python implementation must not be collected first. */ \
-  nb::object strong_impl;                                                     \
-                                                                              \
-  /* Keeps the SUNContext alive for as long as the native shell exists. */    \
-  std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner;            \
-                                                                              \
-  /* Revocable native callback adapters handed to Python. */                  \
-  NativeCallbackRegistry callbacks
+template<typename Derived, typename Pointee>
+class CustomObjectBase
+{
+public:
+  using Context = std::shared_ptr<std::remove_pointer_t<SUNContext>>;
+  using Handle  = std::shared_ptr<Pointee>;
+
+  CustomObjectBase(Context sunctx, const char* label)
+    : sunctx_owner_(std::move(sunctx)), label_(label)
+  {}
+
+  Handle _get_sundials_handle(nb::handle self)
+  {
+    if (raw_handle_)
+    {
+      return Handle(std::shared_ptr<void>{}, static_cast<Pointee*>(raw_handle_));
+    }
+    if (!sunctx_owner_)
+    {
+      throw nb::type_error(
+        (std::string(label_) + " base constructor was not initialized").c_str());
+    }
+    if (state_ == HandleState::materializing)
+    {
+      throw std::runtime_error(std::string("reentrant ") + label_ +
+                               " native handle materialization");
+    }
+    if (state_ == HandleState::materialized) { return handle_; }
+
+    state_ = HandleState::materializing;
+    try
+    {
+      handle_ = static_cast<Derived&>(*this).make_handle(self);
+      state_  = HandleState::materialized;
+    }
+    catch (...)
+    {
+      handle_.reset();
+      state_ = HandleState::unmaterialized;
+      throw;
+    }
+    return handle_;
+  }
+
+  bool _is_materialized() const { return state_ == HandleState::materialized; }
+
+  Context sunctx() const { return sunctx_owner_; }
+
+protected:
+  Context sunctx_owner_;
+  void* raw_handle_{nullptr};
+
+private:
+  enum class HandleState
+  {
+    unmaterialized,
+    materializing,
+    materialized
+  };
+
+  Handle handle_;
+  HandleState state_{HandleState::unmaterialized};
+  const char* label_;
+};
+
+/* Shared native-content ownership and callback state for every family. */
+struct CustomContentBase
+{
+  nb::object weak_impl;
+  nb::object strong_impl;
+  std::shared_ptr<std::remove_pointer_t<SUNContext>> sunctx_owner;
+  NativeCallbackRegistry callbacks;
+};
 
 /*
  * Resolve the Python implementation behind a native handle.

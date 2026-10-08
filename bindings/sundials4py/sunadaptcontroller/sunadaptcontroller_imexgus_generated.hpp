@@ -10,8 +10,8 @@ auto pyClass_SUNAdaptControllerContent_ImExGus =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNAdaptController_ImExGus",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_ImExGus",
   [](SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>
   {
     auto SUNAdaptController_ImExGus_adapt_return_type_to_shared_ptr =
@@ -28,9 +28,10 @@ m.def(
   },
   nb::arg("sunctx"), "nb::keep_alive<0, 1>()", nb::keep_alive<0, 1>());
 
-m.def("SUNAdaptController_SetParams_ImExGus",
-      SUNAdaptController_SetParams_ImExGus, nb::arg("C"), nb::arg("k1e"),
-      nb::arg("k2e"), nb::arg("k1i"), nb::arg("k2i"));
+sundials4py::scoped_def(m, "SUNAdaptController_SetParams_ImExGus",
+                        SUNAdaptController_SetParams_ImExGus, nb::arg("C"),
+                        nb::arg("k1e"), nb::arg("k2e"), nb::arg("k1i"),
+                        nb::arg("k2i"));
 // #ifdef __cplusplus
 //
 // #endif

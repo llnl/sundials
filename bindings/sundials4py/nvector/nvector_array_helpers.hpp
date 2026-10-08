@@ -112,14 +112,10 @@ inline void retain_python_host_array(N_Vector v, nanobind::object array)
 }
 
 inline void retain_python_device_array(N_Vector v, nanobind::object array)
-{
-  prepare_python_array_owners(v).device_array = std::move(array);
-}
+{ prepare_python_array_owners(v).device_array = std::move(array); }
 
 inline bool object_is_none(nanobind::object obj)
-{
-  return obj.ptr() == Py_None;
-}
+{ return obj.ptr() == Py_None; }
 
 inline bool is_jax_object(nanobind::handle obj)
 {
@@ -158,9 +154,7 @@ inline std::string read_optional_string(nanobind::object value)
 }
 
 inline bool is_cuda_nvector(N_Vector v)
-{
-  return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA;
-}
+{ return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA; }
 
 inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
 {
@@ -197,32 +191,45 @@ inline void bind_nvector_array_accessors(nanobind::module_& m,
                                          GetCupyArray get_cupy_array,
                                          GetTorchTensor get_torch_tensor)
 {
-  m.def("N_VGetNumpyArray", get_numpy_array, nanobind::arg("v"),
-        "Return a NumPy view of an N_Vector's host data.\n\n"
-        "The returned one-dimensional array shares storage with the N_Vector, "
-        "so modifying the array modifies the vector. This function is not "
-        "supported for CUDA N_Vectors; use a backend-specific CUDA accessor "
-        "instead.");
+  sundials4py::scoped_def(m, "N_VGetNumpyArray", get_numpy_array,
+                          nanobind::arg("v"),
+                          "Return a NumPy view of an N_Vector's host data.\n\n"
+                          "The returned one-dimensional array shares storage "
+                          "with the N_Vector, "
+                          "so modifying the array modifies the vector. This "
+                          "function is not "
+                          "supported for CUDA N_Vectors; use a "
+                          "backend-specific CUDA accessor "
+                          "instead.");
 
-  m.def("N_VGetJaxArray", get_jax_array, nanobind::arg("v"),
-        "Return a JAX array view of an N_Vector's data.\n\n"
-        "The returned array uses the N_Vector's native device and shares "
-        "storage with the N_Vector. Use an explicit JAX or NumPy conversion "
-        "when a host array is needed. JAX arrays are immutable; use "
-        "N_VSetJaxArray to copy values into an N_Vector or to attach mutable "
-        "JAX Ref storage.");
+  sundials4py::
+    scoped_def(m, "N_VGetJaxArray", get_jax_array, nanobind::arg("v"),
+               "Return a JAX array view of an N_Vector's data.\n\n"
+               "The returned array uses the N_Vector's native device and "
+               "shares "
+               "storage with the N_Vector. Use an explicit JAX or NumPy "
+               "conversion "
+               "when a host array is needed. JAX arrays are immutable; use "
+               "N_VSetJaxArray to copy values into an N_Vector or to attach "
+               "mutable "
+               "JAX Ref storage.");
 
-  m.def("N_VGetCupyArray", get_cupy_array, nanobind::arg("v"),
-        "Return a CuPy view of a CUDA N_Vector's device data.\n\n"
-        "This function requires a CUDA N_Vector and a CUDA-enabled "
-        "sundials4py build. The returned array shares device storage with "
-        "the N_Vector.");
+  sundials4py::
+    scoped_def(m, "N_VGetCupyArray", get_cupy_array, nanobind::arg("v"),
+               "Return a CuPy view of a CUDA N_Vector's device data.\n\n"
+               "This function requires a CUDA N_Vector and a CUDA-enabled "
+               "sundials4py build. The returned array shares device storage "
+               "with "
+               "the N_Vector.");
 
-  m.def("N_VGetTorchTensor", get_torch_tensor, nanobind::arg("v"),
-        "Return a PyTorch tensor view of an N_Vector's data.\n\n"
-        "The returned tensor uses the N_Vector's native device and shares "
-        "storage with the N_Vector. Call .cpu() or another PyTorch transfer "
-        "operation explicitly when a host copy is needed.");
+  sundials4py::
+    scoped_def(m, "N_VGetTorchTensor", get_torch_tensor, nanobind::arg("v"),
+               "Return a PyTorch tensor view of an N_Vector's data.\n\n"
+               "The returned tensor uses the N_Vector's native device and "
+               "shares "
+               "storage with the N_Vector. Call .cpu() or another PyTorch "
+               "transfer "
+               "operation explicitly when a host copy is needed.");
 }
 
 template<typename Array>

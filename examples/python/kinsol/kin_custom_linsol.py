@@ -142,7 +142,7 @@ class MyMatrix(CustomSUNMatrix):
         # reference to it is gone; that is expected and handled by the
         # binding, which holds a strong reference to the implementation for
         # as long as SUNDIALS owns the clone.
-        return MyMatrix(self.n, self.sunctx)
+        return type(self)(self.n, self.sunctx)
 
     def zero(self):
         self.sub[:] = 0.0
@@ -186,10 +186,17 @@ class MyMatrix(CustomSUNMatrix):
 
 
 class MyLinearSolver(CustomSUNLinearSolver):
-    """A SUNLinearSolver implemented in Python, using the Thomas algorithm."""
+    """A SUNLinearSolver implemented in Python, using the Thomas algorithm.
+
+    The loops below keep the algorithm visible for this small teaching
+    example. For larger systems, replace the per-element Python loops with a
+    compiled implementation such as ``scipy.linalg.solve_banded`` (or a
+    vectorized/Numba equivalent).
+    """
 
     def __init__(self, matrix, sunctx):
         self.n = matrix.n
+        self.solve_calls = 0
 
         # Populated by setup(): the modified diagonal and superdiagonal, and
         # the multipliers used to eliminate the subdiagonal. Precomputing
@@ -242,6 +249,7 @@ class MyLinearSolver(CustomSUNLinearSolver):
         converge -- KINSOL responds by shrinking its step), or a NEGATIVE
         code for a failure no retry will fix.
         """
+        self.solve_calls += 1
         n = self.n
         d = N_VGetNumpyArray(b).copy()
         for i in range(1, n):
@@ -310,9 +318,15 @@ def main():
     print(f"nni      = {nni:6d}    nfe     = {nfe:6d}")
     print(f"nje      = {nje:6d}")
 
+    return computed.copy(), exact.copy(), LS.solve_calls
+
 
 def test_kin_custom_linsol():
-    main()
+    computed, exact, solver_calls = main()
+    # The finite-difference discretization contributes O(h^2) error relative
+    # to the continuous sine solution used here.
+    np.testing.assert_allclose(computed, exact, rtol=1.0e-2, atol=1.0e-2)
+    assert solver_calls > 0
 
 
 if __name__ == "__main__":

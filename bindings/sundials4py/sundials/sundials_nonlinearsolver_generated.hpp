@@ -7,7 +7,6 @@
 auto pyEnumSUNNonlinearSolver_Type =
   nb::enum_<SUNNonlinearSolver_Type>(m, "SUNNonlinearSolver_Type",
                                      nb::is_arithmetic(), "")
-    .value("SUNNONLINEARSOLVER_NONE", SUNNONLINEARSOLVER_NONE, "")
     .value("SUNNONLINEARSOLVER_ROOTFIND", SUNNONLINEARSOLVER_ROOTFIND, "")
     .value("SUNNONLINEARSOLVER_FIXEDPOINT", SUNNONLINEARSOLVER_FIXEDPOINT, "")
     .value("SUNNONLINEARSOLVER_HYBRID", SUNNONLINEARSOLVER_HYBRID, "")
@@ -31,15 +30,17 @@ auto pyClass_generic_SUNNonlinearSolver =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNNonlinSolGetType", SUNNonlinSolGetType, nb::arg("NLS"));
+sundials4py::scoped_def(m, "SUNNonlinSolGetType", SUNNonlinSolGetType,
+                        nb::arg("NLS"));
 
-m.def("SUNNonlinSolInitialize", SUNNonlinSolInitialize, nb::arg("NLS"));
+sundials4py::scoped_def(m, "SUNNonlinSolInitialize", SUNNonlinSolInitialize,
+                        nb::arg("NLS"));
 
-m.def("SUNNonlinSolSetMaxIters", SUNNonlinSolSetMaxIters, nb::arg("NLS"),
-      nb::arg("maxiters"));
+sundials4py::scoped_def(m, "SUNNonlinSolSetMaxIters", SUNNonlinSolSetMaxIters,
+                        nb::arg("NLS"), nb::arg("maxiters"));
 
-m.def(
-  "SUNNonlinSolGetNumIters",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetNumIters",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long>
   {
     auto SUNNonlinSolGetNumIters_adapt_modifiable_immutable_to_return =
@@ -55,8 +56,8 @@ m.def(
   },
   nb::arg("NLS"));
 
-m.def(
-  "SUNNonlinSolGetCurIter",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetCurIter",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, int>
   {
     auto SUNNonlinSolGetCurIter_adapt_modifiable_immutable_to_return =
@@ -72,8 +73,8 @@ m.def(
   },
   nb::arg("NLS"));
 
-m.def(
-  "SUNNonlinSolGetNumConvFails",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetNumConvFails",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, long>
   {
     auto SUNNonlinSolGetNumConvFails_adapt_modifiable_immutable_to_return =

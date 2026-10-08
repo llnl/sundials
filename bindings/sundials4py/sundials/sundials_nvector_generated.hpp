@@ -41,56 +41,65 @@ auto pyClass_generic_N_Vector =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("N_VGetVectorID", N_VGetVectorID, nb::arg("w"));
+sundials4py::scoped_def(m, "N_VGetVectorID", N_VGetVectorID, nb::arg("w"));
 
-m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
+sundials4py::scoped_def(m, "N_VGetCommunicator", N_VGetCommunicator,
+                        nb::arg("v"));
 
-m.def("N_VGetLength", N_VGetLength, nb::arg("v"));
+sundials4py::scoped_def(m, "N_VGetLength", N_VGetLength, nb::arg("v"));
 
-m.def("N_VGetLocalLength", N_VGetLocalLength, nb::arg("v"));
+sundials4py::scoped_def(m, "N_VGetLocalLength", N_VGetLocalLength, nb::arg("v"));
 
-m.def("N_VLinearSum", N_VLinearSum, nb::arg("a"), nb::arg("x"), nb::arg("b"),
-      nb::arg("y"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VLinearSum", N_VLinearSum, nb::arg("a"),
+                        nb::arg("x"), nb::arg("b"), nb::arg("y"), nb::arg("z"));
 
-m.def("N_VConst", N_VConst, nb::arg("c"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VConst", N_VConst, nb::arg("c"), nb::arg("z"));
 
-m.def("N_VProd", N_VProd, nb::arg("x"), nb::arg("y"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VProd", N_VProd, nb::arg("x"), nb::arg("y"),
+                        nb::arg("z"));
 
-m.def("N_VDiv", N_VDiv, nb::arg("x"), nb::arg("y"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VDiv", N_VDiv, nb::arg("x"), nb::arg("y"),
+                        nb::arg("z"));
 
-m.def("N_VScale", N_VScale, nb::arg("c"), nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VScale", N_VScale, nb::arg("c"), nb::arg("x"),
+                        nb::arg("z"));
 
-m.def("N_VAbs", N_VAbs, nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VAbs", N_VAbs, nb::arg("x"), nb::arg("z"));
 
-m.def("N_VInv", N_VInv, nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VInv", N_VInv, nb::arg("x"), nb::arg("z"));
 
-m.def("N_VAddConst", N_VAddConst, nb::arg("x"), nb::arg("b"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VAddConst", N_VAddConst, nb::arg("x"),
+                        nb::arg("b"), nb::arg("z"));
 
-m.def("N_VDotProd", N_VDotProd, nb::arg("x"), nb::arg("y"));
+sundials4py::scoped_def(m, "N_VDotProd", N_VDotProd, nb::arg("x"), nb::arg("y"));
 
-m.def("N_VMaxNorm", N_VMaxNorm, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VMaxNorm", N_VMaxNorm, nb::arg("x"));
 
-m.def("N_VWrmsNorm", N_VWrmsNorm, nb::arg("x"), nb::arg("w"));
+sundials4py::scoped_def(m, "N_VWrmsNorm", N_VWrmsNorm, nb::arg("x"),
+                        nb::arg("w"));
 
-m.def("N_VWrmsNormMask", N_VWrmsNormMask, nb::arg("x"), nb::arg("w"),
-      nb::arg("id"));
+sundials4py::scoped_def(m, "N_VWrmsNormMask", N_VWrmsNormMask, nb::arg("x"),
+                        nb::arg("w"), nb::arg("id"));
 
-m.def("N_VMin", N_VMin, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VMin", N_VMin, nb::arg("x"));
 
-m.def("N_VWL2Norm", N_VWL2Norm, nb::arg("x"), nb::arg("w"));
+sundials4py::scoped_def(m, "N_VWL2Norm", N_VWL2Norm, nb::arg("x"), nb::arg("w"));
 
-m.def("N_VL1Norm", N_VL1Norm, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VL1Norm", N_VL1Norm, nb::arg("x"));
 
-m.def("N_VCompare", N_VCompare, nb::arg("c"), nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VCompare", N_VCompare, nb::arg("c"), nb::arg("x"),
+                        nb::arg("z"));
 
-m.def("N_VInvTest", N_VInvTest, nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VInvTest", N_VInvTest, nb::arg("x"), nb::arg("z"));
 
-m.def("N_VConstrMask", N_VConstrMask, nb::arg("c"), nb::arg("x"), nb::arg("m"));
+sundials4py::scoped_def(m, "N_VConstrMask", N_VConstrMask, nb::arg("c"),
+                        nb::arg("x"), nb::arg("m"));
 
-m.def("N_VMinQuotient", N_VMinQuotient, nb::arg("num"), nb::arg("denom"));
+sundials4py::scoped_def(m, "N_VMinQuotient", N_VMinQuotient, nb::arg("num"),
+                        nb::arg("denom"));
 
-m.def(
-  "N_VLinearCombination",
+sundials4py::scoped_def(
+  m, "N_VLinearCombination",
   [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
      N_Vector z) -> SUNErrCode
   {
@@ -109,8 +118,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("c_1d"), nb::arg("X_1d"), nb::arg("z"));
 
-m.def(
-  "N_VScaleAddMulti",
+sundials4py::scoped_def(
+  m, "N_VScaleAddMulti",
   [](int nvec, sundials4py::Array1d a_1d, N_Vector x,
      std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
@@ -133,8 +142,8 @@ m.def(
   nb::arg("nvec"), nb::arg("a_1d"), nb::arg("x"), nb::arg("Y_1d"),
   nb::arg("Z_1d"));
 
-m.def(
-  "N_VDotProdMulti",
+sundials4py::scoped_def(
+  m, "N_VDotProdMulti",
   [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
      sundials4py::Array1d dotprods_1d) -> SUNErrCode
   {
@@ -155,8 +164,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("x"), nb::arg("Y_1d"), nb::arg("dotprods_1d"));
 
-m.def(
-  "N_VLinearSumVectorArray",
+sundials4py::scoped_def(
+  m, "N_VLinearSumVectorArray",
   [](int nvec, sunrealtype a, std::vector<N_Vector> X_1d, sunrealtype b,
      std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
@@ -179,8 +188,8 @@ m.def(
   nb::arg("nvec"), nb::arg("a"), nb::arg("X_1d"), nb::arg("b"), nb::arg("Y_1d"),
   nb::arg("Z_1d"));
 
-m.def(
-  "N_VScaleVectorArray",
+sundials4py::scoped_def(
+  m, "N_VScaleVectorArray",
   [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
      std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
@@ -202,8 +211,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("c_1d"), nb::arg("X_1d"), nb::arg("Z_1d"));
 
-m.def(
-  "N_VConstVectorArray",
+sundials4py::scoped_def(
+  m, "N_VConstVectorArray",
   [](int nvec, sunrealtype c, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
     auto N_VConstVectorArray_adapt_arr_ptr_to_std_vector =
@@ -219,8 +228,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("c"), nb::arg("Z_1d"));
 
-m.def(
-  "N_VWrmsNormVectorArray",
+sundials4py::scoped_def(
+  m, "N_VWrmsNormVectorArray",
   [](int nvec, std::vector<N_Vector> X_1d, std::vector<N_Vector> W_1d,
      sundials4py::Array1d nrm_1d) -> SUNErrCode
   {
@@ -242,8 +251,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("X_1d"), nb::arg("W_1d"), nb::arg("nrm_1d"));
 
-m.def(
-  "N_VWrmsNormMaskVectorArray",
+sundials4py::scoped_def(
+  m, "N_VWrmsNormMaskVectorArray",
   [](int nvec, std::vector<N_Vector> X_1d, std::vector<N_Vector> W_1d,
      N_Vector id, sundials4py::Array1d nrm_1d) -> SUNErrCode
   {
@@ -267,29 +276,32 @@ m.def(
   nb::arg("nvec"), nb::arg("X_1d"), nb::arg("W_1d"), nb::arg("id"),
   nb::arg("nrm_1d"));
 
-m.def("N_VDotProdLocal", N_VDotProdLocal, nb::arg("x"), nb::arg("y"));
+sundials4py::scoped_def(m, "N_VDotProdLocal", N_VDotProdLocal, nb::arg("x"),
+                        nb::arg("y"));
 
-m.def("N_VMaxNormLocal", N_VMaxNormLocal, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VMaxNormLocal", N_VMaxNormLocal, nb::arg("x"));
 
-m.def("N_VMinLocal", N_VMinLocal, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VMinLocal", N_VMinLocal, nb::arg("x"));
 
-m.def("N_VL1NormLocal", N_VL1NormLocal, nb::arg("x"));
+sundials4py::scoped_def(m, "N_VL1NormLocal", N_VL1NormLocal, nb::arg("x"));
 
-m.def("N_VWSqrSumLocal", N_VWSqrSumLocal, nb::arg("x"), nb::arg("w"));
+sundials4py::scoped_def(m, "N_VWSqrSumLocal", N_VWSqrSumLocal, nb::arg("x"),
+                        nb::arg("w"));
 
-m.def("N_VWSqrSumMaskLocal", N_VWSqrSumMaskLocal, nb::arg("x"), nb::arg("w"),
-      nb::arg("id"));
+sundials4py::scoped_def(m, "N_VWSqrSumMaskLocal", N_VWSqrSumMaskLocal,
+                        nb::arg("x"), nb::arg("w"), nb::arg("id"));
 
-m.def("N_VInvTestLocal", N_VInvTestLocal, nb::arg("x"), nb::arg("z"));
+sundials4py::scoped_def(m, "N_VInvTestLocal", N_VInvTestLocal, nb::arg("x"),
+                        nb::arg("z"));
 
-m.def("N_VConstrMaskLocal", N_VConstrMaskLocal, nb::arg("c"), nb::arg("x"),
-      nb::arg("m"));
+sundials4py::scoped_def(m, "N_VConstrMaskLocal", N_VConstrMaskLocal,
+                        nb::arg("c"), nb::arg("x"), nb::arg("m"));
 
-m.def("N_VMinQuotientLocal", N_VMinQuotientLocal, nb::arg("num"),
-      nb::arg("denom"));
+sundials4py::scoped_def(m, "N_VMinQuotientLocal", N_VMinQuotientLocal,
+                        nb::arg("num"), nb::arg("denom"));
 
-m.def(
-  "N_VDotProdMultiLocal",
+sundials4py::scoped_def(
+  m, "N_VDotProdMultiLocal",
   [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
      sundials4py::Array1d dotprods_1d) -> SUNErrCode
   {
@@ -311,8 +323,8 @@ m.def(
   },
   nb::arg("nvec"), nb::arg("x"), nb::arg("Y_1d"), nb::arg("dotprods_1d"));
 
-m.def(
-  "N_VDotProdMultiAllReduce",
+sundials4py::scoped_def(
+  m, "N_VDotProdMultiAllReduce",
   [](int nvec_total, N_Vector x, sundials4py::Array1d sum_1d) -> SUNErrCode
   {
     auto N_VDotProdMultiAllReduce_adapt_arr_ptr_to_std_vector =
@@ -329,9 +341,10 @@ m.def(
   },
   nb::arg("nvec_total"), nb::arg("x"), nb::arg("sum_1d"));
 
-m.def("N_VPrint", N_VPrint, nb::arg("v"));
+sundials4py::scoped_def(m, "N_VPrint", N_VPrint, nb::arg("v"));
 
-m.def("N_VPrintFile", N_VPrintFile, nb::arg("v"), nb::arg("outfile"));
+sundials4py::scoped_def(m, "N_VPrintFile", N_VPrintFile, nb::arg("v"),
+                        nb::arg("outfile"));
 // #ifdef __cplusplus
 //
 // #endif
