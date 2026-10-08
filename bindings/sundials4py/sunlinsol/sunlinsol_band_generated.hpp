@@ -1,4 +1,4 @@
-// #ifndef _SUNLINSOL_BAND_H
+// #ifndef SUNDIALS_SUNLINSOL_BAND_H
 //
 // #ifdef __cplusplus
 // #endif

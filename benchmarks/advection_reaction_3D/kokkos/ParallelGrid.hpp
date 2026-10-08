@@ -20,8 +20,8 @@
  * freedom, and that uses Kokkos views to store communication buffer data.
  * ----------------------------------------------------------------------------*/
 
-#ifndef _KOKKOSPARGRID_H
-#define _KOKKOSPARGRID_H
+#ifndef SUNDIALS_PARALLELGRID_HPP
+#define SUNDIALS_PARALLELGRID_HPP
 
 #include <Kokkos_Core.hpp>
 #include <fstream>

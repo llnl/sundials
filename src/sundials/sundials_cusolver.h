@@ -27,8 +27,8 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h>
 
-#ifndef _SUNDIALS_CUSOLVER_H
-#define _SUNDIALS_CUSOLVER_H
+#ifndef SUNDIALS_SUNDIALS_CUSOLVER_H
+#define SUNDIALS_SUNDIALS_CUSOLVER_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -66,4 +66,4 @@ inline sunbooleantype SUNDIALS_CUSOLVER_Assert(cusolverStatus_t status,
 }
 #endif
 
-#endif /* _SUNDIALS_CUSOLVER_H */
+#endif /* SUNDIALS_SUNDIALS_CUSOLVER_H */

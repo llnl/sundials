@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TPETRA_INTERFACE_HPP_
-#define _SUNDIALS_TPETRA_INTERFACE_HPP_
+#ifndef SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP
+#define SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP
 
 #include <Tpetra_Vector.hpp>
 #include <nvector/nvector_trilinos.h>
@@ -63,4 +63,4 @@ SUNDIALS_EXPORT N_Vector N_VMake_Trilinos(
   Teuchos::RCP<sundials::trilinos::nvector_tpetra::TpetraVectorInterface::vector_type> v,
   SUNContext sunctx);
 
-#endif // _TPETRA_SUNDIALS_INTERFACE_HPP_
+#endif // SUNDIALS_SUNDIALSTPETRAVECTORINTERFACE_HPP

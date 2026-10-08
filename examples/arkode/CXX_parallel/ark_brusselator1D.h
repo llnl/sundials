@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARK_BRUSSELATOR1D_H
-#define _ARK_BRUSSELATOR1D_H
+#ifndef SUNDIALS_ARK_BRUSSELATOR1D_H
+#define SUNDIALS_ARK_BRUSSELATOR1D_H
 
 #include <cmath>
 #include <cstdio>

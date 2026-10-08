@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_LAPACK_H
-#define _SUNDIALS_LAPACK_H
+#ifndef SUNDIALS_LAPACK_DEFS_H_IN
+#define SUNDIALS_LAPACK_DEFS_H_IN
 
 #include <sundials/sundials_types.h>
 

@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_TPETRA_VECTOR_KERNELS_HPP_
-#define _SUNDIALS_TPETRA_VECTOR_KERNELS_HPP_
+#ifndef SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
+#define SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP
 
 #include <Kokkos_Core.hpp>
 #include <Tpetra_Vector.hpp>
@@ -772,4 +772,4 @@ inline scalar_type minQuotientLocal(const vector_type& num, const vector_type& d
 } // namespace trilinos
 } // namespace sundials
 
-#endif // _TPETRA_SUNDIALS_VECTOR_KERNELS_HPP_
+#endif // SUNDIALS_SUNDIALSTPETRAVECTORKERNELS_HPP

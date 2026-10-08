@@ -18,6 +18,9 @@
  * ark_advection_diffusion_reaction.cpp for more details.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_ARK_ADVECTION_DIFFUSION_REACTION_HPP
+#define SUNDIALS_ARK_ADVECTION_DIFFUSION_REACTION_HPP
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -1212,3 +1215,5 @@ static int CloseOutput(UserOptions& uopts)
 }
 
 //---- end of file ----
+
+#endif // SUNDIALS_ARK_ADVECTION_DIFFUSION_REACTION_HPP

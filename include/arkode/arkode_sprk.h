@@ -17,8 +17,8 @@
  * This header file defines the ARKodeSPRKTable structure.
  * -----------------------------------------------------------------*/
 
-#ifndef _ARKODE_SPRKTABLE_H
-#define _ARKODE_SPRKTABLE_H
+#ifndef SUNDIALS_ARKODE_SPRK_H
+#define SUNDIALS_ARKODE_SPRK_H
 
 #include <arkode/arkode_butcher.h>
 #include <sundials/sundials_types.h>
