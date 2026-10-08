@@ -69,7 +69,7 @@ For users employing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or
 includes algorithms for their approximation through difference
 quotients, although the user also has the option of supplying a routine
 to compute the Jacobian (or an approximation to it) directly. This
-user-supplied routine is required when using sparse or user-supplied
+user-supplied routine is required when user-supplied and CSR sparse
 Jacobian matrices.
 
 For users employing matrix-free iterative linear solvers, CVODE
