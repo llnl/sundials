@@ -29,9 +29,6 @@ extern "C" {
  * Deprecated Functions -- all are superseded by shared ARKODE-level routines
  * -------------------------------------------------------------------------- */
 
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeCreateMRIStepInnerStepper instead")
-int ARKStepCreateMRIStepInnerStepper(void* arkode_mem,
-                                     MRIStepInnerStepper* stepper);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeResize instead")
 int ARKStepResize(void* arkode_mem, N_Vector ynew, sunrealtype hscale,
                   sunrealtype t0, ARKVecResizeFn resize, void* resize_data);

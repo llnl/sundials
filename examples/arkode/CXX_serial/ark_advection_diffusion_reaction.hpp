@@ -101,7 +101,7 @@ struct UserData
   SUNMatrix temp_J = nullptr;
 
   // Inner stepper memory
-  MRIStepInnerStepper fast_mem = nullptr;
+  SUNStepper fast_mem = nullptr;
 
   ~UserData();
 };
@@ -188,6 +188,12 @@ struct CVodeInnerStepperContent
   sunrealtype hinit = ZERO; // initial step size
   sunrealtype hcur  = ZERO; // current step size
 
+  // MRI forcing data owned by MRIStep
+  sunrealtype tshift = ZERO;
+  sunrealtype tscale = ONE;
+  N_Vector* forcing  = nullptr;
+  int nforcing       = 0;
+
   // saved integrator stats
   long int nst     = 0; // time steps
   long int netf    = 0; // error test fails
@@ -198,14 +204,18 @@ struct CVodeInnerStepperContent
   long int nje     = 0; // Jacobian evals
 };
 
-int CVodeInnerStepper_Evolve(MRIStepInnerStepper fast_mem, sunrealtype t0,
-                             sunrealtype tout, N_Vector y);
+int CVodeInnerStepper_Evolve(SUNStepper fast_mem, sunrealtype tout, N_Vector y,
+                             sunrealtype* tret);
 
-int CVodeInnerStepper_FullRhs(MRIStepInnerStepper fast_mem, sunrealtype t,
-                              N_Vector y, N_Vector f, int mode);
+SUNErrCode CVodeInnerStepper_FullRhs(SUNStepper fast_mem, sunrealtype t,
+                                     N_Vector y, N_Vector f, SUNFullRhsMode mode);
 
-int CVodeInnerStepper_Reset(MRIStepInnerStepper fast_mem, sunrealtype tR,
-                            N_Vector yR);
+SUNErrCode CVodeInnerStepper_Reset(SUNStepper fast_mem, sunrealtype tR,
+                                   N_Vector yR);
+
+SUNErrCode CVodeInnerStepper_SetForcing(SUNStepper fast_mem, sunrealtype tshift,
+                                        sunrealtype tscale, N_Vector* forcing,
+                                        int nforcing);
 
 // -----------------------------------------------------------------------------
 // Functions provided to the SUNDIALS integrators
@@ -253,13 +263,13 @@ int SetupARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
 
 int SetupMRIARK(SUNContext ctx, UserData& udata, UserOptions& uopts, N_Vector y,
                 SUNMatrix* A, SUNLinearSolver* LS, SUNMatrix* A_fast,
-                SUNLinearSolver* LS_fast, MRIStepInnerStepper* fast_mem,
+                SUNLinearSolver* LS_fast, SUNStepper* fast_mem,
                 void** arkode_mem);
 
 int SetupMRICVODE(SUNContext ctx, UserData& udata, UserOptions& uopts,
                   N_Vector y, SUNMatrix* A, SUNLinearSolver* LS,
                   SUNMatrix* A_fast, SUNLinearSolver* LS_fast,
-                  MRIStepInnerStepper* fast_mem, void** arkode_mem);
+                  SUNStepper* fast_mem, void** arkode_mem);
 
 // Compute the initial condition
 int SetIC(N_Vector y, UserData& udata);
@@ -367,7 +377,7 @@ static int OutputStatsARK(void* arkode_mem, UserData& udata)
 }
 
 // Print MRI integrator statistics
-static int OutputStatsMRIARK(void* arkode_mem, MRIStepInnerStepper fast_mem,
+static int OutputStatsMRIARK(void* arkode_mem, SUNStepper fast_mem,
                              UserData& udata)
 {
   int flag;
@@ -417,7 +427,7 @@ static int OutputStatsMRIARK(void* arkode_mem, MRIStepInnerStepper fast_mem,
 
   // Get fast integrator stats and solver stats
   void* fast_arkode_mem;
-  MRIStepInnerStepper_GetContent(fast_mem, &fast_arkode_mem);
+  SUNStepper_GetContent(fast_mem, &fast_arkode_mem);
 
   // Get fast integrator and solver stats
   flag = ARKodeGetNumSteps(fast_arkode_mem, &nst);
@@ -507,7 +517,7 @@ static int UpdateCVodeStats(CVodeInnerStepperContent* content)
 }
 
 // Print MRI integrator statistics
-static int OutputStatsMRICVODE(void* arkode_mem, MRIStepInnerStepper fast_mem,
+static int OutputStatsMRICVODE(void* arkode_mem, SUNStepper fast_mem,
                                UserData& udata)
 {
   int flag;
@@ -553,7 +563,7 @@ static int OutputStatsMRICVODE(void* arkode_mem, MRIStepInnerStepper fast_mem,
 
   // Get fast integrator stats and solver stats
   void* inner_content;
-  MRIStepInnerStepper_GetContent(fast_mem, &inner_content);
+  SUNStepper_GetContent(fast_mem, &inner_content);
   CVodeInnerStepperContent* content = (CVodeInnerStepperContent*)inner_content;
 
   // Update CVODE stats

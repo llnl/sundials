@@ -225,9 +225,9 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
   }
 
   // Wrap ARKStep integrator as fast integrator object
-  MRIStepInnerStepper inner_stepper = nullptr;
-  flag = ARKodeCreateMRIStepInnerStepper(arkstep_mem, &inner_stepper);
-  if (check_flag(&flag, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  SUNStepper inner_stepper = nullptr;
+  flag = ARKodeCreateSUNStepper(arkstep_mem, &inner_stepper);
+  if (check_flag(&flag, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
   // ----------------------
   // Create slow integrator
@@ -541,7 +541,7 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
   }
 
   // Clean up
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
   ARKodeFree(&mristep_mem);
   ARKodeFree(&arkstep_mem);
   if (type == MRISTEP_IMPLICIT || type == MRISTEP_IMEX || type == MRISTEP_SR)
