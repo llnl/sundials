@@ -4397,7 +4397,7 @@ ARKStep system resize function
       further action is necessary.
 
    **Example codes:**
-      * ``examples/arkode/C_serial/ark_heat1D_adapt.c``
+      * ``examples/arkode/ark_heat_1d/c/ark_heat1D_adapt.c``
 
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
@@ -4452,7 +4452,7 @@ wrap an ARKStep memory block as an :c:type:`MRIStepInnerStepper`.
          outer_arkode_mem = MRIStepCreate(fse, fsi, t0, y0, stepper, sunctx);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
    .. deprecated:: 7.2.0 (ARKODE 6.2.0)
 

@@ -16,7 +16,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # This is a direct port of the C example,
-#   examples/arkode/C_klu/ark_brusselator1D_klu.c
+#   examples/arkode/ark_brusselator/c-klu/ark_brusselator1D_klu.c
 # to use sundials4py.
 # -----------------------------------------------------------------
 
