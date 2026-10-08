@@ -19,7 +19,7 @@ jobs:
   gitlab-pipeline:
     runs-on: ubuntu-latest
     environment: delayed-30-minutes 
-    timeout-minutes: 120
+timeout-minutes: 125
 
     steps:
       - name: Wait for GitLab pipeline
