@@ -40,10 +40,10 @@ typedef int (*SUNRhsFn)(sunrealtype t, N_Vector y, N_Vector ydot,
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to SUNDomEigEstimator_Ops object */
-typedef _SUNDIALS_STRUCT_ SUNDomEigEstimator_Ops_* SUNDomEigEstimator_Ops;
+typedef SUNDIALS_STRUCT SUNDomEigEstimator_Ops_* SUNDomEigEstimator_Ops;
 
 /* Forward reference for pointer to SUNDomEigEstimator object */
-typedef _SUNDIALS_STRUCT_ SUNDomEigEstimator_* SUNDomEigEstimator;
+typedef SUNDIALS_STRUCT SUNDomEigEstimator_* SUNDomEigEstimator;
 
 /* Structure containing function pointers to estimator operations */
 struct SUNDomEigEstimator_Ops_

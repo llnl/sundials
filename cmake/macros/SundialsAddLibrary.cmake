@@ -519,6 +519,16 @@ macro(sundials_add_f2003_library target)
     set(_clib_target)
   endif()
 
+  # Disable warnings we cannot fix in SWIG generated C code
+  set(_sundials_swig_options)
+  foreach(_sundials_swig_flag ${SUNDIALS_C_SWIG_WARNING_FLAGS})
+    list(APPEND _sundials_swig_options
+         "$<$<COMPILE_LANGUAGE:C>:${_sundials_swig_flag}>")
+  endforeach()
+  if(_sundials_swig_options)
+    list(PREPEND _sundials_swig_options PRIVATE)
+  endif()
+
   sundials_add_library(
     ${target}
     SOURCES ${sundials_add_f2003_library_SOURCES}
@@ -530,6 +540,7 @@ macro(sundials_add_f2003_library target)
     COMPILE_DEFINITIONS ${sundials_add_f2003_library_COMPILE_DEFINITIONS} PUBLIC
                         "SUNDIALS_INT${SUNDIALS_INDEX_SIZE}_T"
     COMPILE_OPTIONS ${sundials_add_f2003_library_COMPILE_OPTIONS}
+                    ${_sundials_swig_options}
     PROPERTIES ${sundials_add_f2003_library_PROPERTIES} ${_properties}
     OUTPUT_NAME ${sundials_add_f2003_library_OUTPUT_NAME}
     VERSION ${sundials_add_f2003_library_VERSION}

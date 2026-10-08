@@ -39,7 +39,7 @@ SUNAdaptController class, and defines its *content* field as:
 
 .. code-block:: c
 
-   struct _SUNAdaptControllerContent_Soderlind {
+   struct SUNAdaptControllerContent_Soderlind_ {
      sunrealtype k1;
      sunrealtype k2;
      sunrealtype k3;

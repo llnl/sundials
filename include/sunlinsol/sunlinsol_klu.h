@@ -96,7 +96,7 @@ typedef sunindextype (*KLUSolveFn)(sun_klu_symbolic*, sun_klu_numeric*,
                                    sun_klu_common*);
 #endif
 
-struct _SUNLinearSolverContent_KLU
+struct SUNLinearSolverContent_KLU_
 {
   int last_flag;
   int first_factorize;
@@ -106,7 +106,7 @@ struct _SUNLinearSolverContent_KLU
   KLUSolveFn klu_solver;
 };
 
-typedef struct _SUNLinearSolverContent_KLU* SUNLinearSolverContent_KLU;
+typedef struct SUNLinearSolverContent_KLU_* SUNLinearSolverContent_KLU;
 
 /* -------------------------------------
  * Exported Functions for SUNLINSOL_KLU

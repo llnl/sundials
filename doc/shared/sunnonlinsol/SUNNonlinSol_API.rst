@@ -711,11 +711,11 @@ implementation-dependent *content* field and an *ops*
 field.
 
 A :c:type:`SUNNonlinearSolver` is a pointer to the
-:c:struct:`_generic_SUNNonlinearSolver` structure:
+:c:struct:`SUNNonlinearSolver_` structure:
 
-.. c:type:: struct _generic_SUNNonlinearSolver *SUNNonlinearSolver
+.. c:type:: struct SUNNonlinearSolver_ *SUNNonlinearSolver
 
-.. c:struct:: _generic_SUNNonlinearSolver
+.. c:struct:: SUNNonlinearSolver_
 
    The structure defining the SUNDIALS nonlinear solver class.
 
@@ -734,9 +734,9 @@ A :c:type:`SUNNonlinearSolver` is a pointer to the
 
 The virtual table structure is defined as
 
-.. c:type:: struct _generic_SUNNonlinearSolver_Ops *SUNNonlinearSolver_Ops
+.. c:type:: struct SUNNonlinearSolver_Ops_ *SUNNonlinearSolver_Ops
 
-.. c:struct:: _generic_SUNNonlinearSolver_Ops
+.. c:struct:: SUNNonlinearSolver_Ops_
 
    The structure defining :c:type:`SUNNonlinearSolver` operations.
 

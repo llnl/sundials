@@ -91,7 +91,7 @@ static constexpr sunindextype zeroIdx = 0;
  * Private structure definition
  */
 
-struct _N_PrivateVectorContent_Raja
+struct N_PrivateVectorContent_Raja_
 {
   sunbooleantype use_managed_mem; /* do data pointers use managed memory */
 
@@ -102,7 +102,7 @@ struct _N_PrivateVectorContent_Raja
   size_t fused_buffer_offset;  /* current offset into the buffer */
 };
 
-typedef struct _N_PrivateVectorContent_Raja* N_PrivateVectorContent_Raja;
+typedef struct N_PrivateVectorContent_Raja_* N_PrivateVectorContent_Raja;
 
 /*
  * Utility functions
@@ -187,14 +187,14 @@ N_Vector N_VNewEmpty_Raja(SUNContext sunctx)
   v->ops->nvprint     = N_VPrint_Raja;
   v->ops->nvprintfile = N_VPrintFile_Raja;
 
-  v->content = (N_VectorContent_Raja)malloc(sizeof(_N_VectorContent_Raja));
+  v->content = (N_VectorContent_Raja)malloc(sizeof(N_VectorContent_Raja_));
   if (v->content == NULL)
   {
     N_VDestroy(v);
     return NULL;
   }
 
-  NVEC_RAJA_CONTENT(v)->priv = malloc(sizeof(_N_PrivateVectorContent_Raja));
+  NVEC_RAJA_CONTENT(v)->priv = malloc(sizeof(N_PrivateVectorContent_Raja_));
   if (NVEC_RAJA_CONTENT(v)->priv == NULL)
   {
     N_VDestroy(v);

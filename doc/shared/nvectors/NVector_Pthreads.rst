@@ -37,7 +37,7 @@ threaded using POSIX threads (Pthreads).
 
 .. code-block:: c
 
-   struct _N_VectorContent_Pthreads {
+   struct N_VectorContent_Pthreads_ {
      sunindextype length;
      sunbooleantype own_data;
      sunrealtype *data;

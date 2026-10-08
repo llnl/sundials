@@ -111,7 +111,7 @@ The SUNLinSol_SuperLUMT module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_SuperLUMT {
+   struct SUNLinearSolverContent_SuperLUMT_ {
      int          last_flag;
      int          first_factorize;
      SuperMatrix  *A, *AC, *L, *U, *B;

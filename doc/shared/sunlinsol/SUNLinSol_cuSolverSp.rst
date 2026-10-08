@@ -144,7 +144,7 @@ The SUNLinSol_cuSolverSp_batchQR module defines the *content* field of a
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_cuSolverSp_batchQR {
+   struct SUNLinearSolverContent_cuSolverSp_batchQR_ {
       int                last_flag;       /* last return flag                          */
       sunbooleantype     first_factorize; /* is this the first factorization?          */
       size_t             internal_size;   /* size of cusolver buffer for Q and R       */

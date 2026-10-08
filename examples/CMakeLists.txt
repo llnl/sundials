@@ -40,10 +40,7 @@ foreach(lang ${_SUNDIALS_ENABLED_LANGS})
 endforeach()
 
 # Disable some warnings for examples
-if(SUNDIALS_ENABLE_ALL_WARNINGS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-parameter")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
-endif()
+sundials_disable_warnings(unused-parameter)
 
 # Initialize CMAKE_Fortran_MODULE_DIRECTORY for examples
 set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

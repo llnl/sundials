@@ -17,12 +17,6 @@
 # CMakeLists.txt file for the F2003 IDA object library
 # ---------------------------------------------------------------
 
-# Disable warnings from unused SWIG macros which we can't control
-if(SUNDIALS_ENABLE_ALL_WARNINGS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-macros")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-macros")
-endif()
-
 set(ida_SOURCES fida_mod.f90 fida_mod.c)
 
 # Create the library

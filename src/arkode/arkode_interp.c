@@ -131,7 +131,7 @@ ARKInterp arkInterpCreate_Hermite(ARKodeMem ark_mem, int degree)
     free(interp);
     return (NULL);
   }
-  memset(content, 0, sizeof(struct _ARKInterpContent_Hermite));
+  memset(content, 0, sizeof(struct ARKInterpContent_Hermite_));
 
   /* attach ops and content structures to overall structure */
   interp->ops     = ops;
@@ -816,7 +816,7 @@ ARKInterp arkInterpCreate_Lagrange(ARKodeMem ark_mem, int degree)
     free(interp);
     return (NULL);
   }
-  memset(content, 0, sizeof(struct _ARKInterpContent_Lagrange));
+  memset(content, 0, sizeof(struct ARKInterpContent_Lagrange_));
 
   /* attach ops and content structures to overall structure */
   interp->ops     = ops;
