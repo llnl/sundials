@@ -215,7 +215,7 @@ mpi:
           - '**/mpi*/**'
           - '**/*_mpi/**'
           - '**/*parallel*/**'
-          - '**/*MPI*'
+          - '**/*_MPI*'
           - '**/*mpimanyvector*'
           - '**/*mpiplusx*'
           - '**/*mpinvector*'
