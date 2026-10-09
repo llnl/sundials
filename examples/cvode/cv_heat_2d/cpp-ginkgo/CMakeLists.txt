@@ -24,4 +24,5 @@ sundials_add_examples_ginkgo(
            SYCL
            INSTALL_FILES
            cv_heat_2d_ginkgo.hpp
+           cv_heat_2d_ginkgo_gpu.hpp
            "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp")

@@ -19,26 +19,29 @@ foreach(backend REF OMP CUDA HIP SYCL)
   endif()
 
   set(float_precision default)
+  set(sources cv_bruss_batched_ginkgo.cpp)
   if(backend MATCHES "CUDA")
     set(vector nveccuda)
-    set(language CUDA)
+    set_source_files_properties(cv_bruss_batched_ginkgo_gpu.cpp
+                                PROPERTIES LANGUAGE CUDA)
+    list(APPEND sources cv_bruss_batched_ginkgo_gpu.cpp)
     set(float_precision 4)
   elseif(backend MATCHES "HIP")
     set(vector nvechip)
-    set(language CXX)
+    get_property(enabled_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+    if(HIP IN_LIST enabled_languages)
+      set_source_files_properties(cv_bruss_batched_ginkgo_gpu.cpp
+                                  PROPERTIES LANGUAGE HIP)
+    endif()
+    list(APPEND sources cv_bruss_batched_ginkgo_gpu.cpp)
   elseif(backend MATCHES "SYCL")
     set(vector nvecsycl)
-    set(language CXX)
   elseif(backend MATCHES "OMP")
     set(vector nvecopenmp)
-    set(language CXX)
   else()
     set(vector nvecserial)
-    set(language CXX)
   endif()
 
-  set_source_files_properties(cv_bruss_batched_ginkgo.cpp
-                              PROPERTIES LANGUAGE ${language})
   set(example_target cv_bruss_batched_ginkgo.${backend})
   set(example_options)
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_target}.out")
@@ -49,10 +52,11 @@ foreach(backend REF OMP CUDA HIP SYCL)
     list(APPEND example_options NODIFF)
   endif()
   sundials_add_example(
-    ${example_target} cv_bruss_batched_ginkgo.cpp ${example_options}
+    ${example_target} ${sources} ${example_options}
     FLOAT_PRECISION ${float_precision}
     INSTALL_FILES
-      cv_bruss_batched_ginkgo.hpp
+      cv_bruss_batched_ginkgo.hpp cv_bruss_batched_ginkgo_gpu.cpp
+      cv_bruss_batched_ginkgo_gpu.hpp
       "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
     LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_${vector} Ginkgo::ginkgo
                    ${EXE_EXTRA_LINK_LIBS}

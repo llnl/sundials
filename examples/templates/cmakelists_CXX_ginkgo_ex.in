@@ -20,52 +20,52 @@ cmake_minimum_required(VERSION @CMAKE_VERSION@)
 
 # Set cache variables for C compilers and flags
 set(CMAKE_C_COMPILER
-  "@CMAKE_C_COMPILER@"
-  CACHE FILEPATH "C compiler")
+    "@CMAKE_C_COMPILER@"
+    CACHE FILEPATH "C compiler")
 
 set(CMAKE_C_FLAGS
-  "@CMAKE_C_FLAGS@"
-  CACHE STRING "C compiler flags")
+    "@CMAKE_C_FLAGS@"
+    CACHE STRING "C compiler flags")
 
 set(CMAKE_C_STANDARD
-  "@CMAKE_C_STANDARD@"
-  CACHE STRING "C standard")
+    "@CMAKE_C_STANDARD@"
+    CACHE STRING "C standard")
 
 # Set cache variables for C++ compilers and flags
 set(CMAKE_CXX_COMPILER
-  "@CMAKE_CXX_COMPILER@"
-  CACHE FILEPATH "CXX compiler")
+    "@CMAKE_CXX_COMPILER@"
+    CACHE FILEPATH "CXX compiler")
 
 set(CMAKE_CXX_FLAGS
-  "@CMAKE_CXX_FLAGS@"
-  CACHE STRING "CXX compiler flags")
+    "@CMAKE_CXX_FLAGS@"
+    CACHE STRING "CXX compiler flags")
 
 set(CMAKE_CXX_STANDARD
-  "@CMAKE_CXX_STANDARD@"
-  CACHE STRING "C++ standard")
+    "@CMAKE_CXX_STANDARD@"
+    CACHE STRING "C++ standard")
 
 # Set cache variables for CUDA compilers and flags
 if("@SUNDIALS_GINKGO_BACKENDS@" MATCHES "CUDA")
 
   set(CMAKE_CUDA_COMPILER
-    "@CMAKE_CUDA_COMPILER@"
-    CACHE FILEPATH "CUDA compiler")
+      "@CMAKE_CUDA_COMPILER@"
+      CACHE FILEPATH "CUDA compiler")
 
   set(CMAKE_CUDA_HOST_COMPILER
-    "@CMAKE_CUDA_HOST_COMPILER@"
-    CACHE FILEPATH "CUDA host compiler")
+      "@CMAKE_CUDA_HOST_COMPILER@"
+      CACHE FILEPATH "CUDA host compiler")
 
   set(CMAKE_CUDA_FLAGS
-    "@CMAKE_CUDA_FLAGS@"
-    CACHE STRING "CUDA compiler flags")
+      "@CMAKE_CUDA_FLAGS@"
+      CACHE STRING "CUDA compiler flags")
 
   set(CMAKE_CUDA_STANDARD
-    "@CMAKE_CUDA_STANDARD@"
-    CACHE STRING "CUDA standard")
+      "@CMAKE_CUDA_STANDARD@"
+      CACHE STRING "CUDA standard")
 
   set(CMAKE_CUDA_ARCHITECTURES
-    "@CMAKE_CUDA_ARCHITECTURES@"
-    CACHE STRING "CUDA target architectures")
+      "@CMAKE_CUDA_ARCHITECTURES@"
+      CACHE STRING "CUDA target architectures")
 
   set(_cuda CUDA)
 
@@ -81,19 +81,17 @@ include(CTest)
 
 # Specify the path to SUNDIALSConfig.cmake
 set(SUNDIALS_DIR
-  "@CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@"
-  CACHE PATH "Location of SUNDIALSConfig.cmake")
+    "@CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@"
+    CACHE PATH "Location of SUNDIALSConfig.cmake")
 
 # Find SUNDIALS
-find_package(SUNDIALS REQUIRED
-  COMPONENTS @EXAMPLES_CMAKE_COMPONENTS@
-  HINTS "${SUNDIALS_DIR}"
-  NO_DEFAULT_PATH)
+find_package(SUNDIALS REQUIRED COMPONENTS @EXAMPLES_CMAKE_COMPONENTS@ HINTS
+                                          "${SUNDIALS_DIR}" NO_DEFAULT_PATH)
 
 # Additional libraries
 set(EXTRA_LIBS
-  @EXAMPLES_EXTRA_LIBS@
-  CACHE STRING "Additional libraries")
+    @EXAMPLES_EXTRA_LIBS@
+    CACHE STRING "Additional libraries")
 
 # Additional includes
 include_directories(. @EXTRA_INCLUDES@)
@@ -103,13 +101,13 @@ include_directories(. @EXTRA_INCLUDES@)
 # Macro to create build targets
 macro(add_examples EXAMPLES_VAR)
 
-  set(options )
-  set(oneValueArgs )
+  set(options)
+  set(oneValueArgs)
   set(multiValueArgs BACKENDS)
 
   # Parse keyword arguments and options
-  cmake_parse_arguments(arg
-    "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}"
+                        ${ARGN})
 
   foreach(example ${${EXAMPLES_VAR}})
     foreach(backend ${arg_BACKENDS})
@@ -119,10 +117,8 @@ macro(add_examples EXAMPLES_VAR)
       endif()
 
       if(backend MATCHES "CUDA")
-        set_source_files_properties(${example} PROPERTIES LANGUAGE CUDA)
         set(vector nveccuda)
       elseif(backend MATCHES "HIP")
-        set_source_files_properties(${example} PROPERTIES LANGUAGE CXX)
         set(vector nvechip)
       elseif(backend MATCHES "OMP")
         set(vector nvecopenmp)
@@ -131,24 +127,38 @@ macro(add_examples EXAMPLES_VAR)
       endif()
 
       # extract the file name without extension
+      get_filename_component(example_basename ${example} NAME_WE)
       get_filename_component(example_target ${example} NAME_WE)
       set(example_target "${example_target}.${backend}")
+      set(example_sources ${example})
+
+      if(backend MATCHES "CUDA" OR backend MATCHES "HIP")
+        set(gpu_source
+            "${CMAKE_CURRENT_SOURCE_DIR}/${example_basename}_gpu.cpp")
+        if(EXISTS "${gpu_source}")
+          if(backend MATCHES "CUDA")
+            set_source_files_properties(${gpu_source} PROPERTIES LANGUAGE CUDA)
+          elseif(backend MATCHES "HIP")
+            get_property(enabled_languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+            if(HIP IN_LIST enabled_languages)
+              set_source_files_properties(${gpu_source} PROPERTIES LANGUAGE HIP)
+            endif()
+          endif()
+          list(APPEND example_sources ${gpu_source})
+        endif()
+      endif()
 
       # create target
-      add_executable(${example_target}
-        ${example} @EXAMPLES_DEPENDENCIES@)
+      add_executable(${example_target} ${example_sources}
+                                       @EXAMPLES_DEPENDENCIES@)
 
       # which backend to use
-      target_compile_definitions(${example_target}
-        PRIVATE USE_${backend})
+      target_compile_definitions(${example_target} PRIVATE USE_${backend})
 
       # libraries to link against
-      target_link_libraries(${example_target}
-        PRIVATE
-        @EXAMPLES_CMAKE_TARGETS@
-        SUNDIALS::${vector}
-        Ginkgo::ginkgo
-        ${EXTRA_LIBS})
+      target_link_libraries(
+        ${example_target} PRIVATE @EXAMPLES_CMAKE_TARGETS@ SUNDIALS::${vector}
+                                  Ginkgo::ginkgo ${EXTRA_LIBS})
 
       # add the example to ctest
       add_test(NAME ${example_target} COMMAND ${example_target})
@@ -166,14 +176,11 @@ set(gpu_examples @GPU_EXAMPLES@)
 set(cpu_gpu_examples @CPU_GPU_EXAMPLES@)
 
 if(cpu_examples)
-  add_examples(cpu_examples
-    BACKENDS REF OMP)
+  add_examples(cpu_examples BACKENDS REF OMP)
 endif()
 if(gpu_examples)
-  add_examples(gpu_examples
-    BACKENDS CUDA HIP)
+  add_examples(gpu_examples BACKENDS CUDA HIP)
 endif()
 if(cpu_gpu_examples)
-  add_examples(cpu_gpu_examples
-    BACKENDS REF OMP CUDA HIP)
+  add_examples(cpu_gpu_examples BACKENDS REF OMP CUDA HIP)
 endif()
