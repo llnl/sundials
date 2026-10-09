@@ -11,7 +11,7 @@ pointers. This is useful when using the Fortran 2003 interfaces.
 Updated :c:func:`ARKodeGetReturnFlagName`, :c:func:`CVodeGetReturnFlagName`,
 :c:func:`CVDiagGetReturnFlagName`, :c:func:`IDAGetReturnFlagName`, and
 :c:func:`KINGetReturnFlagName` to return ``const char*`` rather than ``char*``.
-The returned string should no longer be freed by the used.
+The returned string should no longer be freed by the user.
 
 **Bug Fixes**
 
