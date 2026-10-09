@@ -15,8 +15,8 @@ void bind_nvector_serial(nb::module_& m)
 {
 #include "nvector_serial_generated.hpp"
 
-  m.def(
-    "N_VMake_Serial",
+  sundials4py::scoped_def(
+    m, "N_VMake_Serial",
     [](sunindextype vec_length, sundials4py::Array1d data,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {

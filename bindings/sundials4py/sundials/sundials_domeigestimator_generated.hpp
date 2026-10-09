@@ -16,24 +16,31 @@ auto pyClassSUNDomEigEstimator_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNDomEigEstimator_SetMaxIters", SUNDomEigEstimator_SetMaxIters,
-      nb::arg("DEE"), nb::arg("max_iters"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetRhsLinearizationPoint",
+                        SUNDomEigEstimator_SetRhsLinearizationPoint,
+                        nb::arg("DEE"), nb::arg("t"), nb::arg("v"));
 
-m.def("SUNDomEigEstimator_SetNumPreprocessIters",
-      SUNDomEigEstimator_SetNumPreprocessIters, nb::arg("DEE"),
-      nb::arg("num_iters"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetMaxIters",
+                        SUNDomEigEstimator_SetMaxIters, nb::arg("DEE"),
+                        nb::arg("max_iters"));
 
-m.def("SUNDomEigEstimator_SetRelTol", SUNDomEigEstimator_SetRelTol,
-      nb::arg("DEE"), nb::arg("tol"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetNumPreprocessIters",
+                        SUNDomEigEstimator_SetNumPreprocessIters,
+                        nb::arg("DEE"), nb::arg("num_iters"));
 
-m.def("SUNDomEigEstimator_SetInitialGuess", SUNDomEigEstimator_SetInitialGuess,
-      nb::arg("DEE"), nb::arg("q"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetRelTol",
+                        SUNDomEigEstimator_SetRelTol, nb::arg("DEE"),
+                        nb::arg("tol"));
 
-m.def("SUNDomEigEstimator_Initialize", SUNDomEigEstimator_Initialize,
-      nb::arg("DEE"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetInitialGuess",
+                        SUNDomEigEstimator_SetInitialGuess, nb::arg("DEE"),
+                        nb::arg("q"));
 
-m.def(
-  "SUNDomEigEstimator_Estimate",
+sundials4py::scoped_def(m, "SUNDomEigEstimator_Initialize",
+                        SUNDomEigEstimator_Initialize, nb::arg("DEE"));
+
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_Estimate",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, sunrealtype, sunrealtype>
   {
     auto SUNDomEigEstimator_Estimate_adapt_modifiable_immutable_to_return =
@@ -52,8 +59,8 @@ m.def(
   },
   nb::arg("DEE"));
 
-m.def(
-  "SUNDomEigEstimator_GetRes",
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_GetRes",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, sunrealtype>
   {
     auto SUNDomEigEstimator_GetRes_adapt_modifiable_immutable_to_return =
@@ -69,8 +76,8 @@ m.def(
   },
   nb::arg("DEE"));
 
-m.def(
-  "SUNDomEigEstimator_GetNumIters",
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_GetNumIters",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
   {
     auto SUNDomEigEstimator_GetNumIters_adapt_modifiable_immutable_to_return =
@@ -88,8 +95,8 @@ m.def(
   },
   nb::arg("DEE"));
 
-m.def(
-  "SUNDomEigEstimator_GetNumRhsEvals",
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_GetNumRhsEvals",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
   {
     auto SUNDomEigEstimator_GetNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -107,8 +114,8 @@ m.def(
   },
   nb::arg("DEE"));
 
-m.def(
-  "SUNDomEigEstimator_GetNumATimesCalls",
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_GetNumATimesCalls",
   [](SUNDomEigEstimator DEE) -> std::tuple<SUNErrCode, long>
   {
     auto SUNDomEigEstimator_GetNumATimesCalls_adapt_modifiable_immutable_to_return =
@@ -126,8 +133,8 @@ m.def(
   },
   nb::arg("DEE"));
 
-m.def("SUNDomEigEstimator_Write", SUNDomEigEstimator_Write, nb::arg("DEE"),
-      nb::arg("outfile"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_Write", SUNDomEigEstimator_Write,
+                        nb::arg("DEE"), nb::arg("outfile"));
 // #ifdef __cplusplus
 //
 // #endif

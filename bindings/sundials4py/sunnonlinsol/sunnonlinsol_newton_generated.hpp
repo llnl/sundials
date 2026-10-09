@@ -10,8 +10,8 @@ auto pyClass_SUNNonlinearSolverContent_Newton =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNNonlinSol_Newton",
+sundials4py::scoped_def(
+  m, "SUNNonlinSol_Newton",
   [](N_Vector y, SUNContext sunctx)
     -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
@@ -30,8 +30,8 @@ m.def(
   nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
   nb::keep_alive<0, 2>());
 
-m.def(
-  "SUNNonlinSol_NewtonSens",
+sundials4py::scoped_def(
+  m, "SUNNonlinSol_NewtonSens",
   [](int count, N_Vector y, SUNContext sunctx)
     -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
@@ -51,12 +51,12 @@ m.def(
   nb::arg("count"), nb::arg("y"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
 
-m.def("SUNNonlinSolSetComputeStiffnessRatio_Newton",
-      SUNNonlinSolSetComputeStiffnessRatio_Newton, nb::arg("NLS"),
-      nb::arg("onoff"));
+sundials4py::scoped_def(m, "SUNNonlinSolSetComputeStiffnessRatio_Newton",
+                        SUNNonlinSolSetComputeStiffnessRatio_Newton,
+                        nb::arg("NLS"), nb::arg("onoff"));
 
-m.def(
-  "SUNNonlinSolGetStiffnessRatio_Newton",
+sundials4py::scoped_def(
+  m, "SUNNonlinSolGetStiffnessRatio_Newton",
   [](SUNNonlinearSolver NLS) -> std::tuple<SUNErrCode, sunrealtype>
   {
     auto SUNNonlinSolGetStiffnessRatio_Newton_adapt_modifiable_immutable_to_return =

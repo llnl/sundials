@@ -53,8 +53,8 @@ void bind_arkode_erkstep(nb::module_& m)
   // ERKStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "ERKStepCreate",
+  sundials4py::scoped_def(
+    m, "ERKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> rhs, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
@@ -87,8 +87,8 @@ void bind_arkode_erkstep(nb::module_& m)
     nb::arg("rhs"), nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"),
     nb::keep_alive<0, 4>());
 
-  m.def(
-    "ERKStepCreateAdjointStepper",
+  sundials4py::scoped_def(
+    m, "ERKStepCreateAdjointStepper",
     [](void* arkode_mem,
        std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_f, sunrealtype tf,
        N_Vector sf, SUNContext sunctx) -> std::tuple<int, SUNAdjointStepper>

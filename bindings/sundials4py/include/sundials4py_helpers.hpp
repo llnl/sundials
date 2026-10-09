@@ -24,6 +24,39 @@ namespace nb = nanobind;
 
 namespace sundials4py {
 
+/* Defined with the exception-state machinery in sundials4py_custom_object.hpp.
+   Callback wrappers use this declaration so Python exceptions are recorded at
+   the C callback boundary instead of unwinding through SUNDIALS frames. */
+void record_pending_exception(const std::exception& error) noexcept;
+
+inline void record_user_callback_exception(const std::exception& error) noexcept
+{
+  try
+  {
+    nb::gil_scoped_acquire gil;
+    if (capture_custom_exceptions()) { record_pending_exception(error); }
+    else
+    {
+      report_custom_exception(nullptr, "user-supplied callback", error,
+                              __FILE__, __LINE__);
+    }
+  }
+  catch (...)
+  {
+    if (Py_IsInitialized() != 0 && nb::is_alive())
+    {
+      nb::gil_scoped_acquire gil;
+      PyErr_Clear();
+    }
+  }
+}
+
+inline void record_unknown_user_callback_exception() noexcept
+{
+  const std::runtime_error error("unknown non-standard C++ exception");
+  record_user_callback_exception(error);
+}
+
 /// This function will call a user-supplied Python function through C++ side wrappers
 /// \tparam FnType is the function signature, e.g., std::remove_pointer_t<CVRhsFn>
 /// \tparam FnTableType is the struct function table that holds the user-supplied Python functions as std::function
@@ -37,21 +70,36 @@ namespace sundials4py {
 template<typename FnType, typename FnTableType, std::size_t UserDataArg, typename... Args>
 int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
-  constexpr size_t N            = sizeof...(Args);
-  constexpr int user_data_index = N - UserDataArg;
-  auto args_tuple               = std::tuple<Args...>(args...);
+  try
+  {
+    if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
+    constexpr size_t N            = sizeof...(Args);
+    constexpr int user_data_index = N - UserDataArg;
+    auto args_tuple               = std::tuple<Args...>(args...);
 
-  // Extract user_data from the specified position
-  void* user_data = std::get<user_data_index>(args_tuple);
+    // Extract user_data from the specified position
+    void* user_data = std::get<user_data_index>(args_tuple);
 
-  // Cast user_data to FnTableType*
-  auto fn_table = static_cast<FnTableType*>(user_data);
-  auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
+    // Cast user_data to FnTableType*
+    auto fn_table = static_cast<FnTableType*>(user_data);
+    auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
 
-  // Pass nullptr as user_data since we do not want the user to mess with user_data (which holds our function table)
-  std::get<user_data_index>(args_tuple) = nullptr;
-  return std::apply([&](auto&&... call_args) { return fn(call_args...); },
-                    args_tuple);
+    // Pass nullptr as user_data since we do not want the user to mess with
+    // user_data (which holds our function table)
+    std::get<user_data_index>(args_tuple) = nullptr;
+    return std::apply([&](auto&&... call_args) { return fn(call_args...); },
+                      args_tuple);
+  }
+  catch (const std::exception& error)
+  {
+    record_user_callback_exception(error);
+    return -1;
+  }
+  catch (...)
+  {
+    record_unknown_user_callback_exception();
+    return -1;
+  }
 }
 
 /// This function will call a user-supplied Python function through C++ side wrappers
@@ -70,27 +118,41 @@ template<typename FnType, typename FnTableType, typename MemType,
          std::size_t UserDataArg, typename... Args>
 int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
-  constexpr size_t N = sizeof...(Args);
-  static_assert(UserDataArg >= 1 && UserDataArg <= N);
-  constexpr size_t user_data_index = N - UserDataArg;
-  auto args_tuple                  = std::tuple<Args...>(args...);
+  try
+  {
+    if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
+    constexpr size_t N = sizeof...(Args);
+    static_assert(UserDataArg >= 1 && UserDataArg <= N);
+    constexpr size_t user_data_index = N - UserDataArg;
+    auto args_tuple                  = std::tuple<Args...>(args...);
 
-  // Extract user_data from the specified position
-  void* user_data = std::get<user_data_index>(args_tuple);
+    // Extract user_data from the specified position
+    void* user_data = std::get<user_data_index>(args_tuple);
 
-  // Cast user_data to FnTableType*
-  auto mem      = static_cast<MemType>(user_data);
-  auto fn_table = static_cast<FnTableType*>(mem->python);
-  auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
+    // Cast user_data to FnTableType*
+    auto mem      = static_cast<MemType>(user_data);
+    auto fn_table = static_cast<FnTableType*>(mem->python);
+    auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
 
-  // Pass nullptr as user_data since we do not want the user to mess with
-  // user_data (which holds our function table)
-  static_assert(
-    std::is_same_v<std::tuple_element_t<user_data_index, decltype(args_tuple)>,
-                   void*>);
-  std::get<user_data_index>(args_tuple) = nullptr;
-  return std::apply([&](auto&&... call_args) { return fn(call_args...); },
-                    args_tuple);
+    // Pass nullptr as user_data since we do not want the user to mess with
+    // user_data (which holds our function table)
+    static_assert(
+      std::is_same_v<std::tuple_element_t<user_data_index, decltype(args_tuple)>,
+                     void*>);
+    std::get<user_data_index>(args_tuple) = nullptr;
+    return std::apply([&](auto&&... call_args) { return fn(call_args...); },
+                      args_tuple);
+  }
+  catch (const std::exception& error)
+  {
+    record_user_callback_exception(error);
+    return -1;
+  }
+  catch (...)
+  {
+    record_unknown_user_callback_exception();
+    return -1;
+  }
 }
 
 /// This function will call a user-supplied Python function through C++ side wrappers
@@ -103,15 +165,29 @@ int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 template<typename FnType, typename FnTableType, typename T, typename... Args>
 int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
-  auto args_tuple = std::tuple<Args...>(args...);
+  try
+  {
+    if (custom_exception_pending()) { return SUN_ERR_EXT_FAIL; }
+    auto args_tuple = std::tuple<Args...>(args...);
 
-  // Cast object->python to FnTableType*
-  auto object   = static_cast<T>(std::get<0>(args_tuple));
-  auto fn_table = static_cast<FnTableType*>(object->python);
-  auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
+    // Cast object->python to FnTableType*
+    auto object   = static_cast<T>(std::get<0>(args_tuple));
+    auto fn_table = static_cast<FnTableType*>(object->python);
+    auto fn       = nb::cast<std::function<FnType>>(fn_table->*fn_member);
 
-  return std::apply([&](auto&&... call_args) { return fn(call_args...); },
-                    args_tuple);
+    return std::apply([&](auto&&... call_args) { return fn(call_args...); },
+                      args_tuple);
+  }
+  catch (const std::exception& error)
+  {
+    record_user_callback_exception(error);
+    return -1;
+  }
+  catch (...)
+  {
+    record_unknown_user_callback_exception();
+    return -1;
+  }
 }
 
 ///

@@ -4,14 +4,14 @@
 // #endif
 //
 
-m.def("SPRKStepSetMethod", SPRKStepSetMethod, nb::arg("arkode_mem"),
-      nb::arg("sprk_storage"));
+sundials4py::scoped_def(m, "SPRKStepSetMethod", SPRKStepSetMethod,
+                        nb::arg("arkode_mem"), nb::arg("sprk_storage"));
 
-m.def("SPRKStepSetMethodName", SPRKStepSetMethodName, nb::arg("arkode_mem"),
-      nb::arg("method"));
+sundials4py::scoped_def(m, "SPRKStepSetMethodName", SPRKStepSetMethodName,
+                        nb::arg("arkode_mem"), nb::arg("method"));
 
-m.def(
-  "SPRKStepGetCurrentMethod",
+sundials4py::scoped_def(
+  m, "SPRKStepGetCurrentMethod",
   [](void* arkode_mem) -> std::tuple<int, ARKodeSPRKTable>
   {
     auto SPRKStepGetCurrentMethod_adapt_modifiable_immutable_to_return =

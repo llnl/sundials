@@ -26,8 +26,8 @@ auto pyEnumSUNGramSchmidtType =
 // #endif
 //
 
-m.def(
-  "SUNModifiedGS",
+sundials4py::scoped_def(
+  m, "SUNModifiedGS",
   [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k,
      int p) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -60,8 +60,8 @@ m.def(
   },
   nb::arg("v_1d"), nb::arg("h_2d"), nb::arg("k"), nb::arg("p"));
 
-m.def(
-  "SUNClassicalGS",
+sundials4py::scoped_def(
+  m, "SUNClassicalGS",
   [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k, int p,
      sundials4py::Array1d stemp_1d,
      std::vector<N_Vector> vtemp_1d) -> std::tuple<SUNErrCode, sunrealtype>
@@ -106,8 +106,8 @@ m.def(
   nb::arg("v_1d"), nb::arg("h_2d"), nb::arg("k"), nb::arg("p"),
   nb::arg("stemp_1d"), nb::arg("vtemp_1d"));
 
-m.def(
-  "SUNQRfact",
+sundials4py::scoped_def(
+  m, "SUNQRfact",
   [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d, int job) -> int
   {
     auto SUNQRfact_adapt_arr_ptr_to_std_vector =
@@ -126,8 +126,8 @@ m.def(
   },
   nb::arg("n"), nb::arg("h_2d"), nb::arg("q_1d"), nb::arg("job"));
 
-m.def(
-  "SUNQRsol",
+sundials4py::scoped_def(
+  m, "SUNQRsol",
   [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d,
      sundials4py::Array1d b_1d) -> int
   {
@@ -148,8 +148,8 @@ m.def(
   },
   nb::arg("n"), nb::arg("h_2d"), nb::arg("q_1d"), nb::arg("b_1d"));
 
-m.def(
-  "SUNQRAdd_MGS",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_MGS",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -170,8 +170,8 @@ m.def(
   nb::arg("Q_1d"), nb::arg("R_1d"), nb::arg("df"), nb::arg("m"),
   nb::arg("mMax"), nb::arg("QRdata"));
 
-m.def(
-  "SUNQRAdd_ICWY",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_ICWY",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -192,8 +192,8 @@ m.def(
   nb::arg("Q_1d"), nb::arg("R_1d"), nb::arg("df"), nb::arg("m"),
   nb::arg("mMax"), nb::arg("QRdata"));
 
-m.def(
-  "SUNQRAdd_ICWY_SB",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_ICWY_SB",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -215,8 +215,8 @@ m.def(
   nb::arg("Q_1d"), nb::arg("R_1d"), nb::arg("df"), nb::arg("m"),
   nb::arg("mMax"), nb::arg("QRdata"));
 
-m.def(
-  "SUNQRAdd_CGS2",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_CGS2",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -237,8 +237,8 @@ m.def(
   nb::arg("Q_1d"), nb::arg("R_1d"), nb::arg("df"), nb::arg("m"),
   nb::arg("mMax"), nb::arg("QRdata"));
 
-m.def(
-  "SUNQRAdd_DCGS2",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_DCGS2",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -260,8 +260,8 @@ m.def(
   nb::arg("Q_1d"), nb::arg("R_1d"), nb::arg("df"), nb::arg("m"),
   nb::arg("mMax"), nb::arg("QRdata"));
 
-m.def(
-  "SUNQRAdd_DCGS2_SB",
+sundials4py::scoped_def(
+  m, "SUNQRAdd_DCGS2_SB",
   [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
      int mMax, void* QRdata) -> SUNErrCode
   {
@@ -348,20 +348,22 @@ auto pyClass_generic_SUNLinearSolver =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNLinSolGetType", SUNLinSolGetType, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolGetType", SUNLinSolGetType, nb::arg("S"));
 
-m.def("SUNLinSolGetID", SUNLinSolGetID, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolGetID", SUNLinSolGetID, nb::arg("S"));
 
-m.def("SUNLinSolSetScalingVectors", SUNLinSolSetScalingVectors, nb::arg("S"),
-      nb::arg("s1"), nb::arg("s2"));
+sundials4py::scoped_def(m, "SUNLinSolSetScalingVectors",
+                        SUNLinSolSetScalingVectors, nb::arg("S"), nb::arg("s1"),
+                        nb::arg("s2"));
 
-m.def("SUNLinSolSetZeroGuess", SUNLinSolSetZeroGuess, nb::arg("S"),
-      nb::arg("onoff"));
+sundials4py::scoped_def(m, "SUNLinSolSetZeroGuess", SUNLinSolSetZeroGuess,
+                        nb::arg("S"), nb::arg("onoff"));
 
-m.def("SUNLinSolInitialize", SUNLinSolInitialize, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolInitialize", SUNLinSolInitialize,
+                        nb::arg("S"));
 
-m.def(
-  "SUNLinSolSetup",
+sundials4py::scoped_def(
+  m, "SUNLinSolSetup",
   [](SUNLinearSolver S, std::optional<SUNMatrix> A = std::nullopt) -> int
   {
     auto SUNLinSolSetup_adapt_optional_arg_with_default_null =
@@ -378,14 +380,14 @@ m.def(
   },
   nb::arg("S"), nb::arg("A").none() = nb::none());
 
-m.def("SUNLinSolNumIters", SUNLinSolNumIters, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolNumIters", SUNLinSolNumIters, nb::arg("S"));
 
-m.def("SUNLinSolResNorm", SUNLinSolResNorm, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolResNorm", SUNLinSolResNorm, nb::arg("S"));
 
-m.def("SUNLinSolResid", SUNLinSolResid, nb::arg("S"),
-      "nb::rv_policy::reference", nb::rv_policy::reference);
+sundials4py::scoped_def(m, "SUNLinSolResid", SUNLinSolResid, nb::arg("S"),
+                        "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def("SUNLinSolLastFlag", SUNLinSolLastFlag, nb::arg("S"));
+sundials4py::scoped_def(m, "SUNLinSolLastFlag", SUNLinSolLastFlag, nb::arg("S"));
 // #ifdef __cplusplus
 //
 // #endif

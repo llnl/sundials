@@ -1,4 +1,7 @@
 /* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -13,8 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -36,6 +39,17 @@ struct SUNLinearSolverFunctionTable
   nb::object PSetupFn;
   nb::object PSolveFn;
 };
+
+/* Matrix and adapt-controller bindings need no equivalent sidecar: unlike the
+   solver APIs, they have no setters that retain Python callback objects. */
+
+/* Return the solver's Python function table, creating it on first use. Core
+   SUNLinSolFree destroys the table before delegating to the implementation. */
+inline SUNLinearSolverFunctionTable* sunlinearsolver_function_table(SUNLinearSolver S)
+{
+  if (S->python == nullptr) { S->python = new SUNLinearSolverFunctionTable; }
+  return static_cast<SUNLinearSolverFunctionTable*>(S->python);
+}
 
 template<typename... Args>
 inline int sunlinearsolver_atimesfn_wrapper(Args... args)
@@ -61,4 +75,4 @@ inline int sunlinearsolver_psolvefn_wrapper(Args... args)
     5>(&SUNLinearSolverFunctionTable::PSolveFn, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS4PY_LINEARSOLVER_USERSUPPLIED_HPP

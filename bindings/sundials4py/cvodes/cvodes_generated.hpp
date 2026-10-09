@@ -73,11 +73,11 @@ m.attr("CV_REIFWD_FAIL")         = -105;
 m.attr("CV_FWD_FAIL")            = -106;
 m.attr("CV_GETY_BADT")           = -107;
 
-m.def("CVodeReInit", CVodeReInit, nb::arg("cvode_mem"), nb::arg("t0"),
-      nb::arg("y0"));
+sundials4py::scoped_def(m, "CVodeReInit", CVodeReInit, nb::arg("cvode_mem"),
+                        nb::arg("t0"), nb::arg("y0"));
 
-m.def(
-  "CVodeResizeHistory",
+sundials4py::scoped_def(
+  m, "CVodeResizeHistory",
   [](void* cvode_mem, sundials4py::Array1d t_hist_1d,
      std::vector<N_Vector> y_hist_1d, std::vector<N_Vector> f_hist_1d,
      int num_y_hist, int num_f_hist) -> int
@@ -105,98 +105,112 @@ m.def(
   nb::arg("cvode_mem"), nb::arg("t_hist_1d"), nb::arg("y_hist_1d"),
   nb::arg("f_hist_1d"), nb::arg("num_y_hist"), nb::arg("num_f_hist"));
 
-m.def("CVodeSStolerances", CVodeSStolerances, nb::arg("cvode_mem"),
-      nb::arg("reltol"), nb::arg("abstol"));
+sundials4py::scoped_def(m, "CVodeSStolerances", CVodeSStolerances,
+                        nb::arg("cvode_mem"), nb::arg("reltol"),
+                        nb::arg("abstol"));
 
-m.def("CVodeSVtolerances", CVodeSVtolerances, nb::arg("cvode_mem"),
-      nb::arg("reltol"), nb::arg("abstol"));
+sundials4py::scoped_def(m, "CVodeSVtolerances", CVodeSVtolerances,
+                        nb::arg("cvode_mem"), nb::arg("reltol"),
+                        nb::arg("abstol"));
 
-m.def("CVodeSetConstraints", CVodeSetConstraints, nb::arg("cvode_mem"),
-      nb::arg("constraints"));
+sundials4py::scoped_def(m, "CVodeSetConstraints", CVodeSetConstraints,
+                        nb::arg("cvode_mem"), nb::arg("constraints"));
 
-m.def("CVodeSetMaxNumConstraintFails", CVodeSetMaxNumConstraintFails,
-      nb::arg("cvode_mem"), nb::arg("max_fails"));
+sundials4py::scoped_def(m, "CVodeSetMaxNumConstraintFails",
+                        CVodeSetMaxNumConstraintFails, nb::arg("cvode_mem"),
+                        nb::arg("max_fails"));
 
-m.def("CVodeSetDeltaGammaMaxLSetup", CVodeSetDeltaGammaMaxLSetup,
-      nb::arg("cvode_mem"), nb::arg("dgmax_lsetup"));
+sundials4py::scoped_def(m, "CVodeSetDeltaGammaMaxLSetup",
+                        CVodeSetDeltaGammaMaxLSetup, nb::arg("cvode_mem"),
+                        nb::arg("dgmax_lsetup"));
 
-m.def("CVodeSetInitStep", CVodeSetInitStep, nb::arg("cvode_mem"), nb::arg("hin"));
+sundials4py::scoped_def(m, "CVodeSetInitStep", CVodeSetInitStep,
+                        nb::arg("cvode_mem"), nb::arg("hin"));
 
-m.def("CVodeSetLSetupFrequency", CVodeSetLSetupFrequency, nb::arg("cvode_mem"),
-      nb::arg("msbp"));
+sundials4py::scoped_def(m, "CVodeSetLSetupFrequency", CVodeSetLSetupFrequency,
+                        nb::arg("cvode_mem"), nb::arg("msbp"));
 
-m.def("CVodeSetMaxConvFails", CVodeSetMaxConvFails, nb::arg("cvode_mem"),
-      nb::arg("maxncf"));
+sundials4py::scoped_def(m, "CVodeSetMaxConvFails", CVodeSetMaxConvFails,
+                        nb::arg("cvode_mem"), nb::arg("maxncf"));
 
-m.def("CVodeSetMaxErrTestFails", CVodeSetMaxErrTestFails, nb::arg("cvode_mem"),
-      nb::arg("maxnef"));
+sundials4py::scoped_def(m, "CVodeSetMaxErrTestFails", CVodeSetMaxErrTestFails,
+                        nb::arg("cvode_mem"), nb::arg("maxnef"));
 
-m.def("CVodeSetMaxHnilWarns", CVodeSetMaxHnilWarns, nb::arg("cvode_mem"),
-      nb::arg("mxhnil"));
+sundials4py::scoped_def(m, "CVodeSetMaxHnilWarns", CVodeSetMaxHnilWarns,
+                        nb::arg("cvode_mem"), nb::arg("mxhnil"));
 
-m.def("CVodeSetMaxNonlinIters", CVodeSetMaxNonlinIters, nb::arg("cvode_mem"),
-      nb::arg("maxcor"));
+sundials4py::scoped_def(m, "CVodeSetMaxNonlinIters", CVodeSetMaxNonlinIters,
+                        nb::arg("cvode_mem"), nb::arg("maxcor"));
 
-m.def("CVodeSetMaxNumSteps", CVodeSetMaxNumSteps, nb::arg("cvode_mem"),
-      nb::arg("mxsteps"));
+sundials4py::scoped_def(m, "CVodeSetMaxNumSteps", CVodeSetMaxNumSteps,
+                        nb::arg("cvode_mem"), nb::arg("mxsteps"));
 
-m.def("CVodeSetMaxOrd", CVodeSetMaxOrd, nb::arg("cvode_mem"), nb::arg("maxord"));
+sundials4py::scoped_def(m, "CVodeSetMaxOrd", CVodeSetMaxOrd,
+                        nb::arg("cvode_mem"), nb::arg("maxord"));
 
-m.def("CVodeSetMaxStep", CVodeSetMaxStep, nb::arg("cvode_mem"), nb::arg("hmax"));
+sundials4py::scoped_def(m, "CVodeSetMaxStep", CVodeSetMaxStep,
+                        nb::arg("cvode_mem"), nb::arg("hmax"));
 
-m.def("CVodeSetMinStep", CVodeSetMinStep, nb::arg("cvode_mem"), nb::arg("hmin"));
+sundials4py::scoped_def(m, "CVodeSetMinStep", CVodeSetMinStep,
+                        nb::arg("cvode_mem"), nb::arg("hmin"));
 
-m.def("CVodeSetMonitorFrequency", CVodeSetMonitorFrequency,
-      nb::arg("cvode_mem"), nb::arg("nst"));
+sundials4py::scoped_def(m, "CVodeSetMonitorFrequency", CVodeSetMonitorFrequency,
+                        nb::arg("cvode_mem"), nb::arg("nst"));
 
-m.def("CVodeSetNonlinConvCoef", CVodeSetNonlinConvCoef, nb::arg("cvode_mem"),
-      nb::arg("nlscoef"));
+sundials4py::scoped_def(m, "CVodeSetNonlinConvCoef", CVodeSetNonlinConvCoef,
+                        nb::arg("cvode_mem"), nb::arg("nlscoef"));
 
-m.def("CVodeSetNonlinearSolver", CVodeSetNonlinearSolver, nb::arg("cvode_mem"),
-      nb::arg("NLS"));
+sundials4py::scoped_def(m, "CVodeSetNonlinearSolver", CVodeSetNonlinearSolver,
+                        nb::arg("cvode_mem"), nb::arg("NLS"));
 
-m.def("CVodeSetStabLimDet", CVodeSetStabLimDet, nb::arg("cvode_mem"),
-      nb::arg("stldet"));
+sundials4py::scoped_def(m, "CVodeSetStabLimDet", CVodeSetStabLimDet,
+                        nb::arg("cvode_mem"), nb::arg("stldet"));
 
-m.def("CVodeSetStopTime", CVodeSetStopTime, nb::arg("cvode_mem"),
-      nb::arg("tstop"));
+sundials4py::scoped_def(m, "CVodeSetStopTime", CVodeSetStopTime,
+                        nb::arg("cvode_mem"), nb::arg("tstop"));
 
-m.def("CVodeSetInterpolateStopTime", CVodeSetInterpolateStopTime,
-      nb::arg("cvode_mem"), nb::arg("interp"));
+sundials4py::scoped_def(m, "CVodeSetInterpolateStopTime",
+                        CVodeSetInterpolateStopTime, nb::arg("cvode_mem"),
+                        nb::arg("interp"));
 
-m.def("CVodeClearStopTime", CVodeClearStopTime, nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeClearStopTime", CVodeClearStopTime,
+                        nb::arg("cvode_mem"));
 
-m.def("CVodeSetEtaFixedStepBounds", CVodeSetEtaFixedStepBounds,
-      nb::arg("cvode_mem"), nb::arg("eta_min_fx"), nb::arg("eta_max_fx"));
+sundials4py::scoped_def(m, "CVodeSetEtaFixedStepBounds",
+                        CVodeSetEtaFixedStepBounds, nb::arg("cvode_mem"),
+                        nb::arg("eta_min_fx"), nb::arg("eta_max_fx"));
 
-m.def("CVodeSetEtaMaxFirstStep", CVodeSetEtaMaxFirstStep, nb::arg("cvode_mem"),
-      nb::arg("eta_max_fs"));
+sundials4py::scoped_def(m, "CVodeSetEtaMaxFirstStep", CVodeSetEtaMaxFirstStep,
+                        nb::arg("cvode_mem"), nb::arg("eta_max_fs"));
 
-m.def("CVodeSetEtaMaxEarlyStep", CVodeSetEtaMaxEarlyStep, nb::arg("cvode_mem"),
-      nb::arg("eta_max_es"));
+sundials4py::scoped_def(m, "CVodeSetEtaMaxEarlyStep", CVodeSetEtaMaxEarlyStep,
+                        nb::arg("cvode_mem"), nb::arg("eta_max_es"));
 
-m.def("CVodeSetNumStepsEtaMaxEarlyStep", CVodeSetNumStepsEtaMaxEarlyStep,
-      nb::arg("cvode_mem"), nb::arg("small_nst"));
+sundials4py::scoped_def(m, "CVodeSetNumStepsEtaMaxEarlyStep",
+                        CVodeSetNumStepsEtaMaxEarlyStep, nb::arg("cvode_mem"),
+                        nb::arg("small_nst"));
 
-m.def("CVodeSetEtaMax", CVodeSetEtaMax, nb::arg("cvode_mem"),
-      nb::arg("eta_max_gs"));
+sundials4py::scoped_def(m, "CVodeSetEtaMax", CVodeSetEtaMax,
+                        nb::arg("cvode_mem"), nb::arg("eta_max_gs"));
 
-m.def("CVodeSetEtaMin", CVodeSetEtaMin, nb::arg("cvode_mem"), nb::arg("eta_min"));
+sundials4py::scoped_def(m, "CVodeSetEtaMin", CVodeSetEtaMin,
+                        nb::arg("cvode_mem"), nb::arg("eta_min"));
 
-m.def("CVodeSetEtaMinErrFail", CVodeSetEtaMinErrFail, nb::arg("cvode_mem"),
-      nb::arg("eta_min_ef"));
+sundials4py::scoped_def(m, "CVodeSetEtaMinErrFail", CVodeSetEtaMinErrFail,
+                        nb::arg("cvode_mem"), nb::arg("eta_min_ef"));
 
-m.def("CVodeSetEtaMaxErrFail", CVodeSetEtaMaxErrFail, nb::arg("cvode_mem"),
-      nb::arg("eta_max_ef"));
+sundials4py::scoped_def(m, "CVodeSetEtaMaxErrFail", CVodeSetEtaMaxErrFail,
+                        nb::arg("cvode_mem"), nb::arg("eta_max_ef"));
 
-m.def("CVodeSetNumFailsEtaMaxErrFail", CVodeSetNumFailsEtaMaxErrFail,
-      nb::arg("cvode_mem"), nb::arg("small_nef"));
+sundials4py::scoped_def(m, "CVodeSetNumFailsEtaMaxErrFail",
+                        CVodeSetNumFailsEtaMaxErrFail, nb::arg("cvode_mem"),
+                        nb::arg("small_nef"));
 
-m.def("CVodeSetEtaConvFail", CVodeSetEtaConvFail, nb::arg("cvode_mem"),
-      nb::arg("eta_cf"));
+sundials4py::scoped_def(m, "CVodeSetEtaConvFail", CVodeSetEtaConvFail,
+                        nb::arg("cvode_mem"), nb::arg("eta_cf"));
 
-m.def(
-  "CVodeSetRootDirection",
+sundials4py::scoped_def(
+  m, "CVodeSetRootDirection",
   [](void* cvode_mem, std::vector<int> rootdir_1d) -> int
   {
     auto CVodeSetRootDirection_adapt_arr_ptr_to_std_vector =
@@ -213,35 +227,14 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("rootdir_1d"));
 
-m.def("CVodeSetNoInactiveRootWarn", CVodeSetNoInactiveRootWarn,
-      nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeSetNoInactiveRootWarn",
+                        CVodeSetNoInactiveRootWarn, nb::arg("cvode_mem"));
 
-m.def(
-  "CVode",
-  [](void* cvode_mem, sunrealtype tout, N_Vector yout,
-     int itask) -> std::tuple<int, sunrealtype>
-  {
-    auto CVode_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem, sunrealtype tout, N_Vector yout,
-         int itask) -> std::tuple<int, sunrealtype>
-    {
-      sunrealtype tret_adapt_modifiable;
+sundials4py::scoped_def(m, "CVodeComputeState", CVodeComputeState,
+                        nb::arg("cvode_mem"), nb::arg("ycor"), nb::arg("y"));
 
-      int r = CVode(cvode_mem, tout, yout, &tret_adapt_modifiable, itask);
-      return std::make_tuple(r, tret_adapt_modifiable);
-    };
-
-    return CVode_adapt_modifiable_immutable_to_return(cvode_mem, tout, yout,
-                                                      itask);
-  },
-  nb::arg("cvode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"),
-  "Solver function");
-
-m.def("CVodeComputeState", CVodeComputeState, nb::arg("cvode_mem"),
-      nb::arg("ycor"), nb::arg("y"));
-
-m.def(
-  "CVodeComputeStateSens",
+sundials4py::scoped_def(
+  m, "CVodeComputeStateSens",
   [](void* cvode_mem, std::vector<N_Vector> yScor_1d,
      std::vector<N_Vector> yS_1d) -> int
   {
@@ -262,14 +255,16 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("yScor_1d"), nb::arg("yS_1d"));
 
-m.def("CVodeComputeStateSens1", CVodeComputeStateSens1, nb::arg("cvode_mem"),
-      nb::arg("idx"), nb::arg("yScor1"), nb::arg("yS1"));
+sundials4py::scoped_def(m, "CVodeComputeStateSens1", CVodeComputeStateSens1,
+                        nb::arg("cvode_mem"), nb::arg("idx"), nb::arg("yScor1"),
+                        nb::arg("yS1"));
 
-m.def("CVodeGetDky", CVodeGetDky, nb::arg("cvode_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("dky"), "Dense output function");
+sundials4py::scoped_def(m, "CVodeGetDky", CVodeGetDky, nb::arg("cvode_mem"),
+                        nb::arg("t"), nb::arg("k"), nb::arg("dky"),
+                        "Dense output function");
 
-m.def(
-  "CVodeGetNumSteps",
+sundials4py::scoped_def(
+  m, "CVodeGetNumSteps",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumSteps_adapt_modifiable_immutable_to_return =
@@ -285,8 +280,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumRhsEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumRhsEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -302,8 +297,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumLinSolvSetups",
+sundials4py::scoped_def(
+  m, "CVodeGetNumLinSolvSetups",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumLinSolvSetups_adapt_modifiable_immutable_to_return =
@@ -320,8 +315,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumErrTestFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumErrTestFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -337,8 +332,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetLastOrder",
+sundials4py::scoped_def(
+  m, "CVodeGetLastOrder",
   [](void* cvode_mem) -> std::tuple<int, int>
   {
     auto CVodeGetLastOrder_adapt_modifiable_immutable_to_return =
@@ -354,8 +349,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetCurrentOrder",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentOrder",
   [](void* cvode_mem) -> std::tuple<int, int>
   {
     auto CVodeGetCurrentOrder_adapt_modifiable_immutable_to_return =
@@ -371,8 +366,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetCurrentGamma",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentGamma",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetCurrentGamma_adapt_modifiable_immutable_to_return =
@@ -388,8 +383,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumStabLimOrderReds",
+sundials4py::scoped_def(
+  m, "CVodeGetNumStabLimOrderReds",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumStabLimOrderReds_adapt_modifiable_immutable_to_return =
@@ -406,8 +401,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetActualInitStep",
+sundials4py::scoped_def(
+  m, "CVodeGetActualInitStep",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetActualInitStep_adapt_modifiable_immutable_to_return =
@@ -423,8 +418,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetLastStep",
+sundials4py::scoped_def(
+  m, "CVodeGetLastStep",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetLastStep_adapt_modifiable_immutable_to_return =
@@ -440,8 +435,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetCurrentStep",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentStep",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetCurrentStep_adapt_modifiable_immutable_to_return =
@@ -457,8 +452,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetCurrentState",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentState",
   [](void* cvode_mem) -> std::tuple<int, N_Vector>
   {
     auto CVodeGetCurrentState_adapt_modifiable_immutable_to_return =
@@ -474,8 +469,8 @@ m.def(
   },
   nb::arg("cvode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "CVodeGetCurrentSensSolveIndex",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentSensSolveIndex",
   [](void* cvode_mem) -> std::tuple<int, int>
   {
     auto CVodeGetCurrentSensSolveIndex_adapt_modifiable_immutable_to_return =
@@ -492,8 +487,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetCurrentTime",
+sundials4py::scoped_def(
+  m, "CVodeGetCurrentTime",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetCurrentTime_adapt_modifiable_immutable_to_return =
@@ -509,8 +504,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetTolScaleFactor",
+sundials4py::scoped_def(
+  m, "CVodeGetTolScaleFactor",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetTolScaleFactor_adapt_modifiable_immutable_to_return =
@@ -526,14 +521,14 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodeGetErrWeights", CVodeGetErrWeights, nb::arg("cvode_mem"),
-      nb::arg("eweight"));
+sundials4py::scoped_def(m, "CVodeGetErrWeights", CVodeGetErrWeights,
+                        nb::arg("cvode_mem"), nb::arg("eweight"));
 
-m.def("CVodeGetEstLocalErrors", CVodeGetEstLocalErrors, nb::arg("cvode_mem"),
-      nb::arg("ele"));
+sundials4py::scoped_def(m, "CVodeGetEstLocalErrors", CVodeGetEstLocalErrors,
+                        nb::arg("cvode_mem"), nb::arg("ele"));
 
-m.def(
-  "CVodeGetNumGEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumGEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumGEvals_adapt_modifiable_immutable_to_return =
@@ -549,8 +544,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetRootInfo",
+sundials4py::scoped_def(
+  m, "CVodeGetRootInfo",
   [](void* cvode_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto CVodeGetRootInfo_adapt_arr_ptr_to_std_vector =
@@ -567,8 +562,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("rootsfound_1d"));
 
-m.def(
-  "CVodeGetIntegratorStats",
+sundials4py::scoped_def(
+  m, "CVodeGetIntegratorStats",
   [](void* cvode_mem) -> std::tuple<int, long, long, long, long, int, int,
                                     sunrealtype, sunrealtype, sunrealtype, sunrealtype>
   {
@@ -609,8 +604,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "CVodeGetNumNonlinSolvIters",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
@@ -627,8 +622,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumNonlinSolvConvFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumNonlinSolvConvFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return =
@@ -646,8 +641,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNonlinSolvStats",
+sundials4py::scoped_def(
+  m, "CVodeGetNonlinSolvStats",
   [](void* cvode_mem) -> std::tuple<int, long, long>
   {
     auto CVodeGetNonlinSolvStats_adapt_modifiable_immutable_to_return =
@@ -666,8 +661,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumStepSolveFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumStepSolveFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumStepSolveFails_adapt_modifiable_immutable_to_return =
@@ -684,8 +679,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumConstraintFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumConstraintFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumConstraintFails_adapt_modifiable_immutable_to_return =
@@ -703,8 +698,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumConstraintCorrections",
+sundials4py::scoped_def(
+  m, "CVodeGetNumConstraintCorrections",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumConstraintCorrections_adapt_modifiable_immutable_to_return =
@@ -723,24 +718,28 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodePrintAllStats", CVodePrintAllStats, nb::arg("cvode_mem"),
-      nb::arg("outfile"), nb::arg("fmt"));
+sundials4py::scoped_def(m, "CVodePrintAllStats", CVodePrintAllStats,
+                        nb::arg("cvode_mem"), nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("CVodeGetReturnFlagName", CVodeGetReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "CVodeGetReturnFlagName", CVodeGetReturnFlagName,
+                        nb::arg("flag"));
 
-m.def("CVodeQuadReInit", CVodeQuadReInit, nb::arg("cvode_mem"), nb::arg("yQ0"));
+sundials4py::scoped_def(m, "CVodeQuadReInit", CVodeQuadReInit,
+                        nb::arg("cvode_mem"), nb::arg("yQ0"));
 
-m.def("CVodeQuadSStolerances", CVodeQuadSStolerances, nb::arg("cvode_mem"),
-      nb::arg("reltolQ"), nb::arg("abstolQ"));
+sundials4py::scoped_def(m, "CVodeQuadSStolerances", CVodeQuadSStolerances,
+                        nb::arg("cvode_mem"), nb::arg("reltolQ"),
+                        nb::arg("abstolQ"));
 
-m.def("CVodeQuadSVtolerances", CVodeQuadSVtolerances, nb::arg("cvode_mem"),
-      nb::arg("reltolQ"), nb::arg("abstolQ"));
+sundials4py::scoped_def(m, "CVodeQuadSVtolerances", CVodeQuadSVtolerances,
+                        nb::arg("cvode_mem"), nb::arg("reltolQ"),
+                        nb::arg("abstolQ"));
 
-m.def("CVodeSetQuadErrCon", CVodeSetQuadErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQ"));
+sundials4py::scoped_def(m, "CVodeSetQuadErrCon", CVodeSetQuadErrCon,
+                        nb::arg("cvode_mem"), nb::arg("errconQ"));
 
-m.def(
-  "CVodeGetQuad",
+sundials4py::scoped_def(
+  m, "CVodeGetQuad",
   [](void* cvode_mem, N_Vector yQout) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetQuad_adapt_modifiable_immutable_to_return =
@@ -756,11 +755,12 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("yQout"));
 
-m.def("CVodeGetQuadDky", CVodeGetQuadDky, nb::arg("cvode_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("dky"));
+sundials4py::scoped_def(m, "CVodeGetQuadDky", CVodeGetQuadDky,
+                        nb::arg("cvode_mem"), nb::arg("t"), nb::arg("k"),
+                        nb::arg("dky"));
 
-m.def(
-  "CVodeGetQuadNumRhsEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadNumRhsEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetQuadNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -776,8 +776,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetQuadNumErrTestFails",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadNumErrTestFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetQuadNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -794,11 +794,11 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodeGetQuadErrWeights", CVodeGetQuadErrWeights, nb::arg("cvode_mem"),
-      nb::arg("eQweight"));
+sundials4py::scoped_def(m, "CVodeGetQuadErrWeights", CVodeGetQuadErrWeights,
+                        nb::arg("cvode_mem"), nb::arg("eQweight"));
 
-m.def(
-  "CVodeGetQuadStats",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadStats",
   [](void* cvode_mem) -> std::tuple<int, long, long>
   {
     auto CVodeGetQuadStats_adapt_modifiable_immutable_to_return =
@@ -817,8 +817,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeSensReInit",
+sundials4py::scoped_def(
+  m, "CVodeSensReInit",
   [](void* cvode_mem, int ism, std::vector<N_Vector> yS0_1d) -> int
   {
     auto CVodeSensReInit_adapt_arr_ptr_to_std_vector =
@@ -834,8 +834,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("ism"), nb::arg("yS0_1d"));
 
-m.def(
-  "CVodeSensSStolerances",
+sundials4py::scoped_def(
+  m, "CVodeSensSStolerances",
   [](void* cvode_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
   {
     auto CVodeSensSStolerances_adapt_arr_ptr_to_std_vector =
@@ -855,8 +855,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("reltolS"), nb::arg("abstolS_1d"));
 
-m.def(
-  "CVodeSensSVtolerances",
+sundials4py::scoped_def(
+  m, "CVodeSensSVtolerances",
   [](void* cvode_mem, sunrealtype reltolS, std::vector<N_Vector> abstolS_1d) -> int
   {
     auto CVodeSensSVtolerances_adapt_arr_ptr_to_std_vector =
@@ -875,19 +875,22 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("reltolS"), nb::arg("abstolS_1d"));
 
-m.def("CVodeSensEEtolerances", CVodeSensEEtolerances, nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeSensEEtolerances", CVodeSensEEtolerances,
+                        nb::arg("cvode_mem"));
 
-m.def("CVodeSetSensDQMethod", CVodeSetSensDQMethod, nb::arg("cvode_mem"),
-      nb::arg("DQtype"), nb::arg("DQrhomax"));
+sundials4py::scoped_def(m, "CVodeSetSensDQMethod", CVodeSetSensDQMethod,
+                        nb::arg("cvode_mem"), nb::arg("DQtype"),
+                        nb::arg("DQrhomax"));
 
-m.def("CVodeSetSensErrCon", CVodeSetSensErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconS"));
+sundials4py::scoped_def(m, "CVodeSetSensErrCon", CVodeSetSensErrCon,
+                        nb::arg("cvode_mem"), nb::arg("errconS"));
 
-m.def("CVodeSetSensMaxNonlinIters", CVodeSetSensMaxNonlinIters,
-      nb::arg("cvode_mem"), nb::arg("maxcorS"));
+sundials4py::scoped_def(m, "CVodeSetSensMaxNonlinIters",
+                        CVodeSetSensMaxNonlinIters, nb::arg("cvode_mem"),
+                        nb::arg("maxcorS"));
 
-m.def(
-  "CVodeSetSensParams",
+sundials4py::scoped_def(
+  m, "CVodeSetSensParams",
   [](void* cvode_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
      std::vector<int> plist_1d) -> int
   {
@@ -909,19 +912,23 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("p_1d"), nb::arg("pbar_1d"), nb::arg("plist_1d"));
 
-m.def("CVodeSetNonlinearSolverSensSim", CVodeSetNonlinearSolverSensSim,
-      nb::arg("cvode_mem"), nb::arg("NLS"));
+sundials4py::scoped_def(m, "CVodeSetNonlinearSolverSensSim",
+                        CVodeSetNonlinearSolverSensSim, nb::arg("cvode_mem"),
+                        nb::arg("NLS"));
 
-m.def("CVodeSetNonlinearSolverSensStg", CVodeSetNonlinearSolverSensStg,
-      nb::arg("cvode_mem"), nb::arg("NLS"));
+sundials4py::scoped_def(m, "CVodeSetNonlinearSolverSensStg",
+                        CVodeSetNonlinearSolverSensStg, nb::arg("cvode_mem"),
+                        nb::arg("NLS"));
 
-m.def("CVodeSetNonlinearSolverSensStg1", CVodeSetNonlinearSolverSensStg1,
-      nb::arg("cvode_mem"), nb::arg("NLS"));
+sundials4py::scoped_def(m, "CVodeSetNonlinearSolverSensStg1",
+                        CVodeSetNonlinearSolverSensStg1, nb::arg("cvode_mem"),
+                        nb::arg("NLS"));
 
-m.def("CVodeSensToggleOff", CVodeSensToggleOff, nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeSensToggleOff", CVodeSensToggleOff,
+                        nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSens",
+sundials4py::scoped_def(
+  m, "CVodeGetSens",
   [](void* cvode_mem,
      std::vector<N_Vector> ySout_1d) -> std::tuple<int, sunrealtype>
   {
@@ -950,8 +957,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("ySout_1d"));
 
-m.def(
-  "CVodeGetSens1",
+sundials4py::scoped_def(
+  m, "CVodeGetSens1",
   [](void* cvode_mem, int is, N_Vector ySout) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetSens1_adapt_modifiable_immutable_to_return =
@@ -968,8 +975,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("is_"), nb::arg("ySout"));
 
-m.def(
-  "CVodeGetSensDky",
+sundials4py::scoped_def(
+  m, "CVodeGetSensDky",
   [](void* cvode_mem, sunrealtype t, int k, std::vector<N_Vector> dkyA_1d) -> int
   {
     auto CVodeGetSensDky_adapt_arr_ptr_to_std_vector =
@@ -986,11 +993,12 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("t"), nb::arg("k"), nb::arg("dkyA_1d"));
 
-m.def("CVodeGetSensDky1", CVodeGetSensDky1, nb::arg("cvode_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("is_"), nb::arg("dky"));
+sundials4py::scoped_def(m, "CVodeGetSensDky1", CVodeGetSensDky1,
+                        nb::arg("cvode_mem"), nb::arg("t"), nb::arg("k"),
+                        nb::arg("is_"), nb::arg("dky"));
 
-m.def(
-  "CVodeGetSensNumRhsEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNumRhsEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetSensNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -1006,8 +1014,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumRhsEvalsSens",
+sundials4py::scoped_def(
+  m, "CVodeGetNumRhsEvalsSens",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumRhsEvalsSens_adapt_modifiable_immutable_to_return =
@@ -1023,8 +1031,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensNumErrTestFails",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNumErrTestFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetSensNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -1041,8 +1049,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensNumLinSolvSetups",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNumLinSolvSetups",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetSensNumLinSolvSetups_adapt_modifiable_immutable_to_return =
@@ -1060,8 +1068,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensErrWeights",
+sundials4py::scoped_def(
+  m, "CVodeGetSensErrWeights",
   [](void* cvode_mem, std::vector<N_Vector> eSweight_1d) -> int
   {
     auto CVodeGetSensErrWeights_adapt_arr_ptr_to_std_vector =
@@ -1079,8 +1087,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("eSweight_1d"));
 
-m.def(
-  "CVodeGetSensStats",
+sundials4py::scoped_def(
+  m, "CVodeGetSensStats",
   [](void* cvode_mem) -> std::tuple<int, long, long, long, long>
   {
     auto CVodeGetSensStats_adapt_modifiable_immutable_to_return =
@@ -1105,8 +1113,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNumNonlinSolvIters",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetSensNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
@@ -1124,8 +1132,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensNumNonlinSolvConvFails",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNumNonlinSolvConvFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetSensNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return =
@@ -1143,8 +1151,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetSensNonlinSolvStats",
+sundials4py::scoped_def(
+  m, "CVodeGetSensNonlinSolvStats",
   [](void* cvode_mem) -> std::tuple<int, long, long>
   {
     auto CVodeGetSensNonlinSolvStats_adapt_modifiable_immutable_to_return =
@@ -1164,8 +1172,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumStepSensSolveFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumStepSensSolveFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumStepSensSolveFails_adapt_modifiable_immutable_to_return =
@@ -1183,8 +1191,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetStgrSensNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "CVodeGetStgrSensNumNonlinSolvIters",
   [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d) -> int
   {
     auto CVodeGetStgrSensNumNonlinSolvIters_adapt_arr_ptr_to_std_vector =
@@ -1203,8 +1211,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("nSTGR1niters_1d"));
 
-m.def(
-  "CVodeGetStgrSensNumNonlinSolvConvFails",
+sundials4py::scoped_def(
+  m, "CVodeGetStgrSensNumNonlinSolvConvFails",
   [](void* cvode_mem, sundials4py::LongArray1d nSTGR1nfails_1d) -> int
   {
     auto CVodeGetStgrSensNumNonlinSolvConvFails_adapt_arr_ptr_to_std_vector =
@@ -1223,8 +1231,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("nSTGR1nfails_1d"));
 
-m.def(
-  "CVodeGetStgrSensNonlinSolvStats",
+sundials4py::scoped_def(
+  m, "CVodeGetStgrSensNonlinSolvStats",
   [](void* cvode_mem, sundials4py::LongArray1d nSTGR1niters_1d,
      sundials4py::LongArray1d nSTGR1nfails_1d) -> int
   {
@@ -1249,8 +1257,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("nSTGR1niters_1d"), nb::arg("nSTGR1nfails_1d"));
 
-m.def(
-  "CVodeGetNumStepStgrSensSolveFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumStepStgrSensSolveFails",
   [](void* cvode_mem, sundials4py::LongArray1d nSTGR1ncfails_1d) -> int
   {
     auto CVodeGetNumStepStgrSensSolveFails_adapt_arr_ptr_to_std_vector =
@@ -1269,8 +1277,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("nSTGR1ncfails_1d"));
 
-m.def(
-  "CVodeQuadSensReInit",
+sundials4py::scoped_def(
+  m, "CVodeQuadSensReInit",
   [](void* cvode_mem, std::vector<N_Vector> yQS0_1d) -> int
   {
     auto CVodeQuadSensReInit_adapt_arr_ptr_to_std_vector =
@@ -1286,8 +1294,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("yQS0_1d"));
 
-m.def(
-  "CVodeQuadSensSStolerances",
+sundials4py::scoped_def(
+  m, "CVodeQuadSensSStolerances",
   [](void* cvode_mem, sunrealtype reltolQS, sundials4py::Array1d abstolQS_1d) -> int
   {
     auto CVodeQuadSensSStolerances_adapt_arr_ptr_to_std_vector =
@@ -1308,8 +1316,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("reltolQS"), nb::arg("abstolQS_1d"));
 
-m.def(
-  "CVodeQuadSensSVtolerances",
+sundials4py::scoped_def(
+  m, "CVodeQuadSensSVtolerances",
   [](void* cvode_mem, sunrealtype reltolQS, std::vector<N_Vector> abstolQS_1d) -> int
   {
     auto CVodeQuadSensSVtolerances_adapt_arr_ptr_to_std_vector =
@@ -1330,14 +1338,14 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("reltolQS"), nb::arg("abstolQS_1d"));
 
-m.def("CVodeQuadSensEEtolerances", CVodeQuadSensEEtolerances,
-      nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeQuadSensEEtolerances",
+                        CVodeQuadSensEEtolerances, nb::arg("cvode_mem"));
 
-m.def("CVodeSetQuadSensErrCon", CVodeSetQuadSensErrCon, nb::arg("cvode_mem"),
-      nb::arg("errconQS"));
+sundials4py::scoped_def(m, "CVodeSetQuadSensErrCon", CVodeSetQuadSensErrCon,
+                        nb::arg("cvode_mem"), nb::arg("errconQS"));
 
-m.def(
-  "CVodeGetQuadSens",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSens",
   [](void* cvode_mem,
      std::vector<N_Vector> yQSout_1d) -> std::tuple<int, sunrealtype>
   {
@@ -1367,8 +1375,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("yQSout_1d"));
 
-m.def(
-  "CVodeGetQuadSens1",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSens1",
   [](void* cvode_mem, int is, N_Vector yQSout) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetQuadSens1_adapt_modifiable_immutable_to_return =
@@ -1385,8 +1393,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("is_"), nb::arg("yQSout"));
 
-m.def(
-  "CVodeGetQuadSensDky",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSensDky",
   [](void* cvode_mem, sunrealtype t, int k,
      std::vector<N_Vector> dkyQS_all_1d) -> int
   {
@@ -1406,11 +1414,12 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("t"), nb::arg("k"), nb::arg("dkyQS_all_1d"));
 
-m.def("CVodeGetQuadSensDky1", CVodeGetQuadSensDky1, nb::arg("cvode_mem"),
-      nb::arg("t"), nb::arg("k"), nb::arg("is_"), nb::arg("dkyQS"));
+sundials4py::scoped_def(m, "CVodeGetQuadSensDky1", CVodeGetQuadSensDky1,
+                        nb::arg("cvode_mem"), nb::arg("t"), nb::arg("k"),
+                        nb::arg("is_"), nb::arg("dkyQS"));
 
-m.def(
-  "CVodeGetQuadSensNumRhsEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSensNumRhsEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetQuadSensNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -1427,8 +1436,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetQuadSensNumErrTestFails",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSensNumErrTestFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetQuadSensNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -1446,8 +1455,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetQuadSensErrWeights",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSensErrWeights",
   [](void* cvode_mem, std::vector<N_Vector> eQSweight_1d) -> int
   {
     auto CVodeGetQuadSensErrWeights_adapt_arr_ptr_to_std_vector =
@@ -1466,8 +1475,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("eQSweight_1d"));
 
-m.def(
-  "CVodeGetQuadSensStats",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadSensStats",
   [](void* cvode_mem) -> std::tuple<int, long, long>
   {
     auto CVodeGetQuadSensStats_adapt_modifiable_immutable_to_return =
@@ -1486,13 +1495,14 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodeAdjInit", CVodeAdjInit, nb::arg("cvode_mem"), nb::arg("steps"),
-      nb::arg("interp"));
+sundials4py::scoped_def(m, "CVodeAdjInit", CVodeAdjInit, nb::arg("cvode_mem"),
+                        nb::arg("steps"), nb::arg("interp"));
 
-m.def("CVodeAdjReInit", CVodeAdjReInit, nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeAdjReInit", CVodeAdjReInit,
+                        nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeCreateB",
+sundials4py::scoped_def(
+  m, "CVodeCreateB",
   [](void* cvode_mem, int lmmB) -> std::tuple<int, int>
   {
     auto CVodeCreateB_adapt_modifiable_immutable_to_return =
@@ -1508,81 +1518,65 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("lmmB"));
 
-m.def("CVodeReInitB", CVodeReInitB, nb::arg("cvode_mem"), nb::arg("which"),
-      nb::arg("tB0"), nb::arg("yB0"));
+sundials4py::scoped_def(m, "CVodeReInitB", CVodeReInitB, nb::arg("cvode_mem"),
+                        nb::arg("which"), nb::arg("tB0"), nb::arg("yB0"));
 
-m.def("CVodeSStolerancesB", CVodeSStolerancesB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("reltolB"), nb::arg("abstolB"));
+sundials4py::scoped_def(m, "CVodeSStolerancesB", CVodeSStolerancesB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("reltolB"), nb::arg("abstolB"));
 
-m.def("CVodeSVtolerancesB", CVodeSVtolerancesB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("reltolB"), nb::arg("abstolB"));
+sundials4py::scoped_def(m, "CVodeSVtolerancesB", CVodeSVtolerancesB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("reltolB"), nb::arg("abstolB"));
 
-m.def("CVodeQuadReInitB", CVodeQuadReInitB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("yQB0"));
+sundials4py::scoped_def(m, "CVodeQuadReInitB", CVodeQuadReInitB,
+                        nb::arg("cvode_mem"), nb::arg("which"), nb::arg("yQB0"));
 
-m.def("CVodeQuadSStolerancesB", CVodeQuadSStolerancesB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("reltolQB"), nb::arg("abstolQB"));
+sundials4py::scoped_def(m, "CVodeQuadSStolerancesB", CVodeQuadSStolerancesB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("reltolQB"), nb::arg("abstolQB"));
 
-m.def("CVodeQuadSVtolerancesB", CVodeQuadSVtolerancesB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("reltolQB"), nb::arg("abstolQB"));
+sundials4py::scoped_def(m, "CVodeQuadSVtolerancesB", CVodeQuadSVtolerancesB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("reltolQB"), nb::arg("abstolQB"));
 
-m.def(
-  "CVodeF",
-  [](void* cvode_mem, sunrealtype tout, N_Vector yout,
-     int itask) -> std::tuple<int, sunrealtype, int>
-  {
-    auto CVodeF_adapt_modifiable_immutable_to_return =
-      [](void* cvode_mem, sunrealtype tout, N_Vector yout,
-         int itask) -> std::tuple<int, sunrealtype, int>
-    {
-      sunrealtype tret_adapt_modifiable;
-      int ncheckPtr_adapt_modifiable;
+sundials4py::scoped_def(m, "CVodeSetAdjNoSensi", CVodeSetAdjNoSensi,
+                        nb::arg("cvode_mem"));
 
-      int r = CVodeF(cvode_mem, tout, yout, &tret_adapt_modifiable, itask,
-                     &ncheckPtr_adapt_modifiable);
-      return std::make_tuple(r, tret_adapt_modifiable,
-                             ncheckPtr_adapt_modifiable);
-    };
+sundials4py::scoped_def(m, "CVodeSetMaxOrdB", CVodeSetMaxOrdB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("maxordB"));
 
-    return CVodeF_adapt_modifiable_immutable_to_return(cvode_mem, tout, yout,
-                                                       itask);
-  },
-  nb::arg("cvode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"));
+sundials4py::scoped_def(m, "CVodeSetMaxNumStepsB", CVodeSetMaxNumStepsB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("mxstepsB"));
 
-m.def("CVodeB", CVodeB, nb::arg("cvode_mem"), nb::arg("tBout"),
-      nb::arg("itaskB"));
+sundials4py::scoped_def(m, "CVodeSetStabLimDetB", CVodeSetStabLimDetB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("stldetB"));
 
-m.def("CVodeSetAdjNoSensi", CVodeSetAdjNoSensi, nb::arg("cvode_mem"));
+sundials4py::scoped_def(m, "CVodeSetInitStepB", CVodeSetInitStepB,
+                        nb::arg("cvode_mem"), nb::arg("which"), nb::arg("hinB"));
 
-m.def("CVodeSetMaxOrdB", CVodeSetMaxOrdB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("maxordB"));
+sundials4py::scoped_def(m, "CVodeSetMinStepB", CVodeSetMinStepB,
+                        nb::arg("cvode_mem"), nb::arg("which"), nb::arg("hminB"));
 
-m.def("CVodeSetMaxNumStepsB", CVodeSetMaxNumStepsB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("mxstepsB"));
+sundials4py::scoped_def(m, "CVodeSetMaxStepB", CVodeSetMaxStepB,
+                        nb::arg("cvode_mem"), nb::arg("which"), nb::arg("hmaxB"));
 
-m.def("CVodeSetStabLimDetB", CVodeSetStabLimDetB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("stldetB"));
+sundials4py::scoped_def(m, "CVodeSetConstraintsB", CVodeSetConstraintsB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("constraintsB"));
 
-m.def("CVodeSetInitStepB", CVodeSetInitStepB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("hinB"));
+sundials4py::scoped_def(m, "CVodeSetQuadErrConB", CVodeSetQuadErrConB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("errconQB"));
 
-m.def("CVodeSetMinStepB", CVodeSetMinStepB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("hminB"));
+sundials4py::scoped_def(m, "CVodeSetNonlinearSolverB", CVodeSetNonlinearSolverB,
+                        nb::arg("cvode_mem"), nb::arg("which"), nb::arg("NLS"));
 
-m.def("CVodeSetMaxStepB", CVodeSetMaxStepB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("hmaxB"));
-
-m.def("CVodeSetConstraintsB", CVodeSetConstraintsB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("constraintsB"));
-
-m.def("CVodeSetQuadErrConB", CVodeSetQuadErrConB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("errconQB"));
-
-m.def("CVodeSetNonlinearSolverB", CVodeSetNonlinearSolverB,
-      nb::arg("cvode_mem"), nb::arg("which"), nb::arg("NLS"));
-
-m.def(
-  "CVodeGetB",
+sundials4py::scoped_def(
+  m, "CVodeGetB",
   [](void* cvode_mem, int which, N_Vector yB) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetB_adapt_modifiable_immutable_to_return =
@@ -1598,8 +1592,8 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("which"), nb::arg("yB"));
 
-m.def(
-  "CVodeGetQuadB",
+sundials4py::scoped_def(
+  m, "CVodeGetQuadB",
   [](void* cvode_mem, int which, N_Vector qB) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetQuadB_adapt_modifiable_immutable_to_return =
@@ -1616,14 +1610,14 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("which"), nb::arg("qB"));
 
-m.def("CVodeGetAdjCVodeBmem", CVodeGetAdjCVodeBmem, nb::arg("cvode_mem"),
-      nb::arg("which"));
+sundials4py::scoped_def(m, "CVodeGetAdjCVodeBmem", CVodeGetAdjCVodeBmem,
+                        nb::arg("cvode_mem"), nb::arg("which"));
 
-m.def("CVodeGetAdjY", CVodeGetAdjY, nb::arg("cvode_mem"), nb::arg("t"),
-      nb::arg("y"));
+sundials4py::scoped_def(m, "CVodeGetAdjY", CVodeGetAdjY, nb::arg("cvode_mem"),
+                        nb::arg("t"), nb::arg("y"));
 
-m.def(
-  "CVodeGetAdjDataPointHermite",
+sundials4py::scoped_def(
+  m, "CVodeGetAdjDataPointHermite",
   [](void* cvode_mem, int which, std::optional<N_Vector> y = std::nullopt,
      std::optional<N_Vector> yd = std::nullopt) -> std::tuple<int, sunrealtype>
   {
@@ -1669,8 +1663,8 @@ m.def(
   nb::arg("cvode_mem"), nb::arg("which"), nb::arg("y").none() = nb::none(),
   nb::arg("yd").none() = nb::none());
 
-m.def(
-  "CVodeGetAdjDataPointPolynomial",
+sundials4py::scoped_def(
+  m, "CVodeGetAdjDataPointPolynomial",
   [](void* cvode_mem, int which,
      std::optional<N_Vector> y = std::nullopt) -> std::tuple<int, sunrealtype, int>
   {
@@ -1733,8 +1727,8 @@ m.attr("CVLS_SUNLS_FAIL")      = -9;
 m.attr("CVLS_NO_ADJ")          = -101;
 m.attr("CVLS_LMEMB_NULL")      = -102;
 
-m.def(
-  "CVodeSetLinearSolver",
+sundials4py::scoped_def(
+  m, "CVodeSetLinearSolver",
   [](void* cvode_mem, SUNLinearSolver LS,
      std::optional<SUNMatrix> A = std::nullopt) -> int
   {
@@ -1755,22 +1749,25 @@ m.def(
   },
   nb::arg("cvode_mem"), nb::arg("LS"), nb::arg("A").none() = nb::none());
 
-m.def("CVodeSetJacEvalFrequency", CVodeSetJacEvalFrequency,
-      nb::arg("cvode_mem"), nb::arg("msbj"));
+sundials4py::scoped_def(m, "CVodeSetJacEvalFrequency", CVodeSetJacEvalFrequency,
+                        nb::arg("cvode_mem"), nb::arg("msbj"));
 
-m.def("CVodeSetLinearSolutionScaling", CVodeSetLinearSolutionScaling,
-      nb::arg("cvode_mem"), nb::arg("onoff"));
+sundials4py::scoped_def(m, "CVodeSetLinearSolutionScaling",
+                        CVodeSetLinearSolutionScaling, nb::arg("cvode_mem"),
+                        nb::arg("onoff"));
 
-m.def("CVodeSetDeltaGammaMaxBadJac", CVodeSetDeltaGammaMaxBadJac,
-      nb::arg("cvode_mem"), nb::arg("dgmax_jbad"));
+sundials4py::scoped_def(m, "CVodeSetDeltaGammaMaxBadJac",
+                        CVodeSetDeltaGammaMaxBadJac, nb::arg("cvode_mem"),
+                        nb::arg("dgmax_jbad"));
 
-m.def("CVodeSetEpsLin", CVodeSetEpsLin, nb::arg("cvode_mem"), nb::arg("eplifac"));
+sundials4py::scoped_def(m, "CVodeSetEpsLin", CVodeSetEpsLin,
+                        nb::arg("cvode_mem"), nb::arg("eplifac"));
 
-m.def("CVodeSetLSNormFactor", CVodeSetLSNormFactor, nb::arg("arkode_mem"),
-      nb::arg("nrmfac"));
+sundials4py::scoped_def(m, "CVodeSetLSNormFactor", CVodeSetLSNormFactor,
+                        nb::arg("arkode_mem"), nb::arg("nrmfac"));
 
-m.def(
-  "CVodeGetJac",
+sundials4py::scoped_def(
+  m, "CVodeGetJac",
   [](void* cvode_mem) -> std::tuple<int, SUNMatrix>
   {
     auto CVodeGetJac_adapt_modifiable_immutable_to_return =
@@ -1786,8 +1783,8 @@ m.def(
   },
   nb::arg("cvode_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "CVodeGetJacTime",
+sundials4py::scoped_def(
+  m, "CVodeGetJacTime",
   [](void* cvode_mem) -> std::tuple<int, sunrealtype>
   {
     auto CVodeGetJacTime_adapt_modifiable_immutable_to_return =
@@ -1803,8 +1800,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetJacNumSteps",
+sundials4py::scoped_def(
+  m, "CVodeGetJacNumSteps",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetJacNumSteps_adapt_modifiable_immutable_to_return =
@@ -1820,8 +1817,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumJacEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumJacEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumJacEvals_adapt_modifiable_immutable_to_return =
@@ -1837,8 +1834,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumPrecEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumPrecEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumPrecEvals_adapt_modifiable_immutable_to_return =
@@ -1854,8 +1851,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumPrecSolves",
+sundials4py::scoped_def(
+  m, "CVodeGetNumPrecSolves",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumPrecSolves_adapt_modifiable_immutable_to_return =
@@ -1871,8 +1868,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumLinIters",
+sundials4py::scoped_def(
+  m, "CVodeGetNumLinIters",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumLinIters_adapt_modifiable_immutable_to_return =
@@ -1888,8 +1885,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumLinConvFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumLinConvFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumLinConvFails_adapt_modifiable_immutable_to_return =
@@ -1905,8 +1902,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumJTSetupEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumJTSetupEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumJTSetupEvals_adapt_modifiable_immutable_to_return =
@@ -1922,8 +1919,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumJtimesEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumJtimesEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumJtimesEvals_adapt_modifiable_immutable_to_return =
@@ -1939,8 +1936,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumLinRhsEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumLinRhsEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumLinRhsEvals_adapt_modifiable_immutable_to_return =
@@ -1956,8 +1953,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetLinSolveStats",
+sundials4py::scoped_def(
+  m, "CVodeGetLinSolveStats",
   [](void* cvode_mem)
     -> std::tuple<int, long, long, long, long, long, long, long, long>
   {
@@ -1994,8 +1991,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetLastLinFlag",
+sundials4py::scoped_def(
+  m, "CVodeGetLastLinFlag",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetLastLinFlag_adapt_modifiable_immutable_to_return =
@@ -2011,10 +2008,11 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def("CVodeGetLinReturnFlagName", CVodeGetLinReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "CVodeGetLinReturnFlagName",
+                        CVodeGetLinReturnFlagName, nb::arg("flag"));
 
-m.def(
-  "CVodeSetLinearSolverB",
+sundials4py::scoped_def(
+  m, "CVodeSetLinearSolverB",
   [](void* cvode_mem, int which, SUNLinearSolver LS,
      std::optional<SUNMatrix> A = std::nullopt) -> int
   {
@@ -2037,14 +2035,17 @@ m.def(
   nb::arg("cvode_mem"), nb::arg("which"), nb::arg("LS"),
   nb::arg("A").none() = nb::none());
 
-m.def("CVodeSetEpsLinB", CVodeSetEpsLinB, nb::arg("cvode_mem"),
-      nb::arg("which"), nb::arg("eplifacB"));
+sundials4py::scoped_def(m, "CVodeSetEpsLinB", CVodeSetEpsLinB,
+                        nb::arg("cvode_mem"), nb::arg("which"),
+                        nb::arg("eplifacB"));
 
-m.def("CVodeSetLSNormFactorB", CVodeSetLSNormFactorB, nb::arg("arkode_mem"),
-      nb::arg("which"), nb::arg("nrmfacB"));
+sundials4py::scoped_def(m, "CVodeSetLSNormFactorB", CVodeSetLSNormFactorB,
+                        nb::arg("arkode_mem"), nb::arg("which"),
+                        nb::arg("nrmfacB"));
 
-m.def("CVodeSetLinearSolutionScalingB", CVodeSetLinearSolutionScalingB,
-      nb::arg("cvode_mem"), nb::arg("which"), nb::arg("onoffB"));
+sundials4py::scoped_def(m, "CVodeSetLinearSolutionScalingB",
+                        CVodeSetLinearSolutionScalingB, nb::arg("cvode_mem"),
+                        nb::arg("which"), nb::arg("onoffB"));
 // #ifdef __cplusplus
 //
 // #endif
@@ -2057,22 +2058,23 @@ m.def("CVodeSetLinearSolutionScalingB", CVodeSetLinearSolutionScalingB,
 // #endif
 //
 
-m.def("CVodeSetProjErrEst", CVodeSetProjErrEst, nb::arg("cvode_mem"),
-      nb::arg("onoff"));
+sundials4py::scoped_def(m, "CVodeSetProjErrEst", CVodeSetProjErrEst,
+                        nb::arg("cvode_mem"), nb::arg("onoff"));
 
-m.def("CVodeSetProjFrequency", CVodeSetProjFrequency, nb::arg("cvode_mem"),
-      nb::arg("proj_freq"));
+sundials4py::scoped_def(m, "CVodeSetProjFrequency", CVodeSetProjFrequency,
+                        nb::arg("cvode_mem"), nb::arg("proj_freq"));
 
-m.def("CVodeSetMaxNumProjFails", CVodeSetMaxNumProjFails, nb::arg("cvode_mem"),
-      nb::arg("max_fails"));
+sundials4py::scoped_def(m, "CVodeSetMaxNumProjFails", CVodeSetMaxNumProjFails,
+                        nb::arg("cvode_mem"), nb::arg("max_fails"));
 
-m.def("CVodeSetEpsProj", CVodeSetEpsProj, nb::arg("cvode_mem"), nb::arg("eps"));
+sundials4py::scoped_def(m, "CVodeSetEpsProj", CVodeSetEpsProj,
+                        nb::arg("cvode_mem"), nb::arg("eps"));
 
-m.def("CVodeSetProjFailEta", CVodeSetProjFailEta, nb::arg("cvode_mem"),
-      nb::arg("eta"));
+sundials4py::scoped_def(m, "CVodeSetProjFailEta", CVodeSetProjFailEta,
+                        nb::arg("cvode_mem"), nb::arg("eta"));
 
-m.def(
-  "CVodeGetNumProjEvals",
+sundials4py::scoped_def(
+  m, "CVodeGetNumProjEvals",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumProjEvals_adapt_modifiable_immutable_to_return =
@@ -2088,8 +2090,8 @@ m.def(
   },
   nb::arg("cvode_mem"));
 
-m.def(
-  "CVodeGetNumProjFails",
+sundials4py::scoped_def(
+  m, "CVodeGetNumProjFails",
   [](void* cvode_mem) -> std::tuple<int, long>
   {
     auto CVodeGetNumProjFails_adapt_modifiable_immutable_to_return =

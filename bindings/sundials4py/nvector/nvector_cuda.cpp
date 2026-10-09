@@ -436,21 +436,21 @@ void bind_nvector_cuda(nb::module_& m)
     .def("__dlpack_device__", [](const CudaDeviceArrayPointer& self)
          { return nb::make_tuple(2, self.device_id); });
 
-  m.def(
-    "N_VNewEmpty_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VNewEmpty_Cuda",
     [](SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     { return nvector_detail::wrap_nvector(N_VNewEmpty_Cuda(sunctx)); },
     nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
-  m.def(
-    "N_VNew_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VNew_Cuda",
     [](sunindextype vec_length,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     { return nvector_detail::wrap_nvector(N_VNew_Cuda(vec_length, sunctx)); },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
-  m.def(
-    "N_VNewManaged_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VNewManaged_Cuda",
     [](sunindextype vec_length,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
@@ -458,8 +458,8 @@ void bind_nvector_cuda(nb::module_& m)
     },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
-  m.def(
-    "N_VNewWithMemHelp_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VNewWithMemHelp_Cuda",
     [](sunindextype vec_length, sunbooleantype use_managed_mem,
        SUNMemoryHelper helper,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
@@ -470,8 +470,8 @@ void bind_nvector_cuda(nb::module_& m)
     nb::arg("vec_length"), nb::arg("use_managed_mem"), nb::arg("helper"),
     nb::arg("sunctx"), nb::keep_alive<0, 3>(), nb::keep_alive<0, 4>());
 
-  m.def(
-    "N_VMake_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VMake_Cuda",
     [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
        std::uintptr_t d_vdata,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
@@ -486,8 +486,8 @@ void bind_nvector_cuda(nb::module_& m)
     // keep_alive avoids the explicit owner registry used by later replacements.
     nb::arg("sunctx"), nb::keep_alive<0, 2>(), nb::keep_alive<0, 4>());
 
-  m.def(
-    "N_VMake_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VMake_Cuda",
     [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
        CudaArray1d d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
@@ -502,8 +502,8 @@ void bind_nvector_cuda(nb::module_& m)
     nb::arg("d_vdata_1d").noconvert(), nb::arg("sunctx"),
     nb::keep_alive<0, 2>(), nb::keep_alive<0, 3>(), nb::keep_alive<0, 4>());
 
-  m.def(
-    "N_VMake_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VMake_Cuda",
     [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
        nb::object d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
@@ -520,8 +520,8 @@ void bind_nvector_cuda(nb::module_& m)
     nb::arg("d_vdata_1d"), nb::arg("sunctx"), nb::keep_alive<0, 2>(),
     nb::keep_alive<0, 3>(), nb::keep_alive<0, 4>());
 
-  m.def(
-    "N_VMakeManaged_Cuda",
+  sundials4py::scoped_def(
+    m, "N_VMakeManaged_Cuda",
     [](sunindextype vec_length, std::uintptr_t vdata,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
@@ -532,8 +532,8 @@ void bind_nvector_cuda(nb::module_& m)
     nb::arg("vec_length"), nb::arg("vdata"), nb::arg("sunctx"),
     nb::keep_alive<0, 3>());
 
-  m.def(
-    "N_VGetDeviceArrayPointer",
+  sundials4py::scoped_def(
+    m, "N_VGetDeviceArrayPointer",
     [](N_Vector x) { return CudaDeviceArrayPointer(x); }, nb::arg("x"));
 
   nvector_detail::bind_nvector_array_accessors(m, &get_numpy_array,

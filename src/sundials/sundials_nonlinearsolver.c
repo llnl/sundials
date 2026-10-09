@@ -159,6 +159,11 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
 {
   if (NLS == NULL) { return (SUN_SUCCESS); }
 
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
+#endif
+  NLS->python = NULL;
+
   /* if the free operation exists use it */
   if (NLS->ops)
   {
@@ -171,10 +176,6 @@ SUNErrCode SUNNonlinSolFree(SUNNonlinearSolver NLS)
   NLS->content = NULL;
   free(NLS->ops);
   NLS->ops = NULL;
-#if defined(SUNDIALS_ENABLE_PYTHON)
-  SUNNonlinearSolverFunctionTable_Destroy(NLS->python);
-#endif
-  NLS->python = NULL;
   free(NLS);
   NLS = NULL;
 

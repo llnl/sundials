@@ -4,8 +4,8 @@
 // #endif
 //
 
-m.def(
-  "SUNAdjointCheckpointScheme_NeedsSaving",
+sundials4py::scoped_def(
+  m, "SUNAdjointCheckpointScheme_NeedsSaving",
   [](SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
      suncountertype stage_num,
      sunrealtype t) -> std::tuple<SUNErrCode, sunbooleantype>
@@ -31,13 +31,14 @@ m.def(
   nb::arg("check_scheme"), nb::arg("step_num"), nb::arg("stage_num"),
   nb::arg("t"));
 
-m.def("SUNAdjointCheckpointScheme_InsertVector",
-      SUNAdjointCheckpointScheme_InsertVector, nb::arg("check_scheme"),
-      nb::arg("step_num"), nb::arg("stage_num"), nb::arg("t"), nb::arg("state"));
+sundials4py::scoped_def(m, "SUNAdjointCheckpointScheme_InsertVector",
+                        SUNAdjointCheckpointScheme_InsertVector,
+                        nb::arg("check_scheme"), nb::arg("step_num"),
+                        nb::arg("stage_num"), nb::arg("t"), nb::arg("state"));
 
-m.def("SUNAdjointCheckpointScheme_EnableDense",
-      SUNAdjointCheckpointScheme_EnableDense, nb::arg("check_scheme"),
-      nb::arg("on_or_off"));
+sundials4py::scoped_def(m, "SUNAdjointCheckpointScheme_EnableDense",
+                        SUNAdjointCheckpointScheme_EnableDense,
+                        nb::arg("check_scheme"), nb::arg("on_or_off"));
 // #ifdef __cplusplus
 //
 // #endif

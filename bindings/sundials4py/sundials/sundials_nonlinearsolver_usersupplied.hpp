@@ -1,4 +1,7 @@
 /* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -13,8 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
+#ifndef SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
+#define SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -41,6 +44,18 @@ struct SUNNonlinearSolverFunctionTable
   nb::object getupdatenormfn;
   nb::object getconvratefn;
 };
+
+/* Return the solver's Python function table, creating it on first use. Core
+   SUNNonlinSolFree destroys it before delegating to the implementation. */
+inline SUNNonlinearSolverFunctionTable* sunnonlinearsolver_function_table(
+  SUNNonlinearSolver NLS)
+{
+  if (NLS->python == nullptr)
+  {
+    NLS->python = new SUNNonlinearSolverFunctionTable;
+  }
+  return static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+}
 
 template<typename... Args>
 inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
@@ -150,4 +165,4 @@ inline int sunnonlinearsolver_convtestfn_wrapper(Args... args)
     1>(&SUNNonlinearSolverFunctionTable::convtestfn, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP
+#endif // SUNDIALS4PY_NONLINEARSOLVER_USERSUPPLIED_HPP

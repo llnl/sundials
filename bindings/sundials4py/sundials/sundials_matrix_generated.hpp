@@ -35,39 +35,26 @@ auto pyClass_generic_SUNMatrix =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNMatGetID", SUNMatGetID, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatGetID", SUNMatGetID, nb::arg("A"));
 
-m.def(
-  "SUNMatClone",
-  [](SUNMatrix A) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
-  {
-    auto SUNMatClone_adapt_return_type_to_shared_ptr =
-      [](SUNMatrix A) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
-    {
-      auto lambda_result = SUNMatClone(A);
+sundials4py::scoped_def(m, "SUNMatZero", SUNMatZero, nb::arg("A"));
 
-      return our_make_shared<std::remove_pointer_t<SUNMatrix>, SUNMatrixDeleter>(
-        lambda_result);
-    };
+sundials4py::scoped_def(m, "SUNMatCopy", SUNMatCopy, nb::arg("A"), nb::arg("B"));
 
-    return SUNMatClone_adapt_return_type_to_shared_ptr(A);
-  },
-  nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatScaleAdd", SUNMatScaleAdd, nb::arg("c"),
+                        nb::arg("A"), nb::arg("B"));
 
-m.def("SUNMatZero", SUNMatZero, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNMatScaleAddI", SUNMatScaleAddI, nb::arg("c"),
+                        nb::arg("A"));
 
-m.def("SUNMatCopy", SUNMatCopy, nb::arg("A"), nb::arg("B"));
+sundials4py::scoped_def(m, "SUNMatMatvecSetup", SUNMatMatvecSetup, nb::arg("A"));
 
-m.def("SUNMatScaleAdd", SUNMatScaleAdd, nb::arg("c"), nb::arg("A"), nb::arg("B"));
+sundials4py::scoped_def(m, "SUNMatMatvec", SUNMatMatvec, nb::arg("A"),
+                        nb::arg("x"), nb::arg("y"));
 
-m.def("SUNMatScaleAddI", SUNMatScaleAddI, nb::arg("c"), nb::arg("A"));
-
-m.def("SUNMatMatvecSetup", SUNMatMatvecSetup, nb::arg("A"));
-
-m.def("SUNMatMatvec", SUNMatMatvec, nb::arg("A"), nb::arg("x"), nb::arg("y"));
-
-m.def("SUNMatHermitianTransposeVec", SUNMatHermitianTransposeVec, nb::arg("A"),
-      nb::arg("x"), nb::arg("y"));
+sundials4py::scoped_def(m, "SUNMatHermitianTransposeVec",
+                        SUNMatHermitianTransposeVec, nb::arg("A"), nb::arg("x"),
+                        nb::arg("y"));
 // #ifdef __cplusplus
 //
 // #endif

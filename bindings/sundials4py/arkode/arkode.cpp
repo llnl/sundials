@@ -47,8 +47,8 @@ void bind_arkode_splittingstep(nb::module_& m);
 
 // ARKODE callback binding macros
 #define BIND_ARKODE_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)       \
-  m.def(                                                                \
-    #NAME,                                                              \
+  sundials4py::scoped_def(                                              \
+    m, #NAME,                                                           \
     [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                   \
       auto fn_table    = get_arkode_fn_table(ark_mem);                  \
@@ -60,8 +60,8 @@ void bind_arkode_splittingstep(nb::module_& m);
 
 #define BIND_ARKODE_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
                               MEMBER2, WRAPPER2, ...)                      \
-  m.def(                                                                   \
-    #NAME,                                                                 \
+  sundials4py::scoped_def(                                                 \
+    m, #NAME,                                                              \
     [](void* ark_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,  \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
@@ -78,6 +78,19 @@ void bind_arkode_splittingstep(nb::module_& m);
 void bind_arkode(nb::module_& m)
 {
 #include "arkode_generated.hpp"
+
+  m.def(
+    "ARKodeEvolve",
+    [](void* mem, sunrealtype tout, N_Vector yout, int itask)
+    {
+      CustomExceptionScope scope;
+      sunrealtype tret;
+      int flag = ARKodeEvolve(mem, tout, yout, &tret, itask);
+      scope.rethrow_if_pending();
+      return std::make_tuple(flag, tret);
+    },
+    nb::arg("arkode_mem"), nb::arg("tout"), nb::arg("yout"), nb::arg("itask"),
+    "Integrate the ODE over an interval in t");
 
   /////////////////////////////////////////////////////////////////////////////
   // Manual attributes to capture static const int declarations for deprecated
@@ -107,8 +120,8 @@ void bind_arkode(nb::module_& m)
   // ARKODE user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "ARKodeRootInit",
+  sundials4py::scoped_def(
+    m, "ARKodeRootInit",
     [](void* ark_mem, int nrtfn,
        std::function<std::remove_pointer_t<ARKRootStdFn>> fn)
     {
@@ -128,8 +141,8 @@ void bind_arkode(nb::module_& m)
   BIND_ARKODE_CALLBACK(ARKodeResFtolerance, ARKRwtFn, rwtn, arkode_rwtfn_wrapper,
                        nb::arg("arkode_mem"), nb::arg("efun").none());
 
-  m.def(
-    "ARKodeResize",
+  sundials4py::scoped_def(
+    m, "ARKodeResize",
     [](void* ark_mem, N_Vector y_new, sunrealtype h_scale, sunrealtype t0,
        std::function<std::remove_pointer_t<ARKVecResizeFn>> fn)
     {
@@ -217,8 +230,8 @@ void bind_arkode(nb::module_& m)
 
   // ARKodeSetMassTimes doesn't fit the BIND_ARKODE_CALLBACK macro pattern(s)
   // due to the 4th argument for user data, so we just write it out explicitly.
-  m.def(
-    "ARKodeSetMassTimes",
+  sundials4py::scoped_def(
+    m, "ARKodeSetMassTimes",
     [](void* ark_mem,
        std::function<std::remove_pointer_t<ARKLsMassTimesSetupFn>> msetup,
        std::function<std::remove_pointer_t<ARKLsMassTimesVecFn>> mtimes)
@@ -252,8 +265,8 @@ void bind_arkode(nb::module_& m)
   // Additional functions that litgen cannot generate
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "ARKodeSetOptions",
+  sundials4py::scoped_def(
+    m, "ARKodeSetOptions",
     [](void* ark_mem, const std::string& arkid, const std::string& file_name,
        int argc, const std::vector<std::string>& args)
     {
@@ -275,14 +288,15 @@ void bind_arkode(nb::module_& m)
     nb::arg("args"));
 
   // This function has optional arguments which litgen cannot deal with because they are followed by non-optional arguments.
-  m.def("ARKodeSetMassLinearSolver", ARKodeSetMassLinearSolver,
-        nb::arg("arkode_mem"), nb::arg("LS"), nb::arg("M").none(),
-        nb::arg("time_dep"));
+  sundials4py::scoped_def(m, "ARKodeSetMassLinearSolver",
+                          ARKodeSetMassLinearSolver, nb::arg("arkode_mem"),
+                          nb::arg("LS"), nb::arg("M").none(),
+                          nb::arg("time_dep"));
 
   // TODO(CJB) The nullopt approach of handling None args doesn't seem to be compatible
   // with sundials4py::Array1d, so we just use none() for the Bi and Be args here for now.
-  m.def(
-    "ARKodeButcherTable_Create",
+  sundials4py::scoped_def(
+    m, "ARKodeButcherTable_Create",
     [](int s, int q, int p, sundials4py::Array1d c_1d, sundials4py::Array1d A_1d,
        sundials4py::Array1d b_1d, sundials4py::Array1d d_1d)
       -> std::shared_ptr<std::remove_pointer_t<ARKodeButcherTable>>

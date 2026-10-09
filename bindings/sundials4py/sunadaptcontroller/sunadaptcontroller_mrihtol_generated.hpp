@@ -10,8 +10,8 @@ auto pyClassSUNAdaptControllerContent_MRIHTol_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNAdaptController_MRIHTol",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_MRIHTol",
   [](SUNAdaptController HControl, SUNAdaptController TolControl,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNAdaptController>>
   {
@@ -34,13 +34,13 @@ m.def(
   nb::arg("HControl"), nb::arg("TolControl"), nb::arg("sunctx"),
   "nb::keep_alive<0, 3>()", nb::keep_alive<0, 3>());
 
-m.def("SUNAdaptController_SetParams_MRIHTol",
-      SUNAdaptController_SetParams_MRIHTol, nb::arg("C"),
-      nb::arg("inner_max_relch"), nb::arg("inner_min_tolfac"),
-      nb::arg("inner_max_tolfac"));
+sundials4py::scoped_def(m, "SUNAdaptController_SetParams_MRIHTol",
+                        SUNAdaptController_SetParams_MRIHTol, nb::arg("C"),
+                        nb::arg("inner_max_relch"), nb::arg("inner_min_tolfac"),
+                        nb::arg("inner_max_tolfac"));
 
-m.def(
-  "SUNAdaptController_GetSlowController_MRIHTol",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_GetSlowController_MRIHTol",
   [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
   {
     auto SUNAdaptController_GetSlowController_MRIHTol_adapt_modifiable_immutable_to_return =
@@ -58,8 +58,8 @@ m.def(
   },
   nb::arg("C"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "SUNAdaptController_GetFastController_MRIHTol",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_GetFastController_MRIHTol",
   [](SUNAdaptController C) -> std::tuple<SUNErrCode, SUNAdaptController>
   {
     auto SUNAdaptController_GetFastController_MRIHTol_adapt_modifiable_immutable_to_return =

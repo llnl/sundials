@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -23,6 +24,10 @@
 #include "sundials/sundials_adaptcontroller.h"
 #include "sundials4py.hpp"
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include <sundials/sundials_adaptcontroller.hpp>
 
 namespace nb = nanobind;
@@ -32,10 +37,64 @@ namespace sundials4py {
 
 void bind_sunadaptcontroller(nb::module_& m)
 {
+  // The shared base class owns the lazy native-handle machinery. The concrete
+  // H and MRI subclasses below select the required estimate callback shape.
+  nb::class_<CustomSUNAdaptController>(m, "CustomSUNAdaptController",
+                                       nb::dynamic_attr(),
+                                       nb::is_weak_referenceable())
+    .def("_is_materialized", &CustomSUNAdaptController::_is_materialized)
+    .def("validate",
+         [](CustomSUNAdaptController& self) { self.validate(nb::find(&self)); })
+    .def_prop_ro("sunctx", &CustomSUNAdaptController::sunctx,
+                 nb::sig("def sunctx(self) -> object"),
+                 "The SUNDIALS context owned by this object.")
+    .def("estimate_step",
+         [](CustomSUNAdaptController&, sunrealtype, int, sunrealtype) {
+           return CustomSUNAdaptController::base_method_status("estimate_step");
+         })
+    .def("estimate_step_tol",
+         [](CustomSUNAdaptController&, sunrealtype, sunrealtype, int,
+            sunrealtype, sunrealtype) {
+           return CustomSUNAdaptController::base_method_status(
+             "estimate_step_tol");
+         })
+    .def("reset", [](CustomSUNAdaptController&)
+         { return CustomSUNAdaptController::base_method_status("reset"); })
+    .def("set_defaults", [](CustomSUNAdaptController&)
+         { return CustomSUNAdaptController::base_method_status("set_defaults"); })
+    .def("set_options", [](CustomSUNAdaptController&, const std::string&,
+                           const std::string&, const std::vector<std::string>&)
+         { return CustomSUNAdaptController::base_method_status("set_options"); })
+    .def("write", [](CustomSUNAdaptController&, std::uintptr_t)
+         { return CustomSUNAdaptController::base_method_status("write"); })
+    .def("set_error_bias",
+         [](CustomSUNAdaptController&, sunrealtype) {
+           return CustomSUNAdaptController::base_method_status(
+             "set_error_bias");
+         })
+    .def("update_h", [](CustomSUNAdaptController&, sunrealtype, sunrealtype)
+         { return CustomSUNAdaptController::base_method_status("update_h"); })
+    .def("update_mri_h_tol",
+         [](CustomSUNAdaptController&, sunrealtype, sunrealtype, sunrealtype,
+            sunrealtype) {
+           return CustomSUNAdaptController::base_method_status(
+             "update_mri_h_tol");
+         });
+
+  nb::class_<CustomSUNHController, CustomSUNAdaptController>(m, "CustomSUNHController",
+                                                             nb::dynamic_attr())
+    .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>>(),
+         nb::arg("sunctx"));
+
+  nb::class_<CustomSUNMRIController, CustomSUNAdaptController>(m, "CustomSUNMRIController",
+                                                               nb::dynamic_attr())
+    .def(nb::init<std::shared_ptr<std::remove_pointer_t<SUNContext>>>(),
+         nb::arg("sunctx"));
+
 #include "sundials_adaptcontroller_generated.hpp"
 
-  m.def(
-    "SUNAdaptController_SetOptions",
+  sundials4py::scoped_def(
+    m, "SUNAdaptController_SetOptions",
     [](SUNAdaptController self, const std::string& id,
        const std::string& file_name, int argc,
        const std::vector<std::string>& args)

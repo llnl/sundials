@@ -4,16 +4,17 @@
 // #endif
 //
 
-m.def("ERKStepSetTable", ERKStepSetTable, nb::arg("arkode_mem"), nb::arg("B"));
+sundials4py::scoped_def(m, "ERKStepSetTable", ERKStepSetTable,
+                        nb::arg("arkode_mem"), nb::arg("B"));
 
-m.def("ERKStepSetTableNum", ERKStepSetTableNum, nb::arg("arkode_mem"),
-      nb::arg("etable"));
+sundials4py::scoped_def(m, "ERKStepSetTableNum", ERKStepSetTableNum,
+                        nb::arg("arkode_mem"), nb::arg("etable"));
 
-m.def("ERKStepSetTableName", ERKStepSetTableName, nb::arg("arkode_mem"),
-      nb::arg("etable"));
+sundials4py::scoped_def(m, "ERKStepSetTableName", ERKStepSetTableName,
+                        nb::arg("arkode_mem"), nb::arg("etable"));
 
-m.def(
-  "ERKStepGetCurrentButcherTable",
+sundials4py::scoped_def(
+  m, "ERKStepGetCurrentButcherTable",
   [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable>
   {
     auto ERKStepGetCurrentButcherTable_adapt_modifiable_immutable_to_return =
@@ -32,8 +33,8 @@ m.def(
   " Optional output functions\n\n nb::rv_policy::reference",
   nb::rv_policy::reference);
 
-m.def(
-  "ERKStepGetTimestepperStats",
+sundials4py::scoped_def(
+  m, "ERKStepGetTimestepperStats",
   [](void* arkode_mem) -> std::tuple<int, long, long, long, long, long>
   {
     auto ERKStepGetTimestepperStats_adapt_modifiable_immutable_to_return =

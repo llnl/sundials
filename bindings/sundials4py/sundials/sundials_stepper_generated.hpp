@@ -16,8 +16,8 @@ auto pyEnumSUNFullRhsMode = nb::enum_<SUNFullRhsMode>(m, "SUNFullRhsMode",
 // #endif
 //
 
-m.def(
-  "SUNStepper_Create",
+sundials4py::scoped_def(
+  m, "SUNStepper_Create",
   [](SUNContext sunctx)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNStepper>>>
   {
@@ -49,8 +49,8 @@ m.def(
   nb::rv_policy::reference,
   nb::call_policy<sundials4py::returns_references_to<1, 1>>());
 
-m.def(
-  "SUNStepper_Evolve",
+sundials4py::scoped_def(
+  m, "SUNStepper_Evolve",
   [](SUNStepper stepper, sunrealtype tout,
      N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -70,8 +70,8 @@ m.def(
   },
   nb::arg("stepper"), nb::arg("tout"), nb::arg("vret"));
 
-m.def(
-  "SUNStepper_OneStep",
+sundials4py::scoped_def(
+  m, "SUNStepper_OneStep",
   [](SUNStepper stepper, sunrealtype tout,
      N_Vector vret) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -91,26 +91,29 @@ m.def(
   },
   nb::arg("stepper"), nb::arg("tout"), nb::arg("vret"));
 
-m.def("SUNStepper_FullRhs", SUNStepper_FullRhs, nb::arg("stepper"),
-      nb::arg("t"), nb::arg("v"), nb::arg("f"), nb::arg("mode"));
+sundials4py::scoped_def(m, "SUNStepper_FullRhs", SUNStepper_FullRhs,
+                        nb::arg("stepper"), nb::arg("t"), nb::arg("v"),
+                        nb::arg("f"), nb::arg("mode"));
 
-m.def("SUNStepper_ReInit", SUNStepper_ReInit, nb::arg("stepper"), nb::arg("t0"),
-      nb::arg("v0"));
+sundials4py::scoped_def(m, "SUNStepper_ReInit", SUNStepper_ReInit,
+                        nb::arg("stepper"), nb::arg("t0"), nb::arg("v0"));
 
-m.def("SUNStepper_Reset", SUNStepper_Reset, nb::arg("stepper"), nb::arg("tR"),
-      nb::arg("vR"));
+sundials4py::scoped_def(m, "SUNStepper_Reset", SUNStepper_Reset,
+                        nb::arg("stepper"), nb::arg("tR"), nb::arg("vR"));
 
-m.def("SUNStepper_ResetCheckpointIndex", SUNStepper_ResetCheckpointIndex,
-      nb::arg("stepper"), nb::arg("ckptIdxR"));
+sundials4py::scoped_def(m, "SUNStepper_ResetCheckpointIndex",
+                        SUNStepper_ResetCheckpointIndex, nb::arg("stepper"),
+                        nb::arg("ckptIdxR"));
 
-m.def("SUNStepper_SetStopTime", SUNStepper_SetStopTime, nb::arg("stepper"),
-      nb::arg("tstop"));
+sundials4py::scoped_def(m, "SUNStepper_SetStopTime", SUNStepper_SetStopTime,
+                        nb::arg("stepper"), nb::arg("tstop"));
 
-m.def("SUNStepper_SetStepDirection", SUNStepper_SetStepDirection,
-      nb::arg("stepper"), nb::arg("stepdir"));
+sundials4py::scoped_def(m, "SUNStepper_SetStepDirection",
+                        SUNStepper_SetStepDirection, nb::arg("stepper"),
+                        nb::arg("stepdir"));
 
-m.def(
-  "SUNStepper_SetForcing",
+sundials4py::scoped_def(
+  m, "SUNStepper_SetForcing",
   [](SUNStepper stepper, sunrealtype tshift, sunrealtype tscale,
      std::vector<N_Vector> forcing_1d, int nforcing) -> SUNErrCode
   {
@@ -132,11 +135,11 @@ m.def(
   nb::arg("stepper"), nb::arg("tshift"), nb::arg("tscale"),
   nb::arg("forcing_1d"), nb::arg("nforcing"));
 
-m.def("SUNStepper_SetLastFlag", SUNStepper_SetLastFlag, nb::arg("stepper"),
-      nb::arg("last_flag"));
+sundials4py::scoped_def(m, "SUNStepper_SetLastFlag", SUNStepper_SetLastFlag,
+                        nb::arg("stepper"), nb::arg("last_flag"));
 
-m.def(
-  "SUNStepper_GetLastFlag",
+sundials4py::scoped_def(
+  m, "SUNStepper_GetLastFlag",
   [](SUNStepper stepper) -> std::tuple<SUNErrCode, int>
   {
     auto SUNStepper_GetLastFlag_adapt_modifiable_immutable_to_return =
@@ -152,8 +155,8 @@ m.def(
   },
   nb::arg("stepper"));
 
-m.def(
-  "SUNStepper_GetNumSteps",
+sundials4py::scoped_def(
+  m, "SUNStepper_GetNumSteps",
   [](SUNStepper stepper) -> std::tuple<SUNErrCode, suncountertype>
   {
     auto SUNStepper_GetNumSteps_adapt_modifiable_immutable_to_return =

@@ -31,8 +31,8 @@ using namespace sundials::experimental;
 #include "kinsol_usersupplied.hpp"
 
 #define BIND_KINSOL_CALLBACK(NAME, FN_TYPE, MEMBER, WRAPPER, ...)       \
-  m.def(                                                                \
-    #NAME,                                                              \
+  sundials4py::scoped_def(                                              \
+    m, #NAME,                                                           \
     [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE>> fn) \
     {                                                                   \
       auto fntable    = get_kinsol_fn_table(kin_mem);                   \
@@ -44,8 +44,8 @@ using namespace sundials::experimental;
 
 #define BIND_KINSOL_CALLBACK2(NAME, FN_TYPE1, MEMBER1, WRAPPER1, FN_TYPE2, \
                               MEMBER2, WRAPPER2, ...)                      \
-  m.def(                                                                   \
-    #NAME,                                                                 \
+  sundials4py::scoped_def(                                                 \
+    m, #NAME,                                                              \
     [](void* kin_mem, std::function<std::remove_pointer_t<FN_TYPE1>> fn1,  \
        std::function<std::remove_pointer_t<FN_TYPE2>> fn2)                 \
     {                                                                      \
@@ -65,12 +65,24 @@ void bind_kinsol(nb::module_& m)
 {
 #include "kinsol_generated.hpp"
 
+  m.def(
+    "KINSol",
+    [](void* mem, N_Vector uu, int strategy, N_Vector u_scale, N_Vector f_scale)
+    {
+      CustomExceptionScope scope;
+      int flag = KINSol(mem, uu, strategy, u_scale, f_scale);
+      scope.rethrow_if_pending();
+      return flag;
+    },
+    nb::arg("kinmem"), nb::arg("uu"), nb::arg("strategy"), nb::arg("u_scale"),
+    nb::arg("f_scale"), "Solver function");
+
   nb::class_<KINView>(m, "KINView")
     .def("get", nb::overload_cast<>(&KINView::get, nb::const_),
          nb::rv_policy::reference);
 
-  m.def(
-    "KINSetOptions",
+  sundials4py::scoped_def(
+    m, "KINSetOptions",
     [](void* kin_mem, const std::string& kinid, const std::string& file_name,
        int argc, const std::vector<std::string>& args)
     {
@@ -91,14 +103,14 @@ void bind_kinsol(nb::module_& m)
     nb::arg("kin_mem"), nb::arg("kinid"), nb::arg("file_name"), nb::arg("argc"),
     nb::arg("args"));
 
-  m.def(
-    "KINCreate",
+  sundials4py::scoped_def(
+    m, "KINCreate",
     [](SUNContext sunctx)
     { return std::make_shared<KINView>(KINCreate(sunctx)); },
     nb::arg("sunctx"), nb::keep_alive<0, 1>());
 
-  m.def(
-    "KINInit",
+  sundials4py::scoped_def(
+    m, "KINInit",
     [](void* kin_mem, std::function<std::remove_pointer_t<KINSysFn>> sysfn,
        N_Vector tmpl)
     {

@@ -32,8 +32,8 @@ void bind_arkode_splittingstep(nb::module_& m)
 {
 #include "arkode_splittingstep_generated.hpp"
 
-  m.def(
-    "SplittingStepCreate",
+  sundials4py::scoped_def(
+    m, "SplittingStepCreate",
     [](std::vector<SUNStepper> steppers, int partitions, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
     {
@@ -48,8 +48,8 @@ void bind_arkode_splittingstep(nb::module_& m)
     nb::arg("steppers"), nb::arg("partitions"), nb::arg("t0"), nb::arg("y0"),
     nb::arg("sunctx"), nb::keep_alive<0, 5>());
 
-  m.def(
-    "SplittingStepReInit",
+  sundials4py::scoped_def(
+    m, "SplittingStepReInit",
     [](void* arkode_mem, std::vector<SUNStepper> steppers, int partitions,
        sunrealtype t0, N_Vector y0) -> int
     {
