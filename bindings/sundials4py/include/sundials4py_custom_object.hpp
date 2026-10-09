@@ -48,7 +48,8 @@
 #include "sundials4py_core_types.hpp"
 
 #if defined(NB_FREE_THREADED)
-#error "sundials4py custom objects are not yet free-threading safe; build without FREE_THREADED"
+#error \
+  "sundials4py custom objects are not yet free-threading safe; build without FREE_THREADED"
 #endif
 namespace sundials4py {
 
