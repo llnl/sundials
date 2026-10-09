@@ -85,4 +85,6 @@ void bind_sunlogger(nb::module_& m)
 } // namespace sundials4py
 
 extern "C" void SUNLoggerFunctionTable_Destroy(void* ptr)
-{ delete static_cast<SUNLoggerFunctionTable*>(ptr); }
+{
+  delete static_cast<SUNLoggerFunctionTable*>(ptr);
+}

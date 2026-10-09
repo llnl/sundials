@@ -56,8 +56,7 @@ void bind_sunlinearsolver(nb::module_& m)
     .def("set_preconditioner", [](CustomSUNLinearSolver&, nb::object, nb::object)
          { return CustomSUNLinearSolver::base_method_int("set_preconditioner"); })
     .def("set_scaling_vectors",
-         [](CustomSUNLinearSolver&, nb::object, nb::object)
-         {
+         [](CustomSUNLinearSolver&, nb::object, nb::object) {
            return CustomSUNLinearSolver::base_method_int("set_scaling_vectors");
          })
     .def("set_zero_guess", [](CustomSUNLinearSolver&, sunbooleantype)
@@ -121,10 +120,7 @@ void bind_sunlinearsolver(nb::module_& m)
         status = SUNLinSolSetATimes(LS, fn_table,
                                     sunlinearsolver_atimesfn_wrapper);
       }
-      else
-      {
-        status = SUNLinSolSetATimes(LS, nullptr, nullptr);
-      }
+      else { status = SUNLinSolSetATimes(LS, nullptr, nullptr); }
       if (status != SUN_SUCCESS) { fn_table->ATimesFn = std::move(previous); }
       return status;
     },

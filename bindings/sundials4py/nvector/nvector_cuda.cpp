@@ -162,10 +162,7 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
     content->host_data   = replacement_alias;
   }
   else if (device == ArrayDevice::Cpu) { content->host_data = replacement; }
-  else
-  {
-    content->device_data = replacement;
-  }
+  else { content->device_data = replacement; }
 
   if (managed)
   {
@@ -173,19 +170,13 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
     owners.host_array   = nb::object();
     owners.device_array = nb::object();
     if (device == ArrayDevice::Cpu) { owners.host_array = std::move(owner); }
-    else
-    {
-      owners.device_array = std::move(owner);
-    }
+    else { owners.device_array = std::move(owner); }
   }
   else if (device == ArrayDevice::Cpu)
   {
     retain_python_host_array(v, std::move(owner));
   }
-  else
-  {
-    retain_python_device_array(v, std::move(owner));
-  }
+  else { retain_python_device_array(v, std::move(owner)); }
 
   SUNErrCode dealloc_status = SUN_SUCCESS;
   if (managed)
@@ -440,7 +431,8 @@ void bind_nvector_cuda(nb::module_& m)
     .def(
       "__dlpack__",
       [](const CudaDeviceArrayPointer& self, nb::object /* stream */)
-      { return self.dlpack(); }, nb::arg("stream") = nb::none())
+      { return self.dlpack(); },
+      nb::arg("stream") = nb::none())
     .def("__dlpack_device__", [](const CudaDeviceArrayPointer& self)
          { return nb::make_tuple(2, self.device_id); });
 

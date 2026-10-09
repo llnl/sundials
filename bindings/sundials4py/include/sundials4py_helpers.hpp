@@ -68,7 +68,7 @@ inline void record_unknown_user_callback_exception() noexcept
 /// \param args is the arguments to the C function, which will be forwarded to the user-supplied Python function,
 ///        except user_data, which is intercepted and passed as a nullptr.
 template<typename FnType, typename FnTableType, std::size_t UserDataArg, typename... Args>
-int user_supplied_fn_caller(nb::object FnTableType::* fn_member, Args... args)
+int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
   try
   {
@@ -116,7 +116,7 @@ int user_supplied_fn_caller(nb::object FnTableType::* fn_member, Args... args)
 ///        Python function, except user_data, which is intercepted and passed as a nullptr.
 template<typename FnType, typename FnTableType, typename MemType,
          std::size_t UserDataArg, typename... Args>
-int user_supplied_fn_caller(nb::object FnTableType::* fn_member, Args... args)
+int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
   try
   {
@@ -163,7 +163,7 @@ int user_supplied_fn_caller(nb::object FnTableType::* fn_member, Args... args)
 /// \param fn_member is the name of the function in the FnTableType to call
 /// \param args is the arguments to the C function, which will be forwarded to the user-supplied Python function.
 template<typename FnType, typename FnTableType, typename T, typename... Args>
-int user_supplied_fn_caller(nb::object FnTableType::* fn_member, Args... args)
+int user_supplied_fn_caller(nb::object FnTableType::*fn_member, Args... args)
 {
   try
   {

@@ -41,10 +41,7 @@ using namespace sundials::experimental;
       auto fn_table    = get_cvode_fn_table(cv_mem);                   \
       fn_table->MEMBER = nb::cast(fn);                                 \
       if (fn) { return NAME(cv_mem, WRAPPER); }                        \
-      else                                                             \
-      {                                                                \
-        return NAME(cv_mem, nullptr);                                  \
-      }                                                                \
+      else { return NAME(cv_mem, nullptr); }                           \
     },                                                                 \
     __VA_ARGS__)
 
@@ -61,10 +58,7 @@ using namespace sundials::experimental;
       if (fn1 && fn2) { return NAME(cv_mem, WRAPPER1, WRAPPER2); }        \
       else if (fn1) { return NAME(cv_mem, WRAPPER1, nullptr); }           \
       else if (fn2) { return NAME(cv_mem, nullptr, WRAPPER2); }           \
-      else                                                                \
-      {                                                                   \
-        return NAME(cv_mem, nullptr, nullptr);                            \
-      }                                                                   \
+      else { return NAME(cv_mem, nullptr, nullptr); }                     \
     },                                                                    \
     __VA_ARGS__)
 
@@ -77,10 +71,7 @@ using namespace sundials::experimental;
       auto fn_table    = get_cvode_fn_table(cv_mem, which);                       \
       fn_table->MEMBER = nb::cast(fn);                                            \
       if (fn) { return NAME(cv_mem, which, WRAPPER); }                            \
-      else                                                                        \
-      {                                                                           \
-        return NAME(cv_mem, which, nullptr);                                      \
-      }                                                                           \
+      else { return NAME(cv_mem, which, nullptr); }                               \
     },                                                                            \
     __VA_ARGS__)
 
@@ -99,10 +90,7 @@ using namespace sundials::experimental;
       if (fn1 && fn2) { return NAME(cv_mem, which, WRAPPER1, WRAPPER2); }  \
       else if (fn1) { return NAME(cv_mem, which, WRAPPER1, nullptr); }     \
       else if (fn2) { return NAME(cv_mem, which, nullptr, WRAPPER2); }     \
-      else                                                                 \
-      {                                                                    \
-        return NAME(cv_mem, which, nullptr, nullptr);                      \
-      }                                                                    \
+      else { return NAME(cv_mem, which, nullptr, nullptr); }               \
     },                                                                     \
     __VA_ARGS__)
 
@@ -173,7 +161,8 @@ void bind_cvodes(nb::module_& m)
     nb::arg("args"));
 
   sundials4py::scoped_def(
-    m, "CVodeCreate", [](int lmm, SUNContext sunctx)
+    m, "CVodeCreate",
+    [](int lmm, SUNContext sunctx)
     { return std::make_shared<CVodeView>(CVodeCreate(lmm, sunctx)); },
     nb::arg("lmm"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
 
@@ -217,10 +206,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->rootfn = nb::cast(fn);
         return CVodeRootInit(cv_mem, nrtfn, cvode_rootfn_wrapper);
       }
-      else
-      {
-        return CVodeRootInit(cv_mem, nrtfn, nullptr);
-      }
+      else { return CVodeRootInit(cv_mem, nrtfn, nullptr); }
     },
     nb::arg("cv_mem"), nb::arg("nrtfn"), nb::arg("fn").none());
 
@@ -235,10 +221,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fQ = nb::cast(fQ);
         return CVodeQuadInit(cv_mem, cvode_fQ_wrapper, yQ0);
       }
-      else
-      {
-        return CVodeQuadInit(cv_mem, nullptr, yQ0);
-      }
+      else { return CVodeQuadInit(cv_mem, nullptr, yQ0); }
     },
     nb::arg("cv_mem"), nb::arg("fQ").none(), nb::arg("yQ0"));
 
@@ -285,10 +268,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fQS = nb::cast(fQS);
         return CVodeQuadSensInit(cv_mem, cvode_fQS_wrapper, yQS0.data());
       }
-      else
-      {
-        return CVodeQuadSensInit(cv_mem, nullptr, yQS0.data());
-      }
+      else { return CVodeQuadSensInit(cv_mem, nullptr, yQS0.data()); }
     },
     nb::arg("cvode_mem"), nb::arg("fQS"), nb::arg("yQS0"));
 
@@ -304,10 +284,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fS = nb::cast(fS);
         return CVodeSensInit(cv_mem, Ns, ism, cvode_fS_wrapper, yS0.data());
       }
-      else
-      {
-        return CVodeSensInit(cv_mem, Ns, ism, nullptr, yS0.data());
-      }
+      else { return CVodeSensInit(cv_mem, Ns, ism, nullptr, yS0.data()); }
     },
     nb::arg("cvode_mem"), nb::arg("Ns"), nb::arg("ism"), nb::arg("fS").none(),
     nb::arg("yS0"));
@@ -325,10 +302,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fS1 = nb::cast(fS1);
         return CVodeSensInit1(cv_mem, Ns, ism, cvode_fS1_wrapper, yS0.data());
       }
-      else
-      {
-        return CVodeSensInit1(cv_mem, Ns, ism, nullptr, yS0.data());
-      }
+      else { return CVodeSensInit1(cv_mem, Ns, ism, nullptr, yS0.data()); }
     },
     nb::arg("cvode_mem"), nb::arg("Ns"), nb::arg("ism"), nb::arg("fS1").none(),
     nb::arg("yS0"));
@@ -376,10 +350,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fQB = nb::cast(fQB);
         return CVodeQuadInitB(cv_mem, which, cvode_fQB_wrapper, yQBO);
       }
-      else
-      {
-        return CVodeQuadInitB(cv_mem, which, nullptr, yQBO);
-      }
+      else { return CVodeQuadInitB(cv_mem, which, nullptr, yQBO); }
     },
     nb::arg("cvode_mem"), nb::arg("which"), nb::arg("fQB").none(),
     nb::arg("yQB0"));
@@ -442,10 +413,7 @@ void bind_cvodes(nb::module_& m)
         fn_table->fQBS = nb::cast(fQBS);
         return CVodeQuadInitBS(cv_mem, which, cvode_fQBS_wrapper, yQBO);
       }
-      else
-      {
-        return CVodeQuadInitBS(cv_mem, which, nullptr, yQBO);
-      }
+      else { return CVodeQuadInitBS(cv_mem, which, nullptr, yQBO); }
     },
     nb::arg("cvode_mem"), nb::arg("which"), nb::arg("fQBS").none(),
     nb::arg("yQB0"));
@@ -477,4 +445,6 @@ void bind_cvodes(nb::module_& m)
 
 // The destroy functions gets called in our C code by the integrator destructor
 extern "C" void cvode_user_supplied_fn_table_destroy(void* ptr)
-{ delete static_cast<cvode_user_supplied_fn_table*>(ptr); }
+{
+  delete static_cast<cvode_user_supplied_fn_table*>(ptr);
+}

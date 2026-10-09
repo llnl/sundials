@@ -63,8 +63,7 @@ void bind_sunmatrix(nb::module_& m)
     .def("matvecsetup", [](CustomSUNMatrix&)
          { return CustomSUNMatrix::base_method_status("matvecsetup"); })
     .def("hermitian_transpose_matvec",
-         [](CustomSUNMatrix&, nb::object, nb::object)
-         {
+         [](CustomSUNMatrix&, nb::object, nb::object) {
            return CustomSUNMatrix::base_method_status(
              "hermitian_transpose_matvec");
          });

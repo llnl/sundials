@@ -63,8 +63,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
     .def("get_cur_iter", [](CustomSUNNonlinearSolver&)
          { return CustomSUNNonlinearSolver::base_method_int("get_cur_iter"); })
     .def("get_num_conv_fails",
-         [](CustomSUNNonlinearSolver&)
-         {
+         [](CustomSUNNonlinearSolver&) {
            return CustomSUNNonlinearSolver::base_method_int(
              "get_num_conv_fails");
          })
@@ -81,21 +80,18 @@ void bind_sunnonlinearsolver(nb::module_& m)
     .def("set_lsolve_fn", [](CustomSUNNonlinearSolver&, nb::object)
          { return CustomSUNNonlinearSolver::base_method_int("set_lsolve_fn"); })
     .def("set_conv_test_fn",
-         [](CustomSUNNonlinearSolver&, nb::object)
-         {
+         [](CustomSUNNonlinearSolver&, nb::object) {
            return CustomSUNNonlinearSolver::base_method_int("set_conv_test_fn");
          })
     .def("set_norm_fn", [](CustomSUNNonlinearSolver&, nb::object)
          { return CustomSUNNonlinearSolver::base_method_int("set_norm_fn"); })
     .def("set_get_update_norm_fn",
-         [](CustomSUNNonlinearSolver&, nb::object)
-         {
+         [](CustomSUNNonlinearSolver&, nb::object) {
            return CustomSUNNonlinearSolver::base_method_int(
              "set_get_update_norm_fn");
          })
     .def("set_get_conv_rate_fn",
-         [](CustomSUNNonlinearSolver&, nb::object)
-         {
+         [](CustomSUNNonlinearSolver&, nb::object) {
            return CustomSUNNonlinearSolver::base_method_int(
              "set_get_conv_rate_fn");
          })
@@ -187,10 +183,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
       {
         status = SUNNonlinSolSetSysFn(NLS, sunnonlinearsolver_sysfn_wrapper);
       }
-      else
-      {
-        status = SUNNonlinSolSetSysFn(NLS, nullptr);
-      }
+      else { status = SUNNonlinSolSetSysFn(NLS, nullptr); }
       if (status != SUN_SUCCESS) { fntable->sysfn = std::move(old_fn); }
       return status;
     },
@@ -270,10 +263,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
         status = SUNNonlinSolSetLSetupFn(NLS,
                                          sunnonlinearsolver_lsetupfn_wrapper);
       }
-      else
-      {
-        status = SUNNonlinSolSetLSetupFn(NLS, nullptr);
-      }
+      else { status = SUNNonlinSolSetLSetupFn(NLS, nullptr); }
       if (status != SUN_SUCCESS) { fntable->lsetupfn = std::move(old_fn); }
       return status;
     },
@@ -305,10 +295,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
         status = SUNNonlinSolSetLSolveFn(NLS,
                                          sunnonlinearsolver_lsolvefn_wrapper);
       }
-      else
-      {
-        status = SUNNonlinSolSetLSolveFn(NLS, nullptr);
-      }
+      else { status = SUNNonlinSolSetLSolveFn(NLS, nullptr); }
       if (status != SUN_SUCCESS) { fntable->lsolvefn = std::move(old_fn); }
       return status;
     },
@@ -340,10 +327,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
         status = SUNNonlinSolSetNormFn(NLS, sunnonlinearsolver_normfn_wrapper,
                                        fntable);
       }
-      else
-      {
-        status = SUNNonlinSolSetNormFn(NLS, nullptr, nullptr);
-      }
+      else { status = SUNNonlinSolSetNormFn(NLS, nullptr, nullptr); }
       if (status != SUN_SUCCESS) { fntable->normfn = std::move(old_fn); }
       return status;
     },
@@ -376,10 +360,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
                                          sunnonlinearsolver_getupdatenormfn_wrapper,
                                          fntable);
       }
-      else
-      {
-        status = SUNNonlinSolSetGetUpdateNormFn(NLS, nullptr, nullptr);
-      }
+      else { status = SUNNonlinSolSetGetUpdateNormFn(NLS, nullptr, nullptr); }
       if (status != SUN_SUCCESS)
       {
         fntable->getupdatenormfn = std::move(old_fn);
@@ -418,10 +399,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
                                            sunnonlinearsolver_convtestfn_wrapper,
                                            fntable);
       }
-      else
-      {
-        status = SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr);
-      }
+      else { status = SUNNonlinSolSetConvTestFn(NLS, nullptr, nullptr); }
       if (status != SUN_SUCCESS) { fntable->convtestfn = std::move(old_fn); }
       return status;
     },
@@ -454,10 +432,7 @@ void bind_sunnonlinearsolver(nb::module_& m)
                                        sunnonlinearsolver_getconvratefn_wrapper,
                                        fntable);
       }
-      else
-      {
-        status = SUNNonlinSolSetGetConvRateFn(NLS, nullptr, nullptr);
-      }
+      else { status = SUNNonlinSolSetGetConvRateFn(NLS, nullptr, nullptr); }
       if (status != SUN_SUCCESS) { fntable->getconvratefn = std::move(old_fn); }
       return status;
     },

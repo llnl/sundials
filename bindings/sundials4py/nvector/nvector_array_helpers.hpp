@@ -112,10 +112,14 @@ inline void retain_python_host_array(N_Vector v, nanobind::object array)
 }
 
 inline void retain_python_device_array(N_Vector v, nanobind::object array)
-{ prepare_python_array_owners(v).device_array = std::move(array); }
+{
+  prepare_python_array_owners(v).device_array = std::move(array);
+}
 
 inline bool object_is_none(nanobind::object obj)
-{ return obj.ptr() == Py_None; }
+{
+  return obj.ptr() == Py_None;
+}
 
 inline bool is_jax_object(nanobind::handle obj)
 {
@@ -154,7 +158,9 @@ inline std::string read_optional_string(nanobind::object value)
 }
 
 inline bool is_cuda_nvector(N_Vector v)
-{ return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA; }
+{
+  return N_VGetVectorID(v) == SUNDIALS_NVEC_CUDA;
+}
 
 inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
 {

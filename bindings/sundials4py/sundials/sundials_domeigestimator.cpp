@@ -61,8 +61,7 @@ void bind_sundomeigestimator(nb::module_& m)
                            const std::string&, const std::vector<std::string>&)
          { return CustomSUNDomEigEstimator::base_method_status("set_options"); })
     .def("set_max_iters",
-         [](CustomSUNDomEigEstimator&, long int)
-         {
+         [](CustomSUNDomEigEstimator&, long int) {
            return CustomSUNDomEigEstimator::base_method_status("set_max_iters");
          })
     .def("set_num_preprocess_iters",
@@ -74,8 +73,7 @@ void bind_sundomeigestimator(nb::module_& m)
     .def("set_rel_tol", [](CustomSUNDomEigEstimator&, sunrealtype)
          { return CustomSUNDomEigEstimator::base_method_status("set_rel_tol"); })
     .def("set_initial_guess",
-         [](CustomSUNDomEigEstimator&, N_Vector)
-         {
+         [](CustomSUNDomEigEstimator&, N_Vector) {
            return CustomSUNDomEigEstimator::base_method_status(
              "set_initial_guess");
          })
@@ -86,13 +84,11 @@ void bind_sundomeigestimator(nb::module_& m)
     .def("get_res", [](CustomSUNDomEigEstimator&)
          { return CustomSUNDomEigEstimator::base_method_status("get_res"); })
     .def("get_num_iters",
-         [](CustomSUNDomEigEstimator&)
-         {
+         [](CustomSUNDomEigEstimator&) {
            return CustomSUNDomEigEstimator::base_method_status("get_num_iters");
          })
     .def("get_num_rhs_evals",
-         [](CustomSUNDomEigEstimator&)
-         {
+         [](CustomSUNDomEigEstimator&) {
            return CustomSUNDomEigEstimator::base_method_status(
              "get_num_rhs_evals");
          })
@@ -146,10 +142,7 @@ void bind_sundomeigestimator(nb::module_& m)
         status = SUNDomEigEstimator_SetATimes(dee, fntable,
                                               sundomeigestimator_atimes_wrapper);
       }
-      else
-      {
-        status = SUNDomEigEstimator_SetATimes(dee, fntable, nullptr);
-      }
+      else { status = SUNDomEigEstimator_SetATimes(dee, fntable, nullptr); }
       if (status != SUN_SUCCESS) { fntable->atimes = std::move(old_fn); }
       return status;
     },
@@ -169,10 +162,7 @@ void bind_sundomeigestimator(nb::module_& m)
         status = SUNDomEigEstimator_SetRhs(DEE, fntable,
                                            sundomeigestimator_setrhs_wrapper);
       }
-      else
-      {
-        status = SUNDomEigEstimator_SetRhs(DEE, fntable, nullptr);
-      }
+      else { status = SUNDomEigEstimator_SetRhs(DEE, fntable, nullptr); }
       if (status != SUN_SUCCESS) { fntable->deerhs = std::move(old_fn); }
       return status;
     },
