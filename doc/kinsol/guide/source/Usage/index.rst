@@ -1674,7 +1674,7 @@ functions are described next.
    .. versionadded:: 6.2.0
 
 
-.. c:function:: char* KINGetReturnFlagName(int flag)
+.. c:function:: const char* KINGetReturnFlagName(int flag)
 
    The function :c:func:`KINGetReturnFlagName` returns the name of the KINSOL
    constant corresponding to ``flag``.
@@ -1683,11 +1683,12 @@ functions are described next.
      * ``flag`` -- return flag from a KINSOL function.
 
    **Return value:**
-     * A string containing the name of the corresponding constant
+     * A string literal containing the name of the corresponding constant. The
+       returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _KINSOL.Usage.CC.optional_output.optout_ls:
