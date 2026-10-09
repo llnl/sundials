@@ -58,5 +58,5 @@ To create an MRIStepInnerStepper implementation:
    structure with :c:func:`MRIStepCreate`.
 
 For an example of creating and attaching a user-defined inner stepper see
-the example code ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+the example code ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 where CVODE is wrapped as an :c:type:`MRIStepInnerStepper`.

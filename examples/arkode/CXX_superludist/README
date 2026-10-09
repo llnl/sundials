@@ -1,4 +1,0 @@
-List of parallel ARKODE C++ examples
-
-  ark_brusselator1D_FEM_sludist : stiff chemical kinetics PDE, with
-                                  FEM spatial discretization          (DIRK/SuperLU_DIST)

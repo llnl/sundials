@@ -16,7 +16,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # This is a direct port of the C example,
-#   examples/arkode/C_serial/ark_brusselator.c,
+#   examples/arkode/ark_brusselator/c/ark_brusselator.c,
 # specifically with the parameters from Test 2.
 #
 # The following test simulates a brusselator problem from chemical

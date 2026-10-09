@@ -716,7 +716,7 @@ added to the ARKODE ERKStep and ARKStep stepper modules. This is based on a new
 set of shared classes, :c:type:`SUNAdjointStepper` and
 :c:type:`SUNAdjointCheckpointScheme`. A new example demonstrating this
 capability can be found in
-``examples/arkode/C_serial/ark_lotka_volterra_ASA.c``. See the
+``examples/arkode/ark_lotka_volterra/c/ark_lotka_volterra_ASA.c``. See the
 :ref:`ARKODE.Mathematics.ASA` section of the ARKODE user guide for details.
 
 **New Features and Enhancements**
@@ -1968,7 +1968,7 @@ Changes to SUNDIALS in release 6.1.1
 **New Feature**
 
 Added new Fortran example program,
-``examples/arkode/F2003_serial/ark_kpr_mri_f2003.f90`` demonstrating MRI
+``examples/arkode/ark_kpr/fortran/ark_kpr_mri_f2003.f90`` demonstrating MRI
 capabilities.
 
 **Bug Fixes**
@@ -2706,7 +2706,7 @@ fixed point nonlinear solver.
 An interface between ARKStep and the XBraid multigrid reduction in time (MGRIT)
 library :cite:p:`xbraid` has been added to enable parallel-in-time integration. See the
 :ref:`ARKODE.Usage.ARKStep.XBraid` section for more information and the example
-codes in ``examples/arkode/CXX_xbraid``. This interface required the addition of
+codes in ``examples/arkode/ark_heat_2d/cpp-mpi-xbraid``. This interface required the addition of
 three new N_Vector operations to exchange vector data between computational
 nodes, see :c:func:`N_VBufSize`, :c:func:`N_VBufPack`, and
 :c:func:`N_VBufUnpack`. These N_Vector operations are only used within the

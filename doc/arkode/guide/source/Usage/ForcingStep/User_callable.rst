@@ -86,7 +86,7 @@ ForcingStep initialization functions
          arkode_mem = ForcingStepCreate(steppers[0], steppers[1], t0, y0, sunctx);
 
    **Example codes:**
-      * ``examples/arkode/C_serial/ark_analytic_partitioned.c``
+      * ``examples/arkode/ark_analytic/c/ark_analytic_partitioned.c``
    
    .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 

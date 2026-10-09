@@ -225,5 +225,5 @@ controllers, there are a few steps required when setting this up in an applicati
       retval = ARKodeSetAdaptController(arkode_mem, scontrol);
 
 An example showing the above steps is provided in
-``examples/arkode/CXX_serial/ark_kpr_nestedmri.cpp``, where multirate controller objects
+``examples/arkode/ark_kpr/cpp/ark_kpr_nestedmri.cpp``, where multirate controller objects
 are used for both the slow and intermediate time scales in a 3-time-scale simulation.
