@@ -18,80 +18,61 @@
 # examples/cvode level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# C examples
-if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(serial)
-  if(SUNDIALS_ENABLE_OPENMP)
-    add_subdirectory(C_openmp)
-  endif()
-  if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
-    add_subdirectory(C_openmpdev)
-  endif()
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(parallel)
-    if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
-      add_subdirectory(C_mpimanyvector)
-    endif()
-  endif()
-  if(SUNDIALS_ENABLE_HYPRE)
-    add_subdirectory(parhyp)
-  endif()
-  if(SUNDIALS_ENABLE_PETSC)
-    add_subdirectory(petsc)
-  endif()
+# Keep the common CVODE library list available to the C variants below.
+set(CVODE_C_LIBS sundials_cvode)
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+  list(APPEND CVODE_C_LIBS sundials_cvode_fused_stubs)
 endif()
 
-# CXX examples
-if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-  add_subdirectory(CXX_serial)
-  if(SUNDIALS_ENABLE_HIP)
-    add_subdirectory(hip)
-  endif()
-  if(SUNDIALS_ENABLE_MAGMA)
-    add_subdirectory(magma)
-  endif()
-  if(SUNDIALS_ENABLE_GINKGO)
-    add_subdirectory(ginkgo)
-  endif()
-  if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
-    add_subdirectory(kokkos)
-  endif()
-  if(SUNDIALS_ENABLE_SUNLINSOL_ONEMKLDENSE)
-    add_subdirectory(CXX_onemkl)
-  endif()
-  if(SUNDIALS_ENABLE_RAJA)
-    add_subdirectory(raja)
-  endif()
-  if(SUNDIALS_ENABLE_NVECTOR_SYCL)
-    add_subdirectory(CXX_sycl)
-  endif()
-  # MPI based examples
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(CXX_parallel)
-    # hypre examples
-    if(SUNDIALS_ENABLE_HYPRE)
-      add_subdirectory(CXX_parhyp)
+# Examples are grouped by problem. Each problem directory contains variants
+# grouped by implementation language and optional TPLs.
+add_subdirectory(cv_adv_diff)
+add_subdirectory(cv_analytic)
+add_subdirectory(cv_analytic_sys)
+add_subdirectory(cv_brusselator)
+add_subdirectory(cv_diag)
+add_subdirectory(cv_direct_demo)
+add_subdirectory(cv_disc)
+add_subdirectory(cv_diurnal)
+add_subdirectory(cv_heat_2d)
+add_subdirectory(cv_kpr)
+add_subdirectory(cv_krylov_demo)
+add_subdirectory(cv_particle)
+add_subdirectory(cv_pendulum)
+add_subdirectory(cv_petsc)
+add_subdirectory(cv_roberts)
+add_subdirectory(cv_rocket)
+add_subdirectory(cv_vdp)
+
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+  include(SundialsInstallExampleCMake)
+
+  # Install each variant as an independent CMake project.
+  get_property(
+    _cvode_problem_directories
+    DIRECTORY
+    PROPERTY SUBDIRECTORIES)
+  set(_cvode_example_directories)
+  foreach(_problem_dir ${_cvode_problem_directories})
+    get_property(
+      _variant_dirs
+      DIRECTORY ${_problem_dir}
+      PROPERTY SUBDIRECTORIES)
+    list(APPEND _cvode_example_directories ${_variant_dirs})
+  endforeach()
+
+  foreach(_example_dir ${_cvode_example_directories})
+    file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
+         ${_example_dir})
+    sundials_install_example_cmake(
+      cvode "${_example_dir}"
+      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}")
+
+    if(_example_rel_dir STREQUAL "cv_adv_diff/c")
+      sundials_add_test_install(cvode ${_example_rel_dir}
+                                EXECUTABLE cv_adv_diff_bnd)
+    else()
+      sundials_add_test_install(cvode ${_example_rel_dir})
     endif()
-    # SuperLU_DIST examples
-    if(SUNDIALS_ENABLE_SUPERLUDIST)
-      add_subdirectory(superludist)
-    endif()
-  endif()
-endif()
-
-# Fortran examples
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
-  add_subdirectory(F2003_serial)
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(F2003_parallel)
-  endif()
-endif()
-
-# CUDA examples
-if(SUNDIALS_ENABLE_CUDA_EXAMPLES)
-
-  if(SUNDIALS_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
-    add_subdirectory(cuda)
-  endif()
-
+  endforeach()
 endif()
