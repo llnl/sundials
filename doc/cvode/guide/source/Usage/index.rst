@@ -3038,7 +3038,7 @@ described next.
    .. versionadded:: 6.2.0
 
 
-.. c:function:: char* CVodeGetReturnFlagName(int flag)
+.. c:function:: const char* CVodeGetReturnFlagName(int flag)
 
    The function ``CVodeGetReturnFlagName`` returns the  name of the CVODE constant corresponding to ``flag``.
 
@@ -3046,11 +3046,12 @@ described next.
      * ``flag`` -- return flag from a CVODE function.
 
    **Return value:**
-     * A string containing the name of the corresponding constant
+     * A string literal containing the name of the corresponding constant. The
+       returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _CVODE.Usage.CC.optional_output.optout_root:
@@ -3496,7 +3497,7 @@ solver, a suffix (for Linear Solver) has been added here (e.g. ``lenrwLS``).
       If the CVDIAG setup function failed (:c:func:`CVode` returned ``CV_LSETUP_FAIL``),  the value of ``lsflag`` is equal to ``CVDIAG_INV_FAIL``, indicating that a  diagonal element with value zero was encountered.  The same value is also returned if the CVDIAG solve function failed  (:c:func:`CVode` returned ``CV_LSOLVE_FAIL``).
 
 
-.. c:function:: char* CVDiagGetReturnFlagName(long int lsflag)
+.. c:function:: const char* CVDiagGetReturnFlagName(long int lsflag)
 
    The function ``CVDiagGetReturnFlagName`` returns the  name of the CVDIAG constant corresponding to ``lsflag``.
 
@@ -3504,11 +3505,12 @@ solver, a suffix (for Linear Solver) has been added here (e.g. ``lenrwLS``).
      * ``lsflag`` -- a return flag from a ``CVDIAG`` function.
 
    **Return value:**
-     * A string containing the name of the corresponding constant.
+     * A string literal containing the name of the corresponding constant. The
+       returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _CVODE.Usage.CC.reinit:

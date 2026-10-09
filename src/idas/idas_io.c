@@ -2425,64 +2425,57 @@ int IDAPrintAllStats(void* ida_mem, FILE* outfile, SUNOutputFormat fmt)
  * =================================================================
  */
 
-char* IDAGetReturnFlagName(long int flag)
+const char* IDAGetReturnFlagName(long int flag)
 {
-  char* name;
-
-  name = (char*)malloc(24 * sizeof(char));
-
   switch (flag)
   {
-  case IDA_SUCCESS: sprintf(name, "IDA_SUCCESS"); break;
-  case IDA_TSTOP_RETURN: sprintf(name, "IDA_TSTOP_RETURN"); break;
-  case IDA_ROOT_RETURN: sprintf(name, "IDA_ROOT_RETURN"); break;
-  case IDA_TOO_MUCH_WORK: sprintf(name, "IDA_TOO_MUCH_WORK"); break;
-  case IDA_TOO_MUCH_ACC: sprintf(name, "IDA_TOO_MUCH_ACC"); break;
-  case IDA_ERR_FAIL: sprintf(name, "IDA_ERR_FAIL"); break;
-  case IDA_CONV_FAIL: sprintf(name, "IDA_CONV_FAIL"); break;
-  case IDA_LINIT_FAIL: sprintf(name, "IDA_LINIT_FAIL"); break;
-  case IDA_LSETUP_FAIL: sprintf(name, "IDA_LSETUP_FAIL"); break;
-  case IDA_LSOLVE_FAIL: sprintf(name, "IDA_LSOLVE_FAIL"); break;
-  case IDA_CONSTR_FAIL: sprintf(name, "IDA_CONSTR_FAIL"); break;
-  case IDA_RES_FAIL: sprintf(name, "IDA_RES_FAIL"); break;
-  case IDA_FIRST_RES_FAIL: sprintf(name, "IDA_FIRST_RES_FAIL"); break;
-  case IDA_REP_RES_ERR: sprintf(name, "IDA_REP_RES_ERR"); break;
-  case IDA_RTFUNC_FAIL: sprintf(name, "IDA_RTFUNC_FAIL"); break;
-  case IDA_MEM_FAIL: sprintf(name, "IDA_MEM_FAIL"); break;
-  case IDA_MEM_NULL: sprintf(name, "IDA_MEM_NULL"); break;
-  case IDA_ILL_INPUT: sprintf(name, "IDA_ILL_INPUT"); break;
-  case IDA_NO_MALLOC: sprintf(name, "IDA_NO_MALLOC"); break;
-  case IDA_BAD_T: sprintf(name, "IDA_BAD_T"); break;
-  case IDA_BAD_K: sprintf(name, "IDA_BAD_K"); break;
-  case IDA_BAD_DKY: sprintf(name, "IDA_BAD_DKY"); break;
-  case IDA_BAD_EWT: sprintf(name, "IDA_BAD_EWT"); break;
-  case IDA_NO_RECOVERY: sprintf(name, "IDA_NO_RECOVERY"); break;
-  case IDA_LINESEARCH_FAIL: sprintf(name, "IDA_LINESEARCH_FAIL"); break;
-  case IDA_NO_SENS: sprintf(name, "IDA_NO_SENS"); break;
-  case IDA_SRES_FAIL: sprintf(name, "IDA_SRES_FAIL"); break;
-  case IDA_REP_SRES_ERR: sprintf(name, "IDA_REP_SRES_ERR"); break;
-  case IDA_BAD_IS: sprintf(name, "IDA_BAD_IS"); break;
-  case IDA_NO_QUAD: sprintf(name, "IDA_NO_QUAD"); break;
-  case IDA_NO_QUADSENS: sprintf(name, "IDA_NO_QUADSENS"); break;
-  case IDA_QRHS_FAIL: sprintf(name, "IDA_QRHS_FAIL"); break;
-  case IDA_REP_QRHS_ERR: sprintf(name, "IDA_REP_QRHS_ERR"); break;
-  case IDA_QSRHS_FAIL: sprintf(name, "IDA_QSRHS_FAIL"); break;
+  case IDA_SUCCESS: return "IDA_SUCCESS";
+  case IDA_TSTOP_RETURN: return "IDA_TSTOP_RETURN";
+  case IDA_ROOT_RETURN: return "IDA_ROOT_RETURN";
+  case IDA_TOO_MUCH_WORK: return "IDA_TOO_MUCH_WORK";
+  case IDA_TOO_MUCH_ACC: return "IDA_TOO_MUCH_ACC";
+  case IDA_ERR_FAIL: return "IDA_ERR_FAIL";
+  case IDA_CONV_FAIL: return "IDA_CONV_FAIL";
+  case IDA_LINIT_FAIL: return "IDA_LINIT_FAIL";
+  case IDA_LSETUP_FAIL: return "IDA_LSETUP_FAIL";
+  case IDA_LSOLVE_FAIL: return "IDA_LSOLVE_FAIL";
+  case IDA_CONSTR_FAIL: return "IDA_CONSTR_FAIL";
+  case IDA_RES_FAIL: return "IDA_RES_FAIL";
+  case IDA_FIRST_RES_FAIL: return "IDA_FIRST_RES_FAIL";
+  case IDA_REP_RES_ERR: return "IDA_REP_RES_ERR";
+  case IDA_RTFUNC_FAIL: return "IDA_RTFUNC_FAIL";
+  case IDA_MEM_FAIL: return "IDA_MEM_FAIL";
+  case IDA_MEM_NULL: return "IDA_MEM_NULL";
+  case IDA_ILL_INPUT: return "IDA_ILL_INPUT";
+  case IDA_NO_MALLOC: return "IDA_NO_MALLOC";
+  case IDA_BAD_T: return "IDA_BAD_T";
+  case IDA_BAD_K: return "IDA_BAD_K";
+  case IDA_BAD_DKY: return "IDA_BAD_DKY";
+  case IDA_BAD_EWT: return "IDA_BAD_EWT";
+  case IDA_NO_RECOVERY: return "IDA_NO_RECOVERY";
+  case IDA_LINESEARCH_FAIL: return "IDA_LINESEARCH_FAIL";
+  case IDA_NO_SENS: return "IDA_NO_SENS";
+  case IDA_SRES_FAIL: return "IDA_SRES_FAIL";
+  case IDA_REP_SRES_ERR: return "IDA_REP_SRES_ERR";
+  case IDA_BAD_IS: return "IDA_BAD_IS";
+  case IDA_NO_QUAD: return "IDA_NO_QUAD";
+  case IDA_NO_QUADSENS: return "IDA_NO_QUADSENS";
+  case IDA_QRHS_FAIL: return "IDA_QRHS_FAIL";
+  case IDA_REP_QRHS_ERR: return "IDA_REP_QRHS_ERR";
+  case IDA_QSRHS_FAIL: return "IDA_QSRHS_FAIL";
   case IDA_REP_QSRHS_ERR:
-    sprintf(name, "IDA_REP_QSRHS_ERR");
-    break;
+    return "IDA_REP_QSRHS_ERR";
 
     /* IDAA flags follow below. */
-  case IDA_NO_ADJ: sprintf(name, "IDA_NO_ADJ"); break;
-  case IDA_BAD_TB0: sprintf(name, "IDA_BAD_TB0"); break;
-  case IDA_REIFWD_FAIL: sprintf(name, "IDA_REIFWD_FAIL"); break;
-  case IDA_FWD_FAIL: sprintf(name, "IDA_FWD_FAIL"); break;
-  case IDA_GETY_BADT: sprintf(name, "IDA_GETY_BADT"); break;
-  case IDA_NO_BCK: sprintf(name, "IDA_NO_BCK"); break;
-  case IDA_NO_FWD: sprintf(name, "IDA_NO_FWD"); break;
-  case IDA_NLS_SETUP_FAIL: sprintf(name, "IDA_NLS_SETUP_FAIL"); break;
-  case IDA_NLS_FAIL: sprintf(name, "IDA_NLS_FAIL"); break;
-  default: sprintf(name, "NONE");
+  case IDA_NO_ADJ: return "IDA_NO_ADJ";
+  case IDA_BAD_TB0: return "IDA_BAD_TB0";
+  case IDA_REIFWD_FAIL: return "IDA_REIFWD_FAIL";
+  case IDA_FWD_FAIL: return "IDA_FWD_FAIL";
+  case IDA_GETY_BADT: return "IDA_GETY_BADT";
+  case IDA_NO_BCK: return "IDA_NO_BCK";
+  case IDA_NO_FWD: return "IDA_NO_FWD";
+  case IDA_NLS_SETUP_FAIL: return "IDA_NLS_SETUP_FAIL";
+  case IDA_NLS_FAIL: return "IDA_NLS_FAIL";
+  default: return "NONE";
   }
-
-  return (name);
 }

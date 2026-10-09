@@ -392,7 +392,7 @@ SUNDIALS_EXPORT int ARKodeGetRootInfo(void* arkode_mem, int* rootsfound_1d);
 SUNDIALS_EXPORT int ARKodeGetUserData(void* arkode_mem, void** user_data);
 SUNDIALS_EXPORT int ARKodePrintAllStats(void* arkode_mem, FILE* outfile,
                                         SUNOutputFormat fmt);
-SUNDIALS_EXPORT char* ARKodeGetReturnFlagName(long int flag);
+SUNDIALS_EXPORT const char* ARKodeGetReturnFlagName(long int flag);
 SUNDIALS_EXPORT int ARKodeWriteParameters(void* arkode_mem, FILE* fp);
 SUNDIALS_EXPORT int ARKodeGetStageIndex(void* arkode_mem, int* stage,
                                         int* max_stages);

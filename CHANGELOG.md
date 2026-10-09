@@ -9,6 +9,11 @@
 Added the utility function, `SUNFileFlush` for flushing file pointers. This is
 useful when using the Fortran 2003 interfaces.
 
+Updated `ARKodeGetReturnFlagName`, `CVodeGetReturnFlagName`,
+`CVDiagGetReturnFlagName`, `IDAGetReturnFlagName`, and `KINGetReturnFlagName` to
+return ``const char*`` rather than ``char*``. The returned string should no
+longer be freed by the used.
+
 ### Bug Fixes
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`

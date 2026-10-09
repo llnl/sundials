@@ -2879,7 +2879,7 @@ described next.
 
    .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
-.. c:function:: char* IDAGetReturnFlagName(long int flag)
+.. c:function:: const char* IDAGetReturnFlagName(long int flag)
 
    The function :c:func:`IDAGetReturnFlagName` returns the name of the IDAS constant
    corresponding to ``flag``.
@@ -2888,11 +2888,12 @@ described next.
       * ``flag`` -- the flag returned by a call to an IDAS function.
 
    **Return value:**
-      * ``char*`` -- the flag name string.
+      * ``const char*`` -- a string literal containing the flag name. The
+        returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _IDAS.Usage.SIM.user_callable.optional_output.iccalc:
