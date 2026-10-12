@@ -66,7 +66,7 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 static sunrealtype urand(void);
 
 /* global copy of Nloc (for check_vector routine) */
-sunindextype local_problem_size;
+static sunindextype local_problem_size;
 
 /* ----------------------------------------------------------------------
  * SUNLinSol_SPTFQMR Linear Solver Testing Routine

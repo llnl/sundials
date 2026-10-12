@@ -27,7 +27,7 @@
 
 // private functions
 static int InitializeClearCache(int cachesize);
-static int FinalizeClearCache();
+static int FinalizeClearCache(void);
 
 /* ----------------------------------------------------------------------
  * Main NVector Testing Routine
@@ -249,6 +249,6 @@ void sync_device(N_Vector x)
 
 static int InitializeClearCache(int cachesize) { return (0); }
 
-static int FinalizeClearCache() { return (0); }
+static int FinalizeClearCache(void) { return (0); }
 
-void ClearCache() { return; }
+void ClearCache(void) { return; }
