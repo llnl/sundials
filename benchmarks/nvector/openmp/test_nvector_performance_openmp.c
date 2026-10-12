@@ -29,7 +29,7 @@
 
 /* private functions */
 static int InitializeClearCache(int cachesize);
-static int FinalizeClearCache();
+static int FinalizeClearCache(void);
 
 /* private data for clearing cache */
 static sunindextype N;    /* data length */
@@ -245,19 +245,23 @@ static int InitializeClearCache(int cachesize)
   return (0);
 }
 
-static int FinalizeClearCache()
+static int FinalizeClearCache(void)
 {
-  free(data);
+  if (data) { free(data); }
   return (0);
 }
 
-void ClearCache()
+void ClearCache(void)
 {
-  sunrealtype sum;
-  sunindextype i;
+  if (data)
+  {
+    sunrealtype sum;
+    sunindextype i;
 
-  sum = SUN_RCONST(0.0);
-  for (i = 0; i < N; i++) { sum += data[i]; }
+    sum = SUN_RCONST(0.0);
+    for (i = 0; i < N; i++) { sum += data[i]; }
+    (void)sum;
+  }
 
   return;
 }

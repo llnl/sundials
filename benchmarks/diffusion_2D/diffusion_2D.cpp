@@ -52,6 +52,7 @@ int diffusion_jac(sunrealtype t, N_Vector u, N_Vector f, SUNMatrix Jac,
   int flag = laplacian_matrix_sludist(u, Jac, udata);
   if (check_flag(&flag, "laplacian_matrix_sludist", 1)) return -1;
 #else
+  (void)udata;
   std::cerr << "ERROR: Diffusion Jacobian not implemented!\n";
   return -1;
 #endif
@@ -93,6 +94,7 @@ int diffusion_jac(sunrealtype t, sunrealtype cj, N_Vector u, N_Vector up,
   int flag = laplacian_matrix_sludist(u, cj, Jac, udata);
   if (check_flag(&flag, "laplacian_matrix_sludist", 1)) return -1;
 #else
+  (void)udata;
   std::cerr << "ERROR: Diffusion Jacobian not implemented!\n";
   return -1;
 #endif

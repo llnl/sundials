@@ -49,7 +49,7 @@ constexpr sunrealtype two  = SUN_RCONST(2.0);
 constexpr sunrealtype y0 = one;
 
 // lambda constant
-sunrealtype problem_data = two;
+static sunrealtype problem_data = two;
 
 inline int initial_condition(N_Vector y_vec)
 {

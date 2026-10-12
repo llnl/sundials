@@ -592,4 +592,4 @@ int csr_from_dense(SUNMatrix Ad, sunrealtype droptol, sunrealtype** matdata,
   return 0;
 }
 
-void sync_device() {}
+void sync_device(void) {}
