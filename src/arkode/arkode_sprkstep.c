@@ -319,17 +319,9 @@ void sprkStep_Free(ARKodeMem ark_mem)
   {
     step_mem = (ARKodeSPRKStepMem)ark_mem->step_mem;
 
-    if (step_mem->sdata != NULL)
-    {
-      arkFreeVec(&step_mem->sdata);
-      step_mem->sdata = NULL;
-    }
+    arkFreeVec(&step_mem->sdata);
 
-    if (step_mem->yerr != NULL)
-    {
-      arkFreeVec(&step_mem->yerr);
-      step_mem->yerr = NULL;
-    }
+    arkFreeVec(&step_mem->yerr);
 
     ARKodeSPRKTable_Free(step_mem->method);
 

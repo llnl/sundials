@@ -838,14 +838,15 @@ int arkRelaxCreate(ARKodeMem ark_mem, ARKRelaxFn relax_fn,
 }
 
 /* Destructor called by driver */
-int arkRelaxDestroy(ARKodeRelaxMem relax_mem)
+void arkRelaxDestroy(ARKodeRelaxMem* relax_mem)
 {
-  if (!relax_mem) { return ARK_SUCCESS; }
+  if ((relax_mem == NULL) || (*relax_mem == NULL)) { return; }
 
   /* Free structure */
-  free(relax_mem);
+  free(*relax_mem);
+  *relax_mem = NULL;
 
-  return ARK_SUCCESS;
+  return;
 }
 
 /* Compute and apply relaxation, called by driver */

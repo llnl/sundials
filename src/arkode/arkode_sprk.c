@@ -548,8 +548,8 @@ void ARKodeSPRKTable_Free(ARKodeSPRKTable sprk_table)
 {
   if (sprk_table)
   {
-    if (sprk_table->ahat) { free(sprk_table->ahat); }
-    if (sprk_table->a) { free(sprk_table->a); }
+    free(sprk_table->ahat);
+    free(sprk_table->a);
     free(sprk_table);
   }
 }
@@ -582,7 +582,7 @@ int ARKodeSPRKTable_ToButcher(ARKodeSPRKTable sprk_table,
   b = ARKodeButcherTable_Alloc(sprk_table->stages, SUNFALSE);
   if (!b)
   {
-    if (a) { ARKodeButcherTable_Free(a); }
+    ARKodeButcherTable_Free(a);
     return ARK_MEM_FAIL;
   }
 
