@@ -538,14 +538,11 @@ macro(sundials_add_f2003_library target)
   endif()
 
   # Disable warnings we cannot fix in SWIG generated C code
-  set(_sundials_swig_options)
-  foreach(_sundials_swig_flag ${SUNDIALS_C_SWIG_WARNING_FLAGS})
+  set(_sundials_swig_options PRIVATE)
+  foreach(_sundials_swig_flag IN LISTS SUNDIALS_C_SWIG_WARNING_FLAGS)
     list(APPEND _sundials_swig_options
          "$<$<COMPILE_LANGUAGE:C>:${_sundials_swig_flag}>")
   endforeach()
-  if(_sundials_swig_options)
-    list(PREPEND _sundials_swig_options PRIVATE)
-  endif()
 
   sundials_add_library(
     ${target}
