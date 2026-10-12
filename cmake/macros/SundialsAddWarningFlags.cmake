@@ -234,6 +234,10 @@ function(sundials_disable_warnings)
       continue()
     endif()
 
+    # We check MSVC specifically in this case because not all MSVC /wd flags
+    # have an equivalent in other compilers that accept MSVC-style options. In
+    # that case the flags might be ignored, so we use the -Wno-<name> style for
+    # non-MSVC compilers.
     set(_flags)
     foreach(_warning ${ARGN})
       if(CMAKE_${lang}_COMPILER_ID STREQUAL "MSVC")
