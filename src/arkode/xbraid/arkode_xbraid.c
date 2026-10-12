@@ -123,11 +123,7 @@ int ARKBraid_Free(braid_App* app)
   {
     content = (ARKBraidContent)(*app)->content;
 
-    if (content->yout != NULL)
-    {
-      arkFreeVec(&(content->yout));
-      content->yout = NULL;
-    }
+    arkFreeVec(&(content->yout));
     free((*app)->content);
     (*app)->content = NULL;
   }

@@ -1671,12 +1671,9 @@ void IDAFree(void** ida_mem)
   IDAFreeVectors(IDA_mem);
 
   /* if IDA created the NLS object then free it */
-  if (IDA_mem->ownNLS)
-  {
-    SUNNonlinSolFree(IDA_mem->NLS);
-    IDA_mem->ownNLS = SUNFALSE;
-    IDA_mem->NLS    = NULL;
-  }
+  if (IDA_mem->ownNLS) { SUNNonlinSolFree(IDA_mem->NLS); }
+  IDA_mem->ownNLS = SUNFALSE;
+  IDA_mem->NLS    = NULL;
 
   if (IDA_mem->ida_lfree != NULL) { IDA_mem->ida_lfree(IDA_mem); }
 
@@ -1906,11 +1903,8 @@ static void IDAFreeVectors(IDAMem IDA_mem)
     IDA_mem->ida_Vatol = NULL;
   }
 
-  if (IDA_mem->ida_constraints)
-  {
-    N_VDestroy(IDA_mem->ida_constraints);
-    IDA_mem->ida_constraints = NULL;
-  }
+  N_VDestroy(IDA_mem->ida_constraints);
+  IDA_mem->ida_constraints = NULL;
 
   if (IDA_mem->ida_idMallocDone)
   {

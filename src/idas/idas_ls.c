@@ -1710,21 +1710,12 @@ int idaLsFree(IDAMem IDA_mem)
   idals_mem = (IDALsMem)IDA_mem->ida_lmem;
 
   /* Free N_Vector memory */
-  if (idals_mem->ytemp)
-  {
-    N_VDestroy(idals_mem->ytemp);
-    idals_mem->ytemp = NULL;
-  }
-  if (idals_mem->yptemp)
-  {
-    N_VDestroy(idals_mem->yptemp);
-    idals_mem->yptemp = NULL;
-  }
-  if (idals_mem->x)
-  {
-    N_VDestroy(idals_mem->x);
-    idals_mem->x = NULL;
-  }
+  N_VDestroy(idals_mem->ytemp);
+  idals_mem->ytemp = NULL;
+  N_VDestroy(idals_mem->yptemp);
+  idals_mem->yptemp = NULL;
+  N_VDestroy(idals_mem->x);
+  idals_mem->x = NULL;
 
   /* Nullify other N_Vector pointers */
   idals_mem->ycur  = NULL;
@@ -1739,6 +1730,7 @@ int idaLsFree(IDAMem IDA_mem)
 
   /* free IDALs interface structure */
   free(IDA_mem->ida_lmem);
+  IDA_mem->ida_lmem = NULL;
 
   return (IDALS_SUCCESS);
 }
@@ -1875,7 +1867,7 @@ int IDASetLinearSolverB(void* ida_mem, int which, SUNLinearSolver LS, SUNMatrix 
   retval   = IDASetLinearSolver(ida_memB, LS, A);
   if (retval != IDALS_SUCCESS)
   {
-    free(idalsB_mem);
+    idaLsFreeB(IDAB_mem);
     idalsB_mem = NULL;
   }
 
@@ -2595,6 +2587,7 @@ int idaLsFreeB(IDABMem IDAB_mem)
 
   /* free IDALsMemB interface structure */
   free(idalsB_mem);
+  IDAB_mem->ida_lmem = NULL;
 
   return (IDALS_SUCCESS);
 }

@@ -1270,11 +1270,7 @@ void ARKodeFree(void** arkode_mem)
   }
 
   /* free the interpolation module */
-  if (ark_mem->interp != NULL)
-  {
-    arkInterpFree(ark_mem->interp);
-    ark_mem->interp = NULL;
-  }
+  arkInterpFree(&(ark_mem->interp));
 
   /* free the root-finding module */
   if (ark_mem->root_mem != NULL)
@@ -1284,11 +1280,7 @@ void ARKodeFree(void** arkode_mem)
   }
 
   /* free the relaxation module */
-  if (ark_mem->relax_mem)
-  {
-    (void)arkRelaxDestroy(ark_mem->relax_mem);
-    ark_mem->relax_mem = NULL;
-  }
+  arkRelaxDestroy(&(ark_mem->relax_mem));
 
 #if defined(SUNDIALS_ENABLE_PYTHON)
   arkode_user_supplied_fn_table_destroy(ark_mem->python);
@@ -2196,10 +2188,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
       return (ARK_MEM_FAIL);
     }
   }
-  else
-  {
-    if (ark_mem->fn != NULL) { arkFreeVec(&ark_mem->fn); }
-  }
+  else { arkFreeVec(&ark_mem->fn); }
 
   /* initialization complete */
   ark_mem->initialized = SUNTRUE;
@@ -3512,20 +3501,14 @@ sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v)
   ---------------------------------------------------------------*/
 void arkFreeVec(N_Vector* v)
 {
-  if (*v != NULL)
-  {
-    N_VDestroy(*v);
-    *v = NULL;
-  }
+  N_VDestroy(*v);
+  *v = NULL;
 }
 
 void arkFreeVecArray(int count, N_Vector** v)
 {
-  if (*v != NULL)
-  {
-    N_VDestroyVectorArray(*v, count);
-    *v = NULL;
-  }
+  N_VDestroyVectorArray(*v, count);
+  *v = NULL;
 }
 
 /*---------------------------------------------------------------

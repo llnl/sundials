@@ -122,23 +122,14 @@ int KINInitOrth(KINMem kin_mem)
 
 void KINFreeOrth(KINMem kin_mem)
 {
-  if (kin_mem->kin_qr_data)
-  {
-    free(kin_mem->kin_qr_data);
-    kin_mem->kin_qr_data = NULL;
-  }
+  free(kin_mem->kin_qr_data);
+  kin_mem->kin_qr_data = NULL;
 
-  if (kin_mem->kin_vtemp3)
-  {
-    N_VDestroy(kin_mem->kin_vtemp3);
-    kin_mem->kin_vtemp3 = NULL;
-  }
+  N_VDestroy(kin_mem->kin_vtemp3);
+  kin_mem->kin_vtemp3 = NULL;
 
-  if (kin_mem->kin_T_aa)
-  {
-    free(kin_mem->kin_T_aa);
-    kin_mem->kin_T_aa = NULL;
-  }
+  free(kin_mem->kin_T_aa);
+  kin_mem->kin_T_aa = NULL;
 
   // Reset AA workspace size
   kin_mem->kin_orth_aa_alloc = 0;
