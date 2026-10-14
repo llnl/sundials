@@ -61,6 +61,12 @@ public:
 
   virtual bool atomic() const { return false; }
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  /* When true, reductions are performed with Thrust on the policy stream (see
+   * ThrustExecPolicy). Mutually exclusive with atomic(). */
+  virtual bool usesThrust() const { return false; }
+#endif
+
   virtual ~ExecPolicy() {}
 
 protected:
@@ -240,6 +246,39 @@ private:
   const size_t gridDim_;
 };
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+/*
+ * A kernel execution policy that performs reductions with Thrust on the given
+ * stream. The grid and block sizes are unused by the Thrust reduction paths,
+ * which do not launch the block-reduce kernels, and are only reported so that
+ * the policy satisfies the ExecPolicy interface.
+ */
+class ThrustExecPolicy : public ExecPolicy
+{
+public:
+  explicit ThrustExecPolicy(hipStream_t stream = 0) : ExecPolicy(stream) {}
+
+  ThrustExecPolicy(const ThrustExecPolicy& ex) : ExecPolicy(ex.stream_) {}
+
+  virtual size_t gridSize(size_t /*numWorkUnits*/ = 0, size_t /*blockDim*/ = 0) const
+  {
+    return 1;
+  }
+
+  virtual size_t blockSize(size_t /*numWorkUnits*/ = 0, size_t /*gridDim*/ = 0) const
+  {
+    return 256;
+  }
+
+  virtual ExecPolicy* clone() const
+  {
+    return static_cast<ExecPolicy*>(new ThrustExecPolicy(*this));
+  }
+
+  virtual bool usesThrust() const { return true; }
+};
+#endif
+
 } // namespace hip
 } // namespace sundials
 
@@ -248,5 +287,8 @@ typedef sundials::hip::ThreadDirectExecPolicy SUNHipThreadDirectExecPolicy;
 typedef sundials::hip::GridStrideExecPolicy SUNHipGridStrideExecPolicy;
 typedef sundials::hip::BlockReduceExecPolicy SUNHipBlockReduceExecPolicy;
 typedef sundials::hip::BlockReduceAtomicExecPolicy SUNHipBlockReduceAtomicExecPolicy;
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+typedef sundials::hip::ThrustExecPolicy SUNHipThrustExecPolicy;
+#endif
 
 #endif

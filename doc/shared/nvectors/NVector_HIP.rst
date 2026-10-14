@@ -355,7 +355,7 @@ may look like:
    };
 
 
-In total, SUNDIALS provides 4 execution policies:
+In total, SUNDIALS provides 5 execution policies:
 
 
    .. cpp:function:: SUNHipThreadDirectExecPolicy(const size_t blockDim, const hipStream_t stream = 0)
@@ -389,6 +389,23 @@ In total, SUNDIALS provides 4 execution policies:
       set to any value greater than 0. If it is set to 0, then the grid size
       will be chosen so that there is enough threads for one thread per work
       unit. If a HIP stream is provided, it will be used to execute the kernel.
+
+   .. cpp:function:: SUNHipThrustExecPolicy(const hipStream_t stream = 0)
+
+      Is for kernels performing a reduction, where the reduction is carried out
+      by Thrust rather than by a SUNDIALS block reduction kernel. If a HIP
+      stream is provided, the Thrust algorithms will be executed on it. Unlike
+      the other reduction policies, the number of threads per block and the grid
+      size are chosen by Thrust and cannot be controlled through the policy.
+
+      This policy is only available when SUNDIALS is built with
+      :cmakeop:`SUNDIALS_ENABLE_THRUST_REDUCTIONS` set to ``ON``, which requires
+      building with C++17 or later. Only a subset of the reduction operations
+      (:c:func:`N_VDotProd`, :c:func:`N_VMaxNorm`, :c:func:`N_VWSqrSumLocal` and
+      :c:func:`N_VMin`) have Thrust implementations; the remaining reductions
+      fall back on the block reduction kernels.
+
+      .. versionadded:: X.Y.Z
 
 
 For example, a policy that uses 128 threads per block and a user provided stream can be
