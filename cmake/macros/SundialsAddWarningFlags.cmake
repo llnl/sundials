@@ -137,6 +137,14 @@ function(sundials_add_warning_flags lang)
           -Wunused-macros
           -Wunused-local-typedefs
           -Wundef
+          -Wformat=2
+          -Wformat-signedness
+          -Wformat-overflow
+          -Wformat-truncation
+          -Wnull-dereference
+          -Wmissing-include-dirs
+          -Wdate-time
+          -Wswitch-enum
           -Wredundant-decls)
 
         if(lang STREQUAL "C")
@@ -188,7 +196,6 @@ function(sundials_add_warning_flags lang)
           -Wimplicit-fallthrough
           -Wloop-analysis
           -Wmissing-variable-declarations
-          -Wnull-dereference
           -Wreserved-identifier
           -Wunreachable-code)
         list(APPEND _swig_flags -Wno-reserved-identifier -Wno-unreachable-code)
