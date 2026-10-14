@@ -13,8 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-  if(SUNDIALS_ENABLE_GINKGO)
-    add_subdirectory(cpp-ginkgo)
+  # Ginkgo's batched CSR and ELL matrices require 32-bit indices.
+  if(SUNDIALS_ENABLE_GINKGO AND SUNDIALS_INDEX_SIZE STREQUAL "32")
+    if(SUNDIALS_GINKGO_BACKENDS MATCHES "REF|OMP")
+      add_subdirectory(cpp-ginkgo)
+    endif()
+    if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA|HIP")
+      add_subdirectory(cpp-ginkgo-gpu)
+    endif()
   endif()
   if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
     add_subdirectory(cpp-kokkos)

@@ -96,20 +96,28 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 static int JacVec(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y,
                   N_Vector fy, void* user_data, N_Vector tmp);
 
-/* Private functions which implement the actual operators either on the CPU or GPU */
-SERIAL_CUDA_OR_HIP(, __global__, __global__)
+/* Private functions which implement the actual operators on the CPU. */
 static void f_kernel(sunrealtype t, sunrealtype* y, sunrealtype* ydot,
                      sunrealtype* A, sunrealtype* B, sunrealtype* Ep, int neq,
                      int num_batches, int batch_size);
-SERIAL_CUDA_OR_HIP(, __global__, __global__)
+
 static void j_kernel(sunrealtype* ydata, sunrealtype* Jdata, sunrealtype* A,
                      sunrealtype* B, sunrealtype* Ep, int neq, int num_batches,
                      int batch_size, int nnzper);
 
-SERIAL_CUDA_OR_HIP(, __global__, __global__)
 static void jv_kernel(sunrealtype* vdata, sunrealtype* Jvdata, sunrealtype* ydata,
                       sunrealtype* A, sunrealtype* B, sunrealtype* Ep, int neq,
                       int num_batches, int batch_size, int nnzper);
+
+N_Vector create_vector(sunindextype length, SUNContext sunctx)
+{
+  return N_VNew_Serial(length, sunctx);
+}
+
+SUNMemoryHelper create_memory_helper(SUNContext sunctx)
+{
+  return SUNMemoryHelper_Sys(sunctx);
+}
 
 /* Private function to initialize the Jacobian sparsity pattern */
 static int JacInit(SUNMatrix J);
@@ -147,21 +155,14 @@ int main(int argc, char* argv[])
   sundials::Context sunctx;
 
   /* Create the Ginkgo executor */
-#if defined(USE_CUDA)
-  auto gko_exec{gko::CudaExecutor::create(0, gko::OmpExecutor::create())};
-#elif defined(USE_HIP)
-  auto gko_exec{gko::HipExecutor::create(0, gko::OmpExecutor::create())};
-#elif defined(USE_OMP)
+#if defined(USE_OMP)
   auto gko_exec{gko::OmpExecutor::create()};
 #else
   auto gko_exec{gko::ReferenceExecutor::create()};
 #endif
 
-  /* Create a SUNMemoryHelper for HIP or CUDA depending on the target.
-     This will be used underneath the Arrays. */
-  SUNMemoryHelper memhelper = SERIAL_CUDA_OR_HIP(SUNMemoryHelper_Sys(sunctx),
-                                                 SUNMemoryHelper_Cuda(sunctx),
-                                                 SUNMemoryHelper_Hip(sunctx));
+  /* Create a SUNMemoryHelper for the user data arrays. */
+  SUNMemoryHelper memhelper = create_memory_helper(sunctx);
 
   /* Set defaults */
   int batch_size  = 3;
@@ -225,8 +226,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  /* Create CUDA or HIP vector of length neq for I.C. and abstol vector */
-  N_Vector y = N_VNew(udata.neq, sunctx);
+  /* Create a vector of length neq for I.C. and the abstol vector */
+  N_Vector y = create_vector(udata.neq, sunctx);
   if (check_retval((void*)y, "N_VNew", 0)) { return 1; }
 
   N_Vector abstol = N_VClone(y);
@@ -389,39 +390,6 @@ int JacInit(SUNMatrix J)
   sunindextype* colvals = Jgko->get_col_idxs();
   if (colvals == nullptr) { return -1; }
 
-#if defined(USE_CUDA) || defined(USE_HIP)
-
-  sunindextype rowptrs_host[4];
-
-  /* there are 3 entries per row */
-  rowptrs_host[0] = 0;
-  rowptrs_host[1] = 3;
-  rowptrs_host[2] = 6;
-  rowptrs_host[3] = 9;
-
-  gko_exec->copy_from(gko_exec->get_master(), 4, rowptrs_host, rowptrs);
-
-  sunindextype colvals_host[9];
-
-  /* first row of batch */
-  colvals_host[0] = 0;
-  colvals_host[1] = 1;
-  colvals_host[2] = 2;
-
-  /* second row of batch */
-  colvals_host[3] = 0;
-  colvals_host[4] = 1;
-  colvals_host[5] = 2;
-
-  /* third row of batch */
-  colvals_host[6] = 0;
-  colvals_host[7] = 1;
-  colvals_host[8] = 2;
-
-  gko_exec->copy_from(gko_exec->get_master(), 9, colvals_host, colvals);
-
-#else
-
   /* there are 3 entries per row */
   rowptrs[0] = 0;
   rowptrs[1] = 3;
@@ -443,8 +411,6 @@ int JacInit(SUNMatrix J)
   colvals[7] = 1;
   colvals[8] = 2;
 
-#endif
-
   return 0;
 }
 
@@ -454,84 +420,35 @@ int JacInit(SUNMatrix J)
  *-------------------------------
  */
 
-/* Right hand side function. This just launches the CUDA or HIP kernel
-   to do the actual computation. At the very least, doing this
-   saves moving the vector data in y and ydot to/from the device
-   every evaluation of f. */
+/* Right hand side function. */
 int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   UserData* udata;
-  sunrealtype *ydata, *ydotdata;
 
-  udata    = (UserData*)user_data;
-  ydata    = N_VGetArrayPointer(y);
-  ydotdata = N_VGetArrayPointer(ydot);
+  udata = (UserData*)user_data;
 
-#if defined(USE_CUDA) || defined(USE_HIP)
-  unsigned threads_per_block = 256;
-  unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
-  f_kernel<<<num_blocks, threads_per_block>>>(t, ydata, ydotdata, udata->a.get(),
-                                              udata->b.get(), udata->ep.get(),
-                                              udata->neq, udata->num_batches,
-                                              udata->batch_size);
-
-  SERIAL_CUDA_OR_HIP(, cudaDeviceSynchronize(), hipDeviceSynchronize());
-  SERIAL_CUDA_OR_HIP(, cudaError_t gpu_err = cudaGetLastError(),
-                     hipError_t gpu_err    = hipGetLastError());
-  if (gpu_err != SERIAL_CUDA_OR_HIP(, cudaSuccess, hipSuccess))
-  {
-    fprintf(stderr, ">>> ERROR in f: GetLastError returned %s\n",
-            SERIAL_CUDA_OR_HIP(, cudaGetErrorName(gpu_err),
-                               hipGetErrorName(gpu_err)));
-    return -1;
-  }
-#else
+  sunrealtype* ydata    = N_VGetArrayPointer(y);
+  sunrealtype* ydotdata = N_VGetArrayPointer(ydot);
   f_kernel(t, ydata, ydotdata, udata->a.get(), udata->b.get(), udata->ep.get(),
            udata->neq, udata->num_batches, udata->batch_size);
-#endif
 
   return 0;
 }
 
 /*
  * Jacobian routine. Compute J(t,y) = df/dy.
- * This is done on the GPU.
  */
 
 int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data,
         N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
   UserData* udata = (UserData*)user_data;
-  auto Jgko       = static_cast<SUNGkoMatrixType*>(J->content)->GkoMtx();
 
+  auto Jgko          = static_cast<SUNGkoMatrixType*>(J->content)->GkoMtx();
   sunrealtype* Jdata = Jgko->get_values();
   sunrealtype* ydata = N_VGetArrayPointer(y);
-
-#if defined(USE_CUDA) || defined(USE_HIP)
-  unsigned threads_per_block = 256;
-  unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
-
-  j_kernel<<<num_blocks, threads_per_block>>>(ydata, Jdata, udata->a.get(),
-                                              udata->b.get(), udata->ep.get(),
-                                              udata->neq, udata->num_batches,
-                                              udata->batch_size, udata->nnzper);
-
-  SERIAL_CUDA_OR_HIP(, cudaDeviceSynchronize(), hipDeviceSynchronize());
-  SERIAL_CUDA_OR_HIP(, cudaError_t gpu_err = cudaGetLastError(),
-                     hipError_t gpu_err    = hipGetLastError());
-  if (gpu_err != SERIAL_CUDA_OR_HIP(, cudaSuccess, hipSuccess))
-  {
-    fprintf(stderr, ">>> ERROR in Jac: GetLastError returned %s\n",
-            SERIAL_CUDA_OR_HIP(, cudaGetErrorName(gpu_err),
-                               hipGetErrorName(gpu_err)));
-    return -1;
-  }
-#else
   j_kernel(ydata, Jdata, udata->a.get(), udata->b.get(), udata->ep.get(),
            udata->neq, udata->num_batches, udata->batch_size, udata->nnzper);
-#endif
 
   return 0;
 }
@@ -544,145 +461,12 @@ int JacVec(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector y, N_Vector fy,
   sunrealtype* vdata  = N_VGetArrayPointer(v);
   sunrealtype* Jvdata = N_VGetArrayPointer(Jv);
   sunrealtype* ydata  = N_VGetArrayPointer(y);
-
-#if defined(USE_CUDA) || defined(USE_HIP)
-  unsigned threads_per_block = 256;
-  unsigned num_blocks        = (udata->num_batches + threads_per_block - 1) /
-                        threads_per_block;
-
-  jv_kernel<<<num_blocks, threads_per_block>>>(vdata, Jvdata, ydata,
-                                               udata->a.get(), udata->b.get(),
-                                               udata->ep.get(), udata->neq,
-                                               udata->num_batches,
-                                               udata->batch_size, udata->nnzper);
-
-  SERIAL_CUDA_OR_HIP(, cudaDeviceSynchronize(), hipDeviceSynchronize());
-  SERIAL_CUDA_OR_HIP(, cudaError_t gpu_err = cudaGetLastError(),
-                     hipError_t gpu_err    = hipGetLastError());
-  if (gpu_err != SERIAL_CUDA_OR_HIP(, cudaSuccess, hipSuccess))
-  {
-    fprintf(stderr, ">>> ERROR in JacVec: GetLastError returned %s\n",
-            SERIAL_CUDA_OR_HIP(, cudaGetErrorName(gpu_err),
-                               hipGetErrorName(gpu_err)));
-    return -1;
-  }
-#else
   jv_kernel(vdata, Jvdata, ydata, udata->a.get(), udata->b.get(), udata->ep.get(),
             udata->neq, udata->num_batches, udata->batch_size, udata->nnzper);
-#endif
 
   return 0;
 }
 
-#if defined(USE_CUDA) || defined(USE_HIP)
-/* Right hand side function evaluation GPU kernel.
-   This kernel needs total number of threads >= num_batches. */
-__global__ void f_kernel(sunrealtype t, sunrealtype* ydata, sunrealtype* ydotdata,
-                         sunrealtype* A, sunrealtype* B, sunrealtype* Ep,
-                         int neq, int num_batches, int batch_size)
-{
-  sunrealtype u, v, w, a, b, ep;
-
-  int batchj = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (batchj < num_batches)
-  {
-    a = A[batchj];
-    b = B[batchj], ep = Ep[batchj];
-
-    u = ydata[batchj * batch_size];
-    v = ydata[batchj * batch_size + 1];
-    w = ydata[batchj * batch_size + 2];
-
-    ydotdata[batchj * batch_size]     = a - (w + 1.0) * u + v * u * u;
-    ydotdata[batchj * batch_size + 1] = w * u - v * u * u;
-    ydotdata[batchj * batch_size + 2] = (b - w) / ep - w * u;
-  }
-}
-
-/* Jacobian evaluation GPU kernel
-   This kernel needs total number of threads >= num_batches. */
-__global__ void j_kernel(sunrealtype* ydata, sunrealtype* Jdata, sunrealtype* A,
-                         sunrealtype* B, sunrealtype* Ep, int neq,
-                         int num_batches, int batch_size, int nnzper)
-{
-  sunrealtype u, v, w, ep;
-
-  int batchj = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (batchj < num_batches)
-  {
-    ep = Ep[batchj];
-
-    /* get y values */
-    u = ydata[batch_size * batchj];
-    v = ydata[batch_size * batchj + 1];
-    w = ydata[batch_size * batchj + 2];
-
-    /* first row of batch */
-    Jdata[nnzper * batchj]     = -(w + 1.0) + 2.0 * u * v;
-    Jdata[nnzper * batchj + 1] = u * u;
-    Jdata[nnzper * batchj + 2] = -u;
-
-    /* second row of batch */
-    Jdata[nnzper * batchj + 3] = w - 2.0 * u * v;
-    Jdata[nnzper * batchj + 4] = -u * u;
-    Jdata[nnzper * batchj + 5] = u;
-
-    /* third row of batch */
-    Jdata[nnzper * batchj + 6] = -w;
-    Jdata[nnzper * batchj + 7] = 0.0;
-    Jdata[nnzper * batchj + 8] = -1.0 / ep - u;
-  }
-}
-
-/* Jacobian-vector product GPU kernel
-   This kernel needs total number of threads >= num_batches. */
-__global__ void jv_kernel(sunrealtype* vdata, sunrealtype* Jvdata,
-                          sunrealtype* ydata, sunrealtype* A, sunrealtype* B,
-                          sunrealtype* Ep, int neq, int num_batches,
-                          int batch_size, int nnzper)
-{
-  sunrealtype u, v, w, v0, v1, v2, ep;
-
-  int batchj = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (batchj < num_batches)
-  {
-    ep = Ep[batchj];
-
-    /* get y values */
-    u = ydata[batch_size * batchj];
-    v = ydata[batch_size * batchj + 1];
-    w = ydata[batch_size * batchj + 2];
-
-    /* get v values */
-    v0 = vdata[batch_size * batchj];
-    v1 = vdata[batch_size * batchj + 1];
-    v2 = vdata[batch_size * batchj + 2];
-
-    /* initialize Jv to zero */
-    Jvdata[batch_size * batchj]     = 0.0;
-    Jvdata[batch_size * batchj + 1] = 0.0;
-    Jvdata[batch_size * batchj + 2] = 0.0;
-
-    // add J[:,0]*v[0]
-    Jvdata[batch_size * batchj] += (-(w + 1.0) + 2.0 * u * v) * v0;
-    Jvdata[batch_size * batchj + 1] += (w - 2.0 * u * v) * v0;
-    Jvdata[batch_size * batchj + 2] += -w * v0;
-
-    // add J[:,1]*v[1]
-    Jvdata[batch_size * batchj] += (u * u) * v1;
-    Jvdata[batch_size * batchj + 1] += (-u * u) * v1;
-    Jvdata[batch_size * batchj + 2] += 0.0;
-
-    // add J[:,2]*v[2]
-    Jvdata[batch_size * batchj] += -u * v2;
-    Jvdata[batch_size * batchj + 1] += u * v2;
-    Jvdata[batch_size * batchj + 2] += (-1.0 / ep - u) * v2;
-  }
-}
-#else
 void f_kernel(sunrealtype t, sunrealtype* ydata, sunrealtype* ydotdata,
               sunrealtype* A, sunrealtype* B, sunrealtype* Ep, int neq,
               int num_batches, int batch_size)
@@ -770,7 +554,6 @@ void jv_kernel(sunrealtype* vdata, sunrealtype* Jvdata, sunrealtype* ydata,
     Jvdata[batch_size * batchj + 2] += (-1.0 / ep - u) * v2;
   }
 }
-#endif
 
 /*
  *-------------------------------

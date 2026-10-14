@@ -58,15 +58,15 @@ void Matvec(BatchMatrix<GkoBatchMatType>& A, GkoBatchVecType* x,
 template<class GkoBatchMatType>
 void Matvec(BatchMatrix<GkoBatchMatType>& A, N_Vector x, N_Vector y);
 
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
-              BatchMatrix<GkoBatchDenseMat>& B);
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
+                     BatchMatrix<GkoBatchDenseMat>& B);
 
 #ifdef SUNDIALS_INT32_T
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
-              BatchMatrix<GkoBatchCsrMat>& B);
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
+                     BatchMatrix<GkoBatchCsrMat>& B);
 
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
-              BatchMatrix<GkoBatchEllMat>& B);
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
+                     BatchMatrix<GkoBatchEllMat>& B);
 #endif
 
 template<class GkoBatchMatType>
@@ -342,8 +342,8 @@ void Matvec(BatchMatrix<GkoBatchMatType>& A, N_Vector x, N_Vector y)
   }
 }
 
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
-              BatchMatrix<GkoBatchDenseMat>& B)
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
+                     BatchMatrix<GkoBatchDenseMat>& B)
 {
   auto cmat = GkoBatchVecType::create(A.GkoExec(),
                                       gko::batch_dim<2>(A.NumBatches(),
@@ -354,15 +354,15 @@ void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchDenseMat>& A,
 }
 
 #ifdef SUNDIALS_INT32_T
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
-              BatchMatrix<GkoBatchCsrMat>& B)
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchCsrMat>& A,
+                     BatchMatrix<GkoBatchCsrMat>& B)
 {
   // NOTE: This is not implemented by Ginkgo for BatchCsr yet
   throw("scale_add not implemented for gko::batch::matrix::Csr");
 }
 
-void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
-              BatchMatrix<GkoBatchEllMat>& B)
+inline void ScaleAdd(const sunrealtype c, BatchMatrix<GkoBatchEllMat>& A,
+                     BatchMatrix<GkoBatchEllMat>& B)
 {
   // NOTE: This is not implemented by Ginkgo for BatchEll yet
   throw("scale_add not implemented for gko::batch::matrix::Ell");

@@ -26,23 +26,11 @@
 #include <random>
 
 #include <sundials/sundials_core.hpp>
+#include <sundials/sundials_matrix.h>
+#include <sundials/sundials_memory.h>
 
-#if defined(USE_CUDA)
-#include <nvector/nvector_cuda.h>
-#include <sunmemory/sunmemory_cuda.h>
-#define SERIAL_CUDA_OR_HIP(a, b, c) b
-constexpr auto N_VNew = N_VNewManaged_Cuda;
-#elif defined(USE_HIP)
-#include <nvector/nvector_hip.h>
-#include <sunmemory/sunmemory_hip.h>
-#define SERIAL_CUDA_OR_HIP(a, b, c) c
-constexpr auto N_VNew = N_VNewManaged_Hip;
-#else
 #include <nvector/nvector_serial.h>
 #include <sunmemory/sunmemory_system.h>
-#define SERIAL_CUDA_OR_HIP(a, b, c) a
-constexpr auto N_VNew = N_VNew_Serial;
-#endif
 
 /* Helper class for Arrays. Built on top of the SUNMemoryHelper. */
 template<typename T, typename I>
@@ -93,5 +81,8 @@ struct UserData
   RealArray a, b;       /* chemical concentrations that are constant */
   RealArray ep;
 };
+
+N_Vector create_vector(sunindextype length, SUNContext sunctx);
+SUNMemoryHelper create_memory_helper(SUNContext sunctx);
 
 #endif // SUNDIALS_CV_BRUSS_BATCHED_GINKGO_HPP
