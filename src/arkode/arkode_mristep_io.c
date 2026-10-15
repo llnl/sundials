@@ -62,11 +62,16 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
   step_mem->stages = 0;
   step_mem->q      = 0;
   step_mem->p      = 0;
-  if (step_mem->MRIC != NULL)
-  {
-    MRIStepCoupling_Free(step_mem->MRIC);
-    step_mem->MRIC = NULL;
-  }
+  MRIStepCoupling_Free(step_mem->MRIC);
+  step_mem->MRIC = NULL;
+  free(step_mem->stagetypes);
+  step_mem->stagetypes = NULL;
+  free(step_mem->stage_map);
+  step_mem->stage_map = NULL;
+  free(step_mem->Ae_row);
+  step_mem->Ae_row = NULL;
+  free(step_mem->Ai_row);
+  step_mem->Ai_row = NULL;
 
   /* set the relevant parameters */
   step_mem->stages = MRIC->stages;
@@ -373,12 +378,30 @@ int mriStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->stage_predict  = NULL; /* no user-supplied stage predictor */
 
   /* Remove pre-existing nonlinear solver object */
-  if (step_mem->NLS && step_mem->ownNLS) { SUNNonlinSolFree(step_mem->NLS); }
-  step_mem->NLS = NULL;
+  if (step_mem->ownNLS)
+  {
+    retval = SUNNonlinSolFree(step_mem->NLS);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return (ARK_NLS_OP_ERR);
+    }
+  }
+  step_mem->NLS    = NULL;
+  step_mem->ownNLS = SUNFALSE;
 
   /* Remove pre-existing coupling table */
-  if (step_mem->MRIC) { MRIStepCoupling_Free(step_mem->MRIC); }
+  MRIStepCoupling_Free(step_mem->MRIC);
   step_mem->MRIC = NULL;
+  free(step_mem->stagetypes);
+  step_mem->stagetypes = NULL;
+  free(step_mem->stage_map);
+  step_mem->stage_map = NULL;
+  free(step_mem->Ae_row);
+  step_mem->Ae_row = NULL;
+  free(step_mem->Ai_row);
+  step_mem->Ai_row = NULL;
 
   /* Load the default SUNAdaptController */
   retval = arkReplaceAdaptController(ark_mem, NULL, SUNTRUE);
@@ -466,11 +489,16 @@ int mriStep_SetOrder(ARKodeMem ark_mem, int ord)
      defaults. Tables will be set in InitialSetup. */
   step_mem->stages = 0;
   step_mem->p      = 0;
-  if (step_mem->MRIC != NULL)
-  {
-    MRIStepCoupling_Free(step_mem->MRIC);
-    step_mem->MRIC = NULL;
-  }
+  MRIStepCoupling_Free(step_mem->MRIC);
+  step_mem->MRIC = NULL;
+  free(step_mem->stagetypes);
+  step_mem->stagetypes = NULL;
+  free(step_mem->stage_map);
+  step_mem->stage_map = NULL;
+  free(step_mem->Ae_row);
+  step_mem->Ae_row = NULL;
+  free(step_mem->Ai_row);
+  step_mem->Ai_row = NULL;
 
   return (ARK_SUCCESS);
 }

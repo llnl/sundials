@@ -82,9 +82,15 @@ int CVodeSetNonlinearSolver(void* cvode_mem, SUNNonlinearSolver NLS)
   }
 
   /* free any existing nonlinear solver */
-  if ((cv_mem->NLS != NULL) && (cv_mem->ownNLS))
+  if (cv_mem->ownNLS)
   {
     retval = SUNNonlinSolFree(cv_mem->NLS);
+    if (retval != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                     "Freeing nonlinear solver failed");
+      return (CV_NLS_FAIL);
+    }
   }
 
   cv_mem->NLS = NLS;

@@ -69,9 +69,15 @@ int arkStep_SetNonlinearSolver(ARKodeMem ark_mem, SUNNonlinearSolver NLS)
   }
 
   /* free any existing nonlinear solver */
-  if ((step_mem->NLS != NULL) && (step_mem->ownNLS))
+  if (step_mem->ownNLS)
   {
     retval = SUNNonlinSolFree(step_mem->NLS);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return (ARK_NLS_OP_ERR);
+    }
   }
 
   /* set SUNNonlinearSolver pointer */

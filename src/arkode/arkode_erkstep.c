@@ -273,44 +273,25 @@ void erkStep_Free(ARKodeMem ark_mem)
     step_mem = (ARKodeERKStepMem)ark_mem->step_mem;
 
     /* free the Butcher table */
-    if (step_mem->B != NULL)
-    {
-      ARKodeButcherTable_Free(step_mem->B);
-      step_mem->B = NULL;
-    }
+    ARKodeButcherTable_Free(step_mem->B);
+    step_mem->B = NULL;
 
     /* free the RHS vectors */
-    if (step_mem->F)
-    {
-      arkFreeVecArray(step_mem->stages, &(step_mem->F));
-      step_mem->F = NULL;
-    }
+    arkFreeVecArray(step_mem->stages, &(step_mem->F));
 
     /* free the reusable arrays for fused vector interface */
-    if (step_mem->cvals != NULL)
-    {
-      free(step_mem->cvals);
-      step_mem->cvals = NULL;
-    }
-    if (step_mem->Xvecs != NULL)
-    {
-      free(step_mem->Xvecs);
-      step_mem->Xvecs = NULL;
-    }
+    free(step_mem->cvals);
+    step_mem->cvals = NULL;
+    free(step_mem->Xvecs);
+    step_mem->Xvecs        = NULL;
     step_mem->nfusedopvecs = 0;
 
     /* free work arrays for MRI forcing */
-    if (step_mem->stage_times)
-    {
-      free(step_mem->stage_times);
-      step_mem->stage_times = NULL;
-    }
+    free(step_mem->stage_times);
+    step_mem->stage_times = NULL;
 
-    if (step_mem->stage_coefs)
-    {
-      free(step_mem->stage_coefs);
-      step_mem->stage_coefs = NULL;
-    }
+    free(step_mem->stage_coefs);
+    step_mem->stage_coefs = NULL;
 
     /* free the time stepper module itself */
     free(ark_mem->step_mem);
@@ -2006,21 +1987,25 @@ int erkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
       if ((step_mem->nfusedopvecs - nvecs) < (step_mem->stages + 1))
       {
         /* free current work space */
-        if (step_mem->cvals != NULL) { free(step_mem->cvals); }
-        if (step_mem->Xvecs != NULL) { free(step_mem->Xvecs); }
+        free(step_mem->cvals);
+        step_mem->cvals = NULL;
+        free(step_mem->Xvecs);
+        step_mem->Xvecs        = NULL;
+        step_mem->nfusedopvecs = 0;
 
         /* allocate reusable arrays for fused vector operations */
-        step_mem->nfusedopvecs = step_mem->stages + 1 + nvecs;
-
-        step_mem->cvals = NULL;
-        step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
-                                               sizeof(sunrealtype));
+        int nfusedopvecs = step_mem->stages + 1 + nvecs;
+        step_mem->cvals = (sunrealtype*)calloc(nfusedopvecs, sizeof(sunrealtype));
         if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
 
-        step_mem->Xvecs = NULL;
-        step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
-                                            sizeof(N_Vector));
-        if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
+        step_mem->Xvecs = (N_Vector*)calloc(nfusedopvecs, sizeof(N_Vector));
+        if (step_mem->Xvecs == NULL)
+        {
+          free(step_mem->cvals);
+          step_mem->cvals = NULL;
+          return (ARK_MEM_FAIL);
+        }
+        step_mem->nfusedopvecs = nfusedopvecs;
       }
     }
   }

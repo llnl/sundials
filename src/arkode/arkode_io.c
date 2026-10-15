@@ -188,11 +188,7 @@ int ARKodeSetInterpolantType(void* arkode_mem, int itype)
   }
 
   /* delete any existing interpolation module */
-  if (ark_mem->interp != NULL)
-  {
-    arkInterpFree(ark_mem->interp);
-    ark_mem->interp = NULL;
-  }
+  arkInterpFree(&(ark_mem->interp));
 
   /* create requested interpolation module, initially specifying
      the maximum possible interpolant degree. */
@@ -3504,11 +3500,9 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
 
   /* Remove current SUNAdaptController object
      (delete if owned, and then nullify pointer) */
-  if (ark_mem->hadapt_mem->owncontroller &&
-      (ark_mem->hadapt_mem->hcontroller != NULL))
+  if (ark_mem->hadapt_mem->owncontroller)
   {
     retval = SUNAdaptController_Destroy(ark_mem->hadapt_mem->hcontroller);
-    ark_mem->hadapt_mem->owncontroller = SUNFALSE;
     if (retval != SUN_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -3516,7 +3510,8 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
       return (ARK_MEM_FAIL);
     }
   }
-  ark_mem->hadapt_mem->hcontroller = NULL;
+  ark_mem->hadapt_mem->owncontroller = SUNFALSE;
+  ark_mem->hadapt_mem->hcontroller   = NULL;
 
   /* On NULL-valued input, create default SUNAdaptController object */
   if (C == NULL)

@@ -4424,7 +4424,7 @@ void CVodeFree(void** cvode_mem)
   free(cv_mem->cv_Zvecs);
   cv_mem->cv_Zvecs = NULL;
 
-  if (cv_mem->proj_mem) { cvProjFree(&(cv_mem->proj_mem)); }
+  cvProjFree(&(cv_mem->proj_mem));
 
 #if defined(SUNDIALS_ENABLE_PYTHON)
   cvode_user_supplied_fn_table_destroy(cv_mem->python);
@@ -4469,6 +4469,7 @@ void CVodeQuadFree(void* cvode_mem)
 void CVodeSensFree(void* cvode_mem)
 {
   CVodeMem cv_mem;
+  SUNErrCode retval;
 
   if (cvode_mem == NULL) { return; }
   cv_mem = (CVodeMem)cvode_mem;
@@ -4517,29 +4518,46 @@ void CVodeSensFree(void* cvode_mem)
   /* if CVODES created a NLS object then free it */
   if (cv_mem->ownNLSsim)
   {
-    SUNNonlinSolFree(cv_mem->NLSsim);
-    cv_mem->ownNLSsim = SUNFALSE;
-    cv_mem->NLSsim    = NULL;
+    retval = SUNNonlinSolFree(cv_mem->NLSsim);
+    if (retval != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                     "Freeing nonlinear solver failed");
+      return;
+    }
   }
+  cv_mem->ownNLSsim = SUNFALSE;
+  cv_mem->NLSsim    = NULL;
+
   if (cv_mem->ownNLSstg)
   {
-    SUNNonlinSolFree(cv_mem->NLSstg);
-    cv_mem->ownNLSstg = SUNFALSE;
-    cv_mem->NLSstg    = NULL;
+    retval = SUNNonlinSolFree(cv_mem->NLSstg);
+    if (retval != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                     "Freeing nonlinear solver failed");
+      return;
+    }
   }
+  cv_mem->ownNLSstg = SUNFALSE;
+  cv_mem->NLSstg    = NULL;
+
   if (cv_mem->ownNLSstg1)
   {
-    SUNNonlinSolFree(cv_mem->NLSstg1);
-    cv_mem->ownNLSstg1 = SUNFALSE;
-    cv_mem->NLSstg1    = NULL;
+    retval = SUNNonlinSolFree(cv_mem->NLSstg1);
+    if (retval != SUN_SUCCESS)
+    {
+      cvProcessError(cv_mem, CV_NLS_FAIL, __LINE__, __func__, __FILE__,
+                     "Freeing nonlinear solver failed");
+      return;
+    }
   }
+  cv_mem->ownNLSstg1 = SUNFALSE;
+  cv_mem->NLSstg1    = NULL;
 
   /* free min atol array if necessary */
-  if (cv_mem->cv_atolSmin0)
-  {
-    free(cv_mem->cv_atolSmin0);
-    cv_mem->cv_atolSmin0 = NULL;
-  }
+  free(cv_mem->cv_atolSmin0);
+  cv_mem->cv_atolSmin0 = NULL;
 }
 
 /*
@@ -4565,11 +4583,8 @@ void CVodeQuadSensFree(void* cvode_mem)
   }
 
   /* free min atol array if necessary */
-  if (cv_mem->cv_atolQSmin0)
-  {
-    free(cv_mem->cv_atolQSmin0);
-    cv_mem->cv_atolQSmin0 = NULL;
-  }
+  free(cv_mem->cv_atolQSmin0);
+  cv_mem->cv_atolQSmin0 = NULL;
 }
 
 /*
@@ -4626,6 +4641,7 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_acor == NULL)
   {
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     return (SUNFALSE);
   }
 
@@ -4633,7 +4649,9 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_tempv == NULL)
   {
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     N_VDestroy(cv_mem->cv_acor);
+    cv_mem->cv_acor = NULL;
     return (SUNFALSE);
   }
 
@@ -4641,8 +4659,11 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_ftemp == NULL)
   {
     N_VDestroy(cv_mem->cv_tempv);
+    cv_mem->cv_tempv = NULL;
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     N_VDestroy(cv_mem->cv_acor);
+    cv_mem->cv_acor = NULL;
     return (SUNFALSE);
   }
 
@@ -4650,9 +4671,13 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_vtemp1 == NULL)
   {
     N_VDestroy(cv_mem->cv_ftemp);
+    cv_mem->cv_ftemp = NULL;
     N_VDestroy(cv_mem->cv_tempv);
+    cv_mem->cv_tempv = NULL;
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     N_VDestroy(cv_mem->cv_acor);
+    cv_mem->cv_acor = NULL;
     return (SUNFALSE);
   }
 
@@ -4660,10 +4685,15 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_vtemp2 == NULL)
   {
     N_VDestroy(cv_mem->cv_vtemp1);
+    cv_mem->cv_vtemp1 = NULL;
     N_VDestroy(cv_mem->cv_ftemp);
+    cv_mem->cv_ftemp = NULL;
     N_VDestroy(cv_mem->cv_tempv);
+    cv_mem->cv_tempv = NULL;
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     N_VDestroy(cv_mem->cv_acor);
+    cv_mem->cv_acor = NULL;
     return (SUNFALSE);
   }
 
@@ -4671,11 +4701,17 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
   if (cv_mem->cv_vtemp3 == NULL)
   {
     N_VDestroy(cv_mem->cv_vtemp2);
+    cv_mem->cv_vtemp2 = NULL;
     N_VDestroy(cv_mem->cv_vtemp1);
+    cv_mem->cv_vtemp1 = NULL;
     N_VDestroy(cv_mem->cv_ftemp);
+    cv_mem->cv_ftemp = NULL;
     N_VDestroy(cv_mem->cv_tempv);
+    cv_mem->cv_tempv = NULL;
     N_VDestroy(cv_mem->cv_ewt);
+    cv_mem->cv_ewt = NULL;
     N_VDestroy(cv_mem->cv_acor);
+    cv_mem->cv_acor = NULL;
     return (SUNFALSE);
   }
 
@@ -4687,13 +4723,24 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
     if (cv_mem->cv_zn[j] == NULL)
     {
       N_VDestroy(cv_mem->cv_ewt);
+      cv_mem->cv_ewt = NULL;
       N_VDestroy(cv_mem->cv_acor);
+      cv_mem->cv_acor = NULL;
       N_VDestroy(cv_mem->cv_tempv);
+      cv_mem->cv_tempv = NULL;
       N_VDestroy(cv_mem->cv_ftemp);
+      cv_mem->cv_ftemp = NULL;
       N_VDestroy(cv_mem->cv_vtemp1);
+      cv_mem->cv_vtemp1 = NULL;
       N_VDestroy(cv_mem->cv_vtemp2);
+      cv_mem->cv_vtemp2 = NULL;
       N_VDestroy(cv_mem->cv_vtemp3);
-      for (i = 0; i < j; i++) { N_VDestroy(cv_mem->cv_zn[i]); }
+      cv_mem->cv_vtemp3 = NULL;
+      for (i = 0; i < j; i++)
+      {
+        N_VDestroy(cv_mem->cv_zn[i]);
+        cv_mem->cv_zn[i] = NULL;
+      }
       return (SUNFALSE);
     }
   }
@@ -4717,17 +4764,33 @@ static void cvFreeVectors(CVodeMem cv_mem)
   maxord = cv_mem->cv_qmax_alloc;
 
   N_VDestroy(cv_mem->cv_ewt);
+  cv_mem->cv_ewt = NULL;
   N_VDestroy(cv_mem->cv_acor);
+  cv_mem->cv_acor = NULL;
   N_VDestroy(cv_mem->cv_tempv);
+  cv_mem->cv_tempv = NULL;
   N_VDestroy(cv_mem->cv_ftemp);
+  cv_mem->cv_ftemp = NULL;
   N_VDestroy(cv_mem->cv_vtemp1);
+  cv_mem->cv_vtemp1 = NULL;
   N_VDestroy(cv_mem->cv_vtemp2);
+  cv_mem->cv_vtemp2 = NULL;
   N_VDestroy(cv_mem->cv_vtemp3);
-  for (j = 0; j <= maxord; j++) { N_VDestroy(cv_mem->cv_zn[j]); }
+  cv_mem->cv_vtemp3 = NULL;
+  for (j = 0; j <= maxord; j++)
+  {
+    N_VDestroy(cv_mem->cv_zn[j]);
+    cv_mem->cv_zn[j] = NULL;
+  }
 
-  if (cv_mem->cv_VabstolMallocDone) { N_VDestroy(cv_mem->cv_Vabstol); }
+  if (cv_mem->cv_VabstolMallocDone)
+  {
+    N_VDestroy(cv_mem->cv_Vabstol);
+    cv_mem->cv_Vabstol = NULL;
+  }
 
-  if (cv_mem->cv_constraints) { N_VDestroy(cv_mem->cv_constraints); }
+  N_VDestroy(cv_mem->cv_constraints);
+  cv_mem->cv_constraints = NULL;
 }
 
 /*

@@ -4035,12 +4035,9 @@ void IDAFree(void** ida_mem)
   IDAAdjFree(IDA_mem);
 
   /* if IDA created the NLS object then free it */
-  if (IDA_mem->ownNLS)
-  {
-    SUNNonlinSolFree(IDA_mem->NLS);
-    IDA_mem->ownNLS = SUNFALSE;
-    IDA_mem->NLS    = NULL;
-  }
+  if (IDA_mem->ownNLS) { SUNNonlinSolFree(IDA_mem->NLS); }
+  IDA_mem->ownNLS = SUNFALSE;
+  IDA_mem->NLS    = NULL;
 
   if (IDA_mem->ida_lfree != NULL) { IDA_mem->ida_lfree(IDA_mem); }
 
@@ -4110,6 +4107,7 @@ void IDAQuadFree(void* ida_mem)
 void IDASensFree(void* ida_mem)
 {
   IDAMem IDA_mem;
+  SUNErrCode retval;
 
   /* return immediately if IDA memory is NULL */
   if (ida_mem == NULL) { return; }
@@ -4147,23 +4145,33 @@ void IDASensFree(void* ida_mem)
   /* if IDA created the NLS object then free it */
   if (IDA_mem->ownNLSsim)
   {
-    SUNNonlinSolFree(IDA_mem->NLSsim);
-    IDA_mem->ownNLSsim = SUNFALSE;
-    IDA_mem->NLSsim    = NULL;
+    retval = SUNNonlinSolFree(IDA_mem->NLSsim);
+    if (retval != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_NLS_FAIL, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return;
+    }
   }
+  IDA_mem->ownNLSsim = SUNFALSE;
+  IDA_mem->NLSsim    = NULL;
+
   if (IDA_mem->ownNLSstg)
   {
-    SUNNonlinSolFree(IDA_mem->NLSstg);
-    IDA_mem->ownNLSstg = SUNFALSE;
-    IDA_mem->NLSstg    = NULL;
+    retval = SUNNonlinSolFree(IDA_mem->NLSstg);
+    if (retval != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_NLS_FAIL, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return;
+    }
   }
+  IDA_mem->ownNLSstg = SUNFALSE;
+  IDA_mem->NLSstg    = NULL;
 
   /* free min atol array if necessary */
-  if (IDA_mem->ida_atolSmin0)
-  {
-    free(IDA_mem->ida_atolSmin0);
-    IDA_mem->ida_atolSmin0 = NULL;
-  }
+  free(IDA_mem->ida_atolSmin0);
+  IDA_mem->ida_atolSmin0 = NULL;
 }
 
 /*
@@ -4188,11 +4196,8 @@ void IDAQuadSensFree(void* ida_mem)
   }
 
   /* free min atol array if necessary */
-  if (IDA_mem->ida_atolQSmin0)
-  {
-    free(IDA_mem->ida_atolQSmin0);
-    IDA_mem->ida_atolQSmin0 = NULL;
-  }
+  free(IDA_mem->ida_atolQSmin0);
+  IDA_mem->ida_atolQSmin0 = NULL;
 }
 
 /*
@@ -4401,11 +4406,8 @@ static void IDAFreeVectors(IDAMem IDA_mem)
     IDA_mem->ida_Vatol = NULL;
   }
 
-  if (IDA_mem->ida_constraints)
-  {
-    N_VDestroy(IDA_mem->ida_constraints);
-    IDA_mem->ida_constraints = NULL;
-  }
+  N_VDestroy(IDA_mem->ida_constraints);
+  IDA_mem->ida_constraints = NULL;
 
   if (IDA_mem->ida_idMallocDone)
   {

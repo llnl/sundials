@@ -907,7 +907,8 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
   /* Disable constraints */
   if (constraints == NULL)
   {
-    if (cv_mem->cv_constraints) { N_VDestroy(cv_mem->cv_constraints); }
+    N_VDestroy(cv_mem->cv_constraints);
+    cv_mem->cv_constraints = NULL;
     return (CV_SUCCESS);
   }
 

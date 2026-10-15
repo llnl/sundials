@@ -895,47 +895,26 @@ static sunbooleantype KINAllocVectors(KINMem kin_mem, N_Vector tmpl)
 
 static void KINFreeVectors(KINMem kin_mem)
 {
-  if (kin_mem->kin_unew != NULL)
-  {
-    N_VDestroy(kin_mem->kin_unew);
-    kin_mem->kin_unew = NULL;
-  }
+  N_VDestroy(kin_mem->kin_unew);
+  kin_mem->kin_unew = NULL;
 
-  if (kin_mem->kin_fval != NULL)
-  {
-    N_VDestroy(kin_mem->kin_fval);
-    kin_mem->kin_fval = NULL;
-  }
+  N_VDestroy(kin_mem->kin_fval);
+  kin_mem->kin_fval = NULL;
 
-  if (kin_mem->kin_pp != NULL)
-  {
-    N_VDestroy(kin_mem->kin_pp);
-    kin_mem->kin_pp = NULL;
-  }
+  N_VDestroy(kin_mem->kin_pp);
+  kin_mem->kin_pp = NULL;
 
-  if (kin_mem->kin_vtemp1 != NULL)
-  {
-    N_VDestroy(kin_mem->kin_vtemp1);
-    kin_mem->kin_vtemp1 = NULL;
-  }
+  N_VDestroy(kin_mem->kin_vtemp1);
+  kin_mem->kin_vtemp1 = NULL;
 
-  if (kin_mem->kin_vtemp2 != NULL)
-  {
-    N_VDestroy(kin_mem->kin_vtemp2);
-    kin_mem->kin_vtemp2 = NULL;
-  }
+  N_VDestroy(kin_mem->kin_vtemp2);
+  kin_mem->kin_vtemp2 = NULL;
 
-  if (kin_mem->kin_gval != NULL)
-  {
-    N_VDestroy(kin_mem->kin_gval);
-    kin_mem->kin_gval = NULL;
-  }
+  N_VDestroy(kin_mem->kin_gval);
+  kin_mem->kin_gval = NULL;
 
-  if (kin_mem->kin_constraints != NULL)
-  {
-    N_VDestroy(kin_mem->kin_constraints);
-    kin_mem->kin_constraints = NULL;
-  }
+  N_VDestroy(kin_mem->kin_constraints);
+  kin_mem->kin_constraints = NULL;
 
   return;
 }

@@ -71,11 +71,8 @@ int ERKStepSetTable(void* arkode_mem, ARKodeButcherTable B)
   step_mem->q      = 0;
   step_mem->p      = 0;
 
-  if (step_mem->B != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->B);
-    step_mem->B = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->B);
+  step_mem->B = NULL;
 
   /* set the relevant parameters */
   step_mem->stages = B->stages;
@@ -124,11 +121,8 @@ int ERKStepSetTableNum(void* arkode_mem, ARKODE_ERKTableID etable)
   step_mem->q      = 0;
   step_mem->p      = 0;
 
-  if (step_mem->B != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->B);
-    step_mem->B = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->B);
+  step_mem->B = NULL;
 
   /* fill in table based on argument */
   step_mem->B = ARKodeButcherTable_LoadERK(etable);
@@ -310,7 +304,7 @@ int erkStep_SetDefaults(ARKodeMem ark_mem)
   ark_mem->hadapt_mem->growth = SUN_RCONST(25.0); /* step adaptivity growth factor */
 
   /* Remove pre-existing Butcher table */
-  if (step_mem->B) { ARKodeButcherTable_Free(step_mem->B); }
+  ARKodeButcherTable_Free(step_mem->B);
   step_mem->B = NULL;
 
   /* Load the default SUNAdaptController */
@@ -343,11 +337,8 @@ int erkStep_SetOrder(ARKodeMem ark_mem, int ord)
   step_mem->stages = 0;
   step_mem->p      = 0;
 
-  if (step_mem->B != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->B);
-    step_mem->B = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->B);
+  step_mem->B = NULL;
 
   return (ARK_SUCCESS);
 }

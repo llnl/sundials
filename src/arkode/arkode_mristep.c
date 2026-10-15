@@ -460,11 +460,16 @@ int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0,
 
   /* If a NLS object was previously used, destroy and recreate default Newton
      NLS object (can be replaced by user-defined object if desired) */
-  if ((step_mem->NLS != NULL) && (step_mem->ownNLS))
+  if (step_mem->ownNLS)
   {
     /* destroy existing NLS object */
     retval = SUNNonlinSolFree(step_mem->NLS);
-    if (retval != ARK_SUCCESS) { return (retval); }
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return (ARK_NLS_OP_ERR);
+    }
     step_mem->NLS    = NULL;
     step_mem->ownNLS = SUNFALSE;
 
@@ -571,35 +576,21 @@ void mriStep_Free(ARKodeMem ark_mem)
     {
       MRIStepCoupling_Free(step_mem->MRIC);
       step_mem->MRIC = NULL;
-      if (step_mem->stagetypes)
-      {
-        free(step_mem->stagetypes);
-        step_mem->stagetypes = NULL;
-      }
-      if (step_mem->stage_map)
-      {
-        free(step_mem->stage_map);
-        step_mem->stage_map = NULL;
-      }
-      if (step_mem->Ae_row)
-      {
-        free(step_mem->Ae_row);
-        step_mem->Ae_row = NULL;
-      }
-      if (step_mem->Ai_row)
-      {
-        free(step_mem->Ai_row);
-        step_mem->Ai_row = NULL;
-      }
     }
 
+    free(step_mem->stagetypes);
+    step_mem->stagetypes = NULL;
+    free(step_mem->stage_map);
+    step_mem->stage_map = NULL;
+    free(step_mem->Ae_row);
+    step_mem->Ae_row = NULL;
+    free(step_mem->Ai_row);
+    step_mem->Ai_row = NULL;
+
     /* free the nonlinear solver memory (if applicable) */
-    if ((step_mem->NLS != NULL) && (step_mem->ownNLS))
-    {
-      SUNNonlinSolFree(step_mem->NLS);
-      step_mem->ownNLS = SUNFALSE;
-    }
-    step_mem->NLS = NULL;
+    if (step_mem->ownNLS) { SUNNonlinSolFree(step_mem->NLS); }
+    step_mem->NLS    = NULL;
+    step_mem->ownNLS = SUNFALSE;
 
     /* free the linear solver memory */
     if (step_mem->lfree != NULL)
@@ -609,21 +600,9 @@ void mriStep_Free(ARKodeMem ark_mem)
     }
 
     /* free the sdata, zpred and zcor vectors */
-    if (step_mem->sdata != NULL)
-    {
-      arkFreeVec(&step_mem->sdata);
-      step_mem->sdata = NULL;
-    }
-    if (step_mem->zpred != NULL)
-    {
-      arkFreeVec(&step_mem->zpred);
-      step_mem->zpred = NULL;
-    }
-    if (step_mem->zcor != NULL)
-    {
-      arkFreeVec(&step_mem->zcor);
-      step_mem->zcor = NULL;
-    }
+    arkFreeVec(&step_mem->sdata);
+    arkFreeVec(&step_mem->zpred);
+    arkFreeVec(&step_mem->zcor);
 
     /* free the RHS vectors */
     if (step_mem->Fse)
@@ -632,31 +611,20 @@ void mriStep_Free(ARKodeMem ark_mem)
       if (step_mem->unify_Fs) { step_mem->Fsi = NULL; }
     }
 
-    if (step_mem->Fsi)
-    {
-      arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi));
-    }
+    arkFreeVecArray(step_mem->nstages_allocated, &(step_mem->Fsi));
 
     /* free the reusable arrays for fused vector interface */
-    if (step_mem->cvals != NULL)
-    {
-      free(step_mem->cvals);
-      step_mem->cvals = NULL;
-    }
-    if (step_mem->Xvecs != NULL)
-    {
-      free(step_mem->Xvecs);
-      step_mem->Xvecs = NULL;
-    }
+    free(step_mem->cvals);
+    step_mem->cvals = NULL;
+    free(step_mem->Xvecs);
+    step_mem->Xvecs        = NULL;
     step_mem->nfusedopvecs = 0;
 
     /* free the ExtSTS helper structure (if applicable) */
     if (step_mem->extsts_method)
     {
       ARKodeFree(&step_mem->stepper->content);
-      step_mem->stepper->content = NULL;
       MRIStepInnerStepper_Free(&step_mem->stepper);
-      step_mem->stepper = NULL;
     }
 
     /* free the time stepper module itself */
@@ -994,7 +962,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     /* allocate/fill derived quantities from MRIC structure */
 
     /* stage map */
-    if (step_mem->stage_map) { free(step_mem->stage_map); }
+    free(step_mem->stage_map);
     step_mem->stage_map = (int*)calloc(step_mem->MRIC->stages,
                                        sizeof(*step_mem->stage_map));
     if (step_mem->stage_map == NULL)
@@ -1013,7 +981,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* stage types */
-    if (step_mem->stagetypes) { free(step_mem->stagetypes); }
+    free(step_mem->stagetypes);
     step_mem->stagetypes = (int*)calloc(step_mem->MRIC->stages + 1,
                                         sizeof(*step_mem->stagetypes));
     if (step_mem->stagetypes == NULL)
@@ -1028,7 +996,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* explicit RK coefficient row */
-    if (step_mem->Ae_row) { free(step_mem->Ae_row); }
+    free(step_mem->Ae_row);
     step_mem->Ae_row = (sunrealtype*)calloc(step_mem->MRIC->stages,
                                             sizeof(*step_mem->Ae_row));
     if (step_mem->Ae_row == NULL)
@@ -1039,7 +1007,7 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
 
     /* implicit RK coefficient row */
-    if (step_mem->Ai_row) { free(step_mem->Ai_row); }
+    free(step_mem->Ai_row);
     step_mem->Ai_row = (sunrealtype*)calloc(step_mem->MRIC->stages,
                                             sizeof(*step_mem->Ai_row));
     if (step_mem->Ai_row == NULL)
@@ -1055,16 +1023,10 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
 
     if (step_mem->nfusedopvecs < fused_workspace_size)
     {
-      if (step_mem->cvals)
-      {
-        free(step_mem->cvals);
-        step_mem->cvals = NULL;
-      }
-      if (step_mem->Xvecs)
-      {
-        free(step_mem->Xvecs);
-        step_mem->Xvecs = NULL;
-      }
+      free(step_mem->cvals);
+      step_mem->cvals = NULL;
+      free(step_mem->Xvecs);
+      step_mem->Xvecs        = NULL;
       step_mem->nfusedopvecs = 0;
 
       step_mem->cvals = (sunrealtype*)calloc(fused_workspace_size,
@@ -1170,12 +1132,18 @@ int mriStep_Init(ARKodeMem ark_mem, int init_type)
     }
     else
     {
-      if ((step_mem->NLS != NULL) && (step_mem->ownNLS))
+      if (step_mem->ownNLS)
       {
-        SUNNonlinSolFree(step_mem->NLS);
-        step_mem->NLS    = NULL;
-        step_mem->ownNLS = SUNFALSE;
+        retval = SUNNonlinSolFree(step_mem->NLS);
+        if (retval != SUN_SUCCESS)
+        {
+          arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                          "Freeing nonlinear solver failed");
+          return (ARK_NLS_OP_ERR);
+        }
       }
+      step_mem->NLS    = NULL;
+      step_mem->ownNLS = SUNFALSE;
       step_mem->linit  = NULL;
       step_mem->lsetup = NULL;
       step_mem->lsolve = NULL;
@@ -4922,17 +4890,10 @@ int mriStepInnerStepper_FreeVecs(MRIStepInnerStepper stepper)
 
   arkFreeVecArray(stepper->nforcing_allocated, &(stepper->forcing));
 
-  if (stepper->vecs != NULL)
-  {
-    free(stepper->vecs);
-    stepper->vecs = NULL;
-  }
-
-  if (stepper->vals != NULL)
-  {
-    free(stepper->vals);
-    stepper->vals = NULL;
-  }
+  free(stepper->vecs);
+  stepper->vecs = NULL;
+  free(stepper->vals);
+  stepper->vals = NULL;
 
   return (ARK_SUCCESS);
 }
@@ -5061,24 +5022,29 @@ int mriStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
     if (step_mem->MRIC)
     {
       /* check if there are enough reusable arrays for fused operations */
-      if ((step_mem->nfusedopvecs - nvecs) < (2 * step_mem->MRIC->stages + 2))
+      if ((step_mem->cvals == NULL) || (step_mem->Xvecs == NULL) ||
+          ((step_mem->nfusedopvecs - nvecs) < (2 * step_mem->MRIC->stages + 2)))
       {
         /* free current work space */
-        if (step_mem->cvals != NULL) { free(step_mem->cvals); }
-        if (step_mem->Xvecs != NULL) { free(step_mem->Xvecs); }
+        free(step_mem->cvals);
+        step_mem->cvals = NULL;
+        free(step_mem->Xvecs);
+        step_mem->Xvecs        = NULL;
+        step_mem->nfusedopvecs = 0;
 
         /* allocate reusable arrays for fused vector operations */
-        step_mem->nfusedopvecs = 2 * step_mem->MRIC->stages + 2 + nvecs;
-
-        step_mem->cvals = NULL;
-        step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
-                                               sizeof(sunrealtype));
+        int nfusedopvecs = 2 * step_mem->MRIC->stages + 2 + nvecs;
+        step_mem->cvals = (sunrealtype*)calloc(nfusedopvecs, sizeof(sunrealtype));
         if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
 
-        step_mem->Xvecs = NULL;
-        step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
-                                            sizeof(N_Vector));
-        if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
+        step_mem->Xvecs = (N_Vector*)calloc(nfusedopvecs, sizeof(N_Vector));
+        if (step_mem->Xvecs == NULL)
+        {
+          free(step_mem->cvals);
+          step_mem->cvals = NULL;
+          return (ARK_MEM_FAIL);
+        }
+        step_mem->nfusedopvecs = nfusedopvecs;
       }
     }
   }

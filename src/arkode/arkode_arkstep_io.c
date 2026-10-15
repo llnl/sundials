@@ -210,17 +210,11 @@ int ARKStepSetTables(void* arkode_mem, int q, int p, ARKodeButcherTable Bi,
   step_mem->q      = 0;
   step_mem->p      = 0;
 
-  if (step_mem->Be != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Be);
-    step_mem->Be = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Be);
+  step_mem->Be = NULL;
 
-  if (step_mem->Bi != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Bi);
-    step_mem->Bi = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Bi);
+  step_mem->Bi = NULL;
 
   /*
    * determine mode (implicit/explicit/ImEx), and perform appropriate actions
@@ -350,17 +344,11 @@ int ARKStepSetTableNum(void* arkode_mem, ARKODE_DIRKTableID itable,
   step_mem->q      = 0;
   step_mem->p      = 0;
 
-  if (step_mem->Be != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Be);
-    step_mem->Be = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Be);
+  step_mem->Be = NULL;
 
-  if (step_mem->Bi != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Bi);
-    step_mem->Bi = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Bi);
+  step_mem->Bi = NULL;
 
   /* determine mode (implicit/explicit/ImEx), and perform
      appropriate actions  */
@@ -750,14 +738,24 @@ int arkStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->stage_predict = NULL; /* no user-supplied stage predictor */
 
   /* Remove pre-existing Butcher tables */
-  if (step_mem->Be) { ARKodeButcherTable_Free(step_mem->Be); }
+  ARKodeButcherTable_Free(step_mem->Be);
   step_mem->Be = NULL;
-  if (step_mem->Bi) { ARKodeButcherTable_Free(step_mem->Bi); }
+  ARKodeButcherTable_Free(step_mem->Bi);
   step_mem->Bi = NULL;
 
   /* Remove pre-existing nonlinear solver object */
-  if (step_mem->NLS && step_mem->ownNLS) { SUNNonlinSolFree(step_mem->NLS); }
-  step_mem->NLS = NULL;
+  if (step_mem->ownNLS)
+  {
+    retval = SUNNonlinSolFree(step_mem->NLS);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_NLS_OP_ERR, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return (ARK_NLS_OP_ERR);
+    }
+  }
+  step_mem->NLS    = NULL;
+  step_mem->ownNLS = SUNFALSE;
 
   /* Load the default SUNAdaptController */
   retval = arkReplaceAdaptController(ark_mem, NULL, SUNTRUE);
@@ -790,17 +788,11 @@ int arkStep_SetOrder(ARKodeMem ark_mem, int ord)
   step_mem->istage = 0;
   step_mem->p      = 0;
 
-  if (step_mem->Be != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Be);
-    step_mem->Be = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Be);
+  step_mem->Be = NULL;
 
-  if (step_mem->Bi != NULL)
-  {
-    ARKodeButcherTable_Free(step_mem->Bi);
-    step_mem->Bi = NULL;
-  }
+  ARKodeButcherTable_Free(step_mem->Bi);
+  step_mem->Bi = NULL;
 
   return (ARK_SUCCESS);
 }

@@ -336,7 +336,7 @@ struct ARKInterp_
 /* ARKInterp module functions */
 int arkInterpResize(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
                     void* resize_data, N_Vector tmpl);
-void arkInterpFree(ARKInterp interp);
+void arkInterpFree(ARKInterp* interp);
 void arkInterpPrintMem(ARKInterp interp, FILE* outfile);
 int arkInterpSetDegree(ARKodeMem ark_mem, ARKInterp interp, int degree);
 int arkInterpInit(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew);

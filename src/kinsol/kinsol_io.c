@@ -865,7 +865,8 @@ int KINSetConstraints(void* kinmem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (kin_mem->kin_constraintsSet) { N_VDestroy(kin_mem->kin_constraints); }
+    N_VDestroy(kin_mem->kin_constraints);
+    kin_mem->kin_constraints    = NULL;
     kin_mem->kin_constraintsSet = SUNFALSE;
     return (KIN_SUCCESS);
   }

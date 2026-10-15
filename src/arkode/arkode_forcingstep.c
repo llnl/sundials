@@ -343,7 +343,7 @@ static int forcingStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile,
   ----------------------------------------------------------------------------*/
 static void forcingStep_Free(ARKodeMem ark_mem)
 {
-  if (ark_mem->step_mem != NULL) { free(ark_mem->step_mem); }
+  free(ark_mem->step_mem);
   ark_mem->step_mem = NULL;
 }
 

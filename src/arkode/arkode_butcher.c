@@ -209,9 +209,9 @@ void ARKodeButcherTable_Free(ARKodeButcherTable B)
      free structure itself */
   if (B != NULL)
   {
-    if (B->d != NULL) { free(B->d); }
-    if (B->c != NULL) { free(B->c); }
-    if (B->b != NULL) { free(B->b); }
+    free(B->d);
+    free(B->c);
+    free(B->b);
     if (B->A != NULL)
     {
       for (i = 0; i < B->stages; i++)

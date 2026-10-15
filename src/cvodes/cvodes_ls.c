@@ -1933,23 +1933,14 @@ int cvLsFree(CVodeMem cv_mem)
   cvls_mem = (CVLsMem)cv_mem->cv_lmem;
 
   /* Free N_Vector memory */
-  if (cvls_mem->ytemp)
-  {
-    N_VDestroy(cvls_mem->ytemp);
-    cvls_mem->ytemp = NULL;
-  }
-  if (cvls_mem->x)
-  {
-    N_VDestroy(cvls_mem->x);
-    cvls_mem->x = NULL;
-  }
+  N_VDestroy(cvls_mem->ytemp);
+  cvls_mem->ytemp = NULL;
+  N_VDestroy(cvls_mem->x);
+  cvls_mem->x = NULL;
 
   /* Free savedJ memory */
-  if (cvls_mem->savedJ)
-  {
-    SUNMatDestroy(cvls_mem->savedJ);
-    cvls_mem->savedJ = NULL;
-  }
+  SUNMatDestroy(cvls_mem->savedJ);
+  cvls_mem->savedJ = NULL;
 
   /* Nullify other N_Vector pointers */
   cvls_mem->ycur = NULL;
@@ -1963,6 +1954,7 @@ int cvLsFree(CVodeMem cv_mem)
 
   /* free CVLs interface structure */
   free(cv_mem->cv_lmem);
+  cv_mem->cv_lmem = NULL;
 
   return (CVLS_SUCCESS);
 }
@@ -2102,7 +2094,7 @@ int CVodeSetLinearSolverB(void* cvode_mem, int which, SUNLinearSolver LS,
   retval     = CVodeSetLinearSolver(cvodeB_mem, LS, A);
   if (retval != CVLS_SUCCESS)
   {
-    free(cvlsB_mem);
+    cvLsFreeB(cvB_mem);
     cvlsB_mem = NULL;
   }
 
@@ -2812,6 +2804,7 @@ int cvLsFreeB(CVodeBMem cvB_mem)
 
   /* free CVLsMemB interface structure */
   free(cvlsB_mem);
+  cvB_mem->cv_lmem = NULL;
 
   return (CVLS_SUCCESS);
 }

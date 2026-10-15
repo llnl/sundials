@@ -100,9 +100,15 @@ int IDASetNonlinearSolverSensSim(void* ida_mem, SUNNonlinearSolver NLS)
   }
 
   /* free any existing nonlinear solver */
-  if ((IDA_mem->NLSsim != NULL) && (IDA_mem->ownNLSsim))
+  if (IDA_mem->ownNLSsim)
   {
     retval = SUNNonlinSolFree(IDA_mem->NLSsim);
+    if (retval != SUN_SUCCESS)
+    {
+      IDAProcessError(IDA_mem, IDA_NLS_FAIL, __LINE__, __func__, __FILE__,
+                      "Freeing nonlinear solver failed");
+      return (IDA_NLS_FAIL);
+    }
   }
 
   /* set SUNNonlinearSolver pointer */
