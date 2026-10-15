@@ -101,7 +101,7 @@ linear solver, vectors, and context are released by calling ``FKINFree``,
 
 The following is sample output from ``kinDiagon_kry_f2003``.
 
-.. literalinclude:: ../../../../examples/kinsol/F2003_serial/kinDiagon_kry_f2003.out
+.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran/kinDiagon_kry_f2003.out
    :language: none
 
 A parallel example: kin_diagon_kry_f2003
@@ -129,5 +129,5 @@ identical to those in ``kinDiagon_kry_f2003``.
 
 The following is sample output from ``kin_diagon_kry_2003`` using 4 MPI ranks.
 
-.. literalinclude:: ../../../../examples/kinsol/F2003_parallel/kin_diagon_kry_f2003.out
+.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran-mpi/kin_diagon_kry_f2003.out
    :language: none

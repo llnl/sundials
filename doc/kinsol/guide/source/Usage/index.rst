@@ -1245,7 +1245,7 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Examples codes:**
 
-   * ``examples/kinsol/serial/kinAnalytic_fp.c``
+   * ``examples/kinsol/kin_analytic/c/kinAnalytic_fp.c``
 
    .. versionchanged:: 7.5.0
 

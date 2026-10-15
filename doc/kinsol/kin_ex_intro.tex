@@ -29,8 +29,9 @@ distributed with {\sundials} are of the form
 The following lists summarize all examples distributed with {\kinsol}.
 
 \vspace{0.2in}\noindent
-Supplied in the {\em srcdir}\id{/examples/kinsol/serial} directory are the
-following serial examples (using the {\nvecs} module):
+Supplied in the \id{c} variant directories under
+{\em srcdir}\id{/examples/kinsol} are the following serial examples (using the
+{\nvecs} module):
 
 \begin{itemize}
 \item \id{kinRoberts\_fp}
@@ -85,8 +86,9 @@ following serial examples (using the {\nvecs} module):
 \end{itemize}
 
 \vspace{0.2in}\noindent
-Supplied in the {\em srcdir}\id{/examples/kinsol/parallel} directory are
-the following parallel examples (using the {\nvecp} module):
+Supplied in the
+{\em srcdir}\id{/examples/kinsol/kin\_food\_web/c-mpi} directory are the
+following parallel examples (using the {\nvecp} module):
 \begin{itemize}
 \item \id{kinFoodWeb\_kry\_p}
   is a parallel implementation of \id{kinFoodWeb\_kry}.
@@ -97,12 +99,12 @@ the following parallel examples (using the {\nvecp} module):
 \end{itemize}
 
 \vspace{0.2in}\noindent
-Supplied in the {\em srcdir}\id{/examples/kinsol/C\_openmp} directory
+Supplied in the {\em srcdir}\id{/examples/kinsol/kin\_food\_web/c-openmp} directory
 is an example \id{kinFoodweb\_kry\_omp}, which solves the same problem
 as \id{kinFoodweb\_kry}, but using the OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent
-Supplied in the {\em srcdir}\id{/examples/kinsol/CUDA\_mpi} directory
+Supplied in the {\em srcdir}\id{/examples/kinsol/kin\_em/cuda-mpi} directory
 is an example \id{kin\_em\_mpicuda}, which solves an
 expectation-maximization problem for mixture densities, using the
 \id{cuda} {\nvector} module and MPI.
@@ -111,8 +113,8 @@ expectation-maximization problem for mixture densities, using the
 The following are examples written in C++:
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/kinsol/CXX\_parallel}
-  contains two examples. \id{kin\_heat2D\_nonlin\_p} solves a
+\item The \id{cpp-mpi} variant directories contain two examples.
+  \id{kin\_heat2D\_nonlin\_p} solves a
   steady state 2D heat equation with an additional nonlinear term.
   This example is solved with fixed point iteration and illustrates
   the use of various orthogonalization methods with Anderson
@@ -120,8 +122,8 @@ The following are examples written in C++:
   \id{kin\_em\_p} solves the same problem as \id{kin\_em\_mpicuda}
   listed above.
 
-\item The directory {\em srcdir}\id{/examples/kinsol/CXX\_parhyp}
-  contains two examples, \id{kin\_heat2D\_nonlin\_hypre\_pfmg} and
+\item The \id{cpp-mpi-hypre} variant directories contain two examples,
+  \id{kin\_heat2D\_nonlin\_hypre\_pfmg} and
   \id{kin\_bratu2D\_hyper\_pfmg}.  These use the \id{hypre}
   \id{PFMG} preconditioner, fixed point iteration, and Anderson
   acceleration.
@@ -134,16 +136,16 @@ Fortran interface modules, and based on examples listed earlier:
 
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/kinsol/F2003\_serial}
-  contains four examples:
+\item The \id{fortran} variant directories contain four examples:
   \id{kinDiagon\_kry\_f2003} solves a simple diagonal test problem.
   \id{kinLaplace\_bnd\_f2003} solves the same problem as \id{kinLaplace\_bnd}.
   \id{kinLaplace\_picard\_kry\_f2003} solves the same problem as
   \id{kinLaplace\_picard\_kry}.
   \id{kinRoboKin\_dns\_f2003} solves the same problem as \id{kinRoboKin\_dns}.
 
-\item The directory {\em srcdir}\id{/examples/kinsol/F2003\_parallel}
-contains one example, \id{kin\_diagon\_kry\_f2003}, which solves
+\item The directory
+{\em srcdir}\id{/examples/kinsol/kin\_diagonal/fortran-mpi} contains one
+example, \id{kin\_diagon\_kry\_f2003}, which solves
 the same problem as \id{kinDiagon\_kry\_f2003}, but using MPI.
 \end{itemize}
 

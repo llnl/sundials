@@ -56,8 +56,9 @@ differ from one machine environment to another by as much as 10% to 20%.
 Serial examples
 ---------------
 
-Supplied in the ``examples/kinsol/serial`` directory are the following serial
-examples (using the :ref:`serial vector <NVectors.NVSerial>`):
+Supplied in the ``c`` variant directories under ``examples/kinsol`` are the
+following serial examples (using the :ref:`serial vector
+<NVectors.NVSerial>`):
 
 - ``kinRoberts_fp`` solves the backward Euler time step for a three-species
   chemical kinetics system, using the fixed point strategy.
@@ -110,8 +111,9 @@ examples (using the :ref:`serial vector <NVectors.NVSerial>`):
 MPI examples
 ------------
 
-Supplied in the ``examples/kinsol/parallel`` directory are the following
-parallel examples (using the :ref:`MPI parallel vector <NVectors.NVParallel>`):
+Supplied in the ``examples/kinsol/kin_food_web/c-mpi`` directory are the
+following parallel examples (using the :ref:`MPI parallel vector
+<NVectors.NVParallel>`):
 
 - ``kinFoodWeb_kry_p`` is a parallel implementation of ``kinFoodWeb_kry``.
 
@@ -122,14 +124,14 @@ parallel examples (using the :ref:`MPI parallel vector <NVectors.NVParallel>`):
 OpenMP example
 --------------
 
-Supplied in the ``examples/kinsol/C_openmp`` directory is an example
+Supplied in the ``examples/kinsol/kin_food_web/c-openmp`` directory is an example
 ``kinFoodweb_kry_omp``, which solves the same problem as ``kinFoodweb_kry``, but
 using the :ref:`OpenMP vector <NVectors.OpenMP>`.
 
 MPI + CUDA example
 ------------------
 
-Supplied in the ``examples/kinsol/CUDA_mpi`` directory is an example
+Supplied in the ``examples/kinsol/kin_em/cuda-mpi`` directory is an example
 ``kin_em_mpicuda``, which solves an expectation-maximization problem for mixture
 densities, using the :ref:`MPI+X <NVectors.MPIPlusX>` and :ref:`CUDA
 <NVectors.CUDA>` vectors.
@@ -137,14 +139,14 @@ densities, using the :ref:`MPI+X <NVectors.MPIPlusX>` and :ref:`CUDA
 C++ examples
 ------------
 
-- The directory ``examples/kinsol/CXX_parallel`` contains two
-  examples. ``kin_heat2D_nonlin_p`` solves a steady state 2D heat equation with
+- The ``cpp-mpi`` variant directories contain two examples.
+  ``kin_heat2D_nonlin_p`` solves a steady state 2D heat equation with
   an additional nonlinear term. This example is solved with fixed point
   iteration and illustrates the use of various orthogonalization methods with
   Anderson acceleration. ``kin_em_p`` solves the same problem as
   ``kin_em_mpicuda`` listed above.
 
-- The directory ``examples/kinsol/CXX_parhyp`` contains two examples,
+- The ``cpp-mpi-hypre`` variant directories contain two examples,
   ``kin_heat2D_nonlin_hypre_pfmg`` and ``kin_bratu2D_hyper_pfmg``. These use the
   *hypre* PFMG preconditioner, fixed point iteration, and Anderson acceleration.
 
@@ -154,13 +156,13 @@ Fortran examples
 The following are examples in Fortran, using the SUNDIALS Fortran interface
 modules, and are based on examples listed earlier:
 
-- The directory ``examples/kinsol/F2003_serial`` contains four examples:
+- The ``fortran`` variant directories contain four examples:
   ``kinDiagon_kry_f2003`` solves a simple diagonal test
   problem. ``kinLaplace_bnd_f2003`` solves the same problem as
   ``kinLaplace_bnd``. ``kinLaplace_picard_kry_f2003`` solves the same problem as
   ``kinLaplace_picard_kry``. ``kinRoboKin_dns_f2003`` solves the same problem as
   ``kinRoboKin_dns``.
 
-- The directory ``examples/kinsol/F2003_parallel`` contains one example,
+- The ``examples/kinsol/kin_diagonal/fortran-mpi`` directory contains one example,
   ``kin_diagon_kry_f2003``, which solves the same problem as
   ``kinDiagon_kry_f2003``, but using MPI.

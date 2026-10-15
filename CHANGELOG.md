@@ -12,6 +12,12 @@ variant contains its input files and reference output. The old IDA example
 Makefiles are no longer installed; use the installed CMakeLists.txt files
 instead.
 
+Reorganized the KINSOL examples by problem, with implementation language and
+optional third-party libraries represented by variant subdirectories. Each
+variant contains its input files and reference output. The old KINSOL example
+Makefiles are no longer installed; use the installed CMakeLists.txt files
+instead.
+
 Reorganized the CVODE examples by problem, with implementation language and
 optional third-party libraries represented by variant subdirectories. Each
 variant contains its input files, scripts, and reference output. The old CVODE
