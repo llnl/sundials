@@ -54,19 +54,19 @@ public:
   {}
 
   virtual size_t gridSize(size_t numWorkUnits   = 0,
-                          size_t /* blockDim */ = 0) const override
+                          size_t /* blockDim */ = 0) const final
   {
     /* ceil(n/m) = floor((n + m - 1) / m) */
     return (numWorkUnits + blockSize() - 1) / blockSize();
   }
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
-                           size_t /* gridDim */      = 0) const override
+                           size_t /* gridDim */      = 0) const final
   {
     return blockDim_;
   }
 
-  virtual ExecPolicy* clone() const override
+  virtual ExecPolicy* clone() const final
   {
     return static_cast<ExecPolicy*>(new ThreadDirectExecPolicy(*this));
   }
@@ -92,18 +92,18 @@ public:
   {}
 
   virtual size_t gridSize(size_t /* numWorkUnits */ = 0,
-                          size_t /* blockDim */     = 0) const override
+                          size_t /* blockDim */     = 0) const final
   {
     return gridDim_;
   }
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
-                           size_t /* gridDim */      = 0) const override
+                           size_t /* gridDim */      = 0) const final
   {
     return blockDim_;
   }
 
-  virtual ExecPolicy* clone() const override
+  virtual ExecPolicy* clone() const final
   {
     return static_cast<ExecPolicy*>(new GridStrideExecPolicy(*this));
   }
@@ -132,7 +132,7 @@ public:
   {}
 
   virtual size_t gridSize(size_t numWorkUnits   = 0,
-                          size_t /* blockDim */ = 0) const override
+                          size_t /* blockDim */ = 0) const final
   {
     if (gridDim_ == 0)
     {
@@ -142,12 +142,12 @@ public:
   }
 
   virtual size_t blockSize(size_t /* numWorkUnits */ = 0,
-                           size_t /* gridDim */      = 0) const override
+                           size_t /* gridDim */      = 0) const final
   {
     return blockDim_;
   }
 
-  virtual ExecPolicy* clone() const override
+  virtual ExecPolicy* clone() const final
   {
     return static_cast<ExecPolicy*>(new BlockReduceExecPolicy(*this));
   }
