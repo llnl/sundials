@@ -226,8 +226,8 @@ int SolveProblem(ProgramArgs* args, ProblemResult* result, SUNContext sunctx)
            method_name, (double)dt);
   solution_fp = fopen(fname, "w+");
 
-  snprintf(fname, sizeof fname, "ark_kepler_times_%s-dt-%.2e.txt",
-           method_name, (double)dt);
+  snprintf(fname, sizeof fname, "ark_kepler_times_%s-dt-%.2e.txt", method_name,
+           (double)dt);
   times_fp = fopen(fname, "w+");
 
   /* Print out starting energy, momentum before integrating */
