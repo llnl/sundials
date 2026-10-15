@@ -48,6 +48,7 @@ typedef struct
 
 typedef struct User_* User;
 
+/* Renamed from _User in the PETSc version to avoid C reserved name pattern */
 struct User_
 {
   PetscReal A, B;          /* Reaction coefficients */
