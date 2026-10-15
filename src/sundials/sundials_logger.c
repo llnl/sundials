@@ -76,7 +76,9 @@ static SUNErrCode sunLoggerGetFilePointer(SUNLogger logger, SUNLogLevel lvl,
   case SUN_LOGLEVEL_WARNING: *fp = logger->warning_fp; break;
   case SUN_LOGLEVEL_INFO: *fp = logger->info_fp; break;
   case SUN_LOGLEVEL_ERROR: *fp = logger->error_fp; break;
-  default: return SUN_ERR_UNREACHABLE;
+  case SUN_LOGLEVEL_ALL:
+  case SUN_LOGLEVEL_NONE:
+  default: *fp = NULL; return SUN_ERR_ARG_OUTOFRANGE;
   }
 
   return SUN_SUCCESS;
