@@ -469,6 +469,7 @@ ARKodeSPRKTable ARKodeSPRKTable_Load(ARKODE_SPRKMethodID id)
   case ARKODE_SPRK_YOSHIDA_6_8: return arkodeSymplecticYoshida6();
   case ARKODE_SPRK_SUZUKI_UMENO_8_16: return arkodeSymplecticSuzukiUmeno816();
   case ARKODE_SPRK_SOFRONIOU_10_36: return arkodeSymplecticSofroniou10();
+  case ARKODE_SPRK_NONE:
   default: return NULL;
   }
 }

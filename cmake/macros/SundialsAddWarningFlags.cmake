@@ -145,6 +145,7 @@ function(sundials_add_warning_flags lang)
           -Wmissing-include-dirs
           -Wdate-time
           -Wswitch-enum
+          -Wimplicit-fallthrough
           -Wredundant-decls)
 
         if(lang STREQUAL "C")
@@ -193,7 +194,6 @@ function(sundials_add_warning_flags lang)
           _flags
           -Wno-unknown-warning-option
           -Wdocumentation
-          -Wimplicit-fallthrough
           -Wloop-analysis
           -Wmissing-variable-declarations
           -Wreserved-identifier

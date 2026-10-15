@@ -2022,35 +2022,38 @@ void KINPrintInfo(SUNDIALS_MAYBE_UNUSED KINMem kin_mem, int info_code,
 
   if (info_code == PRNT_RETVAL)
   {
-    /* If info_code = PRNT_RETVAL, decode the numeric value */
+    va_list aq;
+    va_copy(aq, ap); /* keep a copy for formatting msg1 */
 
     ret = va_arg(ap, int);
 
     switch (ret)
     {
-    case KIN_SUCCESS: sprintf(retstr, "KIN_SUCCESS"); break;
-    case KIN_SYSFUNC_FAIL: sprintf(retstr, "KIN_SYSFUNC_FAIL"); break;
-    case KIN_REPTD_SYSFUNC_ERR: sprintf(retstr, "KIN_REPTD_SYSFUNC_ERR"); break;
-    case KIN_STEP_LT_STPTOL: sprintf(retstr, "KIN_STEP_LT_STPTOL"); break;
+    case KIN_SUCCESS: snprintf(retstr, sizeof(retstr), "KIN_SUCCESS"); break;
+    case KIN_SYSFUNC_FAIL: snprintf(retstr, sizeof(retstr), "KIN_SYSFUNC_FAIL"); break;
+    case KIN_REPTD_SYSFUNC_ERR: snprintf(retstr, sizeof(retstr), "KIN_REPTD_SYSFUNC_ERR"); break;
+    case KIN_STEP_LT_STPTOL: snprintf(retstr, sizeof(retstr), "KIN_STEP_LT_STPTOL"); break;
     case KIN_LINESEARCH_NONCONV:
-      sprintf(retstr, "KIN_LINESEARCH_NONCONV");
+      snprintf(retstr, sizeof(retstr), "KIN_LINESEARCH_NONCONV");
       break;
-    case KIN_LINESEARCH_BCFAIL: sprintf(retstr, "KIN_LINESEARCH_BCFAIL"); break;
-    case KIN_MAXITER_REACHED: sprintf(retstr, "KIN_MAXITER_REACHED"); break;
+    case KIN_LINESEARCH_BCFAIL: snprintf(retstr, sizeof(retstr), "KIN_LINESEARCH_BCFAIL"); break;
+    case KIN_MAXITER_REACHED: snprintf(retstr, sizeof(retstr), "KIN_MAXITER_REACHED"); break;
     case KIN_MXNEWT_5X_EXCEEDED:
-      sprintf(retstr, "KIN_MXNEWT_5X_EXCEEDED");
+      snprintf(retstr, sizeof(retstr), "KIN_MXNEWT_5X_EXCEEDED");
       break;
     case KIN_LINSOLV_NO_RECOVERY:
-      sprintf(retstr, "KIN_LINSOLV_NO_RECOVERY");
+      snprintf(retstr, sizeof(retstr), "KIN_LINSOLV_NO_RECOVERY");
       break;
-    case KIN_LSETUP_FAIL: sprintf(retstr, "KIN_PRECONDSET_FAILURE"); break;
-    case KIN_LSOLVE_FAIL: sprintf(retstr, "KIN_PRECONDSOLVE_FAILURE"); break;
+    case KIN_LSETUP_FAIL: snprintf(retstr, sizeof(retstr), "KIN_PRECONDSET_FAILURE"); break;
+    case KIN_LSOLVE_FAIL: snprintf(retstr, sizeof(retstr), "KIN_PRECONDSOLVE_FAILURE"); break;
+    default: snprintf(retstr, sizeof(retstr), "UNKNOWN"); break;
     }
 
     /* Compose the message */
+    vsnprintf(msg1, sizeof(msg1), msgfmt, aq);
+    va_end(aq);
 
-    sprintf(msg1, msgfmt, ret);
-    sprintf(msg, "%s (%s)", msg1, retstr);
+    snprintf(msg, sizeof(msg), "%s (%s)", msg1, retstr);
   }
   else
   {
