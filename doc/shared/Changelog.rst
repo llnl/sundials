@@ -3083,8 +3083,10 @@ and RAJA vector implementations respectively. Accordingly, the
 and ``libsundials_nvecmpicudaraja.lib`` files have been removed. Users should
 use the MPI+X vector in conjunction with the CUDA and RAJA vectors to replace
 the functionality. The necessary changes are minimal and should require few code
-modifications. See the example programs in ``examples/ida/mpicuda`` and
-``examples/ida/mpiraja`` for examples of how to use the MPI+X vector with the
+modifications. See the example programs in
+``examples/ida/ida_heat_2d/cuda-mpi`` and
+``examples/ida/ida_heat_2d/cpp-mpi-raja`` for examples of how to use the MPI+X
+vector with the
 CUDA and RAJA vectors, respectively.
 
 Made performance improvements to the CUDA vector. Users who utilize a

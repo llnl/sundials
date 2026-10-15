@@ -29,8 +29,9 @@ where
 The following lists summarize all examples distributed with {\ida}.
 
 \vspace{0.2in}\noindent
-The {\ida} distribution contains, in the {\em srcdir}\id{/examples/ida/serial}
-directory, the following nine serial examples (using the {\nvecs} module):
+The {\ida} distribution contains, in the \id{c} variant directories under
+{\em srcdir}\id{/examples/ida}, the following serial examples (using the
+{\nvecs} module):
 %%
 \begin{itemize}
 
@@ -95,8 +96,9 @@ directory, the following nine serial examples (using the {\nvecs} module):
 \end{itemize}
 
 \vspace{0.2in}\noindent
-In the {\em srcdir}\id{/examples/ida/parallel} directory, the {\ida} 
-distribution contains the following parallel examples 
+In the \id{c-mpi} variant directories under
+{\em srcdir}\id{/examples/ida}, the {\ida} distribution contains the
+following parallel examples
 (using the {\nvecp} module):
 %%
 \begin{itemize}
@@ -125,24 +127,24 @@ distribution contains the following parallel examples
 \end{itemize}
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/C\_openmp} directory contains the
+The {\em srcdir}\id{/examples/ida/ida\_food\_web/c-openmp} directory contains the
 two examples \id{idaFoodWeb\_bnd\_omp} and \id{idaFoodWeb\_kry\_omp},
 which are based on the FoodWeb examples listed above.  Both use the
 OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/cuda} directory contains the
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cuda} directory contains the
 example \id{idaHeat2D\_kry\_cuda}, based on \id{idaHeat2D\_kry\_p},
 but using the \id{cuda} {\nvector} module.
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/mpicuda} directory contains the
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cuda-mpi} directory contains the
 example \id{idaHeat2D\_kry\_p\_mpicuda}, based on \id{idaHeat2D\_kry\_p},
 but using the \id{cuda} {\nvector} module and MPI.
 
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/petsc} directory contains the
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/c-mpi-petsc} directory contains the
 examples \id{idaHeat2D\_petsc\_spgmr} and \id{idaHeat2D\_petsc\_snes},
 based on \id{idaHeat2D\_kry\_p}, but using the Petsc linear and
 nonlinear solvers.
@@ -153,14 +155,14 @@ Fortran interface modules, and based on examples listed earlier:
 
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_serial}
-contains the two examples \id{idaRoberts\_dns\_f2003} and
+\item The \id{fortran} variant directories contain the two examples
+\id{idaRoberts\_dns\_f2003} and
 \id{idaHeat2D\_kry\_f2003}.
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_parallel}
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/fortran-mpi}
 contains the example \id{idaHeat2D\_kry\_bbd\_f2003}.
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_openmp}
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/fortran-openmp}
 contains the example \id{idaHeat2D\_kry\_omp\_f2003}.
 
 \end{itemize}
@@ -171,13 +173,13 @@ listed earlier:
 
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/ida/\_raja} contains
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp-raja} contains
 the example \id{idaHeat2D\_kry\_raja}.
 
-\item The directory {\em srcdir}\id{/examples/ida/\_mpiraja} contains
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp-mpi-raja} contains
 the example \id{idaHeat2D\_kry\_p\_mpiraja}.
 
-\item The directory {\em srcdir}\id{/examples/ida/\_trilinos} contains
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp-trilinos} contains
 two examples \id{idaHeat2D\_kry\_tpetra} and \id{idaHeat2D\_kry\_p\_tpetra}.
 
 \end{itemize}
