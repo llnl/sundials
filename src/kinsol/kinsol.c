@@ -2030,22 +2030,36 @@ void KINPrintInfo(SUNDIALS_MAYBE_UNUSED KINMem kin_mem, int info_code,
     switch (ret)
     {
     case KIN_SUCCESS: snprintf(retstr, sizeof(retstr), "KIN_SUCCESS"); break;
-    case KIN_SYSFUNC_FAIL: snprintf(retstr, sizeof(retstr), "KIN_SYSFUNC_FAIL"); break;
-    case KIN_REPTD_SYSFUNC_ERR: snprintf(retstr, sizeof(retstr), "KIN_REPTD_SYSFUNC_ERR"); break;
-    case KIN_STEP_LT_STPTOL: snprintf(retstr, sizeof(retstr), "KIN_STEP_LT_STPTOL"); break;
+    case KIN_SYSFUNC_FAIL:
+      snprintf(retstr, sizeof(retstr), "KIN_SYSFUNC_FAIL");
+      break;
+    case KIN_REPTD_SYSFUNC_ERR:
+      snprintf(retstr, sizeof(retstr), "KIN_REPTD_SYSFUNC_ERR");
+      break;
+    case KIN_STEP_LT_STPTOL:
+      snprintf(retstr, sizeof(retstr), "KIN_STEP_LT_STPTOL");
+      break;
     case KIN_LINESEARCH_NONCONV:
       snprintf(retstr, sizeof(retstr), "KIN_LINESEARCH_NONCONV");
       break;
-    case KIN_LINESEARCH_BCFAIL: snprintf(retstr, sizeof(retstr), "KIN_LINESEARCH_BCFAIL"); break;
-    case KIN_MAXITER_REACHED: snprintf(retstr, sizeof(retstr), "KIN_MAXITER_REACHED"); break;
+    case KIN_LINESEARCH_BCFAIL:
+      snprintf(retstr, sizeof(retstr), "KIN_LINESEARCH_BCFAIL");
+      break;
+    case KIN_MAXITER_REACHED:
+      snprintf(retstr, sizeof(retstr), "KIN_MAXITER_REACHED");
+      break;
     case KIN_MXNEWT_5X_EXCEEDED:
       snprintf(retstr, sizeof(retstr), "KIN_MXNEWT_5X_EXCEEDED");
       break;
     case KIN_LINSOLV_NO_RECOVERY:
       snprintf(retstr, sizeof(retstr), "KIN_LINSOLV_NO_RECOVERY");
       break;
-    case KIN_LSETUP_FAIL: snprintf(retstr, sizeof(retstr), "KIN_PRECONDSET_FAILURE"); break;
-    case KIN_LSOLVE_FAIL: snprintf(retstr, sizeof(retstr), "KIN_PRECONDSOLVE_FAILURE"); break;
+    case KIN_LSETUP_FAIL:
+      snprintf(retstr, sizeof(retstr), "KIN_PRECONDSET_FAILURE");
+      break;
+    case KIN_LSOLVE_FAIL:
+      snprintf(retstr, sizeof(retstr), "KIN_PRECONDSOLVE_FAILURE");
+      break;
     default: snprintf(retstr, sizeof(retstr), "UNKNOWN"); break;
     }
 
