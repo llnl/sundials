@@ -17,7 +17,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the header file for a generic matrix package.
- * It defines the SUNMatrix structure (_generic_SUNMatrix) which
+ * It defines the SUNMatrix structure (SUNMatrix_) which
  * contains the following fields:
  *   - an implementation-dependent 'content' field which contains
  *     the description and actual data of the matrix
@@ -27,8 +27,8 @@
  * This header file contains:
  *   - enumeration constants for all SUNDIALS-defined matrix types,
  *     as well as a generic type for user-supplied matrix types,
- *   - type declarations for the _generic_SUNMatrix and
- *     _generic_SUNMatrix_Ops structures, as well as references to
+ *   - type declarations for the SUNMatrix_ and
+ *     SUNMatrix_Ops_ structures, as well as references to
  *     pointers to such structures (SUNMatrix), and
  *   - prototypes for the matrix functions which operate on
  *     SUNMatrix objects.
@@ -84,13 +84,13 @@ typedef enum SUNMatrix_ID SUNMatrix_ID;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to SUNMatrix_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNMatrix_Ops* SUNMatrix_Ops;
+typedef SUNDIALS_STRUCT SUNMatrix_Ops_* SUNMatrix_Ops;
 
 /* Forward reference for pointer to SUNMatrix object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNMatrix* SUNMatrix;
+typedef SUNDIALS_STRUCT SUNMatrix_* SUNMatrix;
 
 /* Structure containing function pointers to matrix operations  */
-struct _generic_SUNMatrix_Ops
+struct SUNMatrix_Ops_
 {
   SUNMatrix_ID (*getid)(SUNMatrix);
   SUNMatrix (*clone)(SUNMatrix);
@@ -107,7 +107,7 @@ struct _generic_SUNMatrix_Ops
 /* A matrix is a structure with an implementation-dependent
    'content' field, and a pointer to a structure of matrix
    operations corresponding to that implementation.  */
-struct _generic_SUNMatrix
+struct SUNMatrix_
 {
   void* content;
   SUNMatrix_Ops ops;

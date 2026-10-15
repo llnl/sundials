@@ -46,7 +46,7 @@ extern "C" {
 
 /* Hermite interpolation structure */
 
-struct _ARKInterpContent_Hermite
+struct ARKInterpContent_Hermite_
 {
   int degree;       /* maximum interpolant degree to use           */
   N_Vector fold;    /* f(t,y) at beginning of last successful step */
@@ -58,7 +58,7 @@ struct _ARKInterpContent_Hermite
   sunrealtype h;    /* last successful step size                   */
 };
 
-typedef struct _ARKInterpContent_Hermite* ARKInterpContent_Hermite;
+typedef struct ARKInterpContent_Hermite_* ARKInterpContent_Hermite;
 
 /* Hermite structure accessor macros */
 
@@ -93,7 +93,7 @@ int arkInterpEvaluate_Hermite(ARKodeMem ark_mem, ARKInterp interp,
 
 /* Lagrange interpolation structure */
 
-struct _ARKInterpContent_Lagrange
+struct ARKInterpContent_Lagrange_
 {
   int nmax;           /* number of previous solutions to use      */
   int nmaxalloc;      /* vectors allocated for previous solutions */
@@ -103,7 +103,7 @@ struct _ARKInterpContent_Lagrange
   sunrealtype tround; /* unit roundoff for 't' values             */
 };
 
-typedef struct _ARKInterpContent_Lagrange* ARKInterpContent_Lagrange;
+typedef struct ARKInterpContent_Lagrange_* ARKInterpContent_Lagrange;
 
 /* Lagrange structure accessor macros */
 

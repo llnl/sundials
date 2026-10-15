@@ -31,7 +31,7 @@
 %nvector_impl(Pthreads)
 
 // ignore the Pthreads_Data struct
-%ignore _Pthreads_Data;
+%ignore Pthreads_Data_;
 
 // Process and wrap functions in the following files
 %include "nvector/nvector_pthreads.h"

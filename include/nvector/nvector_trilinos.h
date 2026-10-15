@@ -60,14 +60,14 @@ extern "C" {
  */
 
 /*
- * Dummy _N_VectorContent_Trilinos structure is used for
+ * Dummy N_VectorContent_Trilinos_ structure is used for
  * interfacing C with C++ code
  */
 
-struct _N_VectorContent_Trilinos
+struct N_VectorContent_Trilinos_
 {};
 
-typedef struct _N_VectorContent_Trilinos* N_VectorContent_Trilinos;
+typedef struct N_VectorContent_Trilinos_* N_VectorContent_Trilinos;
 
 /*
  * -----------------------------------------------------------------

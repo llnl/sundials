@@ -45,7 +45,7 @@ extern "C" {
  * Dense implementation of SUNMatrix
  * ---------------------------------- */
 
-struct _SUNMatrixContent_Dense
+struct SUNMatrixContent_Dense_
 {
   sunindextype M;
   sunindextype N;
@@ -54,7 +54,7 @@ struct _SUNMatrixContent_Dense
   sunrealtype** cols;
 };
 
-typedef struct _SUNMatrixContent_Dense* SUNMatrixContent_Dense;
+typedef struct SUNMatrixContent_Dense_* SUNMatrixContent_Dense;
 
 /* ------------------------------------
  * Macros for access to SUNMATRIX_DENSE

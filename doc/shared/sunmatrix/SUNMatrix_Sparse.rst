@@ -28,7 +28,7 @@ structure:
 
 .. code-block:: c
 
-   struct _SUNMatrixContent_Sparse {
+   struct SUNMatrixContent_Sparse_ {
      sunindextype M;
      sunindextype N;
      sunindextype NNZ;

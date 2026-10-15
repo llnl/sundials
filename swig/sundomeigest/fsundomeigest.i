@@ -29,5 +29,5 @@
 
 // Macro for creating an interface to an SUNDomEigEstimator
 %define %sundomeigest_impl(TYPE)
-  %ignore SUNDomEigEstimatorContent_## TYPE ##;
+  %ignore SUNDomEigEstimatorContent_## TYPE ##_;
 %enddef

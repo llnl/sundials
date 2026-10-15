@@ -60,7 +60,7 @@ extern "C" {
  * ------------------------------ */
 
 /* Define SUNBraidApp content */
-struct _ARKBraidContent
+struct ARKBraidContent_
 {
   /* ARKODE memory structure */
   ARKodeMem ark_mem;
@@ -84,7 +84,7 @@ struct _ARKBraidContent
   N_Vector yout;
 };
 
-typedef struct _ARKBraidContent* ARKBraidContent;
+typedef struct ARKBraidContent_* ARKBraidContent;
 
 #ifdef __cplusplus
 }

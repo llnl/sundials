@@ -53,7 +53,7 @@ extern "C" {
    ManyVector implementation of N_Vector
    ----------------------------------------------------------------- */
 
-struct _N_VectorContent_MPIManyVector
+struct N_VectorContent_MPIManyVector_
 {
   MPI_Comm comm;               /* overall MPI communicator        */
   sunindextype num_subvectors; /* number of vectors attached       */
@@ -62,7 +62,7 @@ struct _N_VectorContent_MPIManyVector
   sunbooleantype own_data;     /* flag indicating data ownership   */
 };
 
-typedef struct _N_VectorContent_MPIManyVector* N_VectorContent_MPIManyVector;
+typedef struct N_VectorContent_MPIManyVector_* N_VectorContent_MPIManyVector;
 
 /* -----------------------------------------------------------------
    functions exported by ManyVector

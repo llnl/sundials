@@ -143,7 +143,7 @@ SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix Amat,
 
   // Create content
   S->content = (SUNLinearSolverContent_OneMklDense)malloc(
-    sizeof(_SUNLinearSolverContent_OneMklDense));
+    sizeof(SUNLinearSolverContent_OneMklDense_));
   if (!(S->content))
   {
     SUNDIALS_DEBUG_ERROR("Content allocation failed\n");

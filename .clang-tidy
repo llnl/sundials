@@ -14,12 +14,21 @@
 # ------------------------------------------------------------------------------
 ---
 #Checks: '-*,clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,-cppcoreguidelines-explicit-virtual-functions,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-avoid-magic-numbers,google-*,-google-explicit-constructor,modernize-*,-modernize-use-trailing-return-type,mpi-*,readability-*,-readability-magic-numbers,-readability-identifier-length'
-Checks: '-*,readability-braces-around-statements'
+Checks: '-*,readability-braces-around-statements,bugprone-reserved-identifier'
 WarningsAsErrors: ''
-HeaderFilterRegex: ''
+# Report diagnostics in SUNDIALS headers but not in third-party headers.
+HeaderFilterRegex: '.*/(include|src)/(arkode|cvodes?|idas?|kinsol|nvector|sun[a-z]+)/.*'
 AnalyzeTemporaryDtors: false
 FormatStyle: none
 CheckOptions:
+  # Semicolon-separated regexes of reserved names SUNDIALS may define on
+  # purpose, e.g. feature-test macros.
+  - key:             bugprone-reserved-identifier.AllowedIdentifiers
+    value:           '^_POSIX_C_SOURCE$;^_XOPEN_SOURCE$;^_GNU_SOURCE$;^_DEFAULT_SOURCE$;^_USE_MATH_DEFINES$;^_CRT_SECURE_NO_WARNINGS$'
+  - key:             bugprone-reserved-identifier.Invert
+    value:           'false'
+  - key:             bugprone-reserved-identifier.AggressiveDependentMemberLookup
+    value:           'false'
   - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value:           'true'
   - key:             llvm-else-after-return.WarnOnConditionVariables

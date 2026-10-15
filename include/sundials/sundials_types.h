@@ -66,17 +66,17 @@ extern "C" {
 
 /*
  *------------------------------------------------------------------
- * Macro _SUNDIALS_STRUCT_
- * The _SUNDIALS_STRUCT_ macro is defined as a `struct` unless
+ * Macro SUNDIALS_STRUCT
+ * The SUNDIALS_STRUCT macro is defined as a `struct` unless
  * generating the SWIG interfaces - in that case it is defined as
  * nothing. This is needed to work around a bug in SWIG which prevents
  * it from properly parsing our generic module structures.
  *------------------------------------------------------------------
  */
 #ifdef SWIG
-#define _SUNDIALS_STRUCT_
+#define SUNDIALS_STRUCT
 #else
-#define _SUNDIALS_STRUCT_ struct
+#define SUNDIALS_STRUCT struct
 #endif
 
 /*

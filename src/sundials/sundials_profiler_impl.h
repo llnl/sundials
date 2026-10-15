@@ -52,7 +52,7 @@
 #if defined(SUNDIALS_HAVE_POSIX_TIMERS)
 typedef struct timespec sunTimespec;
 #else
-typedef struct _sunTimespec
+typedef struct sunTimespec_
 {
   long int tv_sec;
   long int tv_nsec;
@@ -64,7 +64,7 @@ typedef struct _sunTimespec
   A private structure holding timing information.
  */
 
-struct _sunTimerStruct
+struct sunTimerStruct_
 {
   sunTimespec* tic;
   sunTimespec* toc;
@@ -74,7 +74,7 @@ struct _sunTimerStruct
   long count;
 };
 
-typedef struct _sunTimerStruct sunTimerStruct;
+typedef struct sunTimerStruct_ sunTimerStruct;
 
 struct SUNProfiler_
 {

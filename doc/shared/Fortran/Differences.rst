@@ -33,7 +33,7 @@ Creating generic SUNDIALS objects
 In the C API a SUNDIALS class, such as an :c:type:`N_Vector`, is actually a pointer to
 an underlying C struct. However, in the Fortran 2003 interface, the derived type
 is bound to the C struct, not the pointer to the struct. For example,
-``type(N_Vector)`` is bound to the C struct ``_generic_N_Vector`` not the
+``type(N_Vector)`` is bound to the C struct ``N_Vector_`` not the
 ``N_Vector`` type. The consequence of this is that creating and declaring SUNDIALS
 objects in Fortran is nuanced. This is illustrated in the code snippets below:
 

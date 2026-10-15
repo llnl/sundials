@@ -62,7 +62,7 @@ extern "C" {
  * Sparse Implementation of SUNMATRIX_SPARSE
  * ------------------------------------------ */
 
-struct _SUNMatrixContent_Sparse
+struct SUNMatrixContent_Sparse_
 {
   sunindextype M;
   sunindextype N;
@@ -80,7 +80,7 @@ struct _SUNMatrixContent_Sparse
   sunindextype** rowptrs;
 };
 
-typedef struct _SUNMatrixContent_Sparse* SUNMatrixContent_Sparse;
+typedef struct SUNMatrixContent_Sparse_* SUNMatrixContent_Sparse;
 
 /* ---------------------------------------
  * Macros for access to SUNMATRIX_SPARSE

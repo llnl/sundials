@@ -72,9 +72,9 @@ The Fortran specific section is in the file `swig/Doc/Manual/Fortran.html`.
 
 ## Other notes
 
-The `_SUNDIALS_STRUCT_` macro (defined in `sundials_types.h`) must be used when
+The `SUNDIALS_STRUCT` macro (defined in `sundials_types.h`) must be used when
 declaring a `struct` which will be interfaced to in Swig
-(e.g. the `_generic_N_Vector` structure). The macro is defined as a `struct`
+(e.g. the `N_Vector_` structure). The macro is defined as a `struct`
 unless generating the SWIG interfaces - in that case it is defined as nothing.
 This is needed to work around a bug in SWIG which prevents it from properly parsing
 our generic module structures.

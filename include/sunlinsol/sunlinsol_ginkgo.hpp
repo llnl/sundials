@@ -189,8 +189,8 @@ public:
                SUNContext sunctx)
     : gko_solver_factory_(gko_solver_factory),
       gko_solver_(nullptr),
-      sunlinsol_(std::make_unique<_generic_SUNLinearSolver>()),
-      sunlinsol_ops_(std::make_unique<_generic_SUNLinearSolver_Ops>()),
+      sunlinsol_(std::make_unique<SUNLinearSolver_>()),
+      sunlinsol_ops_(std::make_unique<SUNLinearSolver_Ops_>()),
       res_norm_(sunrealtype{0.0})
   {
     sunlinsol_->content = this;
@@ -350,8 +350,8 @@ public:
 private:
   std::shared_ptr<typename GkoSolverType::Factory> gko_solver_factory_;
   std::unique_ptr<GkoSolverType> gko_solver_;
-  std::unique_ptr<_generic_SUNLinearSolver> sunlinsol_;
-  std::unique_ptr<_generic_SUNLinearSolver_Ops> sunlinsol_ops_;
+  std::unique_ptr<SUNLinearSolver_> sunlinsol_;
+  std::unique_ptr<SUNLinearSolver_Ops_> sunlinsol_ops_;
   int iter_count_{};
   sunrealtype res_norm_{};
 };

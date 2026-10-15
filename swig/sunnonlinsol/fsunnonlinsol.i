@@ -29,5 +29,5 @@
 
 // Macro for creating an interface to an N_Vector
 %define %sunnonlinsol_impl(TYPE)
-  %ignore _SUNNonlinearSolverContent_## TYPE ##;
+  %ignore SUNNonlinearSolverContent_## TYPE ##_;
 %enddef

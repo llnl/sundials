@@ -38,12 +38,12 @@ that has an implementation-dependent *content* field containing
 the description and actual data of the matrix, and an *ops* field
 pointing to a structure with generic matrix operations.
 
-A :c:type:`SUNMatrix` is a pointer to the :c:struct:`_generic_SUNMatrix`
+A :c:type:`SUNMatrix` is a pointer to the :c:struct:`SUNMatrix_`
 structure:
 
-.. c:type:: struct _generic_SUNMatrix *SUNMatrix
+.. c:type:: struct SUNMatrix_ *SUNMatrix
 
-.. c:struct:: _generic_SUNMatrix
+.. c:struct:: SUNMatrix_
 
    The structure defining the SUNDIALS matrix class.
 
@@ -51,7 +51,7 @@ structure:
 
       Pointer to matrix-specific member data
 
-   .. c:member:: struct _generic_SUNMatrix_Ops *ops
+   .. c:member:: struct SUNMatrix_Ops_ *ops
 
       A virtual table of matrix operations provided by a specific
       implementation
@@ -62,7 +62,7 @@ structure:
 
 The virtual table structure is defined as
 
-.. c:struct:: _generic_SUNMatrix_Ops
+.. c:struct:: SUNMatrix_Ops_
 
    The structure defining :c:type:`SUNMatrix` operations.
 

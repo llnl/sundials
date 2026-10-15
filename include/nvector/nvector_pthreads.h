@@ -60,7 +60,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_Pthreads
+struct N_VectorContent_Pthreads_
 {
   sunindextype length;     /* vector length           */
   sunbooleantype own_data; /* data ownership flag     */
@@ -68,7 +68,7 @@ struct _N_VectorContent_Pthreads
   int num_threads;         /* number of POSIX threads */
 };
 
-typedef struct _N_VectorContent_Pthreads* N_VectorContent_Pthreads;
+typedef struct N_VectorContent_Pthreads_* N_VectorContent_Pthreads;
 
 /* Structure to hold parallelization information for each thread when
    calling "companion" functions to compute vector operations. The
@@ -76,7 +76,7 @@ typedef struct _N_VectorContent_Pthreads* N_VectorContent_Pthreads;
    sunrealtype variables are the same for each thread, and the mutex
    variable is used to lock variables in reductions. */
 
-struct _Pthreads_Data
+struct Pthreads_Data_
 {
   sunindextype start;            /* starting index for loop  */
   sunindextype end;              /* ending index for loop    */
@@ -102,7 +102,7 @@ struct _Pthreads_Data
   N_Vector** ZZ2; /* array of vector arrays in fused op */
 };
 
-typedef struct _Pthreads_Data Pthreads_Data;
+typedef struct Pthreads_Data_ Pthreads_Data;
 
 /*
  * -----------------------------------------------------------------

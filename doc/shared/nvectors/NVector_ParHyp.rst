@@ -33,7 +33,7 @@ HYPRE parallel vector object *x*.
 
 .. code-block:: c
 
-   struct _N_VectorContent_ParHyp {
+   struct N_VectorContent_ParHyp_ {
      sunindextype local_length;
      sunindextype global_length;
      sunbooleantype own_data;

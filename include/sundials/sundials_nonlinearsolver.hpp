@@ -29,7 +29,7 @@
 namespace sundials {
 namespace impl {
 using BaseNonlinearSolver =
-  BaseObject<_generic_SUNNonlinearSolver, _generic_SUNNonlinearSolver_Ops>;
+  BaseObject<SUNNonlinearSolver_, SUNNonlinearSolver_Ops_>;
 } // namespace impl
 
 namespace experimental {

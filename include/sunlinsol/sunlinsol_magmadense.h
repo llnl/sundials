@@ -43,7 +43,7 @@ extern "C" {
  * MAGMA dense implementation of SUNLinearSolver
  * ----------------------------------------------- */
 
-struct _SUNLinearSolverContent_MagmaDense
+struct SUNLinearSolverContent_MagmaDense_
 {
   int last_flag;
   sunbooleantype async;
@@ -57,7 +57,7 @@ struct _SUNLinearSolverContent_MagmaDense
   magma_queue_t q;
 };
 
-typedef struct _SUNLinearSolverContent_MagmaDense* SUNLinearSolverContent_MagmaDense;
+typedef struct SUNLinearSolverContent_MagmaDense_* SUNLinearSolverContent_MagmaDense;
 
 SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_MagmaDense(N_Vector y, SUNMatrix A,
                                                      SUNContext sunctx);

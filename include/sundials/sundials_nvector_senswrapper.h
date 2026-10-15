@@ -40,14 +40,14 @@ extern "C" {
   PART I: NVector wrapper content structure
   ============================================================================*/
 
-struct _N_VectorContent_SensWrapper
+struct N_VectorContent_SensWrapper_
 {
   N_Vector* vecs;          /* array of wrapped vectors                */
   int nvecs;               /* number of wrapped vectors               */
   sunbooleantype own_vecs; /* flag indicating if wrapper owns vectors */
 };
 
-typedef struct _N_VectorContent_SensWrapper* N_VectorContent_SensWrapper;
+typedef struct N_VectorContent_SensWrapper_* N_VectorContent_SensWrapper;
 
 /*==============================================================================
   PART II: Macros to access wrapper content

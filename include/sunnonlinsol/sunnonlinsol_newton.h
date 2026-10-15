@@ -37,7 +37,7 @@ extern "C" {
  * I. Content structure
  * ---------------------------------------------------------------------------*/
 
-struct _SUNNonlinearSolverContent_Newton
+struct SUNNonlinearSolverContent_Newton_
 {
   /* functions provided by the integrator */
   SUNNonlinSolSysFn Sys;        /* nonlinear system residual function         */
@@ -63,7 +63,7 @@ struct _SUNNonlinearSolverContent_Newton
   void* ctest_data; /* data to pass to convergence test function              */
 };
 
-typedef struct _SUNNonlinearSolverContent_Newton* SUNNonlinearSolverContent_Newton;
+typedef struct SUNNonlinearSolverContent_Newton_* SUNNonlinearSolverContent_Newton;
 
 /* -----------------------------------------------------------------------------
  * II: Exported functions

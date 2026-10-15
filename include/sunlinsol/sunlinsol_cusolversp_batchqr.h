@@ -38,7 +38,7 @@ extern "C" {
  * ----------------------------------------------------------------------------
  */
 
-struct _SUNLinearSolverContent_cuSolverSp_batchQR
+struct SUNLinearSolverContent_cuSolverSp_batchQR_
 {
   int last_flag; /* last return flag                                     */
   sunbooleantype first_factorize; /* is this the first factorization?                     */
@@ -50,7 +50,7 @@ struct _SUNLinearSolverContent_cuSolverSp_batchQR
   const char* desc; /* description of this linear solver                    */
 };
 
-typedef struct _SUNLinearSolverContent_cuSolverSp_batchQR*
+typedef struct SUNLinearSolverContent_cuSolverSp_batchQR_*
   SUNLinearSolverContent_cuSolverSp_batchQR;
 
 /*

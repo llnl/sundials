@@ -67,7 +67,7 @@ struct ARKodeSPRKTableMem
   sunrealtype* ahat;
 };
 
-typedef _SUNDIALS_STRUCT_ ARKodeSPRKTableMem* ARKodeSPRKTable;
+typedef SUNDIALS_STRUCT ARKodeSPRKTableMem* ARKodeSPRKTable;
 
 /* Utility routines to allocate/free/output SPRK structures */
 SUNDIALS_EXPORT

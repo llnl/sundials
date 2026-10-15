@@ -31,9 +31,9 @@
  * the routine calling a SUNQRAdd function.
  * ---------------------------------------------------------------------------*/
 
-typedef struct _SUNQRData* SUNQRData;
+typedef struct SUNQRData_* SUNQRData;
 
-struct _SUNQRData
+struct SUNQRData_
 {
   N_Vector vtemp;
   N_Vector vtemp2;

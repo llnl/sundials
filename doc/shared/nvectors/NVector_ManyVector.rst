@@ -81,7 +81,7 @@ the beginning of the array of subvectors, and a boolean flag
 
 .. code-block:: c
 
-   struct _N_VectorContent_ManyVector {
+   struct N_VectorContent_ManyVector_ {
      sunindextype  num_subvectors;  /* number of vectors attached      */
      sunindextype  global_length;   /* overall manyvector length       */
      N_Vector*     subvec_array;    /* pointer to N_Vector array       */

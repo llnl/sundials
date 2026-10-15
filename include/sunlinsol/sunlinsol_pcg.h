@@ -43,7 +43,7 @@ extern "C" {
  * PCG Implementation of SUNLinearSolver
  * -------------------------------------- */
 
-struct _SUNLinearSolverContent_PCG
+struct SUNLinearSolverContent_PCG_
 {
   int maxl;
   int pretype;
@@ -65,7 +65,7 @@ struct _SUNLinearSolverContent_PCG
   N_Vector Ap;
 };
 
-typedef struct _SUNLinearSolverContent_PCG* SUNLinearSolverContent_PCG;
+typedef struct SUNLinearSolverContent_PCG_* SUNLinearSolverContent_PCG;
 
 /* -------------------------------------
  * Exported Functions for SUNLINSOL_PCG

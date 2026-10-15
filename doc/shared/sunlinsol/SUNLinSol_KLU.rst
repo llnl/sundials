@@ -174,7 +174,7 @@ field of a ``SUNLinearSolver`` to be the following structure:
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_KLU {
+   struct SUNLinearSolverContent_KLU_ {
      int              last_flag;
      int              first_factorize;
      sun_klu_symbolic *symbolic;

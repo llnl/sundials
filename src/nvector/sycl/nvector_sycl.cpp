@@ -68,7 +68,7 @@ using namespace sundials::sycl;
  * Private structure definition
  * -------------------------------------------------------------------------- */
 
-struct _N_PrivateVectorContent_Sycl
+struct N_PrivateVectorContent_Sycl_
 {
   sunbooleantype use_managed_mem; /* do data pointers use managed memory */
 
@@ -84,7 +84,7 @@ struct _N_PrivateVectorContent_Sycl
   size_t fused_buffer_offset;  /* current offset into the buffer */
 };
 
-typedef struct _N_PrivateVectorContent_Sycl* N_PrivateVectorContent_Sycl;
+typedef struct N_PrivateVectorContent_Sycl_* N_PrivateVectorContent_Sycl;
 
 /* --------------------------------------------------------------------------
  * Utility functions
@@ -187,7 +187,7 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   v->ops->nvprintfile = N_VPrintFile_Sycl;
 
   /* Allocate content structure */
-  v->content = (N_VectorContent_Sycl)malloc(sizeof(_N_VectorContent_Sycl));
+  v->content = (N_VectorContent_Sycl)malloc(sizeof(N_VectorContent_Sycl_));
   if (v->content == NULL)
   {
     SUNDIALS_DEBUG_PRINT(
@@ -198,7 +198,7 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
 
   /* Allocate private content structure */
   NVEC_SYCL_CONTENT(v)->priv = NULL;
-  NVEC_SYCL_CONTENT(v)->priv = malloc(sizeof(_N_PrivateVectorContent_Sycl));
+  NVEC_SYCL_CONTENT(v)->priv = malloc(sizeof(N_PrivateVectorContent_Sycl_));
   if (NVEC_SYCL_CONTENT(v)->priv == NULL)
   {
     SUNDIALS_DEBUG_PRINT(

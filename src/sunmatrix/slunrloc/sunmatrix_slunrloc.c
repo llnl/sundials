@@ -135,7 +135,7 @@ SUNMatrix SUNMatrix_SLUNRloc(SuperMatrix* A_super, gridinfo_t* grid,
   /* Create content */
   content = NULL;
   content =
-    (SUNMatrixContent_SLUNRloc)malloc(sizeof(struct _SUNMatrixContent_SLUNRloc));
+    (SUNMatrixContent_SLUNRloc)malloc(sizeof(struct SUNMatrixContent_SLUNRloc_));
   if (content == NULL)
   {
     SUNMatDestroy(A);

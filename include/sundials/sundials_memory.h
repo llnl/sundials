@@ -45,7 +45,7 @@ typedef enum SUNMemoryType SUNMemoryType;
  * and its ownership.
  */
 
-typedef _SUNDIALS_STRUCT_ SUNMemory_* SUNMemory;
+typedef SUNDIALS_STRUCT SUNMemory_* SUNMemory;
 
 struct SUNMemory_
 {
@@ -64,8 +64,8 @@ SUNDIALS_EXPORT SUNMemory SUNMemoryNewEmpty(SUNContext sunctx);
  * and copy SUNMemory.
  */
 
-typedef _SUNDIALS_STRUCT_ SUNMemoryHelper_Ops_* SUNMemoryHelper_Ops;
-typedef _SUNDIALS_STRUCT_ SUNMemoryHelper_* SUNMemoryHelper;
+typedef SUNDIALS_STRUCT SUNMemoryHelper_Ops_* SUNMemoryHelper_Ops;
+typedef SUNDIALS_STRUCT SUNMemoryHelper_* SUNMemoryHelper;
 
 struct SUNMemoryHelper_
 {

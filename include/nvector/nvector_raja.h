@@ -41,7 +41,7 @@ extern "C" {
    arrays of 'sunrealtype' components, a flag indicating ownership of
    the data, and a private data pointer  */
 
-struct _N_VectorContent_Raja
+struct N_VectorContent_Raja_
 {
   sunindextype length;
   sunbooleantype own_helper;
@@ -51,7 +51,7 @@ struct _N_VectorContent_Raja
   void* priv; /* 'private' data */
 };
 
-typedef struct _N_VectorContent_Raja* N_VectorContent_Raja;
+typedef struct N_VectorContent_Raja_* N_VectorContent_Raja;
 
 /*
  * -----------------------------------------------------------------

@@ -54,14 +54,14 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-struct _N_VectorContent_Serial
+struct N_VectorContent_Serial_
 {
   sunindextype length;     /* vector length       */
   sunbooleantype own_data; /* data ownership flag */
   sunrealtype* data;       /* data array          */
 };
 
-typedef struct _N_VectorContent_Serial* N_VectorContent_Serial;
+typedef struct N_VectorContent_Serial_* N_VectorContent_Serial;
 
 /*
  * -----------------------------------------------------------------

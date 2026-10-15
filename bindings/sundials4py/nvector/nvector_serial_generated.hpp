@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_N_VectorContent_Serial =
-  nb::class_<_N_VectorContent_Serial>(m, "_N_VectorContent_Serial", "")
+auto pyClassN_VectorContent_Serial_ =
+  nb::class_<N_VectorContent_Serial_>(m, "N_VectorContent_Serial_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

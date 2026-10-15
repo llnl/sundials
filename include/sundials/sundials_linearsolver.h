@@ -17,7 +17,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the header file for a generic linear solver package.
- * It defines the SUNLinearSolver structure (_generic_SUNLinearSolver)
+ * It defines the SUNLinearSolver structure (SUNLinearSolver_)
  * which contains the following fields:
  *   - an implementation-dependent 'content' field which contains
  *     any internal data required by the solver
@@ -34,8 +34,8 @@
  *   - enumeration constants for all SUNDIALS-defined linear solver
  *     types, as well as a generic type for user-supplied linear
  *     solver types,
- *   - type declarations for the _generic_SUNLinearSolver and
- *     _generic_SUNLinearSolver_Ops structures, as well as references
+ *   - type declarations for the SUNLinearSolver_ and
+ *     SUNLinearSolver_Ops_ structures, as well as references
  *     to pointers to such structures (SUNLinearSolver),
  *   - prototypes for the linear solver functions which operate
  *     on/by SUNLinearSolver objects, and
@@ -116,13 +116,13 @@ typedef enum SUNLinearSolver_ID SUNLinearSolver_ID;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to SUNLinearSolver_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNLinearSolver_Ops* SUNLinearSolver_Ops;
+typedef SUNDIALS_STRUCT SUNLinearSolver_Ops_* SUNLinearSolver_Ops;
 
 /* Forward reference for pointer to SUNLinearSolver object */
-typedef _SUNDIALS_STRUCT_ _generic_SUNLinearSolver* SUNLinearSolver;
+typedef SUNDIALS_STRUCT SUNLinearSolver_* SUNLinearSolver;
 
 /* Structure containing function pointers to linear solver operations */
-struct _generic_SUNLinearSolver_Ops
+struct SUNLinearSolver_Ops_
 {
   SUNLinearSolver_Type (*gettype)(SUNLinearSolver);
   SUNLinearSolver_ID (*getid)(SUNLinearSolver);
@@ -146,7 +146,7 @@ struct _generic_SUNLinearSolver_Ops
 /* A linear solver is a structure with an implementation-dependent
    'content' field, and a pointer to a structure of linear solver
    operations corresponding to that implementation. */
-struct _generic_SUNLinearSolver
+struct SUNLinearSolver_
 {
   void* content;
   void* python;

@@ -63,7 +63,7 @@
 
 /* User data type */
 
-struct _UserData
+struct UserData_
 {
   sunindextype mm;  /* number of grid points in one dimension */
   sunindextype neq; /* number of equations */
@@ -72,7 +72,7 @@ struct _UserData
   N_Vector pp; /* vector of prec. diag. elements */
 };
 
-typedef _UserData* UserData;
+typedef UserData_* UserData;
 
 /* Prototypes for functions called by IDA */
 

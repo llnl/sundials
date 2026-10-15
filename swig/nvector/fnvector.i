@@ -29,7 +29,7 @@
 
 // Macro for creating an interface to an N_Vector
 %define %nvector_impl(TYPE)
-  %ignore _N_VectorContent_## TYPE ##;
+  %ignore N_VectorContent_## TYPE ##_;
   // Ignore functions with arrays of vector arrays since they are not supported
   %ignore N_VScaleAddMultiVectorArray_## TYPE ##;
   %ignore N_VLinearCombinationVectorArray_## TYPE ##;
@@ -41,4 +41,3 @@
   %ignore N_VGetSubvectorArrayPointer_## TYPE ##;
   %ignore N_VGeSubvectortDeviceArrayPointer_## TYPE ##;
 %enddef
-

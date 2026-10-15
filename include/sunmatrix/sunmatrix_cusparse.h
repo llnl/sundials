@@ -42,7 +42,7 @@ extern "C" {
 #define SUNMAT_CUSPARSE_CSR  0
 #define SUNMAT_CUSPARSE_BCSR 1
 
-struct _SUNMatrix_Content_cuSparse
+struct SUNMatrix_Content_cuSparse_
 {
   int M;
   int N;
@@ -70,7 +70,7 @@ struct _SUNMatrix_Content_cuSparse
   SUNCudaExecPolicy* exec_policy;
 };
 
-typedef struct _SUNMatrix_Content_cuSparse* SUNMatrix_Content_cuSparse;
+typedef struct SUNMatrix_Content_cuSparse_* SUNMatrix_Content_cuSparse;
 
 /* ------------------------------------------------------------------
  * Constructors.

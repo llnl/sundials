@@ -117,7 +117,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-typedef struct _DlsMat
+typedef struct SUNDlsMat_
 {
   int type;
   sunindextype M;

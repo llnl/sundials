@@ -43,7 +43,7 @@ typedef int (*SUNRhsJacTimesFn)(N_Vector v, N_Vector Jv, sunrealtype t,
                                 N_Vector y, N_Vector fy, void* user_data,
                                 N_Vector tmp);
 
-typedef _SUNDIALS_STRUCT_ SUNStepper_* SUNStepper;
+typedef SUNDIALS_STRUCT SUNStepper_* SUNStepper;
 
 typedef SUNErrCode (*SUNStepperEvolveFn)(SUNStepper stepper, sunrealtype tout,
                                          N_Vector vret, sunrealtype* tret);

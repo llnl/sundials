@@ -48,7 +48,7 @@ extern "C" {
  * SPFGMR Implementation of SUNLinearSolver
  * ----------------------------------------- */
 
-struct _SUNLinearSolverContent_SPFGMR
+struct SUNLinearSolverContent_SPFGMR_
 {
   int maxl;
   int pretype;
@@ -79,7 +79,7 @@ struct _SUNLinearSolverContent_SPFGMR
   N_Vector* Xv;
 };
 
-typedef struct _SUNLinearSolverContent_SPFGMR* SUNLinearSolverContent_SPFGMR;
+typedef struct SUNLinearSolverContent_SPFGMR_* SUNLinearSolverContent_SPFGMR;
 
 /* ----------------------------------------
  * Exported Functions for SUNLINSOL_SPFGMR
