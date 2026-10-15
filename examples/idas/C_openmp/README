@@ -1,4 +1,0 @@
-List of C_openmp examples for IDAS
-
-  idasFoodWeb_bnd_omp   : 2-D food web system, banded Jacobian
-  idasFoodWeb_kry_omp   : 2-D food web system using Krylov solver
