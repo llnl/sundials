@@ -37,15 +37,9 @@ SUNErrCode SUNFileOpen(const char* filename, const char* modes, FILE** fp);
 SUNDIALS_EXPORT
 SUNErrCode SUNFileFlush(FILE* fp);
 
-SUNDIALS_DEPRECATED_EXPORT_MSG("Use SUNFileOpen")
-SUNErrCode SUNDIALSFileOpen(const char* filename, const char* modes, FILE** fp);
-
 /* Close a file pointer with the given file name. */
 SUNDIALS_EXPORT
 SUNErrCode SUNFileClose(FILE** fp);
-
-SUNDIALS_DEPRECATED_EXPORT_MSG("Use SUNFileClose")
-SUNErrCode SUNDIALSFileClose(FILE** fp);
 
 #ifdef __cplusplus
 }

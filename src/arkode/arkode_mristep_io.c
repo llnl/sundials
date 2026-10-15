@@ -45,7 +45,6 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
   int retval;
   ARKodeMem ark_mem;
   ARKodeMRIStepMem step_mem;
-  sunindextype Tlrw, Tliw;
 
   /* access ARKodeMem and ARKodeMRIStepMem structures */
   retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
@@ -63,11 +62,11 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
   step_mem->stages = 0;
   step_mem->q      = 0;
   step_mem->p      = 0;
-  MRIStepCoupling_Space(step_mem->MRIC, &Tliw, &Tlrw);
-  MRIStepCoupling_Free(step_mem->MRIC);
-  step_mem->MRIC = NULL;
-  ark_mem->liw -= Tliw;
-  ark_mem->lrw -= Tlrw;
+  if (step_mem->MRIC != NULL)
+  {
+    MRIStepCoupling_Free(step_mem->MRIC);
+    step_mem->MRIC = NULL;
+  }
 
   /* set the relevant parameters */
   step_mem->stages = MRIC->stages;
@@ -82,9 +81,6 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
                     MSG_MRISTEP_NO_COUPLING);
     return (ARK_MEM_NULL);
   }
-  MRIStepCoupling_Space(step_mem->MRIC, &Tliw, &Tlrw);
-  ark_mem->liw += Tliw;
-  ark_mem->lrw += Tlrw;
 
   return (ARK_SUCCESS);
 }
@@ -169,20 +165,6 @@ int mriStep_GetNumRhsEvals(ARKodeMem ark_mem, int partition_index,
   case 1: *rhs_evals = step_mem->nfsi; break;
   default: *rhs_evals = step_mem->nfse + step_mem->nfsi; break;
   }
-
-  return ARK_SUCCESS;
-}
-
-int MRIStepGetNumRhsEvals(void* arkode_mem, long int* nfse_evals,
-                          long int* nfsi_evals)
-{
-  int retval = ARK_SUCCESS;
-
-  retval = ARKodeGetNumRhsEvals(arkode_mem, 0, nfse_evals);
-  if (retval != ARK_SUCCESS) { return retval; }
-
-  retval = ARKodeGetNumRhsEvals(arkode_mem, 1, nfsi_evals);
-  if (retval != ARK_SUCCESS) { return retval; }
 
   return ARK_SUCCESS;
 }
@@ -364,7 +346,6 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
 int mriStep_SetDefaults(ARKodeMem ark_mem)
 {
   ARKodeMRIStepMem step_mem;
-  sunindextype Clenrw, Cleniw;
   int retval;
 
   /* access ARKodeMRIStepMem structure */
@@ -396,13 +377,7 @@ int mriStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->NLS = NULL;
 
   /* Remove pre-existing coupling table */
-  if (step_mem->MRIC)
-  {
-    MRIStepCoupling_Space(step_mem->MRIC, &Cleniw, &Clenrw);
-    ark_mem->lrw -= Clenrw;
-    ark_mem->liw -= Cleniw;
-    MRIStepCoupling_Free(step_mem->MRIC);
-  }
+  if (step_mem->MRIC) { MRIStepCoupling_Free(step_mem->MRIC); }
   step_mem->MRIC = NULL;
 
   /* Load the default SUNAdaptController */
@@ -478,7 +453,6 @@ int mriStep_SetOrder(ARKodeMem ark_mem, int ord)
 {
   int retval;
   ARKodeMRIStepMem step_mem;
-  sunindextype Tlrw, Tliw;
 
   /* access ARKodeMRIStepMem structure */
   retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
@@ -492,11 +466,11 @@ int mriStep_SetOrder(ARKodeMem ark_mem, int ord)
      defaults. Tables will be set in InitialSetup. */
   step_mem->stages = 0;
   step_mem->p      = 0;
-  MRIStepCoupling_Space(step_mem->MRIC, &Tliw, &Tlrw);
-  MRIStepCoupling_Free(step_mem->MRIC);
-  step_mem->MRIC = NULL;
-  ark_mem->liw -= Tliw;
-  ark_mem->lrw -= Tlrw;
+  if (step_mem->MRIC != NULL)
+  {
+    MRIStepCoupling_Free(step_mem->MRIC);
+    step_mem->MRIC = NULL;
+  }
 
   return (ARK_SUCCESS);
 }
@@ -975,461 +949,6 @@ int mriStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
   fprintf(fp, "\n");
 
   return (ARK_SUCCESS);
-}
-
-/*===============================================================
-  Exported-but-deprecated user-callable functions.
-  ===============================================================*/
-
-int MRIStepResize(void* arkode_mem, N_Vector y0, sunrealtype t0,
-                  ARKVecResizeFn resize, void* resize_data)
-{
-  return (ARKodeResize(arkode_mem, y0, ONE, t0, resize, resize_data));
-}
-
-int MRIStepReset(void* arkode_mem, sunrealtype tR, N_Vector yR)
-{
-  return (ARKodeReset(arkode_mem, tR, yR));
-}
-
-int MRIStepSStolerances(void* arkode_mem, sunrealtype reltol, sunrealtype abstol)
-{
-  return (ARKodeSStolerances(arkode_mem, reltol, abstol));
-}
-
-int MRIStepSVtolerances(void* arkode_mem, sunrealtype reltol, N_Vector abstol)
-{
-  return (ARKodeSVtolerances(arkode_mem, reltol, abstol));
-}
-
-int MRIStepWFtolerances(void* arkode_mem, ARKEwtFn efun)
-{
-  return (ARKodeWFtolerances(arkode_mem, efun));
-}
-
-int MRIStepSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
-{
-  return (ARKodeSetLinearSolver(arkode_mem, LS, A));
-}
-
-int MRIStepRootInit(void* arkode_mem, int nrtfn, ARKRootFn g)
-{
-  return (ARKodeRootInit(arkode_mem, nrtfn, g));
-}
-
-int MRIStepSetDefaults(void* arkode_mem)
-{
-  return (ARKodeSetDefaults(arkode_mem));
-}
-
-int MRIStepSetOrder(void* arkode_mem, int ord)
-{
-  return (ARKodeSetOrder(arkode_mem, ord));
-}
-
-int MRIStepSetInterpolantType(void* arkode_mem, int itype)
-{
-  return (ARKodeSetInterpolantType(arkode_mem, itype));
-}
-
-int MRIStepSetInterpolantDegree(void* arkode_mem, int degree)
-{
-  return (ARKodeSetInterpolantDegree(arkode_mem, degree));
-}
-
-int MRIStepSetDenseOrder(void* arkode_mem, int dord)
-{
-  return (ARKodeSetInterpolantDegree(arkode_mem, dord));
-}
-
-int MRIStepSetNonlinearSolver(void* arkode_mem, SUNNonlinearSolver NLS)
-{
-  return (ARKodeSetNonlinearSolver(arkode_mem, NLS));
-}
-
-int MRIStepSetNlsRhsFn(void* arkode_mem, ARKRhsFn nls_fi)
-{
-  return (ARKodeSetNlsRhsFn(arkode_mem, nls_fi));
-}
-
-int MRIStepSetLinear(void* arkode_mem, int timedepend)
-{
-  return (ARKodeSetLinear(arkode_mem, timedepend));
-}
-
-int MRIStepSetNonlinear(void* arkode_mem)
-{
-  return (ARKodeSetNonlinear(arkode_mem));
-}
-
-int MRIStepSetMaxNumSteps(void* arkode_mem, long int mxsteps)
-{
-  return (ARKodeSetMaxNumSteps(arkode_mem, mxsteps));
-}
-
-int MRIStepSetNonlinCRDown(void* arkode_mem, sunrealtype crdown)
-{
-  return (ARKodeSetNonlinCRDown(arkode_mem, crdown));
-}
-
-int MRIStepSetNonlinRDiv(void* arkode_mem, sunrealtype rdiv)
-{
-  return (ARKodeSetNonlinRDiv(arkode_mem, rdiv));
-}
-
-int MRIStepSetDeltaGammaMax(void* arkode_mem, sunrealtype dgmax)
-{
-  return (ARKodeSetDeltaGammaMax(arkode_mem, dgmax));
-}
-
-int MRIStepSetLSetupFrequency(void* arkode_mem, int msbp)
-{
-  return (ARKodeSetLSetupFrequency(arkode_mem, msbp));
-}
-
-int MRIStepSetPredictorMethod(void* arkode_mem, int pred_method)
-{
-  return (ARKodeSetPredictorMethod(arkode_mem, pred_method));
-}
-
-int MRIStepSetMaxNonlinIters(void* arkode_mem, int maxcor)
-{
-  return (ARKodeSetMaxNonlinIters(arkode_mem, maxcor));
-}
-
-int MRIStepSetNonlinConvCoef(void* arkode_mem, sunrealtype nlscoef)
-{
-  return (ARKodeSetNonlinConvCoef(arkode_mem, nlscoef));
-}
-
-int MRIStepSetMaxHnilWarns(void* arkode_mem, int mxhnil)
-{
-  return (ARKodeSetMaxHnilWarns(arkode_mem, mxhnil));
-}
-
-int MRIStepSetInterpolateStopTime(void* arkode_mem, sunbooleantype interp)
-{
-  return (ARKodeSetInterpolateStopTime(arkode_mem, interp));
-}
-
-int MRIStepSetStopTime(void* arkode_mem, sunrealtype tstop)
-{
-  return (ARKodeSetStopTime(arkode_mem, tstop));
-}
-
-int MRIStepClearStopTime(void* arkode_mem)
-{
-  return (ARKodeClearStopTime(arkode_mem));
-}
-
-int MRIStepSetFixedStep(void* arkode_mem, sunrealtype hfixed)
-{
-  return (ARKodeSetFixedStep(arkode_mem, hfixed));
-}
-
-int MRIStepSetRootDirection(void* arkode_mem, int* rootdir)
-{
-  return (ARKodeSetRootDirection(arkode_mem, rootdir));
-}
-
-int MRIStepSetNoInactiveRootWarn(void* arkode_mem)
-{
-  return (ARKodeSetNoInactiveRootWarn(arkode_mem));
-}
-
-int MRIStepSetUserData(void* arkode_mem, void* user_data)
-{
-  return (ARKodeSetUserData(arkode_mem, user_data));
-}
-
-int MRIStepSetPostprocessStepFn(void* arkode_mem, ARKPostProcessFn ProcessStep)
-{
-  return (ARKodeSetPostprocessStepFn(arkode_mem, ProcessStep));
-}
-
-int MRIStepSetPostprocessStageFn(void* arkode_mem, ARKPostProcessFn ProcessStage)
-{
-  return (ARKodeSetPostprocessStageFn(arkode_mem, ProcessStage));
-}
-
-int MRIStepSetStagePredictFn(void* arkode_mem, ARKStagePredictFn PredictStage)
-{
-  return (ARKodeSetStagePredictFn(arkode_mem, PredictStage));
-}
-
-int MRIStepSetDeduceImplicitRhs(void* arkode_mem, sunbooleantype deduce)
-{
-  return (ARKodeSetDeduceImplicitRhs(arkode_mem, deduce));
-}
-
-int MRIStepSetJacFn(void* arkode_mem, ARKLsJacFn jac)
-{
-  return (ARKodeSetJacFn(arkode_mem, jac));
-}
-
-int MRIStepSetJacEvalFrequency(void* arkode_mem, long int msbj)
-{
-  return (ARKodeSetJacEvalFrequency(arkode_mem, msbj));
-}
-
-int MRIStepSetLinearSolutionScaling(void* arkode_mem, sunbooleantype onoff)
-{
-  return (ARKodeSetLinearSolutionScaling(arkode_mem, onoff));
-}
-
-int MRIStepSetEpsLin(void* arkode_mem, sunrealtype eplifac)
-{
-  return (ARKodeSetEpsLin(arkode_mem, eplifac));
-}
-
-int MRIStepSetLSNormFactor(void* arkode_mem, sunrealtype nrmfac)
-{
-  return (ARKodeSetLSNormFactor(arkode_mem, nrmfac));
-}
-
-int MRIStepSetPreconditioner(void* arkode_mem, ARKLsPrecSetupFn psetup,
-                             ARKLsPrecSolveFn psolve)
-{
-  return (ARKodeSetPreconditioner(arkode_mem, psetup, psolve));
-}
-
-int MRIStepSetJacTimes(void* arkode_mem, ARKLsJacTimesSetupFn jtsetup,
-                       ARKLsJacTimesVecFn jtimes)
-{
-  return (ARKodeSetJacTimes(arkode_mem, jtsetup, jtimes));
-}
-
-int MRIStepSetJacTimesRhsFn(void* arkode_mem, ARKRhsFn jtimesRhsFn)
-{
-  return (ARKodeSetJacTimesRhsFn(arkode_mem, jtimesRhsFn));
-}
-
-int MRIStepSetLinSysFn(void* arkode_mem, ARKLsLinSysFn linsys)
-{
-  return (ARKodeSetLinSysFn(arkode_mem, linsys));
-}
-
-int MRIStepEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
-                  sunrealtype* tret, int itask)
-{
-  return (ARKodeEvolve(arkode_mem, tout, yout, tret, itask));
-}
-
-int MRIStepGetDky(void* arkode_mem, sunrealtype t, int k, N_Vector dky)
-{
-  return (ARKodeGetDky(arkode_mem, t, k, dky));
-}
-
-int MRIStepComputeState(void* arkode_mem, N_Vector zcor, N_Vector z)
-{
-  return (ARKodeComputeState(arkode_mem, zcor, z));
-}
-
-int MRIStepGetNumLinSolvSetups(void* arkode_mem, long int* nlinsetups)
-{
-  return (ARKodeGetNumLinSolvSetups(arkode_mem, nlinsetups));
-}
-
-int MRIStepGetWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
-{
-  return (ARKodeGetWorkSpace(arkode_mem, lenrw, leniw));
-}
-
-int MRIStepGetNumSteps(void* arkode_mem, long int* nssteps)
-{
-  return (ARKodeGetNumSteps(arkode_mem, nssteps));
-}
-
-int MRIStepGetLastStep(void* arkode_mem, sunrealtype* hlast)
-{
-  return (ARKodeGetLastStep(arkode_mem, hlast));
-}
-
-int MRIStepGetCurrentTime(void* arkode_mem, sunrealtype* tcur)
-{
-  return (ARKodeGetCurrentTime(arkode_mem, tcur));
-}
-
-int MRIStepGetCurrentState(void* arkode_mem, N_Vector* state)
-{
-  return (ARKodeGetCurrentState(arkode_mem, state));
-}
-
-int MRIStepGetCurrentGamma(void* arkode_mem, sunrealtype* gamma)
-{
-  return (ARKodeGetCurrentGamma(arkode_mem, gamma));
-}
-
-int MRIStepGetTolScaleFactor(void* arkode_mem, sunrealtype* tolsfact)
-{
-  return (ARKodeGetTolScaleFactor(arkode_mem, tolsfact));
-}
-
-int MRIStepGetErrWeights(void* arkode_mem, N_Vector eweight)
-{
-  return (ARKodeGetErrWeights(arkode_mem, eweight));
-}
-
-int MRIStepGetNumGEvals(void* arkode_mem, long int* ngevals)
-{
-  return (ARKodeGetNumGEvals(arkode_mem, ngevals));
-}
-
-int MRIStepGetRootInfo(void* arkode_mem, int* rootsfound)
-{
-  return (ARKodeGetRootInfo(arkode_mem, rootsfound));
-}
-
-int MRIStepGetUserData(void* arkode_mem, void** user_data)
-{
-  return (ARKodeGetUserData(arkode_mem, user_data));
-}
-
-int MRIStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
-{
-  return (ARKodePrintAllStats(arkode_mem, outfile, fmt));
-}
-
-char* MRIStepGetReturnFlagName(long int flag)
-{
-  return (ARKodeGetReturnFlagName(flag));
-}
-
-int MRIStepWriteParameters(void* arkode_mem, FILE* fp)
-{
-  return (ARKodeWriteParameters(arkode_mem, fp));
-}
-
-int MRIStepWriteCoupling(void* arkode_mem, FILE* fp)
-{
-  ARKodeMem ark_mem;
-  ARKodeMRIStepMem step_mem;
-  int retval;
-
-  /* access ARKodeMem and ARKodeMRIStepMem structures */
-  retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
-  if (retval != ARK_SUCCESS) { return (retval); }
-
-  /* check that coupling structure is non-NULL (otherwise report error) */
-  if (step_mem->MRIC == NULL)
-  {
-    arkProcessError(ark_mem, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    "Coupling structure is NULL");
-    return (ARK_MEM_NULL);
-  }
-
-  /* write coupling structure to specified file */
-  fprintf(fp, "\nMRIStep coupling structure:\n");
-  MRIStepCoupling_Write(step_mem->MRIC, fp);
-
-  return (ARK_SUCCESS);
-}
-
-int MRIStepGetNonlinearSystemData(void* arkode_mem, sunrealtype* tcur,
-                                  N_Vector* zpred, N_Vector* z, N_Vector* Fi,
-                                  sunrealtype* gamma, N_Vector* sdata,
-                                  void** user_data)
-{
-  return (ARKodeGetNonlinearSystemData(arkode_mem, tcur, zpred, z, Fi, gamma,
-                                       sdata, user_data));
-}
-
-int MRIStepGetNumNonlinSolvIters(void* arkode_mem, long int* nniters)
-{
-  return (ARKodeGetNumNonlinSolvIters(arkode_mem, nniters));
-}
-
-int MRIStepGetNumNonlinSolvConvFails(void* arkode_mem, long int* nnfails)
-{
-  return (ARKodeGetNumNonlinSolvConvFails(arkode_mem, nnfails));
-}
-
-int MRIStepGetNonlinSolvStats(void* arkode_mem, long int* nniters,
-                              long int* nnfails)
-{
-  return (ARKodeGetNonlinSolvStats(arkode_mem, nniters, nnfails));
-}
-
-int MRIStepGetNumStepSolveFails(void* arkode_mem, long int* nncfails)
-{
-  return (ARKodeGetNumStepSolveFails(arkode_mem, nncfails));
-}
-
-int MRIStepGetJac(void* arkode_mem, SUNMatrix* J)
-{
-  return (ARKodeGetJac(arkode_mem, J));
-}
-
-int MRIStepGetJacTime(void* arkode_mem, sunrealtype* t_J)
-{
-  return (ARKodeGetJacTime(arkode_mem, t_J));
-}
-
-int MRIStepGetJacNumSteps(void* arkode_mem, long* nst_J)
-{
-  return (ARKodeGetJacNumSteps(arkode_mem, nst_J));
-}
-
-int MRIStepGetLinWorkSpace(void* arkode_mem, long int* lenrwLS, long int* leniwLS)
-{
-  return (ARKodeGetLinWorkSpace(arkode_mem, lenrwLS, leniwLS));
-}
-
-int MRIStepGetNumJacEvals(void* arkode_mem, long int* njevals)
-{
-  return (ARKodeGetNumJacEvals(arkode_mem, njevals));
-}
-
-int MRIStepGetNumPrecEvals(void* arkode_mem, long int* npevals)
-{
-  return (ARKodeGetNumPrecEvals(arkode_mem, npevals));
-}
-
-int MRIStepGetNumPrecSolves(void* arkode_mem, long int* npsolves)
-{
-  return (ARKodeGetNumPrecSolves(arkode_mem, npsolves));
-}
-
-int MRIStepGetNumLinIters(void* arkode_mem, long int* nliters)
-{
-  return (ARKodeGetNumLinIters(arkode_mem, nliters));
-}
-
-int MRIStepGetNumLinConvFails(void* arkode_mem, long int* nlcfails)
-{
-  return (ARKodeGetNumLinConvFails(arkode_mem, nlcfails));
-}
-
-int MRIStepGetNumJTSetupEvals(void* arkode_mem, long int* njtsetups)
-{
-  return (ARKodeGetNumJTSetupEvals(arkode_mem, njtsetups));
-}
-
-int MRIStepGetNumJtimesEvals(void* arkode_mem, long int* njvevals)
-{
-  return (ARKodeGetNumJtimesEvals(arkode_mem, njvevals));
-}
-
-int MRIStepGetNumLinRhsEvals(void* arkode_mem, long int* nfevalsLS)
-{
-  return (ARKodeGetNumLinRhsEvals(arkode_mem, nfevalsLS));
-}
-
-int MRIStepGetLastLinFlag(void* arkode_mem, long int* flag)
-{
-  return (ARKodeGetLastLinFlag(arkode_mem, flag));
-}
-
-char* MRIStepGetLinReturnFlagName(long int flag)
-{
-  return (ARKodeGetLinReturnFlagName(flag));
-}
-
-void MRIStepFree(void** arkode_mem) { ARKodeFree(arkode_mem); }
-
-void MRIStepPrintMem(void* arkode_mem, FILE* outfile)
-{
-  ARKodePrintMem(arkode_mem, outfile);
 }
 
 /*===============================================================

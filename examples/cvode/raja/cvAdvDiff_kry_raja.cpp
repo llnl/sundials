@@ -414,14 +414,10 @@ static void PrintOutput(sunrealtype t, sunrealtype umax, long int nst)
 
 static void PrintFinalStats(void* cvode_mem)
 {
-  long lenrw, leniw;
-  long lenrwLS, leniwLS;
   long int nst, nfe, nsetups, nni, ncfn, netf;
   long int nli, npe, nps, ncfl, nfeLS;
   int retval;
 
-  retval = CVodeGetWorkSpace(cvode_mem, &lenrw, &leniw);
-  check_retval(&retval, "CVodeGetWorkSpace", 1);
   retval = CVodeGetNumSteps(cvode_mem, &nst);
   check_retval(&retval, "CVodeGetNumSteps", 1);
   retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
@@ -435,8 +431,6 @@ static void PrintFinalStats(void* cvode_mem)
   retval = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
   check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
-  retval = CVodeGetLinWorkSpace(cvode_mem, &lenrwLS, &leniwLS);
-  check_retval(&retval, "CVodeGetLinWorkSpace", 1);
   retval = CVodeGetNumLinIters(cvode_mem, &nli);
   check_retval(&retval, "CVodeGetNumLinIters", 1);
   retval = CVodeGetNumPrecEvals(cvode_mem, &npe);
@@ -449,8 +443,6 @@ static void PrintFinalStats(void* cvode_mem)
   check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
 
   printf("\nFinal Statistics.. \n\n");
-  printf("lenrw   = %5ld     leniw   = %5ld\n", lenrw, leniw);
-  printf("lenrwLS = %5ld     leniwLS = %5ld\n", lenrwLS, leniwLS);
   printf("nst     = %5ld\n", nst);
   printf("nfe     = %5ld     nfeLS   = %5ld\n", nfe, nfeLS);
   printf("nni     = %5ld     nli     = %5ld\n", nni, nli);

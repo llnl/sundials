@@ -26,7 +26,6 @@ modules:
     - "Destroy"
     - "NewEmpty" # No need to call NewEmpty functions in Python
     - "CopyOps" # No need to call CopyOps functions in Python
-    - "Space" # Space functions are deprecated, so dont expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
     - "SetOptions"
     macro_define_include_by_name__regex:

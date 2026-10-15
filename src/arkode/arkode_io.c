@@ -99,7 +99,6 @@ int ARKodeSetDefaults(void* arkode_mem)
   ark_mem->hadapt_mem->ubound = HFIXED_UB; /* step adaptivity no-change upper bound */
   ark_mem->hadapt_mem->expstab    = NULL;   /* no explicit stability fn */
   ark_mem->hadapt_mem->estab_data = NULL;   /* no explicit stability fn data */
-  ark_mem->hadapt_mem->pq         = PQ;     /* embedding order */
   ark_mem->hadapt_mem->p          = 0;      /* no default embedding order */
   ark_mem->hadapt_mem->q          = 0;      /* no default method order */
   ark_mem->hadapt_mem->adjust     = ADJUST; /* controller order adjustment */
@@ -191,7 +190,7 @@ int ARKodeSetInterpolantType(void* arkode_mem, int itype)
   /* delete any existing interpolation module */
   if (ark_mem->interp != NULL)
   {
-    arkInterpFree(ark_mem, ark_mem->interp);
+    arkInterpFree(ark_mem->interp);
     ark_mem->interp = NULL;
   }
 
@@ -1644,7 +1643,7 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
   /* If there are no constraints, destroy data structures */
   if (constraints == NULL)
   {
-    arkFreeVec(ark_mem, &ark_mem->constraints);
+    arkFreeVec(&ark_mem->constraints);
     return (ARK_SUCCESS);
   }
 
@@ -2742,27 +2741,6 @@ int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight)
 }
 
 /*---------------------------------------------------------------
-  ARKodeGetWorkSpace:
-
-  Returns integrator work space requirements
-  ---------------------------------------------------------------*/
-int ARKodeGetWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
-{
-  ARKodeMem ark_mem;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  *leniw = ark_mem->liw;
-  *lenrw = ark_mem->lrw;
-  return (ARK_SUCCESS);
-}
-
-/*---------------------------------------------------------------
   ARKodeGetNumGEvals:
 
   Returns the current number of calls to g (for rootfinding)
@@ -3523,21 +3501,12 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
                               sunbooleantype take_ownership)
 {
   int retval;
-  long int lenrw, leniw;
 
   /* Remove current SUNAdaptController object
      (delete if owned, and then nullify pointer) */
   if (ark_mem->hadapt_mem->owncontroller &&
       (ark_mem->hadapt_mem->hcontroller != NULL))
   {
-    retval = SUNAdaptController_Space(ark_mem->hadapt_mem->hcontroller, &lenrw,
-                                      &leniw);
-    if (retval == SUN_SUCCESS)
-    {
-      ark_mem->liw -= leniw;
-      ark_mem->lrw -= lenrw;
-    }
-
     retval = SUNAdaptController_Destroy(ark_mem->hadapt_mem->hcontroller);
     ark_mem->hadapt_mem->owncontroller = SUNFALSE;
     if (retval != SUN_SUCCESS)
@@ -3563,13 +3532,6 @@ int arkReplaceAdaptController(ARKodeMem ark_mem, SUNAdaptController C,
   }
   else { ark_mem->hadapt_mem->owncontroller = take_ownership; }
 
-  /* Attach new SUNAdaptController object */
-  retval = SUNAdaptController_Space(C, &lenrw, &leniw);
-  if (retval == SUN_SUCCESS)
-  {
-    ark_mem->liw += leniw;
-    ark_mem->lrw += lenrw;
-  }
   ark_mem->hadapt_mem->hcontroller = C;
 
   return (ARK_SUCCESS);
@@ -3621,309 +3583,3 @@ int arkGetLastKFlag(void* arkode_mem, int* last_kflag)
 
   return (ARK_SUCCESS);
 }
-
-/*===============================================================
-  Deprecated functions
-  ===============================================================*/
-
-/*---------------------------------------------------------------
-  arkSetAdaptivityMethod:
-
-  Specifies the built-in time step adaptivity algorithm (and
-  optionally, its associated parameters) to use.  All parameters
-  will be checked for validity when used by the solver.
-
-  Users should transition to constructing non-default SUNAdaptController
-  objects directly, and providing those directly to the integrator
-  via the time-stepping module *SetController routines.
-  ---------------------------------------------------------------*/
-int arkSetAdaptivityMethod(void* arkode_mem, int imethod, int idefault, int pq,
-                           sunrealtype adapt_params[3])
-{
-  int retval;
-  long int lenrw, leniw;
-  sunrealtype k1, k2, k3;
-  ARKodeMem ark_mem;
-  SUNAdaptController C;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* Check for illegal inputs */
-  if ((idefault != 1) && (adapt_params == NULL))
-  {
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "NULL-valued adapt_params provided");
-    return (ARK_ILL_INPUT);
-  }
-
-  /* Remove current SUNAdaptController object
-     (delete if owned, and then nullify pointer) */
-  if (ark_mem->hadapt_mem->owncontroller &&
-      (ark_mem->hadapt_mem->hcontroller != NULL))
-  {
-    retval = SUNAdaptController_Space(ark_mem->hadapt_mem->hcontroller, &lenrw,
-                                      &leniw);
-    if (retval == SUN_SUCCESS)
-    {
-      ark_mem->liw -= leniw;
-      ark_mem->lrw -= lenrw;
-    }
-
-    retval = SUNAdaptController_Destroy(ark_mem->hadapt_mem->hcontroller);
-    ark_mem->hadapt_mem->owncontroller = SUNFALSE;
-    if (retval != SUN_SUCCESS)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_Destroy failure");
-      return (ARK_MEM_FAIL);
-    }
-  }
-  ark_mem->hadapt_mem->hcontroller = NULL;
-
-  /* set adaptivity parameters from inputs */
-  k1 = k2 = k3 = ZERO;
-  if (idefault != 1)
-  {
-    k1 = adapt_params[0];
-    k2 = adapt_params[1];
-    k3 = adapt_params[2];
-  }
-  ark_mem->hadapt_mem->pq = pq;
-
-  /* Create new SUNAdaptController object based on "imethod" input, optionally setting
-     the specified controller parameters */
-  C = NULL;
-  switch (imethod)
-  {
-  case (ARK_ADAPT_PID):
-    C = SUNAdaptController_PID(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_PID allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_PID(C, k1, -k2, k3);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_PID failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  case (ARK_ADAPT_PI):
-    C = SUNAdaptController_PI(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_PI allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_PI(C, k1, -k2);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_PI failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  case (ARK_ADAPT_I):
-    C = SUNAdaptController_I(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_I allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_I(C, k1);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_I failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  case (ARK_ADAPT_EXP_GUS):
-    C = SUNAdaptController_ExpGus(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_ExpGus allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_ExpGus(C, k1, k2);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_ExpGus failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  case (ARK_ADAPT_IMP_GUS):
-    C = SUNAdaptController_ImpGus(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_ImpGus allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_ImpGus(C, k1, k2);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_ImpGus failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  case (ARK_ADAPT_IMEX_GUS):
-    C = SUNAdaptController_ImExGus(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_ImExGus allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-    if (idefault != 1)
-    {
-      retval = SUNAdaptController_SetParams_ImExGus(C, k1, k2, k3, k3);
-      if (retval != SUN_SUCCESS)
-      {
-        (void)SUNAdaptController_Destroy(C);
-        arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__,
-                        __FILE__, "SUNAdaptController_SetParams_ImExGus failure");
-        return (ARK_CONTROLLER_ERR);
-      }
-    }
-    break;
-  default:
-    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    "Illegal imethod");
-    return (ARK_ILL_INPUT);
-  }
-
-  /* Attach new SUNAdaptController object */
-  retval = SUNAdaptController_Space(C, &lenrw, &leniw);
-  if (retval == SUN_SUCCESS)
-  {
-    ark_mem->liw += leniw;
-    ark_mem->lrw += lenrw;
-  }
-  ark_mem->hadapt_mem->hcontroller   = C;
-  ark_mem->hadapt_mem->owncontroller = SUNTRUE;
-
-  return (ARK_SUCCESS);
-}
-
-/*---------------------------------------------------------------
-  arkSetAdaptivityFn:
-
-  Specifies the user-provided time step adaptivity function to use.
-  If 'hfun' is NULL-valued, then the default I controller will
-  be used instead.
-
-  Users should transition to constructing a custom SUNAdaptController
-  object, and providing this directly to the integrator
-  via the time-stepping module *SetController routines.
-  ---------------------------------------------------------------*/
-int arkSetAdaptivityFn(void* arkode_mem, ARKAdaptFn hfun, void* h_data)
-{
-  int retval;
-  long int lenrw, leniw;
-  ARKodeMem ark_mem;
-  SUNAdaptController C;
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* Remove current SUNAdaptController object
-     (delete if owned, and then nullify pointer) */
-  if (ark_mem->hadapt_mem->owncontroller &&
-      (ark_mem->hadapt_mem->hcontroller != NULL))
-  {
-    retval = SUNAdaptController_Space(ark_mem->hadapt_mem->hcontroller, &lenrw,
-                                      &leniw);
-    if (retval == SUN_SUCCESS)
-    {
-      ark_mem->liw -= leniw;
-      ark_mem->lrw -= lenrw;
-    }
-
-    retval = SUNAdaptController_Destroy(ark_mem->hadapt_mem->hcontroller);
-    ark_mem->hadapt_mem->owncontroller = SUNFALSE;
-    if (retval != SUN_SUCCESS)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_Destroy failure");
-      return (ARK_MEM_FAIL);
-    }
-  }
-  ark_mem->hadapt_mem->hcontroller = NULL;
-
-  /* Create new SUNAdaptController object depending on NULL-ity of 'hfun' */
-  C = NULL;
-  if (hfun == NULL)
-  {
-    C = SUNAdaptController_I(ark_mem->sunctx);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNAdaptController_I allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-  }
-  else
-  {
-    C = ARKUserControl(ark_mem->sunctx, arkode_mem, hfun, h_data);
-    if (C == NULL)
-    {
-      arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
-                      "ARKUserControl allocation failure");
-      return (ARK_MEM_FAIL);
-    }
-  }
-
-  /* Attach new SUNAdaptController object */
-  retval = SUNAdaptController_Space(C, &lenrw, &leniw);
-  if (retval == SUN_SUCCESS)
-  {
-    ark_mem->liw += leniw;
-    ark_mem->lrw += lenrw;
-  }
-  ark_mem->hadapt_mem->hcontroller   = C;
-  ark_mem->hadapt_mem->owncontroller = SUNTRUE;
-
-  return (ARK_SUCCESS);
-}
-
-/*===============================================================
-  EOF
-  ===============================================================*/

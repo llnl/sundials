@@ -28,7 +28,7 @@ for its use.
    :align: center
 
    Overall structure diagram of the IDA package. Components specific to IDA
-   begin with “IDA” (IDALS, IDANLS, and IDABBDPRE), all other items correspond
+   begin with "IDA" (IDALS, IDANLS, and IDABBDPRE), all other items correspond
    to generic SUNDIALS vector, matrix, and solver interfaces.
 
 The overall organization of the IDA package is shown in
@@ -68,7 +68,7 @@ direct case, the references :cite:p:`BrHi:89,Byr:92`, together with the example
 and demonstration programs included with IDA, offer considerable assistance in
 building preconditioners.
 
-IDA’s linear solver interface consists of four primary phases, devoted to (1)
+IDA's linear solver interface consists of four primary phases, devoted to (1)
 memory allocation and initialization, (2) setup of the matrix data involved, (3)
 solution of the system, and (4) freeing of memory. The setup and solution phases
 are separate because the evaluation of Jacobians and preconditioners is done

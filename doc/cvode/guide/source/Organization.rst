@@ -31,7 +31,7 @@ The overall organization of the CVODE package is shown in Figure
    :align: center
 
    Overall structure diagram of the CVODE package. Modules
-   specific to CVODE begin with “CV” (CVLS, CVNLS, CVDIAG,
+   specific to CVODE begin with "CV" (CVLS, CVNLS, CVDIAG,
    CVBBDPRE, and CVBANDPRE), all other items correspond to generic
    SUNDIALS vector, matrix, and solver modules.
 
@@ -86,7 +86,7 @@ difference-quotient approximation in the direct case, the references
 demonstration programs included with CVODE, offer considerable
 assistance in building preconditioners.
 
-CVODE’s linear solver interface consists of four primary phases,
+CVODE's linear solver interface consists of four primary phases,
 devoted to (1) memory allocation and initialization, (2) setup of the
 matrix data involved, (3) solution of the system, and (4) freeing of
 memory. The setup and solution phases are separate because the

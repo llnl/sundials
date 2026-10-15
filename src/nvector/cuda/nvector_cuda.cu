@@ -144,7 +144,6 @@ N_Vector N_VNewEmpty_Cuda(SUNContext sunctx)
   v->ops->nvclone                 = N_VClone_Cuda;
   v->ops->nvcloneempty            = N_VCloneEmpty_Cuda;
   v->ops->nvdestroy               = N_VDestroy_Cuda;
-  v->ops->nvspace                 = N_VSpace_Cuda;
   v->ops->nvgetlength             = N_VGetLength_Cuda;
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Cuda;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Cuda;
@@ -745,12 +744,6 @@ void N_VDestroy_Cuda(N_Vector v)
   free(v);
 
   return;
-}
-
-void N_VSpace_Cuda(N_Vector X, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = NVEC_CUDA_CONTENT(X)->length;
-  *liw = 2;
 }
 
 void N_VConst_Cuda(sunrealtype a, N_Vector X)

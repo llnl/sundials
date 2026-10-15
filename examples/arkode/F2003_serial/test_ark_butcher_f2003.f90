@@ -37,7 +37,6 @@ contains
     implicit none
     type(c_ptr) :: ERK, DIRK
     integer(C_INT) :: ierr, q(1), p(1)
-    integer(kind=myindextype) :: liw(1), lrw(1)
     real(C_DOUBLE) :: b(2), c(2), d(2), A(4)
 
     !===== Setup ====
@@ -59,7 +58,6 @@ contains
     DIRK = FARkodeButcherTable_LoadDIRK(ARKODE_SDIRK_2_1_2)
     ierr = FARkodeButcherTable_CheckOrder(ERK, q, p, C_NULL_PTR)
     ierr = FARkodeButcherTable_CheckARKOrder(ERK, DIRK, q, p, C_NULL_PTR)
-    call FARKodeButcherTable_Space(ERK, liw, lrw)
     call FARKodeButcherTable_Free(ERK)
     call FARKodeButcherTable_Free(DIRK)
 

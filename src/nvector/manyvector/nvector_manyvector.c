@@ -108,7 +108,6 @@ N_Vector N_VMake_MPIManyVector(MPI_Comm comm, sunindextype num_subvectors,
   v->ops->nvcloneempty      = N_VCloneEmpty_MPIManyVector;
   v->ops->nvclone           = N_VClone_MPIManyVector;
   v->ops->nvdestroy         = N_VDestroy_MPIManyVector;
-  v->ops->nvspace           = N_VSpace_MPIManyVector;
   v->ops->nvgetcommunicator = N_VGetCommunicator_MPIManyVector;
   v->ops->nvgetlength       = N_VGetLength_MPIManyVector;
 
@@ -329,7 +328,6 @@ N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector* vec_array,
   v->ops->nvcloneempty  = N_VCloneEmpty_ManyVector;
   v->ops->nvclone       = N_VClone_ManyVector;
   v->ops->nvdestroy     = N_VDestroy_ManyVector;
-  v->ops->nvspace       = N_VSpace_ManyVector;
   v->ops->nvgetlength   = N_VGetLength_ManyVector;
 
   /* standard vector operations */
@@ -571,28 +569,6 @@ void MVAPPEND(N_VDestroy)(N_Vector v)
   free(v);
   v = NULL;
 
-  return;
-}
-
-/* Returns the space requirements for the ManyVector, by accumulating this
-   information from all subvectors. */
-void MVAPPEND(N_VSpace)(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  SUNFunctionBegin(v->sunctx);
-  sunindextype i, lrw1, liw1;
-  *lrw = 0;
-  *liw = 0;
-  for (i = 0; i < MANYVECTOR_NUM_SUBVECS(v); i++)
-  {
-    /* update space requirements for this subvector (if 'nvspace' is implemented) */
-    if ((MANYVECTOR_SUBVEC(v, i))->ops->nvspace != NULL)
-    {
-      N_VSpace(MANYVECTOR_SUBVEC(v, i), &lrw1, &liw1);
-      SUNCheckLastErrVoid();
-      *lrw += lrw1;
-      *liw += liw1;
-    }
-  }
   return;
 }
 

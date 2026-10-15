@@ -95,7 +95,6 @@ linking to the ``libsundials_sunlinsolpcg`` module library.
 
 The module SUNLinSol_PCG provides the following user-callable routines:
 
-
 .. c:function:: SUNLinearSolver SUNLinSol_PCG(N_Vector y, int pretype, int maxl, SUNContext sunctx)
 
    This constructor function creates and allocates memory for a PCG
@@ -138,7 +137,6 @@ The module SUNLinSol_PCG provides the following user-callable routines:
       preconditioning should work appropriately even for packages
       designed with one-sided preconditioning in mind.
 
-
 .. c:function:: SUNErrCode SUNLinSol_PCGSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -163,7 +161,6 @@ The module SUNLinSol_PCG provides the following user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.prec_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_PCGSetMaxl(SUNLinearSolver S, int maxl)
 
    This function updates the number of linear solver iterations to allow.
@@ -181,12 +178,10 @@ The module SUNLinSol_PCG provides the following user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.maxl".
 
-
 .. _SUNLinSol.PCG.Description:
 
 SUNLinSol_PCG Description
 ---------------------------
-
 
 The SUNLinSol_PCG module defines the *content* field of a
 ``SUNLinearSolver`` to be the following structure:
@@ -246,7 +241,6 @@ information:
 * ``p, z, Ap`` - ``N_Vector`` used for workspace by the
   PCG algorithm.
 
-
 This solver is constructed to perform the following operations:
 
 * During construction all ``N_Vector`` solver data is allocated, with
@@ -304,7 +298,5 @@ The SUNLinSol_PCG module defines implementations of all
 * ``SUNLinSolResid_PCG``
 
 * ``SUNLinSolLastFlag_PCG``
-
-* ``SUNLinSolSpace_PCG``
 
 * ``SUNLinSolFree_PCG``

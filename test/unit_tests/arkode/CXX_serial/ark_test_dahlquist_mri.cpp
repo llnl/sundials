@@ -216,12 +216,12 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
   if (prob_opts.i_type == interp_type::lagrange)
   {
     flag = ARKodeSetInterpolantType(arkstep_mem, ARK_INTERP_LAGRANGE);
-    if (check_flag(&flag, "ARKStepSetInterpolantType", 1)) { return 1; }
+    if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
   }
   else if (prob_opts.i_type == interp_type::none)
   {
     flag = ARKodeSetInterpolantType(arkstep_mem, ARK_INTERP_NONE);
-    if (check_flag(&flag, "ARKStepSetInterpolantType", 1)) { return 1; }
+    if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
   }
 
   // Wrap ARKStep integrator as fast integrator object
@@ -284,12 +284,12 @@ int run_tests(MRISTEP_METHOD_TYPE type, ProblemOptions& prob_opts,
   if (prob_opts.i_type == interp_type::lagrange)
   {
     flag = ARKodeSetInterpolantType(mristep_mem, ARK_INTERP_LAGRANGE);
-    if (check_flag(&flag, "ARKStepSetInterpolantType", 1)) { return 1; }
+    if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
   }
   else if (prob_opts.i_type == interp_type::none)
   {
     flag = ARKodeSetInterpolantType(mristep_mem, ARK_INTERP_NONE);
-    if (check_flag(&flag, "ARKStepSetInterpolantType", 1)) { return 1; }
+    if (check_flag(&flag, "ARKodeSetInterpolantType", 1)) { return 1; }
   }
 
   // -------------------------------

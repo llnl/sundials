@@ -538,8 +538,8 @@ program main
   ! ----------------
 
   ! Open up the file output.log for writing
-  retval = FSUNDIALSFileOpen("stdout", "w+", fp)
-  call check_retval(retval, "FSUNDIALSFileOpen")
+  retval = FSUNFileOpen("stdout", "w+", fp)
+  call check_retval(retval, "FSUNFileOpen")
 
   print '(A)', "Slow Integrator Stats"
   flush (output_unit)
@@ -554,8 +554,8 @@ program main
   retval = FARKodePrintAllStats(f_arkode_mem, fp, SUN_OUTPUTFORMAT_TABLE)
 
   ! Close the file
-  retval = FSUNDIALSFileClose(fp)
-  call check_retval(retval, "FSUNDIALSFileOpen")
+  retval = FSUNFileClose(fp)
+  call check_retval(retval, "FSUNFileClose")
 
   ! --------
   ! Clean up

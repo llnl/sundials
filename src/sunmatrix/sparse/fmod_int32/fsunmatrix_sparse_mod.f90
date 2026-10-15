@@ -54,7 +54,6 @@ module fsunmatrix_sparse_mod
  public :: FSUNMatScaleAddI_Sparse
  public :: FSUNMatMatvec_Sparse
  public :: FSUNMatHermitianTransposeVec_Sparse
- public :: FSUNMatSpace_Sparse
 
  public :: FSUNSparseMatrix_Data
  public :: FSUNSparseMatrix_IndexValues
@@ -247,16 +246,6 @@ end function
 
 function swigc_FSUNMatHermitianTransposeVec_Sparse(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatHermitianTransposeVec_Sparse") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNMatSpace_Sparse(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNMatSpace_Sparse") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
@@ -630,25 +619,6 @@ farg1 = c_loc(a)
 farg2 = c_loc(x)
 farg3 = c_loc(y)
 fresult = swigc_FSUNMatHermitianTransposeVec_Sparse(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNMatSpace_Sparse(a, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNMatrix), target, intent(inout) :: a
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(a)
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FSUNMatSpace_Sparse(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

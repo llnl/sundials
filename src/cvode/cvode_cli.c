@@ -92,7 +92,6 @@ static int cvSetFromCommandLine(void* cvode_mem, const char* cvid, int argc,
   static const struct sunKeyLongPair long_pairs[] =
     {{"lsetup_frequency", CVodeSetLSetupFrequency},
      {"max_num_steps", CVodeSetMaxNumSteps},
-     {"monitor_frequency", CVodeSetMonitorFrequency},
      {"num_steps_eta_max_early_step", CVodeSetNumStepsEtaMaxEarlyStep},
      {"jac_eval_frequency", CVodeSetJacEvalFrequency},
      {"proj_frequency", CVodeSetProjFrequency}};

@@ -81,7 +81,7 @@ multistep methods, based on formulas of the form
 Here the :math:`y^n` are computed approximations to :math:`y(t_n)`, and
 :math:`h_n = t_n - t_{n-1}` is the step size. The user of CVODES must
 choose appropriately one of two multistep methods. For nonstiff
-problems, CVODES includes the Adams-Moulton formulas, characterized
+problems, CVODES includes the Adams--Moulton formulas, characterized
 by :math:`K_1 = 1` and :math:`K_2 = q-1` above, where the order
 :math:`q` varies between :math:`1` and :math:`12`. For stiff problems,
 CVODES includes the Backward Differentiation Formulas (BDF) in
@@ -121,7 +121,7 @@ namely
    :label: CVODES_errwt
 
 Because :math:`1/W_i` represents a tolerance in the component
-:math:`y_i`, a vector whose WRMS norm is 1 is regarded as “small.”
+:math:`y_i`, a vector whose WRMS norm is 1 is regarded as "small."
 
 .. _CVODES.Mathematics.nls:
 
@@ -151,7 +151,7 @@ solver and is discussed below and in :numref:`SUNNonlinSol.Newton`. For nonstiff
 systems, a *fixed-point iteration* (previously referred to as a functional
 iteration in this guide) solving :eq:`CVODES_nonlinear_fixedpoint` is also
 available. This involves evaluations of :math:`f` only and can (optionally) use
-Anderson’s method :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11` to
+Anderson's method :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11` to
 accelerate convergence (see :numref:`SUNNonlinSol.FixedPoint` for more details).
 For any nonlinear solver, the initial guess for the iteration is a predicted
 value :math:`y^{n(0)}` computed explicitly from the available history data.
@@ -302,7 +302,7 @@ a vector of ones.
 When the Jacobian is stored using either the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`
 or :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix
 objects, the Jacobian may be supplied by a user routine, or approximated
-by difference quotients, at the user’s option. In the latter case, we
+by difference quotients, at the user's option. In the latter case, we
 use the usual approximation
 
 .. math:: J_{ij} = [f_i(t,y+\sigma_j e_j) - f_i(t,y)]/\sigma_j \, .
@@ -316,7 +316,7 @@ dimensionless value, and :math:`W_j` is the error weight defined in
 :eq:`CVODES_errwt`. In the dense case, this scheme requires
 :math:`N` evaluations of :math:`f`, one for each column of :math:`J`. In
 the band case, the columns of :math:`J` are computed in groups, by the
-Curtis-Powell-Reid algorithm, with the number of :math:`f` evaluations
+Curtis--Powell--Reid algorithm, with the number of :math:`f` evaluations
 equal to the bandwidth.
 
 We note that with sparse and user-supplied ``SUNMatrix`` objects, the
@@ -340,7 +340,7 @@ The increment :math:`\sigma` is :math:`1/\|v\|_{\text{WRMS}}`, so that
 Local Error Test
 ----------------
 
-A critical part of CVODES — making it an ODE “solver” rather than
+A critical part of CVODES, making it an ODE "solver" rather than
 just an ODE method, is its control of local error. At every step, the
 local error is estimated and required to satisfy tolerance conditions,
 and the step is redone with reduced step size whenever that error test
@@ -427,7 +427,7 @@ summarized in :cite:p:`HBGLSSW:05`.
 Normally, CVODES takes steps until a user-defined output value
 :math:`t = t_{\text{out}}` is overtaken, and then it
 computes :math:`y(t_{\text{out}})` by interpolation.
-However, a “one step” mode option is available, where control returns to
+However, a "one step" mode option is available, where control returns to
 the calling program after each step. There are also options to force
 CVODES not to integrate past a given stopping point
 :math:`t = t_{\text{stop}}`.
@@ -560,7 +560,7 @@ for preconditioning either side, or on both sides, although we know of
 no situation where preconditioning on both sides is clearly superior to
 preconditioning on one side only (with the product :math:`P_L P_R`).
 Moreover, for a given preconditioner matrix, the merits of left
-vs. right preconditioning are unclear in general, and the user should
+vs. right preconditioning are unclear in general, and the user should
 experiment with both choices. Performance will differ because the
 inverse of the left preconditioner is included in the linear system
 residual whose norm is being tested in the Krylov algorithm. As a rule,
@@ -578,10 +578,10 @@ also within a time integration, and since each of these iterations has
 its own test for convergence, the preconditioner may use a very crude
 approximation, as long as it captures the dominant numerical feature(s)
 of the system. We have found that the combination of a preconditioner
-with the Newton-Krylov iteration, using even a fairly poor approximation
+with the Newton--Krylov iteration, using even a fairly poor approximation
 to the Jacobian, can be surprisingly superior to using the same matrix
 without Krylov acceleration (i.e., a modified Newton iteration), as well
-as to using the Newton-Krylov method with no preconditioning.
+as to using the Newton--Krylov method with no preconditioning.
 
 .. _CVODES.Mathematics.stablimit:
 
@@ -659,7 +659,7 @@ to the CVODES solution. (In timing tests, these overhead costs have
 ranged from 2% to 7% of the total, depending on the size and complexity
 of the problem, with lower relative costs for larger problems.)
 Therefore, it should be activated only when there is reasonable
-expectation of modes in the user’s system for which it is appropriate.
+expectation of modes in the user's system for which it is appropriate.
 In particular, if a CVODES solution with this option turned off
 appears to take an inordinately large number of steps at orders 3-5 for
 no apparent reason in terms of the solution time scale, then there is a
@@ -776,7 +776,7 @@ it is of interest to compute integral quantities of the form
    :label: CVODES_QUAD
 
 The most effective approach to compute :math:`z(t)` is to extend the original
-problem with the additional ODEs (obtained by applying Leibnitz’s
+problem with the additional ODEs (obtained by applying Leibnitz's
 differentiation rule):
 
 .. math:: \dot z = q(t,y,p) \, , \quad z(t_0) = 0 \, .
@@ -784,7 +784,7 @@ differentiation rule):
 Note that this is equivalent to using a quadrature method based on the
 underlying linear multistep polynomial representation for :math:`y(t)`.
 
-This can be done at the “user level” by simply exposing to CVODES the extended
+This can be done at the "user level" by simply exposing to CVODES the extended
 ODE system :eq:`CVODES_ivp_p` + :eq:`CVODES_QUAD`. However, in the
 context of an implicit integration solver, this approach is not desirable since
 the nonlinear solver module will require the Jacobian (or Jacobian-vector
@@ -792,9 +792,9 @@ product) of this extended ODE. Moreover, since the additional states :math:`z`
 do not enter the right-hand side of the ODE :eq:`CVODES_QUAD` and
 therefore the right-hand side of the extended ODE system, it is much more
 efficient to treat the ODE system :eq:`CVODES_QUAD` separately from the
-original system :eq:`CVODES_ivp_p` by “taking out” the additional states
+original system :eq:`CVODES_ivp_p` by "taking out" the additional states
 :math:`z` from the nonlinear system :eq:`CVODES_nonlinear` that must
-be solved in the correction step of the LMM. Instead, “corrected” values
+be solved in the correction step of the LMM. Instead, "corrected" values
 :math:`z^n` are computed explicitly as
 
 .. math::
@@ -836,7 +836,7 @@ equations* for short):
    :label: CVODES_sens_eqns
 
 obtained by applying the chain rule of differentiation to the original
-ODEs :eq:`CVODES_ivp_p`.
+ODEs :eq:`CVODES_ivp_p`.
 
 When performing forward sensitivity analysis, CVODES carries out the time
 integration of the combined system, :eq:`CVODES_ivp_p` and
@@ -1088,7 +1088,7 @@ as integrands for :math:`\bar{z}`, where :math:`q_y` and :math:`q_p` are the
 partial derivatives of the integrand function :math:`q` of :eq:`CVODES_QUAD`.
 
 As with the quadrature variables :math:`z`, the new variables :math:`\bar z` are
-also excluded from any nonlinear solver phase and “corrected” values :math:`\bar
+also excluded from any nonlinear solver phase and "corrected" values :math:`\bar
 z^n` are obtained through explicit formulas.
 
 
@@ -1334,7 +1334,7 @@ It is easy to see that, except for situations in which the number of parameters
 
 A much more efficient alternative is to compute Hessian-vector products using a
 so-called *forward-over-adjoint* approach. This method is based on using the
-same “trick” as the one used in computing gradients of pointwise functionals
+same "trick" as the one used in computing gradients of pointwise functionals
 with the adjoint method, namely applying a formal directional forward derivation
 to one of the gradients of :eq:`CVODES_dgdp_1` or :eq:`CVODES_dgdp_2`. With that, the cost of
 computing a full Hessian is roughly equivalent to the cost of computing the

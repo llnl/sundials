@@ -63,8 +63,7 @@ int CVBBDPrecInit(void* cvode_mem, sunindextype Nlocal, sunindextype mudq,
   CVodeMem cv_mem;
   CVLsMem cvls_mem;
   CVBBDPrecData pdata;
-  sunindextype muk, mlk, storage_mu, lrw1, liw1;
-  long int lrw, liw;
+  sunindextype muk, mlk, storage_mu;
   int flag;
 
   if (cvode_mem == NULL)
@@ -258,37 +257,7 @@ int CVBBDPrecInit(void* cvode_mem, sunindextype Nlocal, sunindextype mudq,
   /* Set work space sizes and initialize nge */
   pdata->rpwsize = 0;
   pdata->ipwsize = 0;
-  if (cv_mem->cv_tempv->ops->nvspace)
-  {
-    N_VSpace(cv_mem->cv_tempv, &lrw1, &liw1);
-    pdata->rpwsize += 3 * lrw1;
-    pdata->ipwsize += 3 * liw1;
-  }
-  if (pdata->rlocal->ops->nvspace)
-  {
-    N_VSpace(pdata->rlocal, &lrw1, &liw1);
-    pdata->rpwsize += 2 * lrw1;
-    pdata->ipwsize += 2 * liw1;
-  }
-  if (pdata->savedJ->ops->space)
-  {
-    flag = SUNMatSpace(pdata->savedJ, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->savedP->ops->space)
-  {
-    flag = SUNMatSpace(pdata->savedP, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->LS->ops->space)
-  {
-    flag = SUNLinSolSpace(pdata->LS, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  pdata->nge = 0;
+  pdata->nge     = 0;
 
   /* make sure P_data is free from any previous allocations */
   if (cvls_mem->pfree) { cvls_mem->pfree(cv_mem); }
@@ -348,43 +317,6 @@ int CVBBDPrecReInit(void* cvode_mem, sunindextype mudq, sunindextype mldq,
 
   /* Re-initialize nge */
   pdata->nge = 0;
-
-  return (CVLS_SUCCESS);
-}
-
-int CVBBDPrecGetWorkSpace(void* cvode_mem, long int* lenrwBBDP,
-                          long int* leniwBBDP)
-{
-  CVodeMem cv_mem;
-  CVLsMem cvls_mem;
-  CVBBDPrecData pdata;
-
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVLS_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBBD_MEM_NULL);
-    return (CVLS_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  if (cv_mem->cv_lmem == NULL)
-  {
-    cvProcessError(cv_mem, CVLS_LMEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBBD_LMEM_NULL);
-    return (CVLS_LMEM_NULL);
-  }
-  cvls_mem = (CVLsMem)cv_mem->cv_lmem;
-
-  if (cvls_mem->P_data == NULL)
-  {
-    cvProcessError(cv_mem, CVLS_PMEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBBD_PMEM_NULL);
-    return (CVLS_PMEM_NULL);
-  }
-  pdata = (CVBBDPrecData)cvls_mem->P_data;
-
-  *lenrwBBDP = pdata->rpwsize;
-  *leniwBBDP = pdata->ipwsize;
 
   return (CVLS_SUCCESS);
 }

@@ -87,72 +87,6 @@ int CVodeSetUserData(void* cvode_mem, void* user_data)
 }
 
 /*
- * CVodeSetMonitorFn
- *
- * Specifies the user function to call for monitoring
- * the solution and/or integrator statistics.
- */
-
-int CVodeSetMonitorFn(void* cvode_mem, CVMonitorFn fn)
-{
-  CVodeMem cv_mem;
-
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
-  }
-
-  cv_mem = (CVodeMem)cvode_mem;
-
-#ifdef SUNDIALS_ENABLE_MONITORING
-  cv_mem->cv_monitorfun = fn;
-  return (CV_SUCCESS);
-#else
-  /* silence warnings when monitoring is disabled */
-  ((void)fn);
-  cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                 "SUNDIALS was not built with monitoring enabled.");
-  return (CV_ILL_INPUT);
-#endif
-}
-
-/*
- * CVodeSetMonitorFrequency
- *
- * Specifies the frequency with which to call the user function.
- */
-
-int CVodeSetMonitorFrequency(void* cvode_mem, long int nst)
-{
-  CVodeMem cv_mem;
-
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
-  }
-
-  if (nst < 0)
-  {
-    cvProcessError(NULL, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   "step interval must be >= 0\n");
-    return (CV_ILL_INPUT);
-  }
-
-  cv_mem = (CVodeMem)cvode_mem;
-
-#ifdef SUNDIALS_ENABLE_MONITORING
-  cv_mem->cv_monitor_interval = nst;
-  return (CV_SUCCESS);
-#else
-  cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                 "SUNDIALS was not built with monitoring enabled.");
-  return (CV_ILL_INPUT);
-#endif
-}
-
-/*
  * CVodeSetMaxOrd
  *
  * Specifies the maximum method order
@@ -949,12 +883,7 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
   /* Disable constraints */
   if (constraints == NULL)
   {
-    if (cv_mem->cv_constraints)
-    {
-      N_VDestroy(cv_mem->cv_constraints);
-      cv_mem->cv_lrw -= cv_mem->cv_lrw1;
-      cv_mem->cv_liw -= cv_mem->cv_liw1;
-    }
+    if (cv_mem->cv_constraints) { N_VDestroy(cv_mem->cv_constraints); }
     return (CV_SUCCESS);
   }
 
@@ -988,8 +917,6 @@ int CVodeSetConstraints(void* cvode_mem, N_Vector constraints)
                      MSGCV_MEM_FAIL);
       return (CV_MEM_FAIL);
     }
-    cv_mem->cv_lrw += cv_mem->cv_lrw1;
-    cv_mem->cv_liw += cv_mem->cv_liw1;
   }
 
   /* Load the constraints vector */
@@ -1473,30 +1400,6 @@ int CVodeGetEstLocalErrors(void* cvode_mem, N_Vector ele)
   cv_mem = (CVodeMem)cvode_mem;
 
   N_VScale(ONE, cv_mem->cv_acor, ele);
-
-  return (CV_SUCCESS);
-}
-
-/*
- * CVodeGetWorkSpace
- *
- * Returns integrator work space requirements
- */
-
-int CVodeGetWorkSpace(void* cvode_mem, long int* lenrw, long int* leniw)
-{
-  CVodeMem cv_mem;
-
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
-  }
-
-  cv_mem = (CVodeMem)cvode_mem;
-
-  *leniw = cv_mem->cv_liw;
-  *lenrw = cv_mem->cv_lrw;
 
   return (CV_SUCCESS);
 }

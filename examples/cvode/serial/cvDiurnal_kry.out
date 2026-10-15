@@ -52,8 +52,6 @@ c2 (bot.left/middle/top rt.) =    3.352e+11     9.107e+11     4.163e+11
 
 Final Statistics.. 
 
-lenrw   =  2689     leniw   =    53
-lenrwLS =  2454     leniwLS =    42
 nst     =   492
 nfe     =   637     nfeLS   =     0
 nni     =   634     nli     =   649

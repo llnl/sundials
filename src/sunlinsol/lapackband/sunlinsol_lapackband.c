@@ -94,7 +94,6 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
   S->ops->setup      = SUNLinSolSetup_LapackBand;
   S->ops->solve      = SUNLinSolSolve_LapackBand;
   S->ops->lastflag   = SUNLinSolLastFlag_LapackBand;
-  S->ops->space      = SUNLinSolSpace_LapackBand;
   S->ops->free       = SUNLinSolFree_LapackBand;
 
   /* Create content */
@@ -219,14 +218,6 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_LapackBand(SUNLinearSolver S, long int* lenrwLS,
-                                     long int* leniwLS)
-{
-  *lenrwLS = 0;
-  *leniwLS = 2 + LAPACKBAND_CONTENT(S)->N;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S)

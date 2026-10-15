@@ -112,7 +112,6 @@ SUNMatrix SUNMatrix_OneMklDenseBlock(sunindextype num_blocks, sunindextype M,
   A->ops->scaleadd  = SUNMatScaleAdd_OneMklDense;
   A->ops->scaleaddi = SUNMatScaleAddI_OneMklDense;
   A->ops->matvec    = SUNMatMatvec_OneMklDense;
-  A->ops->space     = SUNMatSpace_OneMklDense;
 
   // Create content
   A->content =
@@ -579,26 +578,6 @@ SUNErrCode SUNMatMatvec_OneMklDense(SUNMatrix A, N_Vector x, N_Vector y)
     oneapi::mkl::blas::gemv(*Q, oneapi::mkl::transpose::N, M, N, ONE, Adata, M,
                             xdata, 1, ZERO, ydata, 1);
   }
-
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNMatSpace_OneMklDense(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  if (!A)
-  {
-    SUNDIALS_DEBUG_ERROR("Input matrix is NULL\n");
-    return SUN_ERR_ARG_INCOMPATIBLE;
-  }
-
-  if (SUNMatGetID(A) != SUNMATRIX_ONEMKLDENSE)
-  {
-    SUNDIALS_DEBUG_ERROR("Invalid matrix ID\n");
-    return SUN_ERR_ARG_WRONGTYPE;
-  }
-
-  *lenrw = MAT_LDATA(A);
-  *leniw = 4;
 
   return SUN_SUCCESS;
 }

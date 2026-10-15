@@ -60,7 +60,6 @@ SUNAdaptController SUNAdaptController_MRIStep(ARKodeMem ark_mem,
   C->ops->reset        = SUNAdaptController_Reset_MRIStep;
   C->ops->write        = SUNAdaptController_Write_MRIStep;
   C->ops->updateh      = SUNAdaptController_UpdateH_MRIStep;
-  C->ops->space        = SUNAdaptController_Space_MRIStep;
 
   /* Create content */
   content = NULL;
@@ -132,12 +131,6 @@ SUNErrCode SUNAdaptController_Reset_MRIStep(SUNAdaptController C)
 SUNErrCode SUNAdaptController_Write_MRIStep(SUNAdaptController C, FILE* fptr)
 {
   return SUNAdaptController_Write(MRICONTROL_C(C), fptr);
-}
-
-SUNErrCode SUNAdaptController_Space_MRIStep(SUNAdaptController C,
-                                            long int* lenrw, long int* leniw)
-{
-  return SUNAdaptController_Space(MRICONTROL_C(C), lenrw, leniw);
 }
 
 /*===============================================================

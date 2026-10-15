@@ -912,22 +912,6 @@ SWIGEXPORT int _wrap_FIDAGetDky(void *farg1, double const *farg2, int const *far
 }
 
 
-SWIGEXPORT int _wrap_FIDAGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)IDAGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FIDAGetNumSteps(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1467,22 +1451,6 @@ SWIGEXPORT int _wrap_FIDABBDPrecReInit(void *farg1, int32_t const *farg2, int32_
 }
 
 
-SWIGEXPORT int _wrap_FIDABBDPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)IDABBDPrecGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FIDABBDPrecGetNumGfnEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1666,22 +1634,6 @@ SWIGEXPORT int _wrap_FIDAGetJacNumSteps(void *farg1, long *farg2) {
   arg1 = (void *)(farg1);
   arg2 = (long *)(farg2);
   result = (int)IDAGetJacNumSteps(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FIDAGetLinWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)IDAGetLinWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }

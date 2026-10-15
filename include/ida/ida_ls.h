@@ -103,9 +103,6 @@ SUNDIALS_EXPORT int IDAGetJac(void* ida_mem,
 SUNDIALS_EXPORT int IDAGetJacCj(void* ida_mem, sunrealtype* cj_J);
 SUNDIALS_EXPORT int IDAGetJacTime(void* ida_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int IDAGetJacNumSteps(void* ida_mem, long int* nst_J);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int IDAGetLinWorkSpace(void* ida_mem, long int* lenrwLS, long int* leniwLS);
 SUNDIALS_EXPORT int IDAGetNumJacEvals(void* ida_mem, long int* njevals);
 SUNDIALS_EXPORT int IDAGetNumPrecEvals(void* ida_mem, long int* npevals);
 SUNDIALS_EXPORT int IDAGetNumPrecSolves(void* ida_mem, long int* npsolves);

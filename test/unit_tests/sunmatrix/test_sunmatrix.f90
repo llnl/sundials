@@ -455,26 +455,4 @@ contains
 
   end function Test_FSUNMatMatvec
 
-  integer(c_int) function Test_FSUNMatSpace(A, myid) result(failure)
-    use, intrinsic :: iso_c_binding
-    use test_utilities
-
-    implicit none
-
-    integer(c_int)  :: myid
-    type(SUNMatrix) :: A
-    integer(c_long) :: lenrw(1), leniw(1)
-
-    failure = 0
-
-    failure = FSUNMatSpace(A, lenrw, leniw); 
-    if (failure /= 0) then
-      call TEST_STATUS(">>> FAILED test -- SUNMatSpace ", myid)
-      return
-    else
-      call TEST_STATUS("    PASSED test -- SUNMatSpace ", myid)
-    end if
-
-  end function Test_FSUNMatSpace
-
 end module test_sunmatrix

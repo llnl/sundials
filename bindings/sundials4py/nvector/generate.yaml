@@ -79,7 +79,6 @@ modules:
       - "^N_VScaleVectorArray_.*"
       - "^N_VSetArrayPointer_.*"
       - "^N_VSetVecAtIndexVectorArray_.*"
-      - "^N_VSpace_.*"
       - "^N_VWL2Norm_.*"
       - "^N_VWrmsNorm_.*"
       - "^N_VWrmsNormMask_.*"

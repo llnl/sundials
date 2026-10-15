@@ -41,10 +41,10 @@ described in :numref:`CVODES.Usage.SIM`.
 
 .. _CVODES.Usage.ADJ.skeleton_sim:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program as an application of
+The following is a skeleton of the user's main program as an application of
 CVODES. The user program is to have these steps in the order indicated, unless
 otherwise noted. For the sake of brevity, we defer many of the details to the
 later sections. As in :numref:`CVODES.Usage.SIM.skeleton_sim`, most steps are
@@ -173,7 +173,7 @@ in bold.
 
    ``SUNLinearSolver LS = SUNLinSol_*(...);``
 
-   where ``*`` can be replaced with “Dense”, “SPGMR”, or other options, as
+   where ``*`` can be replaced with "Dense", "SPGMR", or other options, as
    discussed in :numref:`CVODES.Usage.SIM.user_callable.lin_solv_init` and Chapter
    :numref:`SUNLinSol`.
 
@@ -464,7 +464,7 @@ internal memory for the backward problem.
      * ``CV_MEM_FAIL`` -- A memory allocation request has failed.
 
 
-There are two initialization functions for the backward problem – one for the
+There are two initialization functions for the backward problem -- one for the
 case when the backward problem does not depend on the forward sensitivities, and
 one for the case when it does. These two functions are described next.
 
@@ -690,10 +690,10 @@ Nonlinear solver initialization function for backward problem
 
 All CVODES nonlinear solver modules available for forward problems are available
 for the backward problem. As with the forward problem CVODES uses the
-``SUNNonlinearSolver`` implementation of Newton’s method defined by the
+``SUNNonlinearSolver`` implementation of Newton's method defined by the
 :ref:`SUNNONLINSOL_NEWTON <SUNNonlinSol.Newton>` module by default.
 
-To specify a different nonlinear solver for the backward problem, the user’s
+To specify a different nonlinear solver for the backward problem, the user's
 program must create a ``SUNNonlinearSolver`` object by calling the appropriate
 constructor routine. The user must then attach the ``SUNNonlinearSolver`` object
 by calling :c:func:`CVodeSetNonlinearSolverB`, as documented below.
@@ -861,7 +861,7 @@ reader can skip to :numref:`CVODES.Usage.ADJ.user_supplied`.
 We note that, on an error return, all of the optional input functions send an
 error message to the error handler function. All error return values are
 negative, so the test ``flag < 0`` will catch all errors. Finally, a call to a
-``CVodeSet***B`` function can be made from the user’s calling program at any
+``CVodeSet***B`` function can be made from the user's calling program at any
 time and, if successful, takes effect immediately.
 
 Main solver optional input functions
@@ -1723,7 +1723,7 @@ non-``NULL`` ``SUNMatrix`` object was supplied to
       where ``y`` is the solution  of the original IVP at time ``tt``, and
       ``yB`` is the solution of the  backward problem at the same time.
       Information regarding the structure of the specific ``SUNMatrix``
-      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
+      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
       be obtained through using the implementation-specific  ``SUNMatrix``
       interface functions (see :numref:`SUNMatrix` for details).  With direct linear
       solvers (i.e., linear solvers with type  ``SUNLINEARSOLVER_DIRECT``), the
@@ -1776,7 +1776,7 @@ non-``NULL`` ``SUNMatrix`` object was supplied to
       IVP at time ``tt``, ``yS`` is the vector of forward sensitivities at time
       ``tt``,  and ``yB`` is the solution of the backward problem at the same
       time.  Information regarding the structure of the specific ``SUNMatrix``
-      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
+      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
       be obtained through using the implementation-specific  ``SUNMatrix``
       interface functions (see :numref:`SUNMatrix`).  With direct linear solvers
       (i.e., linear solvers with type  ``SUNLINEARSOLVER_DIRECT``, the Jacobian
@@ -1984,7 +1984,7 @@ difference quotient approximation to these products.
 Jacobian-vector product setup for the backward problem (matrix-free linear solvers)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the user’s Jacobian-times-vector routine requires that any Jacobian-related
+If the user's Jacobian-times-vector routine requires that any Jacobian-related
 data be preprocessed or evaluated, then this needs to be done in a user-supplied
 function of type :c:type:`CVLsJacTimesSetupFnB` or
 :c:type:`CVLsJacTimesSetupFnBS`, defined as follows:
@@ -2139,7 +2139,7 @@ following two types:
 Preconditioner setup for the backward problem (iterative linear solvers)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the user’s preconditioner requires that any Jacobian-related data be
+If the user's preconditioner requires that any Jacobian-related data be
 preprocessed or evaluated, then this needs to be done in a user-supplied
 function of one of the following two types:
 

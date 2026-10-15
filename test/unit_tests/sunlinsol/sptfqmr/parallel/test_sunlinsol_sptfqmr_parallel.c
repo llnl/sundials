@@ -215,7 +215,6 @@ int main(int argc, char* argv[])
                                            ProbData.myid);
   fails += Test_SUNLinSolSetZeroGuess(LS, ProbData.myid);
   fails += Test_SUNLinSolInitialize(LS, ProbData.myid);
-  fails += Test_SUNLinSolSpace(LS, ProbData.myid);
   if (fails)
   {
     printf("FAIL: SUNLinSol_SPTFQMR module failed %i initialization tests\n\n",

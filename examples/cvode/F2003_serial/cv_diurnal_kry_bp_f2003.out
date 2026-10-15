@@ -41,8 +41,5 @@
     Avg Krylov subspace dim         =  9.839679E-01
     Num nonlinear solver fails      =        0
     Num linear solver fails         =        0
-    main solver real/int workspace sizes   =     2689          53
-    linear solver real/int workspace sizes =     2454          42
-    CVBandPre real/int workspace sizes    =     2800         622
     CVBandPre number of f evaluations     =       35
   

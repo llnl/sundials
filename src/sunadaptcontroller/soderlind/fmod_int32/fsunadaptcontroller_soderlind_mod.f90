@@ -37,7 +37,6 @@ module fsunadaptcontroller_soderlind_mod
  public :: FSUNAdaptController_Write_Soderlind
  public :: FSUNAdaptController_SetErrorBias_Soderlind
  public :: FSUNAdaptController_UpdateH_Soderlind
- public :: FSUNAdaptController_Space_Soderlind
  public :: FSUNAdaptController_PID
  public :: FSUNAdaptController_SetParams_PID
  public :: FSUNAdaptController_PI
@@ -137,16 +136,6 @@ use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 real(C_DOUBLE), intent(in) :: farg2
 real(C_DOUBLE), intent(in) :: farg3
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Space_Soderlind(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNAdaptController_Space_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -430,25 +419,6 @@ farg1 = c_loc(c)
 farg2 = h
 farg3 = dsm
 fresult = swigc_FSUNAdaptController_UpdateH_Soderlind(farg1, farg2, farg3)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Space_Soderlind(c, lenrw, leniw) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrw
-integer(C_LONG), dimension(*), target, intent(inout) :: leniw
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(c)
-farg2 = c_loc(lenrw(1))
-farg3 = c_loc(leniw(1))
-fresult = swigc_FSUNAdaptController_Space_Soderlind(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

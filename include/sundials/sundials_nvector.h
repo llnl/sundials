@@ -116,7 +116,6 @@ struct _generic_N_Vector_Ops
   N_Vector (*nvclone)(N_Vector);
   N_Vector (*nvcloneempty)(N_Vector);
   void (*nvdestroy)(N_Vector);
-  void (*nvspace)(N_Vector, sunindextype*, sunindextype*);
   sunrealtype* (*nvgetarraypointer)(N_Vector);
   sunrealtype* (*nvgetdevicearraypointer)(N_Vector);
   void (*nvsetarraypointer)(sunrealtype*, N_Vector);
@@ -226,9 +225,6 @@ SUNDIALS_EXPORT N_Vector_ID N_VGetVectorID(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty(N_Vector w);
 SUNDIALS_EXPORT void N_VDestroy(N_Vector v);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void N_VSpace(N_Vector v, sunindextype* lrw, sunindextype* liw);
 SUNDIALS_EXPORT sunrealtype* N_VGetArrayPointer(N_Vector v);
 SUNDIALS_EXPORT sunrealtype* N_VGetDeviceArrayPointer(N_Vector v);
 SUNDIALS_EXPORT void N_VSetArrayPointer(sunrealtype* v_data_1d, N_Vector v);

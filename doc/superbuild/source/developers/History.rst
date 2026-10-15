@@ -39,7 +39,7 @@ conversion was achieved by the use of two sets of routines for basic vector
 operations, one serial and one parallel (based on MPI).
 
 The success of the rewrite prompted a similar rewrite of a nonlinear algebraic
-systems solver, NKSOL, which was the first Newton-Krylov-based nonlinear
+systems solver, NKSOL, which was the first Newton--Krylov-based nonlinear
 software package, into the KINSOL package. (CNKSOL was voted out as a name due
 to a desire of LLNL management for a pronounceable package name, hence KINSOL,
 for Krylov Inexact Newton SOLver.) Further development of the common

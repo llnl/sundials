@@ -43,10 +43,10 @@ described in :numref:`CVODES.Usage.SIM` or :numref:`CVODES.Usage.purequad`.
 
 .. _CVODES.Usage.FSA.skeleton_sim:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program (or calling program) as
+The following is a skeleton of the user's main program (or calling program) as
 an application of CVODES. The user program is to have these steps in the order
 indicated, unless otherwise noted. For the sake of brevity, we defer many of the
 details to the later sections. As in :numref:`CVODES.Usage.SIM.skeleton_sim`,
@@ -237,7 +237,7 @@ sensitivity analysis beyond those for IVP solution
    Upon completion of the integration, deallocate memory for the vectors
    ``yS0`` using ``N_VDestroyVectorArray(yS0, Ns);``
 
-   If ``yS`` was created from ``sunrealtype`` arrays ``yS_i``, it is the user’s
+   If ``yS`` was created from ``sunrealtype`` arrays ``yS_i``, it is the user's
    responsibility to also free the space for the arrays ``yS0_i``.
 
 #. :silver:`Finalize MPI, if used`
@@ -492,9 +492,9 @@ Forward sensitivity nonlinear solver interface functions
 
 As in the pure ODE case, when computing solution sensitivities using forward
 sensitivitiy analysis CVODES uses the ``SUNNonlinearSolver`` implementation of
-Newton’s method defined by the ``SUNNONLINSOL_NEWTON`` module (see
+Newton's method defined by the ``SUNNONLINSOL_NEWTON`` module (see
 :numref:`SUNNonlinSol.Newton`) by default. To specify a different nonlinear
-solver in CVODES, the user’s program must create a ``SUNNonlinearSolver`` object
+solver in CVODES, the user's program must create a ``SUNNonlinearSolver`` object
 by calling the appropriate constructor routine. The user must then attach the
 ``SUNNonlinearSolver`` object to CVODES by calling
 :c:func:`CVodeSetNonlinearSolverSensSim` when using the ``CV_SIMULTANEOUS``
@@ -733,7 +733,7 @@ the remainder of this section.
 We note that, on an error return, all of the optional input functions send an
 error message to the error handler function. All error return values are
 negative, so the test ``flag < 0`` will catch all errors. Finally, a call to a
-``CVodeSetSens***`` function can be made from the user’s calling program at any
+``CVodeSetSens***`` function can be made from the user's calling program at any
 time and, if successful, takes effect immediately.
 
 .. _CVODES.Usage.FSA.user_callable.optional_inputs.Table:
@@ -1282,7 +1282,7 @@ Integration of quadrature equations depending on forward sensitivities
 CVODES provides support for integration of quadrature equations that depends not
 only on the state variables but also on forward sensitivities.
 
-The following is an overview of the sequence of calls in a user’s main program
+The following is an overview of the sequence of calls in a user's main program
 in this situation. Steps that are unchanged from the skeleton program presented
 in :numref:`CVODES.Usage.FSA.skeleton_sim` are grayed out and new or modified
 steps are in bold.
@@ -1787,7 +1787,7 @@ integrand :math:`q`, the appropriate right-hand side functions are given by:
       CVODES.
 
       Here ``y`` is of type ``N_Vector`` and ``yS`` is a pointer to an array
-      containing ``Ns`` vectors of type ``N_Vector``. It is the user’s
+      containing ``Ns`` vectors of type ``N_Vector``. It is the user's
       responsibility to access the vector data consistently (including the use
       of the correct accessor macros from each ``N_Vector`` implementation). For
       the sake of computational efficiency, the vector functions in the two
@@ -1835,7 +1835,7 @@ the sensitivity equations has convergence problems, CVODES will attempt to
 improve the initial guess by reducing the step size in order to provide a better
 prediction of the sensitivity variables. Moreover, even if there are no
 convergence failures in the solution of the sensitivity system, CVODES may
-trigger a call to the linear solver’s setup routine which typically involves
+trigger a call to the linear solver's setup routine which typically involves
 reevaluation of Jacobian information (Jacobian approximation in the case of
 CVDENSE and CVBAND, or preconditioner data in the case of the Krylov solvers).
 The new Jacobian information will be used by subsequent calls to the nonlinear

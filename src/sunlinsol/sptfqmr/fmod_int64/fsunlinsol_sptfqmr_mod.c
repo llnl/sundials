@@ -439,22 +439,6 @@ SWIGEXPORT int64_t _wrap_FSUNLinSolLastFlag_SPTFQMR(SUNLinearSolver farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FSUNLinSolSpace_SPTFQMR(SUNLinearSolver farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNLinearSolver)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNLinSolSpace_SPTFQMR(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FSUNLinSolFree_SPTFQMR(SUNLinearSolver farg1) {
   int fresult ;
   SUNLinearSolver arg1 = (SUNLinearSolver) 0 ;

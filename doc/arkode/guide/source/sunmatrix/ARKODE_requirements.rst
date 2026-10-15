@@ -15,7 +15,6 @@
    SUNDIALS Copyright End
    ----------------------------------------------------------------
 
-
 .. _SUNMatrix.ARKODE:
 
 SUNMATRIX functions used by ARKODE
@@ -30,14 +29,13 @@ are specific to the ARKLS interface and the ARKBANDPRE and ARKBBDPRE
 preconditioner modules.   We further note that the ARKLS interface
 only utilizes these routines when supplied with a *matrix-based*
 linear solver, i.e. the ``SUNMatrix`` object (*J* or *M*) passed to
-:c:func:`ARKStepSetLinearSolver()` or
-:c:func:`ARKStepSetMassLinearSolver()` was not ``NULL``.
+:c:func:`ARKodeSetLinearSolver()` or
+:c:func:`ARKodeSetMassLinearSolver()` was not ``NULL``.
 
 At this point, we should emphasize that the ARKODE user does not need
 to know anything about the usage of matrix functions by the ARKODE
 code modules in order to use ARKODE.  The information is presented as
 an implementation detail for the interested reader.
-
 
 .. _SUNMatrix.ARKODE.Table:
 .. table:: List of matrix functions usage by ARKODE code modules
@@ -64,18 +62,13 @@ an implementation detail for the interested reader.
    +-----------------------------+-----------------+-----------------+-----------------+
    | :c:func:`SUNMatMatvecSetup` |      1,2        |                 |                 |
    +-----------------------------+-----------------+-----------------+-----------------+
-   | :c:func:`SUNMatSpace`       |      2          |        2        |        2        |
-   +-----------------------------+-----------------+-----------------+-----------------+
 
 1. These matrix functions are only used for problems involving a
    non-identity mass matrix.
 
 2. These matrix functions are optionally used, in that these are only
    called if they are implemented in the ``SUNMatrix`` module that is
-   being used (i.e. their function pointers are non-``NULL``).  If not
-   supplied, these modules will assume that the matrix requires no
-   storage.
-
+   being used (i.e. their function pointers are non-``NULL``).
 
 We note that both the ARKBANDPRE and ARKBBDPRE preconditioner modules
 are hard-coded to use the SUNDIALS-supplied band ``SUNMatrix`` type,

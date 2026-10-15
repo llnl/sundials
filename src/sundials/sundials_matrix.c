@@ -67,7 +67,6 @@ SUNMatrix SUNMatNewEmpty(SUNContext sunctx)
   ops->matvecsetup              = NULL;
   ops->matvec                   = NULL;
   ops->mathermitiantransposevec = NULL;
-  ops->space                    = NULL;
 
   /* attach ops and initialize content to NULL */
   A->ops     = ops;
@@ -115,8 +114,6 @@ SUNErrCode SUNMatCopyOps(SUNMatrix A, SUNMatrix B)
   B->ops->scaleaddi   = A->ops->scaleaddi;
   B->ops->matvecsetup = A->ops->matvecsetup;
   B->ops->matvec      = A->ops->matvec;
-  B->ops->space       = A->ops->space;
-
   return (0);
 }
 
@@ -236,15 +233,6 @@ SUNErrCode SUNMatHermitianTransposeVec(SUNMatrix A, N_Vector x, N_Vector y)
     ier = A->ops->mathermitiantransposevec(A, x, y);
   }
   else { ier = SUN_ERR_NOT_IMPLEMENTED; }
-  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(A));
-  return (ier);
-}
-
-SUNErrCode SUNMatSpace(SUNMatrix A, long int* lenrw, long int* leniw)
-{
-  SUNErrCode ier;
-  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(A));
-  ier = A->ops->space(A, lenrw, leniw);
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(A));
   return (ier);
 }

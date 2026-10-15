@@ -46,7 +46,7 @@ B. *Process-based multiphysics decompositions (multi-node)*:
 C. *Structure of arrays (SOA) data layouts (single-node or multi-node)*:
    for problems that require
    separate subvectors for each solution component.  For example, in an
-   incompressible Navier-Stokes simulation, separate subvectors may be
+   incompressible Navier--Stokes simulation, separate subvectors may be
    used for velocities and pressure, which are combined together into a
    single MPIManyVector for the overall "solution".
 

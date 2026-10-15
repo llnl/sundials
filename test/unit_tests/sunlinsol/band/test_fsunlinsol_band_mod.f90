@@ -106,7 +106,6 @@ contains
 
     fails = fails + Test_FSUNLinSolGetType(LS, SUNLINEARSOLVER_DIRECT, 0)
     fails = fails + Test_FSUNLinSolLastFlag(LS, 0)
-    fails = fails + Test_FSUNLinSolSpace(LS, 0)
 
     ! cleanup
     tmp = FSUNLinSolFree(LS)
@@ -117,7 +116,7 @@ contains
 
   end function unit_tests
 
-end module
+end module test_fsunlinsol_band
 
 integer(c_int) function check_vector(X, Y, tol) result(failure)
   use, intrinsic :: iso_c_binding

@@ -85,7 +85,6 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
                  sunrealtype t0, ARKVecResizeFn resize, void* resize_data)
 {
   sunbooleantype resizeOK;
-  sunindextype lrw1, liw1, lrw_diff, liw_diff;
   int retval;
   ARKodeMem ark_mem;
 
@@ -140,21 +139,12 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
     }
   }
 
-  /* Determine change in vector sizes */
-  lrw1 = liw1 = 0;
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  lrw_diff      = lrw1 - ark_mem->lrw1;
-  liw_diff      = liw1 - ark_mem->liw1;
-  ark_mem->lrw1 = lrw1;
-  ark_mem->liw1 = liw1;
-
   /* Disable constraints, the user will need to set a new constraint vector for
      the updated problem size */
-  arkFreeVec(ark_mem, &ark_mem->constraints);
+  arkFreeVec(&ark_mem->constraints);
 
   /* Resize the solver vectors (using y0 as a template) */
-  resizeOK = arkResizeVectors(ark_mem, resize, resize_data, lrw_diff, liw_diff,
-                              y0);
+  resizeOK = arkResizeVectors(ark_mem, resize, resize_data, y0);
   if (!resizeOK)
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -165,8 +155,7 @@ int ARKodeResize(void* arkode_mem, N_Vector y0, sunrealtype hscale,
   /* Resize the interpolation structure memory */
   if (ark_mem->interp != NULL)
   {
-    retval = arkInterpResize(ark_mem, ark_mem->interp, resize, resize_data,
-                             lrw_diff, liw_diff, y0);
+    retval = arkInterpResize(ark_mem, ark_mem->interp, resize, resize_data, y0);
     if (retval != ARK_SUCCESS)
     {
       arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
@@ -1283,7 +1272,7 @@ void ARKodeFree(void** arkode_mem)
   /* free the interpolation module */
   if (ark_mem->interp != NULL)
   {
-    arkInterpFree(ark_mem, ark_mem->interp);
+    arkInterpFree(ark_mem->interp);
     ark_mem->interp = NULL;
   }
 
@@ -1337,10 +1326,6 @@ void ARKodePrintMem(void* arkode_mem, FILE* outfile)
   fprintf(outfile, "ritol = %i\n", ark_mem->ritol);
   fprintf(outfile, "mxhnil = %i\n", ark_mem->mxhnil);
   fprintf(outfile, "mxstep = %li\n", ark_mem->mxstep);
-  fprintf(outfile, "lrw1 = %li\n", (long int)ark_mem->lrw1);
-  fprintf(outfile, "liw1 = %li\n", (long int)ark_mem->liw1);
-  fprintf(outfile, "lrw = %li\n", (long int)ark_mem->lrw);
-  fprintf(outfile, "liw = %li\n", (long int)ark_mem->liw);
   fprintf(outfile, "user_efun = %i\n", ark_mem->user_efun);
   fprintf(outfile, "tstopset = %i\n", ark_mem->tstopset);
   fprintf(outfile, "tstopinterp = %i\n", ark_mem->tstopinterp);
@@ -1608,10 +1593,6 @@ ARKodeMem arkCreate(SUNContext sunctx)
   ark_mem->relax_enabled = SUNFALSE;
   ark_mem->relax_mem     = NULL;
 
-  /* Initialize lrw and liw */
-  ark_mem->lrw = 18;
-  ark_mem->liw = 53; /* fcn/data ptr, int, long int, sunindextype, sunbooleantype */
-
   /* No mallocs have been done yet */
   ark_mem->VabstolMallocDone  = SUNFALSE;
   ark_mem->VRabstolMallocDone = SUNFALSE;
@@ -1640,8 +1621,6 @@ ARKodeMem arkCreate(SUNContext sunctx)
     ARKodeFree((void**)&ark_mem);
     return (NULL);
   }
-  ark_mem->lrw += ARK_ADAPT_LRW;
-  ark_mem->liw += ARK_ADAPT_LIW;
 
   /* Initialize the interpolation structure to NULL */
   ark_mem->interp        = NULL;
@@ -1769,7 +1748,6 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
 {
   sunbooleantype stepperOK, nvectorOK, allocOK;
   int retval;
-  sunindextype lrw1, liw1;
 
   /* Check ark_mem */
   if (ark_mem == NULL)
@@ -1813,16 +1791,6 @@ int arkInit(ARKodeMem ark_mem, sunrealtype t0, N_Vector y0, int init_type)
                       MSG_ARK_BAD_NVECTOR);
       return (ARK_ILL_INPUT);
     }
-
-    /* Set space requirements for one N_Vector */
-    if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-    else
-    {
-      lrw1 = 0;
-      liw1 = 0;
-    }
-    ark_mem->lrw1 = lrw1;
-    ark_mem->liw1 = liw1;
 
     /* Allocate the solver vectors (using y0 as a template) */
     allocOK = arkAllocVectors(ark_mem, y0);
@@ -2230,7 +2198,7 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
   }
   else
   {
-    if (ark_mem->fn != NULL) { arkFreeVec(ark_mem, &ark_mem->fn); }
+    if (ark_mem->fn != NULL) { arkFreeVec(&ark_mem->fn); }
   }
 
   /* initialization complete */
@@ -3502,10 +3470,6 @@ int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
   array already exists it is left alone; otherwise it is allocated
   by cloning the input vector.
 
-  This routine also updates the optional outputs lrw and liw, which
-  are (respectively) the lengths of the overall ARKODE real and
-  integer work spaces.
-
   SUNTRUE is returned if the allocation is successful (or if the
   target vector or vector array already exists) otherwise SUNFALSE
   is returned.
@@ -3524,26 +3488,17 @@ sunbooleantype arkAllocVec(ARKodeMem ark_mem, N_Vector tmpl, N_Vector* v)
       arkFreeVectors(ark_mem);
       return (SUNFALSE);
     }
-    else
-    {
-      ark_mem->lrw += ark_mem->lrw1;
-      ark_mem->liw += ark_mem->liw1;
-    }
   }
   return (SUNTRUE);
 }
 
-sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v,
-                                sunindextype lrw1, long int* lrw,
-                                sunindextype liw1, long int* liw)
+sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v)
 {
   /* allocate the new vector array if necessary */
   if (*v == NULL)
   {
     *v = N_VCloneVectorArray(count, tmpl);
     if (*v == NULL) { return (SUNFALSE); }
-    *lrw += count * lrw1;
-    *liw += count * liw1;
   }
   return (SUNTRUE);
 }
@@ -3553,29 +3508,23 @@ sunbooleantype arkAllocVecArray(int count, N_Vector tmpl, N_Vector** v,
 
   These routines (respectively) free a single vector or a vector
   array. If the target vector or vector array is already NULL it
-  is left alone; otherwise it is freed and the optional outputs
-  lrw and liw are updated accordingly.
+  is left alone; otherwise it is freed.
   ---------------------------------------------------------------*/
-void arkFreeVec(ARKodeMem ark_mem, N_Vector* v)
+void arkFreeVec(N_Vector* v)
 {
   if (*v != NULL)
   {
     N_VDestroy(*v);
     *v = NULL;
-    ark_mem->lrw -= ark_mem->lrw1;
-    ark_mem->liw -= ark_mem->liw1;
   }
 }
 
-void arkFreeVecArray(int count, N_Vector** v, sunindextype lrw1, long int* lrw,
-                     sunindextype liw1, long int* liw)
+void arkFreeVecArray(int count, N_Vector** v)
 {
   if (*v != NULL)
   {
     N_VDestroyVectorArray(*v, count);
     *v = NULL;
-    *lrw -= count * lrw1;
-    *liw -= count * liw1;
   }
 }
 
@@ -3586,17 +3535,13 @@ void arkFreeVecArray(int count, N_Vector** v, sunindextype lrw1, long int* lrw,
   array based on a template vector. If the ARKVecResizeFn function
   is non-NULL, then it calls that routine to perform the resize;
   otherwise it deallocates and reallocates the target vector or
-  vector array based on the template vector. These routines also
-  updates the optional outputs lrw and liw, which are
-  (respectively) the lengths of the overall ARKODE real and
-  integer work spaces.
+  vector array based on the template vector.
 
   SUNTRUE is returned if the resize is successful otherwise
   SUNFALSE is returned.
   ---------------------------------------------------------------*/
 sunbooleantype arkResizeVec(ARKodeMem ark_mem, ARKVecResizeFn resize,
-                            void* resize_data, sunindextype lrw_diff,
-                            sunindextype liw_diff, N_Vector tmpl, N_Vector* v)
+                            void* resize_data, N_Vector tmpl, N_Vector* v)
 {
   if (*v != NULL)
   {
@@ -3621,16 +3566,12 @@ sunbooleantype arkResizeVec(ARKodeMem ark_mem, ARKVecResizeFn resize,
         return (SUNFALSE);
       }
     }
-    ark_mem->lrw += lrw_diff;
-    ark_mem->liw += liw_diff;
   }
   return (SUNTRUE);
 }
 
 sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
-                                 int count, N_Vector tmpl, N_Vector** v,
-                                 sunindextype lrw_diff, long int* lrw,
-                                 sunindextype liw_diff, long int* liw)
+                                 int count, N_Vector tmpl, N_Vector** v)
 {
   int i;
 
@@ -3650,8 +3591,6 @@ sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
         if (resize((*v)[i], tmpl, resize_data)) { return (SUNFALSE); }
       }
     }
-    *lrw += count * lrw_diff;
-    *liw += count * liw_diff;
   }
   return (SUNTRUE);
 }
@@ -3662,9 +3601,7 @@ sunbooleantype arkResizeVecArray(ARKVecResizeFn resize, void* resize_data,
   This routine allocates the ARKODE vectors ewt, yn, tempv* and
   ftemp. If any of these vectors already exist, they are left
   alone. Otherwise, it will allocate each vector by cloning the
-  input vector. This routine also updates the optional outputs
-  lrw and liw, which are (respectively) the lengths of the real
-  and integer work spaces.
+  input vector.
 
   If all memory allocations are successful, arkAllocVectors
   returns SUNTRUE, otherwise it returns SUNFALSE.
@@ -3702,34 +3639,27 @@ sunbooleantype arkAllocVectors(ARKodeMem ark_mem, N_Vector tmpl)
   otherwise they are left alone. If a resize function is provided
   it is called to resize the vectors otherwise the vector is
   freed and a new vector is created by cloning in input vector.
-  This routine also updates the optional outputs lrw and liw,
-  which are (respectively) the lengths of the real and integer
-  work spaces.
 
   If all memory allocations are successful, arkResizeVectors
   returns SUNTRUE, otherwise it returns SUNFALSE.
   ---------------------------------------------------------------*/
 sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
-                                void* resize_data, sunindextype lrw_diff,
-                                sunindextype liw_diff, N_Vector tmpl)
+                                void* resize_data, N_Vector tmpl)
 {
   /* Vabstol */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->Vabstol))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->Vabstol))
   {
     return (SUNFALSE);
   }
 
   /* VRabstol */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->VRabstol))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->VRabstol))
   {
     return (SUNFALSE);
   }
 
   /* ewt */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->ewt))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->ewt))
   {
     return (SUNFALSE);
   }
@@ -3741,54 +3671,46 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
   }
   else
   { /* resize if distinct from ewt */
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                      &ark_mem->rwt))
+    if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->rwt))
     {
       return (SUNFALSE);
     }
   }
 
   /* yn */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->yn))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->yn))
   {
     return (SUNFALSE);
   }
 
   /* fn */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->fn))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->fn))
   {
     return (SUNFALSE);
   }
 
   /* tempv* */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv1))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->tempv1))
   {
     return (SUNFALSE);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv2))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->tempv2))
   {
     return (SUNFALSE);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv3))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->tempv3))
   {
     return (SUNFALSE);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv4))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->tempv4))
   {
     return (SUNFALSE);
   }
 
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, tmpl,
-                    &ark_mem->tempv5))
+  if (!arkResizeVec(ark_mem, resize, resize_data, tmpl, &ark_mem->tempv5))
   {
     return (SUNFALSE);
   }
@@ -3804,17 +3726,17 @@ sunbooleantype arkResizeVectors(ARKodeMem ark_mem, ARKVecResizeFn resize,
   ---------------------------------------------------------------*/
 void arkFreeVectors(ARKodeMem ark_mem)
 {
-  arkFreeVec(ark_mem, &ark_mem->ewt);
-  if (!ark_mem->rwt_is_ewt) { arkFreeVec(ark_mem, &ark_mem->rwt); }
-  arkFreeVec(ark_mem, &ark_mem->tempv1);
-  arkFreeVec(ark_mem, &ark_mem->tempv2);
-  arkFreeVec(ark_mem, &ark_mem->tempv3);
-  arkFreeVec(ark_mem, &ark_mem->tempv4);
-  arkFreeVec(ark_mem, &ark_mem->tempv5);
-  arkFreeVec(ark_mem, &ark_mem->yn);
-  arkFreeVec(ark_mem, &ark_mem->fn);
-  arkFreeVec(ark_mem, &ark_mem->Vabstol);
-  arkFreeVec(ark_mem, &ark_mem->constraints);
+  arkFreeVec(&ark_mem->ewt);
+  if (!ark_mem->rwt_is_ewt) { arkFreeVec(&ark_mem->rwt); }
+  arkFreeVec(&ark_mem->tempv1);
+  arkFreeVec(&ark_mem->tempv2);
+  arkFreeVec(&ark_mem->tempv3);
+  arkFreeVec(&ark_mem->tempv4);
+  arkFreeVec(&ark_mem->tempv5);
+  arkFreeVec(&ark_mem->yn);
+  arkFreeVec(&ark_mem->fn);
+  arkFreeVec(&ark_mem->Vabstol);
+  arkFreeVec(&ark_mem->constraints);
 }
 
 /*---------------------------------------------------------------

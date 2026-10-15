@@ -38,7 +38,6 @@ contains
     implicit none
 
     integer(kind=myindextype) :: ival                ! integer work value
-    integer(kind=myindextype) :: lenrw(1), leniw(1)  ! real and int work space size
     real(c_double)          :: rval                   ! real work value
     real(c_double)          :: x1data(N1), x2data(N2) ! vector data array
     real(c_double), pointer :: xptr(:)                ! pointer to vector data array
@@ -69,7 +68,6 @@ contains
 
     ! test generic vector functions
     ival = FN_VGetVectorID_ManyVector(x)
-    call FN_VSpace_ManyVector(x, lenrw, leniw)
     ival = FN_VGetCommunicator(x)
     ival = FN_VGetLength_ManyVector(x)
 

@@ -30,8 +30,6 @@ with any ``N_Vector`` implementation that supports a minimal subset of operation
 SPFGMR algorithms, SPTFQMR requires a fixed amount of memory that does
 not increase with the number of allowed iterations.
 
-
-
 .. _SUNLinSol.SPTFQMR.Usage:
 
 SUNLinSol_SPTFQMR Usage
@@ -43,7 +41,6 @@ is accessible from all SUNDIALS solvers *without*
 linking to the ``libsundials_sunlinsolsptfqmr`` module library.
 
 The module SUNLinSol_SPTFQMR provides the following user-callable routines:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_SPTFQMR(N_Vector y, int pretype, int maxl, SUNContext sunctx)
 
@@ -84,7 +81,6 @@ The module SUNLinSol_SPTFQMR provides the following user-callable routines:
       With ``SUN_PREC_RIGHT`` or ``SUN_PREC_BOTH`` the initial guess must be zero (use
       :c:func:`SUNLinSolSetZeroGuess` to indicate the initial guess is zero).
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPTFQMRSetPrecType(SUNLinearSolver S, int pretype)
 
    This function updates the flag indicating use of preconditioning.
@@ -106,7 +102,6 @@ The module SUNLinSol_SPTFQMR provides the following user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.prec_type".
 
-
 .. c:function:: SUNErrCode SUNLinSol_SPTFQMRSetMaxl(SUNLinearSolver S, int maxl)
 
    This function updates the number of linear solver iterations to allow.
@@ -124,12 +119,10 @@ The module SUNLinSol_SPTFQMR provides the following user-callable routines:
       This routine will be called by :c:func:`SUNLinSolSetOptions`
       when using the key "LSid.maxl".
 
-
 .. _SUNLinSol.SPTFQMR.Description:
 
 SUNLinSol_SPTFQMR Description
 ---------------------------------
-
 
 The SUNLinSol_SPTFQMR module defines the *content* field of a
 ``SUNLinearSolver`` to be the following structure:
@@ -202,9 +195,6 @@ information:
 
 * ``vtemp1, vtemp2, vtemp3`` - temporary vector storage.
 
-
-
-
 This solver is constructed to perform the following operations:
 
 * During construction all ``N_Vector`` solver data is allocated,
@@ -230,7 +220,6 @@ This solver is constructed to perform the following operations:
 * In the "solve" call the TFQMR iteration is performed.  This
   will include scaling and preconditioning if those options have been
   supplied.
-
 
 The SUNLinSol_SPTFQMR module defines implementations of all
 "iterative" linear solver operations listed in
@@ -261,7 +250,5 @@ The SUNLinSol_SPTFQMR module defines implementations of all
 * ``SUNLinSolResid_SPTFQMR``
 
 * ``SUNLinSolLastFlag_SPTFQMR``
-
-* ``SUNLinSolSpace_SPTFQMR``
 
 * ``SUNLinSolFree_SPTFQMR``

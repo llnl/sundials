@@ -95,7 +95,6 @@ SUNLinearSolver SUNLinSol_LapackDense(N_Vector y, SUNMatrix A, SUNContext sunctx
   S->ops->setup      = SUNLinSolSetup_LapackDense;
   S->ops->solve      = SUNLinSolSolve_LapackDense;
   S->ops->lastflag   = SUNLinSolLastFlag_LapackDense;
-  S->ops->space      = SUNLinSolSpace_LapackDense;
   S->ops->free       = SUNLinSolFree_LapackDense;
 
   /* Create content */
@@ -212,14 +211,6 @@ int SUNLinSolSolve_LapackDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 sunindextype SUNLinSolLastFlag_LapackDense(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_LapackDense(SUNLinearSolver S, long int* lenrwLS,
-                                      long int* leniwLS)
-{
-  *lenrwLS = 0;
-  *leniwLS = 2 + LAPACKDENSE_CONTENT(S)->N;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_LapackDense(SUNLinearSolver S)

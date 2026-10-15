@@ -623,20 +623,4 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateMRIHTol_MRIHTol(SUNAdaptControlle
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Space_MRIHTol(SUNAdaptController farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)SUNAdaptController_Space_MRIHTol(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 

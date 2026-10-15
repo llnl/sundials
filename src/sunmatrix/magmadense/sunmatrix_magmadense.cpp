@@ -121,7 +121,6 @@ SUNMatrix SUNMatrix_MagmaDenseBlock(sunindextype nblocks, sunindextype M,
   Amat->ops->scaleaddi   = SUNMatScaleAddI_MagmaDense;
   Amat->ops->matvecsetup = SUNMatMatvecSetup_MagmaDense;
   Amat->ops->matvec      = SUNMatMatvec_MagmaDense;
-  Amat->ops->space       = SUNMatSpace_MagmaDense;
 
   /* Create content */
   A = NULL;
@@ -605,23 +604,6 @@ SUNErrCode SUNMatMatvec_MagmaDense(SUNMatrix Amat, N_Vector x, N_Vector y)
           (sunrealtype*)N_VGetDeviceArrayPointer(y), 1 /* increment for y data */
     );
   }
-
-  return (SUN_SUCCESS);
-}
-
-SUNErrCode SUNMatSpace_MagmaDense(SUNMatrix Amat, long int* lenrw, long int* leniw)
-{
-  if (Amat == NULL) { return (SUN_ERR_ARG_INCOMPATIBLE); }
-
-  if (SUNMatGetID(Amat) != SUNMATRIX_MAGMADENSE)
-  {
-    return (SUN_ERR_ARG_WRONGTYPE);
-  }
-
-  SUNMatrixContent_MagmaDense A = SMLD_CONTENT(Amat);
-
-  *lenrw = A->ldata;
-  *leniw = 4;
 
   return (SUN_SUCCESS);
 }

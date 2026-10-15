@@ -64,29 +64,6 @@ below.
 
       SUNMatDestroy(A);
 
-
-.. c:function:: SUNErrCode SUNMatSpace(SUNMatrix A, long int *lrw, long int *liw)
-
-   Returns the storage requirements for the matrix *A*.  *lrw*
-   contains the number of sunrealtype words and *liw* contains the number
-   of integer words.  The return value denotes success/failure of the
-   operation.
-
-   This function is advisory only, for use in determining a user's total
-   space requirements; it could be a dummy function in a user-supplied
-   ``SUNMatrix`` module if that information is not of interest.
-
-   Usage:
-
-   .. code-block:: c
-
-      retval = SUNMatSpace(A, &lrw, &liw);
-
-   .. deprecated:: 7.3.0
-
-      Work space functions will be removed in version 8.0.0.
-
-
 .. c:function:: SUNErrCode SUNMatZero(SUNMatrix A)
 
    Zeros all entries of the ``SUNMatrix`` *A*.  The return value

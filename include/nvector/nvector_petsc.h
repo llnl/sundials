@@ -92,9 +92,6 @@ SUNDIALS_EXPORT N_Vector_ID N_VGetVectorID_Petsc(N_Vector v);
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Petsc(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_Petsc(N_Vector w);
 SUNDIALS_EXPORT void N_VDestroy_Petsc(N_Vector v);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void N_VSpace_Petsc(N_Vector v, sunindextype* lrw, sunindextype* liw);
 SUNDIALS_EXPORT MPI_Comm N_VGetCommunicator_Petsc(N_Vector v);
 SUNDIALS_EXPORT sunindextype N_VGetLength_Petsc(N_Vector v);
 
@@ -208,12 +205,6 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Petsc(N_Vector v,
 
 SUNDIALS_EXPORT SUNErrCode N_VEnableDotProdMultiLocal_Petsc(N_Vector v,
                                                             sunbooleantype tf);
-
-SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_Petsc")
-sunrealtype* N_VGetArrayPointer_Petsc(N_Vector v);
-
-SUNDIALS_DEPRECATED_EXPORT_MSG("Not supported, use N_VGetVector_Petsc")
-void N_VSetArrayPointer_Petsc(sunrealtype* v_data, N_Vector v);
 
 #ifdef __cplusplus
 }

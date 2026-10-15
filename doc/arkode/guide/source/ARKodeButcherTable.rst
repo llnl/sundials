@@ -111,8 +111,6 @@ ARKodeButcherTable functions
    +--------------------------------------------------+------------------------------------------------------------+
    | :c:func:`ARKodeButcherTable_Copy()`              | Create a copy of a Butcher table                           |
    +--------------------------------------------------+------------------------------------------------------------+
-   | :c:func:`ARKodeButcherTable_Space()`             | Get the Butcher table real and integer workspace size      |
-   +--------------------------------------------------+------------------------------------------------------------+
    | :c:func:`ARKodeButcherTable_Free()`              | Deallocate a Butcher table                                 |
    +--------------------------------------------------+------------------------------------------------------------+
    | :c:func:`ARKodeButcherTable_Write()`             | Write the Butcher table to an output file                  |
@@ -274,23 +272,6 @@ ARKodeButcherTable functions
    **Return value:**
       * :c:type:`ARKodeButcherTable` structure if successful.
       * ``NULL`` pointer an allocation error occurred.
-
-.. c:function:: void ARKodeButcherTable_Space(ARKodeButcherTable B, sunindextype *liw, sunindextype *lrw)
-
-   Get the real and integer workspace size for a Butcher table.
-
-   **Arguments:**
-      * *B* -- the Butcher table.
-      * *lenrw* -- the number of ``sunrealtype`` values in the Butcher table workspace.
-      * *leniw* -- the number of integer values in the Butcher table workspace.
-
-   **Return value:**
-      * *ARK_SUCCESS* if successful.
-      * *ARK_MEM_NULL* if the Butcher table memory was ``NULL``.
-
-   .. deprecated:: 7.3.0 (ARKODE 6.3.0)
-
-      Work space functions will be removed in version 8.0.0.
 
 .. c:function:: void ARKodeButcherTable_Free(ARKodeButcherTable B)
 

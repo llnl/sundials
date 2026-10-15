@@ -343,20 +343,4 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH_ImExGus(SUNAdaptController farg
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Space_ImExGus(SUNAdaptController farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNAdaptController_Space_ImExGus(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 

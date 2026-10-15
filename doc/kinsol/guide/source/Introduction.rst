@@ -23,7 +23,7 @@ KINSOL is part of a software family called SUNDIALS: SUite of Nonlinear and DIff
 Solvers :cite:p:`HBGLSSW:05`. This suite consists of CVODE, ARKODE, KINSOL, and IDA,
 and variants of these with sensitivity analysis capabilities.
 
-KINSOL is a general-purpose nonlinear system solver based on Newton-Krylov solver technology. A fixed point
+KINSOL is a general-purpose nonlinear system solver based on Newton--Krylov solver technology. A fixed point
 iteration is also included with the release of KINSOL v.2.8.0 and higher.
 
 .. _KINSOL.Introduction.Historical:
@@ -31,11 +31,11 @@ iteration is also included with the release of KINSOL v.2.8.0 and higher.
 Historical Background
 =====================
 
-The first nonlinear solver packages based on Newton-Krylov methods were written in Fortran. In particular, the NKSOL
-package, written at LLNL, was the first Newton-Krylov solver package written for solution of systems arising in the
+The first nonlinear solver packages based on Newton--Krylov methods were written in Fortran. In particular, the NKSOL
+package, written at LLNL, was the first Newton--Krylov solver package written for solution of systems arising in the
 solution of partial differential equations :cite:p:`BrSa:90`. This Fortran code made use of Newton's method to
 solve the discrete nonlinear systems and applied a preconditioned Krylov linear solver for solution of the Jacobian
-system at each nonlinear iteration. The key to the Newton-Krylov method was that the matrix-vector multiplies required
+system at each nonlinear iteration. The key to the Newton--Krylov method was that the matrix-vector multiplies required
 by the Krylov method could effectively be approximated by a finite difference of the nonlinear system-defining function,
 avoiding a requirement for the formation of the actual Jacobian matrix. Significantly less memory was required for the
 solver as a result.

@@ -41,10 +41,10 @@ described in :numref:`IDAS.Usage.SIM`.
 
 .. _IDAS.Usage.ADJ.skeleton_adj:
 
-A skeleton of the user’s main program
+A skeleton of the user's main program
 -------------------------------------
 
-The following is a skeleton of the user’s main program as an application of
+The following is a skeleton of the user's main program as an application of
 IDAS. The user program is to have these steps in the order indicated, unless
 otherwise noted. For the sake of brevity, we defer many of the details to the
 later sections. As in :numref:`IDAS.Usage.SIM.skeleton_sim`, most steps are
@@ -510,7 +510,7 @@ solution specifications, and allocate internal memory for the backward problem.
      * ``IDA_MEM_FAIL`` -- A memory allocation request has failed.
 
 
-There are two initialization functions for the backward problem – one for the
+There are two initialization functions for the backward problem - one for the
 case when the backward problem does not depend on the forward sensitivities, and
 one for the case when it does. These two functions are described next.
 
@@ -713,11 +713,11 @@ Nonlinear solver initialization functions for backward problem
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As with the forward problem IDAS uses the ``SUNNonlinearSolver`` implementation
-of Newton’s method defined by the ``SUNNONLINSOL_NEWTON`` module (see
+of Newton's method defined by the ``SUNNONLINSOL_NEWTON`` module (see
 :numref:`SUNNonlinSol.Newton`) by default.
 
 To specify a different nonlinear solver in IDAS for the backward problem, the
-user’s program must create a ``SUNNonlinearSolver`` object by calling the
+user's program must create a ``SUNNonlinearSolver`` object by calling the
 appropriate constructor routine. The user must then attach the
 ``SUNNonlinearSolver`` object to IDAS by calling
 :c:func:`IDASetNonlinearSolverB`, as documented below.
@@ -948,7 +948,7 @@ can skip to :numref:`IDAS.Usage.ADJ.user_supplied`.
 We note that, on an error return, all of the optional input functions send an
 error message to the error handler function. All error return values are
 negative, so the test ``flag < 0`` will catch all errors. Finally, a call to a
-``IDASet***B`` function can be made from the user’s calling program at any time
+``IDASet***B`` function can be made from the user's calling program at any time
 and, if successful, takes effect immediately.
 
 Main solver optional input functions
@@ -1866,7 +1866,7 @@ as follows:
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``rrB`` -- is the current value of the residual for the backward problem.
      * ``JacB`` -- is the output approximate Jacobian matrix.
-     * ``user_dataB`` -- is a pointer to user data — the parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the parameter passed to ``IDASetUserDataB``.
      * ``tmp1B``, ``tmp2B``, ``tmp3B`` -- are pointers to memory allocated for variables of type ``N_Vector`` which can be used by the :c:type:`IDALsJacFnB` function    as temporary storage or work space.
 
    **Return value:**
@@ -1883,7 +1883,7 @@ as follows:
       where ``yy`` is the solution  of the original IVP at time ``tt``, and
       ``yB`` is the solution of the  backward problem at the same time.
       Information regarding the structure of the specific ``SUNMatrix``
-      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
+      structure (e.g. number of rows, upper/lower bandwidth, sparsity  type) may
       be obtained through using the implementation-specific  ``SUNMatrix``
       interface functions (see Chapter :numref:`SUNMatrix` for  details).  With direct linear
       solvers (i.e., linear solvers with type  ``SUNLINEARSOLVER_DIRECT``), the
@@ -1921,7 +1921,7 @@ as follows:
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``rrb`` -- is the current value of the residual for the backward problem.
      * ``JacB`` -- is the output approximate Jacobian matrix.
-     * ``user_dataB`` -- is a pointer to user data — the parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the parameter passed to ``IDASetUserDataB``.
      * ``tmp1B``, ``tmp2B``, ``tmp3B`` -- are pointers to memory allocated  for variables of type ``N_Vector`` which    can be used by :c:type:`IDALsJacFnBS` as temporary storage or work space.
 
    **Return value:**
@@ -1939,7 +1939,7 @@ as follows:
       original IVP at time ``tt``, ``yS`` is the array of forward sensitivities
       at time ``tt``, and ``yB`` is the solution of the backward problem at the
       same time.  Information regarding the structure of the specific
-      ``SUNMatrix``  structure (e.g. number of rows, upper/lower bandwidth,
+      ``SUNMatrix``  structure (e.g. number of rows, upper/lower bandwidth,
       sparsity  type) may be obtained through using the implementation-specific
       ``SUNMatrix`` interface functions (see Chapter :numref:`SUNMatrix` for  details).  With
       direct linear solvers (i.e., linear solvers with type
@@ -1988,7 +1988,7 @@ these products.
      * ``vB`` -- is the vector by which the Jacobian must be multiplied.
      * ``JvB`` -- is the computed output vector, ``JB*vB``.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
      * ``tmp1B``, ``tmp2B`` -- are pointers to memory allocated for variables of type ``N_Vector`` which    can be used by ``IDALsJacTimesVecFnB`` as temporary storage or work space.
 
    **Return value:**
@@ -2030,7 +2030,7 @@ these products.
      * ``vB`` -- is the vector by which the Jacobian must be multiplied.
      * ``JvB`` -- is the computed output vector, ``JB*vB``.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
      * ``tmp1B``, ``tmp2B`` -- are pointers to memory allocated for variables of type ``N_Vector`` which    can be used by ``IDALsJacTimesVecFnBS`` as temporary storage or work space.
 
    **Return value:**
@@ -2057,7 +2057,7 @@ these products.
 Jacobian-vector product setup for the backward problem (matrix-free linear solvers)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the user’s Jacobian-times-vector requires that any Jacobian-related data be
+If the user's Jacobian-times-vector requires that any Jacobian-related data be
 preprocessed or evaluated, then this needs to be done in a user-supplied
 function of type :c:type:`IDALsJacTimesSetupFnB` or
 :c:type:`IDALsJacTimesSetupFnBS`, defined as follows:
@@ -2075,7 +2075,7 @@ function of type :c:type:`IDALsJacTimesSetupFnB` or
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``resvalB`` -- is the current value of the residual for the backward problem.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
 
    **Return value:**
       The value returned by the Jacobian-vector setup function
@@ -2116,7 +2116,7 @@ function of type :c:type:`IDALsJacTimesSetupFnB` or
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``resvalB`` -- is the current value of the residual for the backward problem.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
 
    **Return value:**
       The value returned by the Jacobian-vector setup function should be  if
@@ -2169,7 +2169,7 @@ following two forms:
      * ``zvecB`` -- is the computed output vector.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
      * ``deltaB`` -- is an input tolerance to be used if an iterative method    is employed in the solution.
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
 
    **Return value:**
       The return value of a preconditioner solve function for the backward
@@ -2201,7 +2201,7 @@ following two forms:
      * ``zvecB`` -- is the computed output vector.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
      * ``deltaB`` -- is an input tolerance to be used if an iterative method    is employed in the solution.
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
 
    **Return value:**
       The return value of a preconditioner solve function for the backward
@@ -2219,7 +2219,7 @@ following two forms:
 Preconditioner setup for the backward problem (iterative linear solvers)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the user’s preconditioner requires that any Jacobian-related data be
+If the user's preconditioner requires that any Jacobian-related data be
 preprocessed or evaluated, then this needs to be done in a user-supplied
 function of one of the following two types:
 
@@ -2236,7 +2236,7 @@ function of one of the following two types:
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``resvalB`` -- is the current value of the residual for the backward problem.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
 
    **Return value:**
       The return value of a preconditioner setup function for the backward
@@ -2265,7 +2265,7 @@ function of one of the following two types:
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``resvalB`` -- is the current value of the residual for the backward problem.
      * ``cjB`` -- is the scalar in the system Jacobian, proportional to the inverse of the    step size ( :math:`\alpha` in :eq:`IDAS_DAE_Jacobian` ).
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to the function ``IDASetUserDataB``.
 
    **Return value:**
       The return value of a preconditioner setup function for the backward
@@ -2384,7 +2384,7 @@ are described below.
      * ``yB`` -- is the current value of the backward dependent variable vector.
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
      * ``gB`` -- is the output vector, :math:`G_B(t,y,\dot y, y_B, \dot y_B)` .
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
 
    **Return value:**
       An ``IDABBDLocalFnB`` should return 0 if successful, a positive value if a
@@ -2419,7 +2419,7 @@ are described below.
      * ``yp`` -- is the current value of the forward solution derivative vector.
      * ``yB`` -- is the current value of the backward dependent variable vector.
      * ``ypB`` -- is the current value of the backward dependent derivative vector.
-     * ``user_dataB`` -- is a pointer to user data — the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
+     * ``user_dataB`` -- is a pointer to user data -- the same as the ``user_dataB`` parameter passed to ``IDASetUserDataB``.
 
    **Return value:**
       An ``IDABBDCommFnB`` should return 0 if successful, a positive value if a

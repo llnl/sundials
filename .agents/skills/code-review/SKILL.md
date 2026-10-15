@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review SUNDIALS pull requests using the repository’s correctness, numerical, API, documentation, testing, portability, and maintainability review patterns. Use for GitHub PR reviews or when asked to review changed SUNDIALS source, bindings, build files, examples, or documentation.
+description: Review SUNDIALS pull requests using the repository's correctness, numerical, API, documentation, testing, portability, and maintainability review patterns. Use for GitHub PR reviews or when asked to review changed SUNDIALS source, bindings, build files, examples, or documentation.
 ---
 
 # SUNDIALS PR Review
@@ -113,7 +113,7 @@ nits while a functional concern is unresolved.
 - When defaults change, update every corresponding table and older/newer
   module variant. User-visible API additions, behavior changes, and
   deprecations need the appropriate `versionadded`, `versionchanged`, or
-  `deprecated` directive with placeholder version `x.y.z`, plus the project’s
+  `deprecated` directive with placeholder version `x.y.z`, plus the project's
   changelog and `doc/shared/RecentChanges.rst` updates when applicable.
 - In documentation, use the heading hierarchy and link, footnote, directive,
   and organization rules from the documentation guides. Document prohibited
@@ -138,7 +138,7 @@ Prefer high-confidence inline comments over a broad checklist. Use the
 historically common question-led style: identify the exact behavior, ask
 whether the intended contract is clear, explain the consequence, and suggest
 a specific correction. Softening language is useful for uncertainty, but never
-hide a blocker behind “maybe.” Use a code suggestion when the replacement is
+hide a blocker behind "maybe." Use a code suggestion when the replacement is
 small and unambiguous. Keep one issue per comment, cite related code or a
 prior thread when useful, and do not ask the author to resolve a thread before
 the replacement has been pushed.

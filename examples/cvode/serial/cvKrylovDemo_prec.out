@@ -418,10 +418,6 @@ Species 6
 
  Final statistics for this run:
 
- CVode real workspace length           = 2897 
- CVode integer workspace length        =   53 
- CVLS real workspace length            = 2646 
- CVLS integer workspace length         =   42 
  Number of steps                       =  353 
  Number of f-s                         =  390 
  Number of f-s (SPGMR)                 =  586 
@@ -486,10 +482,6 @@ t =   1.00e+01  nst = 339  nfe = 377  nni = 374  qu = 2  hu =    7.46e-01
 
  Final statistics for this run:
 
- CVode real workspace length           = 2897 
- CVode integer workspace length        =   53 
- CVLS real workspace length            = 2646 
- CVLS integer workspace length         =   42 
  Number of steps                       =  339 
  Number of f-s                         =  377 
  Number of f-s (SPGMR)                 =  533 
@@ -554,10 +546,6 @@ t =   1.00e+01  nst = 266  nfe = 312  nni = 309  qu = 5  hu =    1.83e-01
 
  Final statistics for this run:
 
- CVode real workspace length           = 2897 
- CVode integer workspace length        =   53 
- CVLS real workspace length            = 2646 
- CVLS integer workspace length         =   42 
  Number of steps                       =  266 
  Number of f-s                         =  312 
  Number of f-s (SPGMR)                 =  600 
@@ -622,10 +610,6 @@ t =   1.00e+01  nst = 256  nfe = 304  nni = 301  qu = 2  hu =    2.03e-01
 
  Final statistics for this run:
 
- CVode real workspace length           = 2897 
- CVode integer workspace length        =   53 
- CVLS real workspace length            = 2646 
- CVLS integer workspace length         =   42 
  Number of steps                       =  256 
  Number of f-s                         =  304 
  Number of f-s (SPGMR)                 =  563 

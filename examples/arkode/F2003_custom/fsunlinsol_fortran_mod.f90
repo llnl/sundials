@@ -69,7 +69,6 @@ contains
     ops%gettype = c_funloc(FSUNLinSolGetType_Fortran)
     ops%setup = c_funloc(FSUNLinSolSetup_Fortran)
     ops%solve = c_funloc(FSUNLinSolSolve_Fortran)
-    ops%space = c_funloc(FSUNLinSolSpace_Fortran)
     ops%free = c_funloc(FSUNLinSolFree_Fortran)
 
   end function FSUNLinSolNew_Fortran
@@ -266,29 +265,6 @@ contains
     return
 
   end function FSUNLinSolSolve_Fortran
-
-  ! ----------------------------------------------------------------
-  integer(c_int) function FSUNLinSolSpace_Fortran(sunls_S, lrw, liw) &
-    result(ierr) bind(C)
-
-    implicit none
-    type(SUNLinearSolver)  :: sunls_S
-    integer(c_int64_t)     :: lrw(1)
-    integer(c_int64_t)     :: liw(1)
-    type(FLinSol), pointer :: S
-
-    ! extract Fortran structure to work with
-    S => FSUNLinSolGetFLinSol(sunls_S)
-
-    ! set output arguments and return
-    lrw(1) = (S%Nvar)*(S%N)
-    liw(1) = 2
-
-    ! return with success
-    ierr = 0
-    return
-
-  end function FSUNLinSolSpace_Fortran
 
 end module fsunlinsol_fortran_mod
 ! ------------------------------------------------------------------

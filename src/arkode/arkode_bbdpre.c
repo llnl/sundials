@@ -59,8 +59,7 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   ARKodeMem ark_mem;
   ARKLsMem arkls_mem;
   ARKBBDPrecData pdata;
-  sunindextype muk, mlk, storage_mu, lrw1, liw1;
-  long int lrw, liw;
+  sunindextype muk, mlk, storage_mu;
   int retval;
 
   /* access ARKodeMem and ARKLsMem structure */
@@ -169,7 +168,7 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   pdata->tmp2 = NULL;
   if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(pdata->tmp2)))
   {
-    arkFreeVec(ark_mem, &(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp1));
     N_VDestroy(pdata->zlocal);
     N_VDestroy(pdata->rlocal);
     SUNMatDestroy(pdata->savedP);
@@ -184,8 +183,8 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   pdata->tmp3 = NULL;
   if (!arkAllocVec(ark_mem, ark_mem->tempv1, &(pdata->tmp3)))
   {
-    arkFreeVec(ark_mem, &(pdata->tmp1));
-    arkFreeVec(ark_mem, &(pdata->tmp2));
+    arkFreeVec(&(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp2));
     N_VDestroy(pdata->zlocal);
     N_VDestroy(pdata->rlocal);
     SUNMatDestroy(pdata->savedP);
@@ -202,9 +201,9 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   pdata->LS = SUNLinSol_Band(pdata->rlocal, pdata->savedP, ark_mem->sunctx);
   if (pdata->LS == NULL)
   {
-    arkFreeVec(ark_mem, &(pdata->tmp1));
-    arkFreeVec(ark_mem, &(pdata->tmp2));
-    arkFreeVec(ark_mem, &(pdata->tmp3));
+    arkFreeVec(&(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp2));
+    arkFreeVec(&(pdata->tmp3));
     N_VDestroy(pdata->zlocal);
     N_VDestroy(pdata->rlocal);
     SUNMatDestroy(pdata->savedP);
@@ -220,9 +219,9 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   retval = SUNLinSolInitialize(pdata->LS);
   if (pdata->LS == NULL)
   {
-    arkFreeVec(ark_mem, &(pdata->tmp1));
-    arkFreeVec(ark_mem, &(pdata->tmp2));
-    arkFreeVec(ark_mem, &(pdata->tmp3));
+    arkFreeVec(&(pdata->tmp1));
+    arkFreeVec(&(pdata->tmp2));
+    arkFreeVec(&(pdata->tmp3));
     N_VDestroy(pdata->zlocal);
     N_VDestroy(pdata->rlocal);
     SUNMatDestroy(pdata->savedP);
@@ -244,37 +243,7 @@ int ARKBBDPrecInit(void* arkode_mem, sunindextype Nlocal, sunindextype mudq,
   /* Set work space sizes and initialize nge */
   pdata->rpwsize = 0;
   pdata->ipwsize = 0;
-  if (ark_mem->tempv1->ops->nvspace)
-  {
-    N_VSpace(ark_mem->tempv1, &lrw1, &liw1);
-    pdata->rpwsize += 3 * lrw1;
-    pdata->ipwsize += 3 * liw1;
-  }
-  if (pdata->rlocal->ops->nvspace)
-  {
-    N_VSpace(pdata->rlocal, &lrw1, &liw1);
-    pdata->rpwsize += 2 * lrw1;
-    pdata->ipwsize += 2 * liw1;
-  }
-  if (pdata->savedJ->ops->space)
-  {
-    retval = SUNMatSpace(pdata->savedJ, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->savedP->ops->space)
-  {
-    retval = SUNMatSpace(pdata->savedP, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  if (pdata->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(pdata->LS, &lrw, &liw);
-    pdata->rpwsize += lrw;
-    pdata->ipwsize += liw;
-  }
-  pdata->nge = 0;
+  pdata->nge     = 0;
 
   /* make sure P_data is free from any previous allocations */
   if (arkls_mem->pfree) { arkls_mem->pfree(ark_mem); }
@@ -324,35 +293,6 @@ int ARKBBDPrecReInit(void* arkode_mem, sunindextype mudq, sunindextype mldq,
 
   /* Re-initialize nge */
   pdata->nge = 0;
-
-  return (ARKLS_SUCCESS);
-}
-
-/*-------------------------------------------------------------*/
-int ARKBBDPrecGetWorkSpace(void* arkode_mem, long int* lenrwBBDP,
-                           long int* leniwBBDP)
-{
-  ARKodeMem ark_mem;
-  ARKLsMem arkls_mem;
-  ARKBBDPrecData pdata;
-  int retval;
-
-  /* access ARKodeMem and ARKLsMem structure */
-  retval = arkLs_AccessARKODELMem(arkode_mem, __func__, &ark_mem, &arkls_mem);
-  if (retval != ARK_SUCCESS) { return (retval); }
-
-  /* Return immediately ARKBBDPrecData is NULL */
-  if (arkls_mem->P_data == NULL)
-  {
-    arkProcessError(ark_mem, ARKLS_PMEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_BBD_PMEM_NULL);
-    return (ARKLS_PMEM_NULL);
-  }
-  pdata = (ARKBBDPrecData)arkls_mem->P_data;
-
-  /* set outputs */
-  *lenrwBBDP = pdata->rpwsize;
-  *leniwBBDP = pdata->ipwsize;
 
   return (ARKLS_SUCCESS);
 }
@@ -565,9 +505,9 @@ static int ARKBBDPrecFree(ARKodeMem ark_mem)
   pdata = (ARKBBDPrecData)arkls_mem->P_data;
 
   SUNLinSolFree(pdata->LS);
-  arkFreeVec(ark_mem, &(pdata->tmp1));
-  arkFreeVec(ark_mem, &(pdata->tmp2));
-  arkFreeVec(ark_mem, &(pdata->tmp3));
+  arkFreeVec(&(pdata->tmp1));
+  arkFreeVec(&(pdata->tmp2));
+  arkFreeVec(&(pdata->tmp3));
   N_VDestroy(pdata->zlocal);
   N_VDestroy(pdata->rlocal);
   SUNMatDestroy(pdata->savedP);

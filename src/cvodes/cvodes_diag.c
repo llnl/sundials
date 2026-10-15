@@ -156,31 +156,6 @@ int CVDiag(void* cvode_mem)
 
 /*
  * -----------------------------------------------------------------
- * CVDiagGetWorkSpace
- * -----------------------------------------------------------------
- */
-
-int CVDiagGetWorkSpace(void* cvode_mem, long int* lenrwLS, long int* leniwLS)
-{
-  CVodeMem cv_mem;
-
-  /* Return immediately if cvode_mem is NULL */
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVDIAG_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGDG_CVMEM_NULL);
-    return (CVDIAG_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  *lenrwLS = 3 * cv_mem->cv_lrw1;
-  *leniwLS = 3 * cv_mem->cv_liw1;
-
-  return (CVDIAG_SUCCESS);
-}
-
-/*
- * -----------------------------------------------------------------
  * CVDiagGetNumRhsEvals
  * -----------------------------------------------------------------
  */

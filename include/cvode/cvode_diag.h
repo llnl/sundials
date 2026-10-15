@@ -49,9 +49,6 @@ SUNDIALS_EXPORT int CVDiag(void* cvode_mem);
 
 /* Optional output functions */
 
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int CVDiagGetWorkSpace(void* cvode_mem, long int* lenrwLS, long int* leniwLS);
 SUNDIALS_EXPORT int CVDiagGetNumRhsEvals(void* cvode_mem, long int* nfevalsLS);
 SUNDIALS_EXPORT int CVDiagGetLastFlag(void* cvode_mem, long int* flag);
 SUNDIALS_EXPORT char* CVDiagGetReturnFlagName(long int flag);

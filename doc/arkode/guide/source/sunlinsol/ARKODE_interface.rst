@@ -60,9 +60,6 @@ information is presented as an implementation detail for the interested reader.
    +---------------------------------------+--------+-----------+-----------+----------+
    | :c:func:`SUNLinSolFree`\ :sup:`4`     |        |           |           |          |
    +---------------------------------------+--------+-----------+-----------+----------+
-   | :c:func:`SUNLinSolSpace`              | O      | O         | O         | O        |
-   +---------------------------------------+--------+-----------+-----------+----------+
-
 
 Notes:
 
@@ -83,11 +80,9 @@ Notes:
    directly, this routine should be available for users to call when
    cleaning up from a simulation.
 
-
 Since there are a wide range of potential SUNLinSol use cases, the following
 subsections describe some details of the ARKLS interface, in the case that
 interested users wish to develop custom SUNLinSol modules.
-
 
 .. _SUNLinSol.Lagged_matrix:
 
@@ -130,7 +125,6 @@ convergence rate given by the spectral radius of :math:`E`.  Assuming
 that stiff systems have a spectrum spread widely over the left
 half-plane, :math:`c` is chosen to minimize the magnitude of the
 eigenvalues of :math:`E`.
-
 
 .. _SUNLinSol.Iterative.Tolerance:
 
@@ -176,8 +170,6 @@ Therefore we compute the tolerance scaling factor
 
 and supply the scaled tolerance ``delta`` :math:`= \text{tol} / w_{mean}` to the SUNLinSol object.
 
-
-
 .. _SUNLinSol.Custom:
 
 Providing a custom SUNLinearSolver
@@ -188,11 +180,10 @@ implementation to ARKODE in order to leverage the structure of a problem.  While
 the "standard" API for these routines is typically sufficient for most users,
 others may need additional ARKODE-specific information on top of what is
 provided.  For these purposes, we note the following advanced output functions
-available in ARKStep and MRIStep:
+available in ARKODE:
 
-
-**ARKStep advanced outputs**: when solving the Newton nonlinear system of
-equations in predictor-corrector form,
+**ARKODE advanced outputs**: when solving the Newton nonlinear system of
+equations in predictor-corrector form for ARKStep,
 
 .. math::
    \begin{array}{ll}
@@ -201,34 +192,22 @@ equations in predictor-corrector form,
    G(z_{cor}) \equiv M(t^I_{n,i}) (z_{cor} - \tilde{a}_i) - \gamma f^I\left(t^I_{n,i}, z_{i}\right) = 0 &\qquad \text{[$M$ time-dependent]}.
    \end{array}
 
-* :c:func:`ARKStepGetCurrentTime()` -- when called within the computation of a
-  step (i.e., within a solve) this returns :math:`t^I_{n,i}`. Otherwise the
-  current internal solution time is returned.
-* :c:func:`ARKStepGetCurrentState()` -- when called within the computation of a
-  step (i.e., within a solve) this returns the current stage vector
-  :math:`z_{i} = z_{cor} + z_{pred}`. Otherwise the current internal solution
-  is returned.
-* :c:func:`ARKStepGetCurrentGamma()` -- returns :math:`\gamma`.
-* :c:func:`ARKStepGetCurrentMassMatrix()` -- returns :math:`M(t)`.
-* :c:func:`ARKStepGetNonlinearSystemData()` -- returns
-  :math:`z_{i}`, :math:`z_{pred}`, :math:`f^I(t^I_{n,i}, y_{cur})`,
-  :math:`\tilde{a}_i`, and :math:`\gamma`.
-
-
-**MRIStep advanced outputs**: when solving the Newton nonlinear system of
-equations in predictor-corrector form,
+or for MRIStep,
 
 .. math::
    G(z_{cor}) \equiv z_{cor} - \gamma f^I\left(t^S_{n,i}, z_{i}\right) - \tilde{a}_i = 0
 
-* :c:func:`MRIStepGetCurrentTime()` -- when called within the computation of a
-  step (i.e., within a solve) this returns :math:`t^S_{n,i}`. Otherwise the
-  current internal solution time is returned.
-* :c:func:`MRIStepGetCurrentState()` -- when called within the computation of a
+* :c:func:`ARKodeGetCurrentTime()` -- when called within the computation of a
+  step (i.e., within a solve) this returns :math:`t^I_{n,i}` for ARKStep and
+  :math:`t^S_{n,i}` for MRIStep. Otherwise the current internal solution time is
+  returned.
+* :c:func:`ARKodeGetCurrentState()` -- when called within the computation of a
   step (i.e., within a solve) this returns the current stage vector
   :math:`z_{i} = z_{cor} + z_{pred}`. Otherwise the current internal solution
   is returned.
-* :c:func:`MRIStepGetCurrentGamma()` -- returns :math:`\gamma`.
-* :c:func:`MRIStepGetNonlinearSystemData()` -- returns
-  :math:`z_{i}`, :math:`z_{pred}`, :math:`f^I(t^I_{n,i}, y_{cur})`,
-  :math:`\tilde{a}_i`, and :math:`\gamma`.
+* :c:func:`ARKodeGetCurrentGamma()` -- returns :math:`\gamma`.
+* :c:func:`ARKodeGetCurrentMassMatrix()` -- returns :math:`M(t)`.
+* :c:func:`ARKodeGetNonlinearSystemData()` -- returns :math:`z_{i}`,
+  :math:`z_{pred}`, :math:`f^I(t^I_{n,i}, y_{cur})` for ARKStep and
+  :math:`f^I(t^S_{n,i}, y_{cur})` for MRIStep, :math:`\tilde{a}_i`, and
+  :math:`\gamma`.

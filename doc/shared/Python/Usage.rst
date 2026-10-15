@@ -151,7 +151,7 @@ information on usage differences, continue to the :ref:`next section
 <Python.Usage.Differences>`. Additional examples can be found in the
 ``examples/python`` directory of the :examples:`SUNDIALS GitHub repository <python>`.
 
-This example demonstrates how to use CVODES to solve the Lotka-Volterra
+This example demonstrates how to use CVODES to solve the Lotka--Volterra
 equations, a model of predator-prey dynamics in ecology, given by
 
 .. math::

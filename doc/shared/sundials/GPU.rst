@@ -23,7 +23,7 @@ In this section, we introduce the SUNDIALS GPU programming model and highlight
 SUNDIALS GPU features. The model leverages the fact that all of the SUNDIALS
 packages interact with simulation data either through the shared vector, matrix,
 and solver APIs or through user-supplied callback functions. Thus, under the
-model, the overall structure of the user’s calling program, and the way users
+model, the overall structure of the user's calling program, and the way users
 interact with the SUNDIALS packages is similar to using SUNDIALS in CPU-only
 environments.
 
@@ -39,12 +39,12 @@ wherever the vector or matrix object dictates as long as SUNDIALS is in control
 of the program. That is, SUNDIALS will not migrate data (explicitly) from one
 memory space to another. Except in the most advanced use cases, it is safe to
 assume that data is kept resident in the GPU-device memory space. The
-consequence of this is that, when control is passed from the user’s calling
+consequence of this is that, when control is passed from the user's calling
 program to SUNDIALS, simulation data in vector or matrix objects must be
 up-to-date in the device memory space. Similarly, when control is passed from
-SUNDIALS to the user’s calling program, the user should assume that any
+SUNDIALS to the user's calling program, the user should assume that any
 simulation data in vector and matrix objects are up-to-date in the device memory
-space. To put it succinctly, *it is the responsibility of the user’s calling
+space. To put it succinctly, *it is the responsibility of the user's calling
 program to manage data coherency between the CPU and GPU-device memory spaces*
 unless unified virtual memory (UVM), also known as managed memory, is being
 utilized.  Typically, the GPU-enabled SUNDIALS modules provide functions to copy

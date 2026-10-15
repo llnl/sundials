@@ -37,7 +37,7 @@ subspace
 
    \mathcal{K}_m(A, \mathbf{v}) = \text{span}\{\mathbf{v}, A \mathbf{v}, A^2 \mathbf{v}, \dots, A^{m-1} \mathbf{v}\}
 
-using the Gram-Schmidt process.  The matrix :math:`A` is projected onto this subspace
+using the Gram--Schmidt process.  The matrix :math:`A` is projected onto this subspace
 to form a small upper Hessenberg matrix :math:`H_m`.  The eigenvalues of :math:`H_m`
 approximate some of the eigenvalues of :math:`A`; the dominant eigenvalue of :math:`A` is
 well-approximated by the dominant eigenvalue of :math:`H_m`.
@@ -103,7 +103,7 @@ routines:
       result of the most recent preprocessing iterations (see
       :c:func:`SUNDomEigEstimator_SetNumPreprocessIters`). As an initial guess
       too close to the dominant eigenvector may cause a breakdown in the
-      Gram–Schmidt process within the Arnoldi iteration, users should account
+      Gram--Schmidt process within the Arnoldi iteration, users should account
       for this when setting the number of initial and subsequent preprocessing
       iterations (e.g., with LSRKStep see
       :c:func:`LSRKStepSetNumDomEigEstInitPreprocessIters` and

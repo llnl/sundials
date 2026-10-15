@@ -25,7 +25,7 @@ A serial dense example: kinFerTron_dns
 As an initial illustration of the use of the KINSOL package for the solution of
 nonlinear systems, we give a sample program called ``kinFerTron_dns.c``. It uses
 the :ref:`dense linear solver <SUNLinSol_Dense>` and the :ref:`serial vector
-<NVectors.NVSerial>` for the solution of the Ferraris-Tronconi test problem
+<NVectors.NVSerial>` for the solution of the Ferraris--Tronconi test problem
 :cite:p:`FlPa:99`.
 
 This problem involves a blend of trigonometric and exponential terms,
@@ -53,7 +53,7 @@ enforce non-positivity and non-negativity:
    l_2 &= x_2 - x_{2\min} \ge 0\\
    L_2 &= x_2 - x_{2\max} \le 0
 
-The Ferraris-Tronconi problem has two known solutions. We solve it with KINSOL
+The Ferraris--Tronconi problem has two known solutions. We solve it with KINSOL
 using two sets of initial guesses for :math:`x_1` and :math:`x_2` (first their
 lower bounds and secondly the middle of their feasible regions), both with an
 exact and modified Newton method, with and without line search.

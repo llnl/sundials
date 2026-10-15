@@ -109,7 +109,6 @@ SUNLinearSolver SUNLinSol_SPBCGS(N_Vector y, int pretype, int maxl,
   S->ops->resnorm           = SUNLinSolResNorm_SPBCGS;
   S->ops->resid             = SUNLinSolResid_SPBCGS;
   S->ops->lastflag          = SUNLinSolLastFlag_SPBCGS;
-  S->ops->space             = SUNLinSolSpace_SPBCGS;
   S->ops->free              = SUNLinSolFree_SPBCGS;
 
   /* Create content */
@@ -910,22 +909,6 @@ sunindextype SUNLinSolLastFlag_SPBCGS(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_SPBCGS(SUNLinearSolver S, long int* lenrwLS,
-                                 long int* leniwLS)
-{
-  SUNFunctionBegin(S->sunctx);
-  sunindextype liw1, lrw1;
-  if (SPBCGS_CONTENT(S)->vtemp->ops->nvspace)
-  {
-    N_VSpace(SPBCGS_CONTENT(S)->vtemp, &lrw1, &liw1);
-    SUNCheckLastErr();
-  }
-  else { lrw1 = liw1 = 0; }
-  *lenrwLS = lrw1 * 9;
-  *leniwLS = liw1 * 9;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_SPBCGS(SUNLinearSolver S)

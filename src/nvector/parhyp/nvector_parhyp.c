@@ -168,7 +168,6 @@ N_Vector N_VNewEmpty_ParHyp(MPI_Comm comm, sunindextype local_length,
   v->ops->nvclone           = N_VClone_ParHyp;
   v->ops->nvcloneempty      = N_VCloneEmpty_ParHyp;
   v->ops->nvdestroy         = N_VDestroy_ParHyp;
-  v->ops->nvspace           = N_VSpace_ParHyp;
   v->ops->nvgetcommunicator = N_VGetCommunicator_ParHyp;
   v->ops->nvgetlength       = N_VGetLength_ParHyp;
 
@@ -400,41 +399,6 @@ void N_VDestroy_ParHyp(N_Vector v)
   v = NULL;
 
   return;
-}
-
-void N_VSpace_ParHyp(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  MPI_Comm comm;
-  int npes;
-
-  comm = NV_COMM_PH(v);
-  MPI_Comm_size(comm, &npes);
-
-  *lrw = NV_GLOBLENGTH_PH(v);
-  *liw = 2 * npes;
-
-  return;
-}
-
-/*
- * This function is disabled in ParHyp implementation and returns NULL.
- * The user should extract HYPRE vector using N_VGetVector_ParHyp and
- * then use HYPRE functions to get pointer to raw data of the local HYPRE
- * vector.
- */
-sunrealtype* N_VGetArrayPointer_ParHyp(SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  return NULL; /* ((sunrealtype *) NV_DATA_PH(v)); */
-}
-
-/*
- * This method is not implemented for HYPRE vector wrapper.
- * TODO: Put error handler in the function body.
- */
-void N_VSetArrayPointer_ParHyp(SUNDIALS_MAYBE_UNUSED sunrealtype* v_data,
-                               SUNDIALS_MAYBE_UNUSED N_Vector v)
-{
-  /* Not implemented for Hypre vector */
 }
 
 MPI_Comm N_VGetCommunicator_ParHyp(N_Vector v) { return (NV_COMM_PH(v)); }

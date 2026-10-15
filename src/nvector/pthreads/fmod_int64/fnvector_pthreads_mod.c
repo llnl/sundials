@@ -335,18 +335,6 @@ SWIGEXPORT void _wrap_FN_VDestroy_Pthreads(N_Vector farg1) {
 }
 
 
-SWIGEXPORT void _wrap_FN_VSpace_Pthreads(N_Vector farg1, int64_t *farg2, int64_t *farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  N_VSpace_Pthreads(arg1,arg2,arg3);
-}
-
-
 SWIGEXPORT void _wrap_FN_VSetArrayPointer_Pthreads(double *farg1, N_Vector farg2) {
   sunrealtype *arg1 = (sunrealtype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;

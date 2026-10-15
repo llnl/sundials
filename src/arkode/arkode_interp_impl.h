@@ -77,9 +77,8 @@ typedef struct _ARKInterpContent_Hermite* ARKInterpContent_Hermite;
 ARKInterp arkInterpCreate_Hermite(ARKodeMem ark_mem, int degree);
 int arkInterpResize_Hermite(ARKodeMem ark_mem, ARKInterp interp,
                             ARKVecResizeFn resize, void* resize_data,
-                            sunindextype lrw_diff, sunindextype liw_diff,
                             N_Vector tmpl);
-void arkInterpFree_Hermite(ARKodeMem ark_mem, ARKInterp interp);
+void arkInterpFree_Hermite(ARKInterp interp);
 void arkInterpPrintMem_Hermite(ARKInterp interp, FILE* outfile);
 int arkInterpSetDegree_Hermite(ARKodeMem ark_mem, ARKInterp interp, int degree);
 int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew);
@@ -123,9 +122,8 @@ typedef struct _ARKInterpContent_Lagrange* ARKInterpContent_Lagrange;
 ARKInterp arkInterpCreate_Lagrange(ARKodeMem ark_mem, int degree);
 int arkInterpResize_Lagrange(ARKodeMem ark_mem, ARKInterp interp,
                              ARKVecResizeFn resize, void* resize_data,
-                             sunindextype lrw_diff, sunindextype liw_diff,
                              N_Vector tmpl);
-void arkInterpFree_Lagrange(ARKodeMem ark_mem, ARKInterp interp);
+void arkInterpFree_Lagrange(ARKInterp interp);
 void arkInterpPrintMem_Lagrange(ARKInterp interp, FILE* outfile);
 int arkInterpSetDegree_Lagrange(ARKodeMem ark_mem, ARKInterp interp, int degree);
 int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew);

@@ -175,10 +175,10 @@ contains the ARKODE output constants.
    +-----------------------------------------------+------------------------------------------------------------+
    | **LSRK method types**                         |                                                            |
    +-----------------------------------------------+------------------------------------------------------------+
-   | :index:`ARKODE_LSRK_RKC_2`                    | 2nd order Runge-Kutta-Chebyshev (RKC) method               |
+   | :index:`ARKODE_LSRK_RKC_2`                    | 2nd order Runge--Kutta--Chebyshev (RKC) method             |
    |                                               | :c:enumerator:`ARKODE_LSRK_RKC_2`                          |
    +-----------------------------------------------+------------------------------------------------------------+
-   | :index:`ARKODE_LSRK_RKL_2`                    | 2nd order Runge-Kutta-Legendre (RKL) method                |
+   | :index:`ARKODE_LSRK_RKL_2`                    | 2nd order Runge--Kutta--Legendre (RKL) method              |
    |                                               | :c:enumerator:`ARKODE_LSRK_RKL_2`                          |
    +-----------------------------------------------+------------------------------------------------------------+
    | :index:`ARKODE_LSRK_SSP_S_2`                  | Optimal 2nd order s-stage SSP RK method                    |

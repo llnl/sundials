@@ -24,7 +24,6 @@ modules:
     fn_exclude_by_name__regex:
     - "Free" # Free and destroy functions should not need to be called as all objects on the Python side are RAII
     - "Destroy"
-    - "Space" # Space functions are deprecated, so don't expose them in Python
     # Due to the need to convert between sys.argv and C argv, we need to do custom wrappers of these
     - "SetOptions"
     # TODO(CJB): Making d_1d a nullopt argument causes this error

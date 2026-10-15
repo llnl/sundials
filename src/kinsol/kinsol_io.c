@@ -865,12 +865,7 @@ int KINSetConstraints(void* kinmem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (kin_mem->kin_constraintsSet)
-    {
-      N_VDestroy(kin_mem->kin_constraints);
-      kin_mem->kin_lrw -= kin_mem->kin_lrw1;
-      kin_mem->kin_liw -= kin_mem->kin_liw1;
-    }
+    if (kin_mem->kin_constraintsSet) { N_VDestroy(kin_mem->kin_constraints); }
     kin_mem->kin_constraintsSet = SUNFALSE;
     return (KIN_SUCCESS);
   }
@@ -887,9 +882,7 @@ int KINSetConstraints(void* kinmem, N_Vector constraints)
 
   if (!kin_mem->kin_constraintsSet)
   {
-    kin_mem->kin_constraints = N_VClone(constraints);
-    kin_mem->kin_lrw += kin_mem->kin_lrw1;
-    kin_mem->kin_liw += kin_mem->kin_liw1;
+    kin_mem->kin_constraints    = N_VClone(constraints);
     kin_mem->kin_constraintsSet = SUNTRUE;
   }
 
@@ -935,30 +928,6 @@ int KINSetSysFunc(void* kinmem, KINSysFn func)
  * KINSOL optional output functions
  * =================================================================
  */
-
-/*
- * -----------------------------------------------------------------
- * Function : KINGetWorkSpace
- * -----------------------------------------------------------------
- */
-
-int KINGetWorkSpace(void* kinmem, long int* lenrw, long int* leniw)
-{
-  KINMem kin_mem;
-
-  if (kinmem == NULL)
-  {
-    KINProcessError(NULL, KIN_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
-    return (KIN_MEM_NULL);
-  }
-
-  kin_mem = (KINMem)kinmem;
-
-  *lenrw = kin_mem->kin_lrw;
-  *leniw = kin_mem->kin_liw;
-
-  return (KIN_SUCCESS);
-}
 
 /*
  * -----------------------------------------------------------------

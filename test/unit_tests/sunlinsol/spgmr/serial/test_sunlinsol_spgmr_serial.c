@@ -196,7 +196,6 @@ int main(int argc, char* argv[])
   fails += Test_SUNLinSolSetScalingVectors(LS, ProbData.s1, ProbData.s2, 0);
   fails += Test_SUNLinSolSetZeroGuess(LS, 0);
   fails += Test_SUNLinSolInitialize(LS, 0);
-  fails += Test_SUNLinSolSpace(LS, 0);
   fails += SUNLinSol_SPGMRSetGSType(LS, gstype);
   if (fails)
   {

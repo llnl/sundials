@@ -18,8 +18,8 @@
 .. _Benchmarks.AdvectionReaction:
 
 
-Advection-Reaction Benchmark
-----------------------------
+Advection--Reaction Benchmark
+-----------------------------
 
 This benchmark problem implements a 3D advection-reaction equation using the
 RAJA performance portability layer with serial, CUDA, or HIP backends.
@@ -86,7 +86,7 @@ listed in :numref:`Table.3D_advection_reaction_options`.
 
 .. _Table.3D_advection_reaction_options:
 
-.. Table:: 3D Advection-Reaction Benchmark Command Line Options
+.. Table:: 3D Advection--Reaction Benchmark Command Line Options
 
    +-------------------------------+------------------------------------+---------------+
    | Option                        | Description                        | Default       |

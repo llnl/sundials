@@ -277,41 +277,39 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   cv_mem->cv_uround = SUN_UNIT_ROUNDOFF;
 
   /* Set default values for integrator optional inputs */
-  cv_mem->cv_f                = NULL;
-  cv_mem->cv_user_data        = NULL;
-  cv_mem->cv_itol             = CV_NN;
-  cv_mem->cv_atolmin0         = SUNTRUE;
-  cv_mem->cv_user_efun        = SUNFALSE;
-  cv_mem->cv_efun             = NULL;
-  cv_mem->cv_e_data           = NULL;
-  cv_mem->cv_monitorfun       = NULL;
-  cv_mem->cv_monitor_interval = 0;
-  cv_mem->cv_qmax             = maxord;
-  cv_mem->cv_mxstep           = MXSTEP_DEFAULT;
-  cv_mem->cv_mxhnil           = MXHNIL_DEFAULT;
-  cv_mem->cv_sldeton          = SUNFALSE;
-  cv_mem->cv_hin              = ZERO;
-  cv_mem->cv_hmin             = HMIN_DEFAULT;
-  cv_mem->cv_hmax_inv         = HMAX_INV_DEFAULT;
-  cv_mem->cv_eta_min_fx       = ETA_MIN_FX_DEFAULT;
-  cv_mem->cv_eta_max_fx       = ETA_MAX_FX_DEFAULT;
-  cv_mem->cv_eta_max_fs       = ETA_MAX_FS_DEFAULT;
-  cv_mem->cv_eta_max_es       = ETA_MAX_ES_DEFAULT;
-  cv_mem->cv_eta_max_gs       = ETA_MAX_GS_DEFAULT;
-  cv_mem->cv_eta_min          = ETA_MIN_DEFAULT;
-  cv_mem->cv_eta_min_ef       = ETA_MIN_EF_DEFAULT;
-  cv_mem->cv_eta_max_ef       = ETA_MAX_EF_DEFAULT;
-  cv_mem->cv_eta_cf           = ETA_CF_DEFAULT;
-  cv_mem->cv_small_nst        = SMALL_NST_DEFAULT;
-  cv_mem->cv_small_nef        = SMALL_NEF_DEFAULT;
-  cv_mem->cv_tstopset         = SUNFALSE;
-  cv_mem->cv_tstopinterp      = SUNFALSE;
-  cv_mem->cv_maxnef           = MXNEF;
-  cv_mem->cv_maxncf           = MXNCF;
-  cv_mem->cv_nlscoef          = CORTES;
-  cv_mem->cv_msbp             = MSBP_DEFAULT;
-  cv_mem->cv_dgmax_lsetup     = DGMAX_LSETUP_DEFAULT;
-  cv_mem->convfail            = CV_NO_FAILURES;
+  cv_mem->cv_f            = NULL;
+  cv_mem->cv_user_data    = NULL;
+  cv_mem->cv_itol         = CV_NN;
+  cv_mem->cv_atolmin0     = SUNTRUE;
+  cv_mem->cv_user_efun    = SUNFALSE;
+  cv_mem->cv_efun         = NULL;
+  cv_mem->cv_e_data       = NULL;
+  cv_mem->cv_qmax         = maxord;
+  cv_mem->cv_mxstep       = MXSTEP_DEFAULT;
+  cv_mem->cv_mxhnil       = MXHNIL_DEFAULT;
+  cv_mem->cv_sldeton      = SUNFALSE;
+  cv_mem->cv_hin          = ZERO;
+  cv_mem->cv_hmin         = HMIN_DEFAULT;
+  cv_mem->cv_hmax_inv     = HMAX_INV_DEFAULT;
+  cv_mem->cv_eta_min_fx   = ETA_MIN_FX_DEFAULT;
+  cv_mem->cv_eta_max_fx   = ETA_MAX_FX_DEFAULT;
+  cv_mem->cv_eta_max_fs   = ETA_MAX_FS_DEFAULT;
+  cv_mem->cv_eta_max_es   = ETA_MAX_ES_DEFAULT;
+  cv_mem->cv_eta_max_gs   = ETA_MAX_GS_DEFAULT;
+  cv_mem->cv_eta_min      = ETA_MIN_DEFAULT;
+  cv_mem->cv_eta_min_ef   = ETA_MIN_EF_DEFAULT;
+  cv_mem->cv_eta_max_ef   = ETA_MAX_EF_DEFAULT;
+  cv_mem->cv_eta_cf       = ETA_CF_DEFAULT;
+  cv_mem->cv_small_nst    = SMALL_NST_DEFAULT;
+  cv_mem->cv_small_nef    = SMALL_NEF_DEFAULT;
+  cv_mem->cv_tstopset     = SUNFALSE;
+  cv_mem->cv_tstopinterp  = SUNFALSE;
+  cv_mem->cv_maxnef       = MXNEF;
+  cv_mem->cv_maxncf       = MXNCF;
+  cv_mem->cv_nlscoef      = CORTES;
+  cv_mem->cv_msbp         = MSBP_DEFAULT;
+  cv_mem->cv_dgmax_lsetup = DGMAX_LSETUP_DEFAULT;
+  cv_mem->convfail        = CV_NO_FAILURES;
 
   /* Initialize inequality constraint variables */
   cv_mem->cv_constraints         = NULL;
@@ -342,11 +340,6 @@ void* CVodeCreate(int lmm, SUNContext sunctx)
   /* Set the saved value for qmax_alloc */
 
   cv_mem->cv_qmax_alloc = maxord;
-
-  /* Initialize lrw and liw */
-
-  cv_mem->cv_lrw = 58 + 2 * L_MAX + NUM_TESTS;
-  cv_mem->cv_liw = 40;
 
   /* No mallocs have been done yet */
 
@@ -380,7 +373,6 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
 {
   CVodeMem cv_mem;
   sunbooleantype nvectorOK, allocOK;
-  sunindextype lrw1, liw1;
   int i, k, retval;
   SUNNonlinearSolver NLS;
 
@@ -423,17 +415,6 @@ int CVodeInit(void* cvode_mem, CVRhsFn f, sunrealtype t0, N_Vector y0)
     SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
     return (CV_ILL_INPUT);
   }
-
-  /* Set space requirements for one N_Vector */
-
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  else
-  {
-    lrw1 = 0;
-    liw1 = 0;
-  }
-  cv_mem->cv_lrw1 = lrw1;
-  cv_mem->cv_liw1 = liw1;
 
   /* Allocate the vectors (using y0 as a template) */
 
@@ -772,9 +753,7 @@ int CVodeSVtolerances(void* cvode_mem, sunrealtype reltol, N_Vector abstol)
 
   if (!(cv_mem->cv_VabstolMallocDone))
   {
-    cv_mem->cv_Vabstol = N_VClone(cv_mem->cv_ewt);
-    cv_mem->cv_lrw += cv_mem->cv_lrw1;
-    cv_mem->cv_liw += cv_mem->cv_liw1;
+    cv_mem->cv_Vabstol           = N_VClone(cv_mem->cv_ewt);
     cv_mem->cv_VabstolMallocDone = SUNTRUE;
   }
 
@@ -862,9 +841,6 @@ int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g)
     cv_mem->cv_rootdir = NULL;
     free(cv_mem->cv_gactive);
     cv_mem->cv_gactive = NULL;
-
-    cv_mem->cv_lrw -= 3 * (cv_mem->cv_nrtfn);
-    cv_mem->cv_liw -= 3 * (cv_mem->cv_nrtfn);
   }
 
   /* If CVodeRootInit() was called with nrtfn == 0, then set cv_nrtfn to
@@ -899,9 +875,6 @@ int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g)
         cv_mem->cv_rootdir = NULL;
         free(cv_mem->cv_gactive);
         cv_mem->cv_gactive = NULL;
-
-        cv_mem->cv_lrw -= 3 * nrt;
-        cv_mem->cv_liw -= 3 * nrt;
 
         cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                        MSGCV_NULL_G);
@@ -1016,9 +989,6 @@ int CVodeRootInit(void* cvode_mem, int nrtfn, CVRootFn g)
 
   /* Set default values for gactive (all active) */
   for (i = 0; i < nrt; i++) { cv_mem->cv_gactive[i] = SUNTRUE; }
-
-  cv_mem->cv_lrw += 3 * nrt;
-  cv_mem->cv_liw += 3 * nrt;
 
   return (CV_SUCCESS);
 }
@@ -1871,9 +1841,6 @@ static sunbooleantype cvCheckNvector(N_Vector tmpl)
  * zn[0], ..., zn[maxord].
  * If all memory allocations are successful, cvAllocVectors returns SUNTRUE.
  * Otherwise all allocated memory is freed and cvAllocVectors returns SUNFALSE.
- * This routine also sets the optional outputs lrw and liw, which are
- * (respectively) the lengths of the real and integer work spaces
- * allocated here.
  */
 
 static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
@@ -1961,10 +1928,6 @@ static sunbooleantype cvAllocVectors(CVodeMem cv_mem, N_Vector tmpl)
     }
   }
 
-  /* Update solver workspace lengths  */
-  cv_mem->cv_lrw += (cv_mem->cv_qmax + 8) * cv_mem->cv_lrw1;
-  cv_mem->cv_liw += (cv_mem->cv_qmax + 8) * cv_mem->cv_liw1;
-
   /* Store the value of qmax used here */
   cv_mem->cv_qmax_alloc = cv_mem->cv_qmax;
 
@@ -1992,22 +1955,9 @@ static void cvFreeVectors(CVodeMem cv_mem)
   N_VDestroy(cv_mem->cv_vtemp3);
   for (j = 0; j <= maxord; j++) { N_VDestroy(cv_mem->cv_zn[j]); }
 
-  cv_mem->cv_lrw -= (maxord + 8) * cv_mem->cv_lrw1;
-  cv_mem->cv_liw -= (maxord + 8) * cv_mem->cv_liw1;
+  if (cv_mem->cv_VabstolMallocDone) { N_VDestroy(cv_mem->cv_Vabstol); }
 
-  if (cv_mem->cv_VabstolMallocDone)
-  {
-    N_VDestroy(cv_mem->cv_Vabstol);
-    cv_mem->cv_lrw -= cv_mem->cv_lrw1;
-    cv_mem->cv_liw -= cv_mem->cv_liw1;
-  }
-
-  if (cv_mem->cv_constraints)
-  {
-    N_VDestroy(cv_mem->cv_constraints);
-    cv_mem->cv_lrw -= cv_mem->cv_lrw1;
-    cv_mem->cv_liw -= cv_mem->cv_liw1;
-  }
+  if (cv_mem->cv_constraints) { N_VDestroy(cv_mem->cv_constraints); }
 }
 
 /*
@@ -3593,15 +3543,6 @@ static void cvCompleteStep(CVodeMem cv_mem)
     cv_mem->cv_saved_tq5 = cv_mem->cv_tq[5];
     cv_mem->cv_indx_acor = cv_mem->cv_qmax;
   }
-
-#ifdef SUNDIALS_ENABLE_MONITORING
-  /* If user access function was provided, call it now */
-  if (cv_mem->cv_monitorfun != NULL &&
-      !(cv_mem->cv_nst % cv_mem->cv_monitor_interval))
-  {
-    cv_mem->cv_monitorfun((void*)cv_mem, cv_mem->cv_user_data);
-  }
-#endif
 
   SUNLogExtraDebugVec(CV_LOGGER, "new solution", cv_mem->cv_zn[0], "y_new(:) =");
 }

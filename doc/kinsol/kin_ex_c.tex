@@ -8,7 +8,7 @@ As an initial illustration of the use of the {\kinsol} package for the
 solution of nonlinear systems, we give a sample program called \id{kinFerTron\_dns.c}.
 It uses the {\kinsol} dense linear solver module {\sunlinsoldense} 
 and the {\nvecs} module (which provides a serial implementation of {\nvector})
-for the solution of the Ferraris-Tronconi test problem~\cite{FlPa:99}.
+for the solution of the Ferraris--Tronconi test problem~\cite{FlPa:99}.
 
 This problem involves a blend of trigonometric and exponential terms:
 \begin{equation}
@@ -33,7 +33,7 @@ feature to enforce non-positivity and non-negativity:
 \end{split}
 \end{equation*}
 
-The Ferraris-Tronconi problem has two known solutions. We solve it with
+The Ferraris--Tronconi problem has two known solutions. We solve it with
 {\kinsol} using two sets of initial guesses for $x_1$ and $x_2$ (first their 
 lower bounds and secondly the middle of their feasible regions), both with
 an exact and modified Newton method, with and without line search.

@@ -7,7 +7,7 @@ description: Build, install, and test SUNDIALS from source as an end user or as 
 
 Prefer out-of-source CMake builds. Never build in the source tree.
 
-If you need full option details or platform-specific notes, open `doc/shared/sundials/Install.rst` (search for “Configuration options”, “Build Type”, “Compilers”, and “Example Programs”).
+If you need full option details or platform-specific notes, open `doc/shared/sundials/Install.rst` (search for "Configuration options", "Build Type", "Compilers", and "Example Programs").
 
 For CI-like, multi-config testing use `test/test_driver.sh` (supports `--testtype pr|release|branch` and `--buildjobs/--testjobs`).
 
@@ -76,7 +76,7 @@ ctest --test-dir build-dev --output-on-failure
 
 Notes:
 
-- If tests that compare against “answer files” fail due to platform differences, consider rerunning with a locally-generated answer directory using `SUNDIALS_TEST_ANSWER_DIR` (see `doc/superbuild/source/developers/testing/CTest.rst`).
+- If tests that compare against "answer files" fail due to platform differences, consider rerunning with a locally-generated answer directory using `SUNDIALS_TEST_ANSWER_DIR` (see `doc/superbuild/source/developers/testing/CTest.rst`).
 - To focus on a subset, use CTest filters (e.g., `ctest --test-dir build-dev -R <regex>`).
 
 ## Troubleshooting checklist

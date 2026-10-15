@@ -345,22 +345,6 @@ SWIGEXPORT int _wrap_FSUNAdaptController_UpdateH_Soderlind(SUNAdaptController fa
 }
 
 
-SWIGEXPORT int _wrap_FSUNAdaptController_Space_Soderlind(SUNAdaptController farg1, long *farg2, long *farg3) {
-  int fresult ;
-  SUNAdaptController arg1 = (SUNAdaptController) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  SUNErrCode result;
-  
-  arg1 = (SUNAdaptController)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (SUNErrCode)SUNAdaptController_Space_Soderlind(arg1,arg2,arg3);
-  fresult = (SUNErrCode)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT SUNAdaptController _wrap_FSUNAdaptController_PID(void *farg1) {
   SUNAdaptController fresult ;
   SUNContext arg1 = (SUNContext) 0 ;

@@ -113,7 +113,6 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm, sunindextype local_length,
   v->ops->nvclone           = N_VClone_Parallel;
   v->ops->nvcloneempty      = N_VCloneEmpty_Parallel;
   v->ops->nvdestroy         = N_VDestroy_Parallel;
-  v->ops->nvspace           = N_VSpace_Parallel;
   v->ops->nvgetarraypointer = N_VGetArrayPointer_Parallel;
   v->ops->nvsetarraypointer = N_VSetArrayPointer_Parallel;
   v->ops->nvgetcommunicator = N_VGetCommunicator_Parallel;
@@ -387,25 +386,6 @@ void N_VDestroy_Parallel(N_Vector v)
   }
   free(v);
   v = NULL;
-
-  return;
-}
-
-void N_VSpace_Parallel(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  SUNFunctionBegin(v->sunctx);
-
-  MPI_Comm comm;
-  int npes;
-
-  SUNAssertVoid(lrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssertVoid(liw, SUN_ERR_ARG_CORRUPT);
-
-  comm = NV_COMM_P(v);
-  SUNCheckMPICallVoid(MPI_Comm_size(comm, &npes));
-
-  *lrw = NV_GLOBLENGTH_P(v);
-  *liw = 2 * npes;
 
   return;
 }

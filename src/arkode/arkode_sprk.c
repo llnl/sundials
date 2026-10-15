@@ -130,7 +130,7 @@ static ARKodeSPRKTable arkodeSymplecticRuth3(void)
   The following methods are from:
 
   McLachlan, R.I., Atela, P.: The accuracy of symplectic integrators.
-  Nonlinearity. 5, 541–562 (1992). https://doi.org/10.1088/0951-7715/5/2/011
+  Nonlinearity. 5, 541-562 (1992). https://doi.org/10.1088/0951-7715/5/2/011
  */
 
 static ARKodeSPRKTable arkodeSymplecticMcLachlan2(void)
@@ -220,7 +220,7 @@ static ARKodeSPRKTable arkodeSymplecticMcLachlan5(void)
   The following methods are from:
 
   Yoshida, H.: Construction of higher order symplectic integrators.
-  Phys Lett A. 150, 262–268 (1990).
+  Phys Lett A. 150, 262-268 (1990).
   https://doi.org/10.1016/0375-9601(90)90092-3
 
  */
@@ -259,7 +259,7 @@ static ARKodeSPRKTable arkodeSymplecticYoshida6(void)
   https://doi.org/10.1007/978-3-642-78448-4_7
 
   McLachlan, R.I.: On the Numerical Integration of Ordinary Differential
-  Equations by Symmetric Composition Methods. Siam J Sci Comput. 16, 151–168
+  Equations by Symmetric Composition Methods. Siam J Sci Comput. 16, 151-168
   (1995). https://doi.org/10.1137/0916010
 
  */
@@ -309,7 +309,7 @@ static ARKodeSPRKTable arkodeSymplecticSuzukiUmeno816(void)
   The following methods are from:
 
   Sofroniou, M., Spaletta, G.: Derivation of symmetric composition constants for
-  symmetric integrators. Optim Methods Softw. 20, 597–613 (2005).
+  symmetric integrators. Optim Methods Softw. 20, 597-613 (2005).
   https://doi.org/10.1080/10556780500140664
 
  */
@@ -542,13 +542,6 @@ ARKodeSPRKTable ARKodeSPRKTable_Copy(ARKodeSPRKTable that_sprk_table)
   }
 
   return sprk_table;
-}
-
-void ARKodeSPRKTable_Space(ARKodeSPRKTable sprk_table, sunindextype* liw,
-                           sunindextype* lrw)
-{
-  *liw = 2;
-  *lrw = sprk_table->stages * 2;
 }
 
 void ARKodeSPRKTable_Free(ARKodeSPRKTable sprk_table)

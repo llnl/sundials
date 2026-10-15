@@ -32,9 +32,6 @@ extern "C" {
   ARKODE Root-finding constants
   ===============================================================*/
 
-#define ARK_ROOT_LRW 5
-#define ARK_ROOT_LIW 12
-
 /* Numeric constants */
 #define HUND SUN_RCONST(100.0)
 

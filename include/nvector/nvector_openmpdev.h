@@ -120,10 +120,6 @@ SUNDIALS_EXPORT N_Vector_ID N_VGetVectorID_OpenMPDEV(N_Vector v);
 SUNDIALS_EXPORT N_Vector N_VCloneEmpty_OpenMPDEV(N_Vector w);
 SUNDIALS_EXPORT N_Vector N_VClone_OpenMPDEV(N_Vector w);
 SUNDIALS_EXPORT void N_VDestroy_OpenMPDEV(N_Vector v);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void N_VSpace_OpenMPDEV(N_Vector v, sunindextype* lrw, sunindextype* liw);
-
 /* standard vector operations */
 SUNDIALS_EXPORT void N_VLinearSum_OpenMPDEV(sunrealtype a, N_Vector x,
                                             sunrealtype b, N_Vector y,

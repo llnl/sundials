@@ -204,17 +204,6 @@ typedef struct KINMemRec
   sunrealtype* kin_cv; /* scalar array for fused vector operations        */
   N_Vector* kin_Xv;    /* vector array for fused vector operations        */
 
-  /* space requirements for vector storage */
-
-  sunindextype kin_lrw1; /* number of sunrealtype-sized memory blocks needed
-                               for a single N_Vector                           */
-  sunindextype kin_liw1; /* number of int-sized memory blocks needed for
-                               a single N_Vecotr                               */
-  long int kin_lrw;      /* total number of sunrealtype-sized memory blocks
-                               needed for all KINSOL work vectors              */
-  long int kin_liw;      /* total number of int-sized memory blocks needed
-                               for all KINSOL work vectors                     */
-
   /* linear solver data */
 
   /* function prototypes (pointers) */

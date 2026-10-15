@@ -33,10 +33,6 @@ SUNDIALS_EXPORT int ARKBandPrecInit(void* arkode_mem, sunindextype N,
                                     sunindextype mu, sunindextype ml);
 
 /* Optional output functions */
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int ARKBandPrecGetWorkSpace(void* arkode_mem, long int* lenrwLS,
-                            long int* leniwLS);
 SUNDIALS_EXPORT int ARKBandPrecGetNumRhsEvals(void* arkode_mem,
                                               long int* nfevalsBP);
 
