@@ -581,6 +581,16 @@ Additionally, the solution is only output 10 times instead of 100.
 
 
 
+.. _ark_brusselator1D_sparseDQ_klu:
+
+ark_brusselator1D_sparseDQ_klu
+============================================
+
+This problem is mathematically identical to the preceding problem,
+:ref:`ark_brusselator1D_klu`, but it only supplies the
+compressed-sparse-column Jacobian matrix structure. ARKODE fills the
+Jacobian entries internally using sparse difference-quotient
+approximations.
 
 
 .. _ark_brusselator1D_FEM_slu:
