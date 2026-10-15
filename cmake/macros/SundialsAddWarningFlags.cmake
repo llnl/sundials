@@ -137,7 +137,6 @@ function(sundials_add_warning_flags lang)
           -Wunused-macros
           -Wunused-local-typedefs
           -Wundef
-          -Wformat=2
           -Wformat-signedness
           -Wformat-overflow
           -Wformat-truncation
@@ -147,6 +146,8 @@ function(sundials_add_warning_flags lang)
           -Wswitch-enum
           -Wimplicit-fallthrough
           -Wredundant-decls)
+        # TODO(DJG): Including -Wformat=2 will require adding a format attribute
+        # to SUNLogger_QueueMsg in the public header or changing its signature
 
         if(lang STREQUAL "C")
           list(
