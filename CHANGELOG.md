@@ -33,6 +33,9 @@ disable compiler warnings emitted by deprecated SUNDIALS API annotations.
 
 ### Bug Fixes
 
+Fixed a bug in the band SUNMatrix `SUNMatScaleAdd` operation where entries
+outside the band of the second matrix were not scaled.
+
 Fixed a bug where the factor provided by `ARKodeSetEpsLin` was scaled by 0.1.
 To restore the original behavior, call `ARKodeSetEpsLin` with an argument of
 0.005.
