@@ -812,6 +812,9 @@ rootfinding (with :c:func:`IDARootInit`).
 
         In any case, the user should see the printed error message for details.
 
+      * ``IDA_TOO_CLOSE`` -- On the first call to :c:func:`IDASolve`, the initial
+        time :math:`t_0` and the output time :math:`t_{out}` are too close to
+        each other.
       * ``IDA_TOO_MUCH_WORK`` -- The solver took ``mxstep`` internal steps but
         could not reach ``tout``. The default value for ``mxstep`` is
         ``MXSTEP_DEFAULT = 500``.

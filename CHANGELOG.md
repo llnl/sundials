@@ -25,6 +25,12 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Updated the documentation for `CVode` to reflect that `CV_TOO_CLOSE` is
+returned whenever the initial and output times are too close, even if an
+initial step size was provided, and added the missing `IDA_TOO_CLOSE` and
+`ARK_TOO_CLOSE` return values to the documentation for `IDASolve` and
+`ARKodeEvolve`, respectively.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
