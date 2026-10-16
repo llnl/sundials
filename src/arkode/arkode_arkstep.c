@@ -586,8 +586,8 @@ void arkStep_PrintMem(ARKodeMem ark_mem, FILE* outfile)
   fprintf(outfile, "ARKStep: maxcor = %i\n", step_mem->maxcor);
   fprintf(outfile, "ARKStep: msbp = %i\n", step_mem->msbp);
   fprintf(outfile, "ARKStep: predictor = %i\n", step_mem->predictor);
-  fprintf(outfile, "ARKStep: lsolve_type = %i\n", step_mem->lsolve_type);
-  fprintf(outfile, "ARKStep: msolve_type = %i\n", step_mem->msolve_type);
+  fprintf(outfile, "ARKStep: lsolve_type = %i\n", (int)step_mem->lsolve_type);
+  fprintf(outfile, "ARKStep: msolve_type = %i\n", (int)step_mem->msolve_type);
   fprintf(outfile, "ARKStep: convfail = %i\n", step_mem->convfail);
 
   /* output long integer quantities */

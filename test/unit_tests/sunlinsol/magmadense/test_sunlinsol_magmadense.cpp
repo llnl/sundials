@@ -283,7 +283,7 @@ int check_vector(N_Vector actual, N_Vector expected, sunrealtype tol)
   else { return (0); }
 }
 
-void sync_device()
+void sync_device(void)
 {
   HIP_OR_CUDA(hipDeviceSynchronize();, cudaDeviceSynchronize();)
 }

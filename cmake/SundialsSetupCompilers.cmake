@@ -244,7 +244,7 @@ if(NOT (SUNDIALS_C_COMPILER_HAS_ATTRIBUTE_ASSUME
     #include <stdio.h>
     int main(void) {
       double a = 0.0;
-      __assume(a >= 0.0));
+      __assume(a >= 0.0);
       a = a + 1.0;
       printf(\"a=%g\", a);
       return 0;

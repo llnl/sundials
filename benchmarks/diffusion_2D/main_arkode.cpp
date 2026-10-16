@@ -690,8 +690,11 @@ void UserOptions::print()
     cout << " --------------------------------- " << endl;
     switch (lsrkmethod)
     {
-    case (ARKODE_LSRK_RKC_2): cout << " method = RKC_2 " << endl; break;
-    case (ARKODE_LSRK_RKL_2): cout << " method = RKL_2 " << endl; break;
+    case ARKODE_LSRK_RKC_2: cout << " method = RKC_2 " << endl; break;
+    case ARKODE_LSRK_RKL_2: cout << " method = RKL_2 " << endl; break;
+    case ARKODE_LSRK_SSP_S_2:
+    case ARKODE_LSRK_SSP_S_3:
+    case ARKODE_LSRK_SSP_10_4:
     default: cout << " ERROR: illegal lsrkmethod " << endl;
     }
     cout << " --------------------------------- " << endl;

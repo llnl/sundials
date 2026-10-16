@@ -29,7 +29,7 @@
 
 /* private functions */
 static int InitializeClearCache(int cachesize);
-static int FinalizeClearCache();
+static int FinalizeClearCache(void);
 
 /* private data for clearing cache */
 static sunindextype N;      /* data length */
@@ -295,7 +295,7 @@ static int InitializeClearCache(int cachesize)
   return (0);
 }
 
-static int FinalizeClearCache()
+static int FinalizeClearCache(void)
 {
   cudaError_t err; /* cuda error flag */
 
@@ -319,7 +319,7 @@ static int FinalizeClearCache()
   return (0);
 }
 
-void ClearCache()
+void ClearCache(void)
 {
   /* call cuda kernel to clear the cache */
   ClearCacheKernel<<<SUNMIN(32, (N + 255) / 256), 256>>>(N, d_data, d_sum);

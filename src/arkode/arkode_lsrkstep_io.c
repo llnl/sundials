@@ -448,6 +448,8 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
 
     case ARKODE_LSRK_SSP_10_4: step_mem->req_stages = 10; break;
 
+    case ARKODE_LSRK_RKC_2:
+    case ARKODE_LSRK_RKL_2:
     default:
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                       __FILE__, "Call LSRKStepSetSSPMethod to declare SSP method type first!");
@@ -501,6 +503,8 @@ int LSRKStepSetNumSSPStages(void* arkode_mem, int num_of_stages)
       }
       break;
 
+    case ARKODE_LSRK_RKC_2:
+    case ARKODE_LSRK_RKL_2:
     default:
       arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__,
                       __FILE__, "Call LSRKStepSetSSPMethod to declare SSP method type first!");

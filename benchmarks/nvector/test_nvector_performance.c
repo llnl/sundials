@@ -43,15 +43,13 @@ static double get_time(void);
 static void time_stats(N_Vector X, double* times, int start, int ntimes,
                        double* avg, double* sdev, double* min, double* max);
 
-int print_time = 0; /* flag for printing timing data */
-int nwarmups   = 1; /* number of extra tests to perform and ignore in average */
+static int print_time = 0; /* flag for printing timing data */
+static int nwarmups = 1; /* number of extra tests to perform and ignore in average */
 
 #if defined(SUNDIALS_HAVE_POSIX_TIMERS)
-time_t base_time_tv_sec = 0; /* Base time; makes time values returned
-                                by get_time easier to read when
-                                printed since they will be zero
-                                based.
-                              */
+static time_t base_time_tv_sec = 0; /* Base time; makes time values returned
+                                       by get_time easier to read when printed
+                                       since they will be zero based. */
 #endif
 
 #define FMT1 "%33s %22.15e %22.15e %22.15e %22.15e\n"

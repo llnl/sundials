@@ -789,7 +789,7 @@ extern "C" int check_vector(N_Vector expected, N_Vector actual,
   return failure > 0;
 }
 
-extern "C" void sync_device()
+extern "C" void sync_device(void)
 {
   HIP_OR_CUDA_OR_SYCL(hipDeviceSynchronize(), cudaDeviceSynchronize(),
                       global_exec->synchronize());

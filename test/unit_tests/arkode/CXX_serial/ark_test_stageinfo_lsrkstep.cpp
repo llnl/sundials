@@ -38,7 +38,7 @@ using namespace problems::prv;
 // can call ARKodeGetLastTime etc in the step and stage pre/postprocessing
 // callback functions below.  This would normally be stored in user_data, but
 // here we reuse problem definitions from other tests.
-void* arkode_mem = nullptr;
+static void* arkode_mem = nullptr;
 static int pre_step(sunrealtype t, N_Vector y, long int step, int attempt,
                     void* user_data);
 static int post_step(sunrealtype t, N_Vector y, long int step, void* user_data);

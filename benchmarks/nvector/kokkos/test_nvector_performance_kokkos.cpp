@@ -43,7 +43,7 @@ using SizeType = VecType::size_type;
 
 /* private functions */
 static int InitializeClearCache(size_t cachesize);
-static int FinalizeClearCache();
+static int FinalizeClearCache(void);
 
 /* private data for clearing cache */
 struct Cache
@@ -263,7 +263,7 @@ int FinalizeClearCache()
   return (0);
 }
 
-void ClearCache()
+void ClearCache(void)
 {
   if (cache->device.data())
   {

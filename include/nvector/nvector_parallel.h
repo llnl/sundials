@@ -334,9 +334,6 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Parallel(N_Vector v,
 SUNDIALS_EXPORT
 SUNErrCode N_VEnableDotProdMultiLocal_Parallel(N_Vector v, sunbooleantype tf);
 
-SUNDIALS_EXPORT
-SUNErrCode N_VEnableDotProdMultiLocal_Parallel(N_Vector v, sunbooleantype tf);
-
 #ifdef __cplusplus
 }
 #endif

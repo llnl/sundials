@@ -51,7 +51,7 @@ constexpr sunrealtype one  = SUN_RCONST(1.0);
 constexpr sunrealtype ten  = SUN_RCONST(10.0);
 
 // lambda and alpha
-sunrealtype problem_data[2] = {SUN_RCONST(-1000.0), SUN_RCONST(10.0)};
+static sunrealtype problem_data[2] = {SUN_RCONST(-1000.0), SUN_RCONST(10.0)};
 
 // -----------------------------------------------------------------------------
 // Helper functions

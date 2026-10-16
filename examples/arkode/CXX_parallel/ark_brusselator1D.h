@@ -76,7 +76,7 @@
 #define IDX(n, i, c) ((n) * (i) + (c))
 
 /* function to sync the host and device */
-static void sync_device();
+static void sync_device(void);
 
 /*
  * Simple timer class.

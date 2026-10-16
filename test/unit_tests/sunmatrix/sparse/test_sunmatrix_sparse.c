@@ -1020,7 +1020,7 @@ int check_matrix(SUNMatrix A, SUNMatrix B, sunrealtype tol)
   if (SUNMatGetID(A) != SUNMatGetID(B))
   {
     printf(">>> ERROR: check_matrix: Different storage types (%d vs %d)\n",
-           SUNMatGetID(A), SUNMatGetID(B));
+           (int)SUNMatGetID(A), (int)SUNMatGetID(B));
     return (1);
   }
   if (SUNSparseMatrix_SparseType(A) != SUNSparseMatrix_SparseType(B))

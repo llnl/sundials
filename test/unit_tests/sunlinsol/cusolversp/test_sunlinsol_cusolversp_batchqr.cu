@@ -307,4 +307,4 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
   else { return (0); }
 }
 
-void sync_device() { cudaDeviceSynchronize(); }
+void sync_device(void) { cudaDeviceSynchronize(); }

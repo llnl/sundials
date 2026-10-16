@@ -132,7 +132,7 @@ int Test_N_VGetVectorID(N_Vector X, N_Vector_ID ID, int myid)
   if (N_VGetVectorID(X) != ID)
   {
     printf(">>> FAILED test -- N_VGetVectorID, Proc %d \n", myid);
-    printf("    Unrecognized vector type %d \n \n", N_VGetVectorID(X));
+    printf("    Unrecognized vector type %d \n \n", (int)N_VGetVectorID(X));
     return (1);
   }
   else if (myid == 0) { printf("PASSED test -- N_VGetVectorID \n"); }

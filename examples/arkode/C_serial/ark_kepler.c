@@ -216,32 +216,19 @@ int SolveProblem(ProgramArgs* args, ProblemResult* result, SUNContext sunctx)
   }
 
   /* Open output files */
-  if (stepper == 0)
-  {
-    const char* fmt1 = "ark_kepler_conserved_%s-dt-%.2e.txt";
-    const char* fmt2 = "ark_kepler_solution_%s-dt-%.2e.txt";
-    const char* fmt3 = "ark_kepler_times_%s-dt-%.2e.txt";
-    char fname[256];
-    sprintf(fname, fmt1, method_name, dt);
-    conserved_fp = fopen(fname, "w+");
-    sprintf(fname, fmt2, method_name, dt);
-    solution_fp = fopen(fname, "w+");
-    sprintf(fname, fmt3, method_name, dt);
-    times_fp = fopen(fname, "w+");
-  }
-  else
-  {
-    const char* fmt1 = "ark_kepler_conserved_%s-dt-%.2e.txt";
-    const char* fmt2 = "ark_kepler_solution_%s-dt-%.2e.txt";
-    const char* fmt3 = "ark_kepler_times_%s-dt-%.2e.txt";
-    char fname[256];
-    sprintf(fname, fmt1, method_name, dt);
-    conserved_fp = fopen(fname, "w+");
-    sprintf(fname, fmt2, method_name, dt);
-    solution_fp = fopen(fname, "w+");
-    sprintf(fname, fmt3, method_name, dt);
-    times_fp = fopen(fname, "w+");
-  }
+  char fname[256];
+
+  snprintf(fname, sizeof fname, "ark_kepler_conserved_%s-dt-%.2e.txt",
+           method_name, (double)dt);
+  conserved_fp = fopen(fname, "w+");
+
+  snprintf(fname, sizeof fname, "ark_kepler_solution_%s-dt-%.2e.txt",
+           method_name, (double)dt);
+  solution_fp = fopen(fname, "w+");
+
+  snprintf(fname, sizeof fname, "ark_kepler_times_%s-dt-%.2e.txt", method_name,
+           (double)dt);
+  times_fp = fopen(fname, "w+");
 
   /* Print out starting energy, momentum before integrating */
   sunrealtype tret = T0;

@@ -38,7 +38,7 @@
 /* private functions */
 static double get_time(void);
 
-int print_time = 0;
+static int print_time = 0;
 
 #define PRINT_TIME(format, time) \
   if (print_time) printf(format, time)
@@ -492,11 +492,10 @@ int Test_SUNLinSolSolve(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
  * ====================================================================*/
 
 #if defined(SUNDIALS_HAVE_POSIX_TIMERS)
-time_t base_time_tv_sec = 0; /* Base time; makes time values returned
-                                by get_time easier to read when
-                                printed since they will be zero
-                                based.
-                              */
+static time_t base_time_tv_sec = 0; /* Base time; makes time values returned
+                                       by get_time easier to read when
+                                       printed since they will be zero
+                                       based. */
 #endif
 
 void SetTiming(int onoff)

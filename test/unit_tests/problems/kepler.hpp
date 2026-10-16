@@ -59,7 +59,7 @@ constexpr sunrealtype half = SUN_RCONST(0.5);
 constexpr sunrealtype one  = SUN_RCONST(1.0);
 
 // eccentricity
-sunrealtype eccentricity = SUN_RCONST(0.6);
+static sunrealtype eccentricity = SUN_RCONST(0.6);
 
 inline int initial_condition(N_Vector y_vec, sunrealtype ecc)
 {

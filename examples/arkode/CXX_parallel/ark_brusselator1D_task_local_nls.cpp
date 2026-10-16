@@ -1777,7 +1777,7 @@ int check_retval(void* returnvalue, const char* funcname, int opt)
 }
 
 /* function to sync the host and device */
-void sync_device()
+void sync_device(void)
 {
 #ifdef USE_CUDA_OR_HIP
   GPU_PREFIX(DeviceSynchronize)();
