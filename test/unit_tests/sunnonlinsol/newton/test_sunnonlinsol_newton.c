@@ -167,11 +167,28 @@ int main(int argc, char* argv[])
   retval = SUNNonlinSolSetLSetupFn(NLS, LSetup);
   if (check_retval(&retval, "SUNNonlinSolSetSetupFn", 1)) { return (1); }
 
+  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
+  if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
+
+  /* Report a missing LSolveFn even when error checks are disabled. */
+  retval = SUNNonlinSolInitialize(NLS);
+  if (retval != SUN_ERR_ARG_CORRUPT)
+  {
+    fprintf(stderr, "SUNNonlinSolInitialize returned %d without LSolveFn\n",
+            retval);
+    return (1);
+  }
+  if (SUNContext_GetLastError(sunctx) != SUN_ERR_ARG_CORRUPT)
+  {
+    fprintf(stderr, "SUNContext did not record the missing LSolveFn error\n");
+    return (1);
+  }
+
   retval = SUNNonlinSolSetLSolveFn(NLS, LSolve);
   if (check_retval(&retval, "SUNNonlinSolSetSolveFn", 1)) { return (1); }
 
-  retval = SUNNonlinSolSetConvTestFn(NLS, ConvTest, Imem);
-  if (check_retval(&retval, "SUNNonlinSolSetConvTestFn", 1)) { return (1); }
+  retval = SUNNonlinSolInitialize(NLS);
+  if (check_retval(&retval, "SUNNonlinSolInitialize", 1)) { return (1); }
 
   retval = SUNNonlinSolSetNormFn(NLS, NormFn, Imem);
   if (check_retval(&retval, "SUNNonlinSolSetNormFn", 1)) { return (1); }

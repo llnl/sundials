@@ -176,9 +176,16 @@ SUNErrCode SUNNonlinSolInitialize_Newton(SUNNonlinearSolver NLS)
 {
   SUNFunctionBegin(NLS->sunctx);
   /* check that all required function pointers have been set */
-  SUNAssert(NEWTON_CONTENT(NLS)->Sys && NEWTON_CONTENT(NLS)->CTest &&
-              NEWTON_CONTENT(NLS)->LSolve,
-            SUN_ERR_ARG_CORRUPT);
+  if (!(NEWTON_CONTENT(NLS)->Sys && NEWTON_CONTENT(NLS)->CTest &&
+        NEWTON_CONTENT(NLS)->LSolve))
+  {
+    SUNHandleErrWithMsg(
+      __LINE__, __func__, __FILE__,
+      "Newton nonlinear solver requires system, convergence test, and linear "
+      "solve functions",
+      SUN_ERR_ARG_CORRUPT, SUNCTX_);
+    return SUN_ERR_ARG_CORRUPT;
+  }
 
   /* reset the total number of iterations and convergence failures */
   NEWTON_CONTENT(NLS)->niters     = 0;
