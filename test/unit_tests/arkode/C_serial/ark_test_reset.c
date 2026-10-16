@@ -17,7 +17,7 @@
  * Routine to test that ARKodeReset functions correctly.
  *
  * This runs the same test problem as in
- * examples/arkode/C_serial/ark_analytic.c:
+ * examples/arkode/ark_analytic/c/ark_analytic.c:
  *    dy/dt = lambda*y + 1/(1+t^2) - lambda*atan(t)
  * for t in various time intervals, with the initial condition
  * y(0)=0, and having analytical solution y(t) = atan(t).

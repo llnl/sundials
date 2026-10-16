@@ -354,11 +354,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         dirname = os.path.join(self.prefix, "examples")
 
         cc_files = [
-            "arkode/C_openmp/Makefile",
-            "arkode/C_parallel/Makefile",
-            "arkode/C_parhyp/Makefile",
-            "arkode/C_petsc/Makefile",
-            "arkode/C_serial/Makefile",
             "cvodes/C_openmp/Makefile",
             "cvodes/parallel/Makefile",
             "cvodes/serial/Makefile",
@@ -401,15 +396,11 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         ]
 
         cxx_files = [
-            "arkode/CXX_parallel/Makefile",
-            "arkode/CXX_serial/Makefile",
             "nvector/cuda/Makefile",
             "nvector/raja/Makefile",
         ]
 
         f77_files = [
-            "arkode/F77_parallel/Makefile",
-            "arkode/F77_serial/Makefile",
             "cvode/fcmix_parallel/Makefile",
             "cvode/fcmix_serial/Makefile",
             "ida/fcmix_openmp/Makefile",
@@ -420,10 +411,9 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             "kinsol/fcmix_serial/Makefile",
         ]
 
-        f90_files = ["arkode/F90_parallel/Makefile", "arkode/F90_serial/Makefile"]
+        f90_files = []
 
         f2003_files = [
-            "arkode/F2003_serial/Makefile",
             "cvodes/F2003_serial/Makefike",
             "ida/F2003_serial/Makefile",
             "idas/F2003_serial/Makefile",

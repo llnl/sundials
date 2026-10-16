@@ -96,14 +96,14 @@ MRIStep initialization and deallocation functions
          outer_arkode_mem = MRIStepCreate(fse, fsi, t0, y0, stepper, sunctx)
 
    **Example codes:**
-      * ``examples/arkode/C_serial/ark_brusselator_mri.c``
-      * ``examples/arkode/C_serial/ark_twowaycouple_mri.c``
-      * ``examples/arkode/C_serial/ark_brusselator_1D_mri.c``
-      * ``examples/arkode/C_serial/ark_onewaycouple_mri.c``
-      * ``examples/arkode/C_serial/ark_reaction_diffusion_mri.c``
-      * ``examples/arkode/C_serial/ark_kpr_mri.c``
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
-      * ``examples/arkode/CXX_serial/ark_test_kpr_nestedmri.cpp``
+      * ``examples/arkode/ark_brusselator/c/ark_brusselator_mri.c``
+      * ``examples/arkode/ark_mri_step/c/ark_twowaycouple_mri.c``
+      * ``examples/arkode/ark_brusselator/c/ark_brusselator_1D_mri.c``
+      * ``examples/arkode/ark_mri_step/c/ark_onewaycouple_mri.c``
+      * ``examples/arkode/ark_mri_step/c/ark_reaction_diffusion_mri.c``
+      * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_kpr/cpp/ark_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
 
 
@@ -162,7 +162,7 @@ MRIStep initialization and deallocation functions
          retval = LSRKStepSet*(sts_mem, ...);
 
    **Example codes:**
-      * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
+      * ``examples/arkode/ark_advection_diffusion_reaction/cpp/ark_adr1d_extsts.cpp``
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)

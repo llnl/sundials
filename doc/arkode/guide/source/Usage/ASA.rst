@@ -11,7 +11,7 @@ discusses how to use ARKODE for adjoint sensitivity analysis as introduced in
 simply setup the forward integration as usual (following :numref:`ARKODE.Usage.Skeleton`) with a few
 differences. Below we provide an updated version of the ARKODE usage in section
 :numref:`ARKODE.Usage.Skeleton` where steps that are unchanged are *italicized*. The example
-code ``examples/arkode/C_serial/ark_lotka_volterra_asa.c`` demonstrates these steps in detail.
+code ``examples/arkode/ark_lotka_volterra/c/ark_lotka_volterra_ASA.c`` demonstrates these steps in detail.
 
 .. index:: Adjoint Sensitivity Analysis user main program
 

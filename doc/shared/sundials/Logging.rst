@@ -82,7 +82,7 @@ API:
 
 .. code-block::
 
-   examples/arkode/CXX_serial/ark_analytic_sys.cpp
+   examples/arkode/ark_analytic/cpp/ark_analytic_sys.cpp
    examples/cvode/cv_adv_diff/c/cv_adv_diff_bnd.c
    examples/cvode/cv_adv_diff/c-mpi/cv_adv_diff_diag_p.c
    examples/kinsol/CXX_parallel/kin_em_p.cpp
