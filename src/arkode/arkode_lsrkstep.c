@@ -3345,7 +3345,7 @@ int lsrkStep_DQJtimes(void* arkode_mem, N_Vector v, N_Vector Jv)
 }
 
 /*----------------------------------------------------------------
-  Utility routines for LSRKStep to serve as an MRIStepInnerStepper
+  Utility routines for LSRKStep to serve as a SUNStepper
   ----------------------------------------------------------------*/
 
 /*------------------------------------------------------------------------------

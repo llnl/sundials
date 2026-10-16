@@ -37,9 +37,8 @@ ERKStep supports the following categories:
 * relaxation Runge--Kutta methods
 
 ERKStep also has forcing function support when converted to a
-:c:type:`SUNStepper` or :c:type:`MRIStepInnerStepper`. See
-:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKStepCreateMRIStepInnerStepper`
-for additional details.
+:c:type:`SUNStepper`. See :c:func:`ARKodeCreateSUNStepper` for additional
+details.
 
 
 .. _ARKODE.Usage.ERKStep.Initialization:

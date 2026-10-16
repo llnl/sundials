@@ -78,9 +78,9 @@ int main(int argc, char* argv[])
   flag = ARKodeSStolerances(inner_arkode_mem, inner_rtol, inner_atol);
   if (check_flag(flag, "ARKodeSStolerances")) { return 1; }
 
-  MRIStepInnerStepper stepper = nullptr;
-  flag = ARKStepCreateMRIStepInnerStepper(inner_arkode_mem, &stepper);
-  if (check_flag(flag, "ARKStepCreateMRIStepInnerStepper")) { return 1; }
+  SUNStepper stepper = nullptr;
+  flag               = ARKodeCreateSUNStepper(inner_arkode_mem, &stepper);
+  if (check_flag(flag, "ARKodeCreateSUNStepper")) { return 1; }
 
   // Create MRIStep memory structure
   void* arkode_mem = nullptr;
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
   SUNMatDestroy(A);
   SUNLinSolFree(LS);
   SUNNonlinSolFree(NLS);
-  MRIStepInnerStepper_Free(&stepper);
+  SUNStepper_Destroy(&stepper);
   ARKodeFree(&inner_arkode_mem);
   ARKodeFree(&arkode_mem);
 

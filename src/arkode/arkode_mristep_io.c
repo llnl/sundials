@@ -347,7 +347,10 @@ int mriStep_SetUserData(ARKodeMem ark_mem, void* user_data)
      user_data pointer to the inner LSRKStep integrator */
   if (step_mem->extsts_method)
   {
-    retval = ARKodeSetUserData(step_mem->stepper->content, user_data);
+    void* sts_mem = NULL;
+    retval        = SUNStepper_GetContent(step_mem->stepper, &sts_mem);
+    if (retval != SUN_SUCCESS) { return (ARK_SUNSTEPPER_ERR); }
+    retval = ARKodeSetUserData(sts_mem, user_data);
     if (retval != ARK_SUCCESS) { return (retval); }
   }
 
