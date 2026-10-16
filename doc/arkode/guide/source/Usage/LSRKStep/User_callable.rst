@@ -223,6 +223,13 @@ Allowable Method Families
 
    .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
+   .. versionchanged:: x.y.z
+
+      An estimator attached before an :c:func:`ARKodeResize` that changes the
+      problem size is no longer used with work vectors of the old size. The
+      next estimate instead fails with ``ARK_DEE_FAIL`` until an estimator
+      created for the new problem size is attached with this function.
+
    .. note::
 
       When using RKC or RKL methods, users must supply a :c:type:`ARKDomEigFn`
@@ -235,6 +242,11 @@ Allowable Method Families
       Jacobian-vector product function by calling
       :c:func:`SUNDomEigEstimator_SetATimes` after attaching the estimator with
       :c:func:`LSRKStepSetDomEigEstimator`.
+
+      The estimator's work vectors cannot be resized. After calling
+      :c:func:`ARKodeResize` with a different problem size, create an
+      estimator for the new size and attach it with this function before the
+      next call to :c:func:`ARKodeEvolve`.
 
 
 .. c:function:: int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps);
@@ -249,6 +261,14 @@ Allowable Method Families
    **Return value:**
       * *ARK_SUCCESS* if successful
       * *ARK_MEM_NULL* if ``arkode_mem`` was ``NULL``.
+
+   .. versionchanged:: 8.0.0 (ARKODE 7.0.0)
+
+      The dominant eigenvalue is now always recomputed on the first step after
+      :c:func:`ARKodeResize`, regardless of ``nsteps`` (including
+      ``nsteps = 0``). Previously, the estimate from before the resize was kept
+      until ``nsteps`` successful steps had elapsed, or indefinitely for
+      ``nsteps = 0``.
 
    .. note::
 
