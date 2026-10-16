@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
-#include <nvector/nvector_hip.h>
+#include <nvector/nvector_hip_deprecated.h>
 
 #include "VectorArrayKernels.hip.hpp"
 #include "VectorKernels.hip.hpp"
@@ -41,6 +41,89 @@ using namespace sundials::hip::impl;
 /*
  * Private function definitions
  */
+
+// Functions attached to the N_Vector
+static void nvAbs_Hip(N_Vector x, N_Vector z);
+static void nvAddConst_Hip(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode nvBufPack_Hip(N_Vector x, void* buf);
+static SUNErrCode nvBufSize_Hip(N_Vector x, sunindextype* size);
+static SUNErrCode nvBufUnpack_Hip(N_Vector x, void* buf);
+static N_Vector nvCloneEmpty_Hip(N_Vector w);
+static N_Vector nvClone_Hip(N_Vector w);
+static void nvCompare_Hip(sunrealtype c, N_Vector x, N_Vector z);
+static SUNErrCode nvConstVectorArray_Hip(int nvec, sunrealtype c, N_Vector* Z);
+static void nvConst_Hip(sunrealtype c, N_Vector z);
+static sunbooleantype nvConstrMask_Hip(N_Vector c, N_Vector x, N_Vector m);
+static void nvDestroy_Hip(N_Vector v);
+static void nvDiv_Hip(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvDotProdMulti_Hip(int nvec, N_Vector x, N_Vector* Y,
+                                     sunrealtype* dotprods);
+static sunrealtype nvDotProd_Hip(N_Vector x, N_Vector y);
+
+static inline sunrealtype* nvGetDeviceArrayPointer_Hip(N_Vector x)
+{
+  N_VectorContent_Hip content = (N_VectorContent_Hip)x->content;
+  return (content->device_data == NULL ? NULL
+                                       : (sunrealtype*)content->device_data->ptr);
+}
+
+static inline sunrealtype* nvGetHostArrayPointer_Hip(N_Vector x)
+{
+  N_VectorContent_Hip content = (N_VectorContent_Hip)x->content;
+  return (content->host_data == NULL ? NULL
+                                     : (sunrealtype*)content->host_data->ptr);
+}
+
+static inline sunindextype nvGetLength_Hip(N_Vector x)
+{
+  N_VectorContent_Hip content = (N_VectorContent_Hip)x->content;
+  return content->length;
+}
+
+static inline N_Vector_ID nvGetVectorID_Hip(N_Vector /*v*/)
+{
+  return SUNDIALS_NVEC_HIP;
+}
+
+static sunbooleantype nvInvTest_Hip(N_Vector x, N_Vector z);
+static void nvInv_Hip(N_Vector x, N_Vector z);
+static sunrealtype nvL1Norm_Hip(N_Vector x);
+static SUNErrCode nvLinearCombinationVectorArray_Hip(int nvec, int nsum,
+                                                     sunrealtype* c,
+                                                     N_Vector** X, N_Vector* Z);
+static SUNErrCode nvLinearCombination_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                          N_Vector Z);
+static SUNErrCode nvLinearSumVectorArray_Hip(int nvec, sunrealtype a,
+                                             N_Vector* X, sunrealtype b,
+                                             N_Vector* Y, N_Vector* Z);
+static void nvLinearSum_Hip(sunrealtype a, N_Vector x, sunrealtype b,
+                            N_Vector y, N_Vector z);
+static sunrealtype nvMaxNorm_Hip(N_Vector x);
+static sunrealtype nvMinQuotient_Hip(N_Vector num, N_Vector denom);
+static sunrealtype nvMin_Hip(N_Vector x);
+static void nvPrintFile_Hip(N_Vector v, FILE* outfile);
+static void nvPrint_Hip(N_Vector v);
+static void nvProd_Hip(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvScaleAddMultiVectorArray_Hip(int nvec, int nsum,
+                                                 sunrealtype* a, N_Vector* X,
+                                                 N_Vector** Y, N_Vector** Z);
+static SUNErrCode nvScaleAddMulti_Hip(int nvec, sunrealtype* c, N_Vector X,
+                                      N_Vector* Y, N_Vector* Z);
+static SUNErrCode nvScaleVectorArray_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                         N_Vector* Z);
+static void nvScale_Hip(sunrealtype c, N_Vector x, N_Vector z);
+static void nvSetDeviceArrayPointer_Hip(sunrealtype* d_vdata_1d, N_Vector v);
+static void nvSetHostArrayPointer_Hip(sunrealtype* h_vdata_1d, N_Vector v);
+static sunrealtype nvWL2Norm_Hip(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumLocal_Hip(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumMaskLocal_Hip(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode nvWrmsNormMaskVectorArray_Hip(int nvec, N_Vector* X,
+                                                N_Vector* W, N_Vector id,
+                                                sunrealtype* nrm);
+static sunrealtype nvWrmsNormMask_Hip(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode nvWrmsNormVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
+                                            sunrealtype* nrm);
+static sunrealtype nvWrmsNorm_Hip(N_Vector x, N_Vector w);
 
 // Allocate vector data
 static int AllocateData(N_Vector v);
@@ -116,61 +199,61 @@ N_Vector N_VNewEmpty_Hip(SUNContext sunctx)
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid           = N_VGetVectorID_Hip;
-  v->ops->nvclone                 = N_VClone_Hip;
-  v->ops->nvcloneempty            = N_VCloneEmpty_Hip;
-  v->ops->nvdestroy               = N_VDestroy_Hip;
-  v->ops->nvgetlength             = N_VGetLength_Hip;
-  v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Hip;
-  v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Hip;
-  v->ops->nvsetarraypointer       = N_VSetHostArrayPointer_Hip;
-  v->ops->nvsetdevicearraypointer = N_VSetDeviceArrayPointer_Hip;
+  v->ops->nvgetvectorid           = nvGetVectorID_Hip;
+  v->ops->nvclone                 = nvClone_Hip;
+  v->ops->nvcloneempty            = nvCloneEmpty_Hip;
+  v->ops->nvdestroy               = nvDestroy_Hip;
+  v->ops->nvgetlength             = nvGetLength_Hip;
+  v->ops->nvgetarraypointer       = nvGetHostArrayPointer_Hip;
+  v->ops->nvgetdevicearraypointer = nvGetDeviceArrayPointer_Hip;
+  v->ops->nvsetarraypointer       = nvSetHostArrayPointer_Hip;
+  v->ops->nvsetdevicearraypointer = nvSetDeviceArrayPointer_Hip;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_Hip;
-  v->ops->nvconst        = N_VConst_Hip;
-  v->ops->nvprod         = N_VProd_Hip;
-  v->ops->nvdiv          = N_VDiv_Hip;
-  v->ops->nvscale        = N_VScale_Hip;
-  v->ops->nvabs          = N_VAbs_Hip;
-  v->ops->nvinv          = N_VInv_Hip;
-  v->ops->nvaddconst     = N_VAddConst_Hip;
-  v->ops->nvdotprod      = N_VDotProd_Hip;
-  v->ops->nvmaxnorm      = N_VMaxNorm_Hip;
-  v->ops->nvmin          = N_VMin_Hip;
-  v->ops->nvl1norm       = N_VL1Norm_Hip;
-  v->ops->nvinvtest      = N_VInvTest_Hip;
-  v->ops->nvconstrmask   = N_VConstrMask_Hip;
-  v->ops->nvminquotient  = N_VMinQuotient_Hip;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_Hip;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_Hip;
-  v->ops->nvwl2norm      = N_VWL2Norm_Hip;
-  v->ops->nvcompare      = N_VCompare_Hip;
+  v->ops->nvlinearsum    = nvLinearSum_Hip;
+  v->ops->nvconst        = nvConst_Hip;
+  v->ops->nvprod         = nvProd_Hip;
+  v->ops->nvdiv          = nvDiv_Hip;
+  v->ops->nvscale        = nvScale_Hip;
+  v->ops->nvabs          = nvAbs_Hip;
+  v->ops->nvinv          = nvInv_Hip;
+  v->ops->nvaddconst     = nvAddConst_Hip;
+  v->ops->nvdotprod      = nvDotProd_Hip;
+  v->ops->nvmaxnorm      = nvMaxNorm_Hip;
+  v->ops->nvmin          = nvMin_Hip;
+  v->ops->nvl1norm       = nvL1Norm_Hip;
+  v->ops->nvinvtest      = nvInvTest_Hip;
+  v->ops->nvconstrmask   = nvConstrMask_Hip;
+  v->ops->nvminquotient  = nvMinQuotient_Hip;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_Hip;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_Hip;
+  v->ops->nvwl2norm      = nvWL2Norm_Hip;
+  v->ops->nvcompare      = nvCompare_Hip;
 
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = N_VDotProd_Hip;
-  v->ops->nvmaxnormlocal     = N_VMaxNorm_Hip;
-  v->ops->nvminlocal         = N_VMin_Hip;
-  v->ops->nvl1normlocal      = N_VL1Norm_Hip;
-  v->ops->nvinvtestlocal     = N_VInvTest_Hip;
-  v->ops->nvconstrmasklocal  = N_VConstrMask_Hip;
-  v->ops->nvminquotientlocal = N_VMinQuotient_Hip;
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_Hip;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_Hip;
+  v->ops->nvdotprodlocal     = nvDotProd_Hip;
+  v->ops->nvmaxnormlocal     = nvMaxNorm_Hip;
+  v->ops->nvminlocal         = nvMin_Hip;
+  v->ops->nvl1normlocal      = nvL1Norm_Hip;
+  v->ops->nvinvtestlocal     = nvInvTest_Hip;
+  v->ops->nvconstrmasklocal  = nvConstrMask_Hip;
+  v->ops->nvminquotientlocal = nvMinQuotient_Hip;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_Hip;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_Hip;
 
   /* single buffer reduction operations */
-  v->ops->nvdotprodmultilocal = N_VDotProdMulti_Hip;
+  v->ops->nvdotprodmultilocal = nvDotProdMulti_Hip;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_Hip;
-  v->ops->nvbufpack   = N_VBufPack_Hip;
-  v->ops->nvbufunpack = N_VBufUnpack_Hip;
+  v->ops->nvbufsize   = nvBufSize_Hip;
+  v->ops->nvbufpack   = nvBufPack_Hip;
+  v->ops->nvbufunpack = nvBufUnpack_Hip;
 
   /* print operation for debugging */
-  v->ops->nvprint     = N_VPrint_Hip;
-  v->ops->nvprintfile = N_VPrintFile_Hip;
+  v->ops->nvprint     = nvPrint_Hip;
+  v->ops->nvprintfile = nvPrintFile_Hip;
 
   /* Create content */
 
@@ -401,7 +484,7 @@ N_Vector N_VMakeManaged_Hip(sunindextype length, sunrealtype* vdata,
  * Set pointer to the raw host data. Does not free the existing pointer.
  */
 
-void N_VSetHostArrayPointer_Hip(sunrealtype* h_vdata, N_Vector v)
+void nvSetHostArrayPointer_Hip(sunrealtype* h_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Hip(v))
   {
@@ -438,7 +521,7 @@ void N_VSetHostArrayPointer_Hip(sunrealtype* h_vdata, N_Vector v)
  * Set pointer to the raw device data
  */
 
-void N_VSetDeviceArrayPointer_Hip(sunrealtype* d_vdata, N_Vector v)
+void nvSetDeviceArrayPointer_Hip(sunrealtype* d_vdata, N_Vector v)
 {
   if (N_VIsManagedMemory_Hip(v))
   {
@@ -565,13 +648,13 @@ void N_VCopyFromDevice_Hip(N_Vector x)
  * Function to print the a CUDA-based vector to stdout
  */
 
-void N_VPrint_Hip(N_Vector x) { N_VPrintFile_Hip(x, stdout); }
+void nvPrint_Hip(N_Vector x) { nvPrintFile_Hip(x, stdout); }
 
 /* ----------------------------------------------------------------------------
  * Function to print the a CUDA-based vector to outfile
  */
 
-void N_VPrintFile_Hip(N_Vector x, FILE* outfile)
+void nvPrintFile_Hip(N_Vector x, FILE* outfile)
 {
   sunindextype i;
 
@@ -593,7 +676,7 @@ void N_VPrintFile_Hip(N_Vector x, FILE* outfile)
  * -----------------------------------------------------------------
  */
 
-N_Vector N_VCloneEmpty_Hip(N_Vector w)
+N_Vector nvCloneEmpty_Hip(N_Vector w)
 {
   N_Vector v;
 
@@ -618,12 +701,12 @@ N_Vector N_VCloneEmpty_Hip(N_Vector w)
   return (v);
 }
 
-N_Vector N_VClone_Hip(N_Vector w)
+N_Vector nvClone_Hip(N_Vector w)
 {
   N_Vector v;
 
   v = NULL;
-  v = N_VCloneEmpty_Hip(w);
+  v = nvCloneEmpty_Hip(w);
   if (v == NULL) { return (NULL); }
 
   NVEC_HIP_MEMHELP(v)             = SUNMemoryHelper_Clone(NVEC_HIP_MEMHELP(w));
@@ -636,7 +719,7 @@ N_Vector N_VClone_Hip(N_Vector w)
   if (NVEC_HIP_MEMHELP(v) == NULL)
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VClone_Hip: SUNMemoryHelper_Clone returned NULL\n");
+      "ERROR in nvClone_Hip: SUNMemoryHelper_Clone returned NULL\n");
     N_VDestroy(v);
     return (NULL);
   }
@@ -644,7 +727,7 @@ N_Vector N_VClone_Hip(N_Vector w)
   if (AllocateData(v))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VClone_Hip: AllocateData returned nonzero\n");
+      "ERROR in nvClone_Hip: AllocateData returned nonzero\n");
     N_VDestroy(v);
     return (NULL);
   }
@@ -652,7 +735,7 @@ N_Vector N_VClone_Hip(N_Vector w)
   return (v);
 }
 
-void N_VDestroy_Hip(N_Vector v)
+void nvDestroy_Hip(N_Vector v)
 {
   N_VectorContent_Hip vc;
   N_PrivateVectorContent_Hip vcp;
@@ -712,7 +795,7 @@ void N_VDestroy_Hip(N_Vector v)
   return;
 }
 
-void N_VConst_Hip(sunrealtype a, N_Vector X)
+void nvConst_Hip(sunrealtype a, N_Vector X)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -720,7 +803,7 @@ void N_VConst_Hip(sunrealtype a, N_Vector X)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VConst_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvConst_Hip: GetKernelParameters returned nonzero\n");
   }
 
   setConstKernel<<<grid, block, shMemSize, stream>>>(a, NVEC_HIP_DDATAp(X),
@@ -728,8 +811,8 @@ void N_VConst_Hip(sunrealtype a, N_Vector X)
   PostKernelLaunch();
 }
 
-void N_VLinearSum_Hip(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
-                      N_Vector Z)
+void nvLinearSum_Hip(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
+                     N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -737,7 +820,7 @@ void N_VLinearSum_Hip(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VLinearSum_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvLinearSum_Hip: GetKernelParameters returned nonzero\n");
   }
 
   linearSumKernel<<<grid, block, shMemSize, stream>>>(a, NVEC_HIP_DDATAp(X), b,
@@ -747,7 +830,7 @@ void N_VLinearSum_Hip(sunrealtype a, N_Vector X, sunrealtype b, N_Vector Y,
   PostKernelLaunch();
 }
 
-void N_VProd_Hip(N_Vector X, N_Vector Y, N_Vector Z)
+void nvProd_Hip(N_Vector X, N_Vector Y, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -755,7 +838,7 @@ void N_VProd_Hip(N_Vector X, N_Vector Y, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VProd_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvProd_Hip: GetKernelParameters returned nonzero\n");
   }
 
   prodKernel<<<grid, block, shMemSize, stream>>>(NVEC_HIP_DDATAp(X),
@@ -765,7 +848,7 @@ void N_VProd_Hip(N_Vector X, N_Vector Y, N_Vector Z)
   PostKernelLaunch();
 }
 
-void N_VDiv_Hip(N_Vector X, N_Vector Y, N_Vector Z)
+void nvDiv_Hip(N_Vector X, N_Vector Y, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -773,7 +856,7 @@ void N_VDiv_Hip(N_Vector X, N_Vector Y, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDiv_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvDiv_Hip: GetKernelParameters returned nonzero\n");
   }
 
   divKernel<<<grid, block, shMemSize, stream>>>(NVEC_HIP_DDATAp(X),
@@ -783,7 +866,7 @@ void N_VDiv_Hip(N_Vector X, N_Vector Y, N_Vector Z)
   PostKernelLaunch();
 }
 
-void N_VScale_Hip(sunrealtype a, N_Vector X, N_Vector Z)
+void nvScale_Hip(sunrealtype a, N_Vector X, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -791,7 +874,7 @@ void N_VScale_Hip(sunrealtype a, N_Vector X, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VScale_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvScale_Hip: GetKernelParameters returned nonzero\n");
   }
 
   scaleKernel<<<grid, block, shMemSize, stream>>>(a, NVEC_HIP_DDATAp(X),
@@ -800,7 +883,7 @@ void N_VScale_Hip(sunrealtype a, N_Vector X, N_Vector Z)
   PostKernelLaunch();
 }
 
-void N_VAbs_Hip(N_Vector X, N_Vector Z)
+void nvAbs_Hip(N_Vector X, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -808,7 +891,7 @@ void N_VAbs_Hip(N_Vector X, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VAbs_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvAbs_Hip: GetKernelParameters returned nonzero\n");
   }
 
   absKernel<<<grid, block, shMemSize, stream>>>(NVEC_HIP_DDATAp(X),
@@ -817,7 +900,7 @@ void N_VAbs_Hip(N_Vector X, N_Vector Z)
   PostKernelLaunch();
 }
 
-void N_VInv_Hip(N_Vector X, N_Vector Z)
+void nvInv_Hip(N_Vector X, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -825,7 +908,7 @@ void N_VInv_Hip(N_Vector X, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInv_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvInv_Hip: GetKernelParameters returned nonzero\n");
   }
 
   invKernel<<<grid, block, shMemSize, stream>>>(NVEC_HIP_DDATAp(X),
@@ -834,7 +917,7 @@ void N_VInv_Hip(N_Vector X, N_Vector Z)
   PostKernelLaunch();
 }
 
-void N_VAddConst_Hip(N_Vector X, sunrealtype b, N_Vector Z)
+void nvAddConst_Hip(N_Vector X, sunrealtype b, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -842,7 +925,7 @@ void N_VAddConst_Hip(N_Vector X, sunrealtype b, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VAddConst_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvAddConst_Hip: GetKernelParameters returned nonzero\n");
   }
 
   addConstKernel<<<grid, block, shMemSize, stream>>>(b, NVEC_HIP_DDATAp(X),
@@ -851,7 +934,7 @@ void N_VAddConst_Hip(N_Vector X, sunrealtype b, N_Vector Z)
   PostKernelLaunch();
 }
 
-sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
+sunrealtype nvDotProd_Hip(N_Vector X, N_Vector Y)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -862,7 +945,7 @@ sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDotProd_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvDotProd_Hip: GetKernelParameters returned nonzero\n");
   }
 
   // When using atomic reductions, we only need one output value
@@ -870,7 +953,7 @@ sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VDotProd_Hip: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvDotProd_Hip: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (atomic)
@@ -897,7 +980,7 @@ sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
   return gpu_result;
 }
 
-sunrealtype N_VMaxNorm_Hip(N_Vector X)
+sunrealtype nvMaxNorm_Hip(N_Vector X)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -908,7 +991,7 @@ sunrealtype N_VMaxNorm_Hip(N_Vector X)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMaxNorm_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMaxNorm_Hip: GetKernelParameters returned nonzero\n");
   }
 
   // When using atomic reductions, we only need one output value
@@ -916,7 +999,7 @@ sunrealtype N_VMaxNorm_Hip(N_Vector X)
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMaxNorm_Hip: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvMaxNorm_Hip: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (atomic)
@@ -944,7 +1027,7 @@ sunrealtype N_VMaxNorm_Hip(N_Vector X)
   return gpu_result;
 }
 
-sunrealtype N_VWSqrSumLocal_Hip(N_Vector X, N_Vector W)
+sunrealtype nvWSqrSumLocal_Hip(N_Vector X, N_Vector W)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -955,13 +1038,13 @@ sunrealtype N_VWSqrSumLocal_Hip(N_Vector X, N_Vector W)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VWSqrSumLocal_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvWSqrSumLocal_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumLocal_Hip: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumLocal_Hip: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
@@ -990,13 +1073,13 @@ sunrealtype N_VWSqrSumLocal_Hip(N_Vector X, N_Vector W)
   return gpu_result;
 }
 
-sunrealtype N_VWrmsNorm_Hip(N_Vector X, N_Vector W)
+sunrealtype nvWrmsNorm_Hip(N_Vector X, N_Vector W)
 {
-  const sunrealtype sum = N_VWSqrSumLocal_Hip(X, W);
+  const sunrealtype sum = nvWSqrSumLocal_Hip(X, W);
   return std::sqrt(sum / NVEC_HIP_CONTENT(X)->length);
 }
 
-sunrealtype N_VWSqrSumMaskLocal_Hip(N_Vector X, N_Vector W, N_Vector Id)
+sunrealtype nvWSqrSumMaskLocal_Hip(N_Vector X, N_Vector W, N_Vector Id)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1006,14 +1089,14 @@ sunrealtype N_VWSqrSumMaskLocal_Hip(N_Vector X, N_Vector W, N_Vector Id)
 
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumMaskLocal_Hip: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumMaskLocal_Hip: "
                          "GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VWSqrSumMaskLocal_Hip: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvWSqrSumMaskLocal_Hip: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
@@ -1044,13 +1127,13 @@ sunrealtype N_VWSqrSumMaskLocal_Hip(N_Vector X, N_Vector W, N_Vector Id)
   return gpu_result;
 }
 
-sunrealtype N_VWrmsNormMask_Hip(N_Vector X, N_Vector W, N_Vector Id)
+sunrealtype nvWrmsNormMask_Hip(N_Vector X, N_Vector W, N_Vector Id)
 {
-  const sunrealtype sum = N_VWSqrSumMaskLocal_Hip(X, W, Id);
+  const sunrealtype sum = nvWSqrSumMaskLocal_Hip(X, W, Id);
   return std::sqrt(sum / NVEC_HIP_CONTENT(X)->length);
 }
 
-sunrealtype N_VMin_Hip(N_Vector X)
+sunrealtype nvMin_Hip(N_Vector X)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1061,14 +1144,14 @@ sunrealtype N_VMin_Hip(N_Vector X)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMin_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMin_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMin_Hip: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvMin_Hip: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (atomic)
@@ -1096,13 +1179,13 @@ sunrealtype N_VMin_Hip(N_Vector X)
   return gpu_result;
 }
 
-sunrealtype N_VWL2Norm_Hip(N_Vector X, N_Vector W)
+sunrealtype nvWL2Norm_Hip(N_Vector X, N_Vector W)
 {
-  const sunrealtype sum = N_VWSqrSumLocal_Hip(X, W);
+  const sunrealtype sum = nvWSqrSumLocal_Hip(X, W);
   return std::sqrt(sum);
 }
 
-sunrealtype N_VL1Norm_Hip(N_Vector X)
+sunrealtype nvL1Norm_Hip(N_Vector X)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1113,14 +1196,14 @@ sunrealtype N_VL1Norm_Hip(N_Vector X)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VL1Norm_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvL1Norm_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VL1Norm_Hip: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvL1Norm_Hip: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (atomic)
@@ -1148,7 +1231,7 @@ sunrealtype N_VL1Norm_Hip(N_Vector X)
   return gpu_result;
 }
 
-void N_VCompare_Hip(sunrealtype c, N_Vector X, N_Vector Z)
+void nvCompare_Hip(sunrealtype c, N_Vector X, N_Vector Z)
 {
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -1156,7 +1239,7 @@ void N_VCompare_Hip(sunrealtype c, N_Vector X, N_Vector Z)
   if (GetKernelParameters(X, false, grid, block, shMemSize, stream))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VCompare_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvCompare_Hip: GetKernelParameters returned nonzero\n");
   }
 
   compareKernel<<<grid, block, shMemSize, stream>>>(c, NVEC_HIP_DDATAp(X),
@@ -1165,7 +1248,7 @@ void N_VCompare_Hip(sunrealtype c, N_Vector X, N_Vector Z)
   PostKernelLaunch();
 }
 
-sunbooleantype N_VInvTest_Hip(N_Vector X, N_Vector Z)
+sunbooleantype nvInvTest_Hip(N_Vector X, N_Vector Z)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1176,14 +1259,14 @@ sunbooleantype N_VInvTest_Hip(N_Vector X, N_Vector Z)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInvTest_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvInvTest_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VInvTest_Hip: InitializeReductionBuffer returned nonzero\n");
+      "ERROR in nvInvTest_Hip: InitializeReductionBuffer returned nonzero\n");
   }
 
   if (atomic)
@@ -1211,7 +1294,7 @@ sunbooleantype N_VInvTest_Hip(N_Vector X, N_Vector Z)
   return (gpu_result < HALF);
 }
 
-sunbooleantype N_VConstrMask_Hip(N_Vector C, N_Vector X, N_Vector M)
+sunbooleantype nvConstrMask_Hip(N_Vector C, N_Vector X, N_Vector M)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1222,13 +1305,13 @@ sunbooleantype N_VConstrMask_Hip(N_Vector C, N_Vector X, N_Vector M)
   if (GetKernelParameters(X, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VConstrMask_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvConstrMask_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(X, gpu_result, buffer_size))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VConstrMask_Hip: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvConstrMask_Hip: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
@@ -1259,7 +1342,7 @@ sunbooleantype N_VConstrMask_Hip(N_Vector C, N_Vector X, N_Vector M)
   return (gpu_result < HALF);
 }
 
-sunrealtype N_VMinQuotient_Hip(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_Hip(N_Vector num, N_Vector denom)
 {
   bool atomic;
   size_t grid, block, shMemSize;
@@ -1271,13 +1354,13 @@ sunrealtype N_VMinQuotient_Hip(N_Vector num, N_Vector denom)
   if (GetKernelParameters(num, true, grid, block, shMemSize, stream, atomic))
   {
     SUNDIALS_DEBUG_PRINT(
-      "ERROR in N_VMinQuotient_Hip: GetKernelParameters returned nonzero\n");
+      "ERROR in nvMinQuotient_Hip: GetKernelParameters returned nonzero\n");
   }
 
   const size_t buffer_size = atomic ? 1 : grid;
   if (InitializeReductionBuffer(num, gpu_result, buffer_size))
   {
-    SUNDIALS_DEBUG_PRINT("ERROR in N_VMinQuotient_Hip: "
+    SUNDIALS_DEBUG_PRINT("ERROR in nvMinQuotient_Hip: "
                          "InitializeReductionBuffer returned nonzero\n");
   }
 
@@ -1315,8 +1398,8 @@ sunrealtype N_VMinQuotient_Hip(N_Vector num, N_Vector denom)
  * -----------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearCombination_Hip(int nvec, sunrealtype* c, N_Vector* X,
-                                    N_Vector Z)
+SUNErrCode nvLinearCombination_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                   N_Vector Z)
 {
   hipError_t err;
 
@@ -1364,8 +1447,8 @@ SUNErrCode N_VLinearCombination_Hip(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMulti_Hip(int nvec, sunrealtype* c, N_Vector X,
-                                N_Vector* Y, N_Vector* Z)
+SUNErrCode nvScaleAddMulti_Hip(int nvec, sunrealtype* c, N_Vector X,
+                               N_Vector* Y, N_Vector* Z)
 {
   hipError_t err;
 
@@ -1425,8 +1508,7 @@ SUNErrCode N_VScaleAddMulti_Hip(int nvec, sunrealtype* c, N_Vector X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VDotProdMulti_Hip(int nvec, N_Vector X, N_Vector* Y,
-                               sunrealtype* dots)
+SUNErrCode nvDotProdMulti_Hip(int nvec, N_Vector X, N_Vector* Y, sunrealtype* dots)
 {
   hipError_t err;
 
@@ -1486,8 +1568,8 @@ SUNErrCode N_VDotProdMulti_Hip(int nvec, N_Vector X, N_Vector* Y,
  * -----------------------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearSumVectorArray_Hip(int nvec, sunrealtype a, N_Vector* X,
-                                       sunrealtype b, N_Vector* Y, N_Vector* Z)
+SUNErrCode nvLinearSumVectorArray_Hip(int nvec, sunrealtype a, N_Vector* X,
+                                      sunrealtype b, N_Vector* Y, N_Vector* Z)
 {
   hipError_t err;
 
@@ -1551,8 +1633,8 @@ SUNErrCode N_VLinearSumVectorArray_Hip(int nvec, sunrealtype a, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleVectorArray_Hip(int nvec, sunrealtype* c, N_Vector* X,
-                                   N_Vector* Z)
+SUNErrCode nvScaleVectorArray_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                  N_Vector* Z)
 {
   hipError_t err;
 
@@ -1612,7 +1694,7 @@ SUNErrCode N_VScaleVectorArray_Hip(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VConstVectorArray_Hip(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode nvConstVectorArray_Hip(int nvec, sunrealtype c, N_Vector* Z)
 {
   hipError_t err;
 
@@ -1650,8 +1732,8 @@ SUNErrCode N_VConstVectorArray_Hip(int nvec, sunrealtype c, N_Vector* Z)
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VWrmsNormVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
-                                      sunrealtype* norms)
+SUNErrCode nvWrmsNormVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
+                                     sunrealtype* norms)
 {
   hipError_t err;
 
@@ -1722,8 +1804,8 @@ SUNErrCode N_VWrmsNormVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VWrmsNormMaskVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
-                                          N_Vector id, sunrealtype* norms)
+SUNErrCode nvWrmsNormMaskVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
+                                         N_Vector id, sunrealtype* norms)
 {
   hipError_t err;
 
@@ -1795,9 +1877,8 @@ SUNErrCode N_VWrmsNormMaskVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMultiVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
-                                           N_Vector* X, N_Vector** Y,
-                                           N_Vector** Z)
+SUNErrCode nvScaleAddMultiVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
+                                          N_Vector* X, N_Vector** Y, N_Vector** Z)
 {
   hipError_t err;
 
@@ -1885,8 +1966,8 @@ SUNErrCode N_VScaleAddMultiVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VLinearCombinationVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
-                                               N_Vector** X, N_Vector* Z)
+SUNErrCode nvLinearCombinationVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
+                                              N_Vector** X, N_Vector* Z)
 {
   hipError_t err;
 
@@ -1958,14 +2039,14 @@ SUNErrCode N_VLinearCombinationVectorArray_Hip(int nvec, int nsum, sunrealtype* 
  * -----------------------------------------------------------------
  */
 
-SUNErrCode N_VBufSize_Hip(N_Vector x, sunindextype* size)
+SUNErrCode nvBufSize_Hip(N_Vector x, sunindextype* size)
 {
   if (x == NULL) { return SUN_ERR_GENERIC; }
   *size = (sunindextype)NVEC_HIP_MEMSIZE(x);
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VBufPack_Hip(N_Vector x, void* buf)
+SUNErrCode nvBufPack_Hip(N_Vector x, void* buf)
 {
   int copy_fail = 0;
   hipError_t cuerr;
@@ -1991,7 +2072,7 @@ SUNErrCode N_VBufPack_Hip(N_Vector x, void* buf)
   else { return SUN_SUCCESS; }
 }
 
-SUNErrCode N_VBufUnpack_Hip(N_Vector x, void* buf)
+SUNErrCode nvBufUnpack_Hip(N_Vector x, void* buf)
 {
   int copy_fail = 0;
   hipError_t cuerr;
@@ -2034,19 +2115,19 @@ SUNErrCode N_VEnableFusedOps_Hip(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = N_VLinearCombination_Hip;
-    v->ops->nvscaleaddmulti     = N_VScaleAddMulti_Hip;
-    v->ops->nvdotprodmulti      = N_VDotProdMulti_Hip;
+    v->ops->nvlinearcombination = nvLinearCombination_Hip;
+    v->ops->nvscaleaddmulti     = nvScaleAddMulti_Hip;
+    v->ops->nvdotprodmulti      = nvDotProdMulti_Hip;
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = N_VLinearSumVectorArray_Hip;
-    v->ops->nvscalevectorarray         = N_VScaleVectorArray_Hip;
-    v->ops->nvconstvectorarray         = N_VConstVectorArray_Hip;
-    v->ops->nvwrmsnormvectorarray      = N_VWrmsNormVectorArray_Hip;
-    v->ops->nvwrmsnormmaskvectorarray  = N_VWrmsNormMaskVectorArray_Hip;
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Hip;
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Hip;
+    v->ops->nvlinearsumvectorarray         = nvLinearSumVectorArray_Hip;
+    v->ops->nvscalevectorarray             = nvScaleVectorArray_Hip;
+    v->ops->nvconstvectorarray             = nvConstVectorArray_Hip;
+    v->ops->nvwrmsnormvectorarray          = nvWrmsNormVectorArray_Hip;
+    v->ops->nvwrmsnormmaskvectorarray      = nvWrmsNormMaskVectorArray_Hip;
+    v->ops->nvscaleaddmultivectorarray     = nvScaleAddMultiVectorArray_Hip;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Hip;
     /* enable single buffer reduction operations */
-    v->ops->nvdotprodmultilocal = N_VDotProdMulti_Hip;
+    v->ops->nvdotprodmultilocal = nvDotProdMulti_Hip;
   }
   else
   {
@@ -2079,7 +2160,7 @@ SUNErrCode N_VEnableLinearCombination_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Hip; }
+  if (tf) { v->ops->nvlinearcombination = nvLinearCombination_Hip; }
   else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
@@ -2095,7 +2176,7 @@ SUNErrCode N_VEnableScaleAddMulti_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Hip; }
+  if (tf) { v->ops->nvscaleaddmulti = nvScaleAddMulti_Hip; }
   else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
@@ -2113,8 +2194,8 @@ SUNErrCode N_VEnableDotProdMulti_Hip(N_Vector v, sunbooleantype tf)
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvdotprodmulti      = N_VDotProdMulti_Hip;
-    v->ops->nvdotprodmultilocal = N_VDotProdMulti_Hip;
+    v->ops->nvdotprodmulti      = nvDotProdMulti_Hip;
+    v->ops->nvdotprodmultilocal = nvDotProdMulti_Hip;
   }
   else
   {
@@ -2135,7 +2216,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Hip; }
+  if (tf) { v->ops->nvlinearsumvectorarray = nvLinearSumVectorArray_Hip; }
   else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
@@ -2151,7 +2232,7 @@ SUNErrCode N_VEnableScaleVectorArray_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Hip; }
+  if (tf) { v->ops->nvscalevectorarray = nvScaleVectorArray_Hip; }
   else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
@@ -2167,7 +2248,7 @@ SUNErrCode N_VEnableConstVectorArray_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Hip; }
+  if (tf) { v->ops->nvconstvectorarray = nvConstVectorArray_Hip; }
   else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
@@ -2183,7 +2264,7 @@ SUNErrCode N_VEnableWrmsNormVectorArray_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvwrmsnormvectorarray = N_VWrmsNormVectorArray_Hip; }
+  if (tf) { v->ops->nvwrmsnormvectorarray = nvWrmsNormVectorArray_Hip; }
   else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   /* return success */
@@ -2199,10 +2280,7 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_Hip(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf)
-  {
-    v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_Hip;
-  }
+  if (tf) { v->ops->nvwrmsnormmaskvectorarray = nvWrmsNormMaskVectorArray_Hip; }
   else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
   /* return success */
@@ -2220,7 +2298,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Hip(N_Vector v, sunbooleantype tf)
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Hip;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Hip;
   }
   else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
@@ -2239,7 +2317,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Hip(N_Vector v, sunbooleantype 
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Hip;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Hip;
   }
   else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
@@ -2259,7 +2337,7 @@ int AllocateData(N_Vector v)
   N_VectorContent_Hip vc         = NVEC_HIP_CONTENT(v);
   N_PrivateVectorContent_Hip vcp = NVEC_HIP_PRIVATE(v);
 
-  if (N_VGetLength_Hip(v) == 0) { return SUN_SUCCESS; }
+  if (nvGetLength_Hip(v) == 0) { return SUN_SUCCESS; }
 
   if (vcp->use_managed_mem)
   {
@@ -2550,3 +2628,189 @@ static void PostKernelLaunch()
   SUNDIALS_HIP_VERIFY(hipGetLastError());
 #endif
 }
+
+/* Deprecated concrete operation wrappers */
+
+extern "C" {
+
+void N_VAbs_Hip(N_Vector x, N_Vector z) { nvAbs_Hip(x, z); }
+
+void N_VAddConst_Hip(N_Vector x, sunrealtype b, N_Vector z)
+{
+  nvAddConst_Hip(x, b, z);
+}
+
+SUNErrCode N_VBufPack_Hip(N_Vector x, void* buf)
+{
+  return nvBufPack_Hip(x, buf);
+}
+
+SUNErrCode N_VBufSize_Hip(N_Vector x, sunindextype* size)
+{
+  return nvBufSize_Hip(x, size);
+}
+
+SUNErrCode N_VBufUnpack_Hip(N_Vector x, void* buf)
+{
+  return nvBufUnpack_Hip(x, buf);
+}
+
+N_Vector N_VCloneEmpty_Hip(N_Vector w) { return nvCloneEmpty_Hip(w); }
+
+N_Vector N_VClone_Hip(N_Vector w) { return nvClone_Hip(w); }
+
+void N_VCompare_Hip(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvCompare_Hip(c, x, z);
+}
+
+SUNErrCode N_VConstVectorArray_Hip(int nvec, sunrealtype c, N_Vector* Z)
+{
+  return nvConstVectorArray_Hip(nvec, c, Z);
+}
+
+void N_VConst_Hip(sunrealtype c, N_Vector z) { nvConst_Hip(c, z); }
+
+sunbooleantype N_VConstrMask_Hip(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMask_Hip(c, x, m);
+}
+
+void N_VDestroy_Hip(N_Vector v) { nvDestroy_Hip(v); }
+
+void N_VDiv_Hip(N_Vector x, N_Vector y, N_Vector z) { nvDiv_Hip(x, y, z); }
+
+SUNErrCode N_VDotProdMulti_Hip(int nvec, N_Vector x, N_Vector* Y,
+                               sunrealtype* dotprods)
+{
+  return nvDotProdMulti_Hip(nvec, x, Y, dotprods);
+}
+
+sunrealtype N_VDotProd_Hip(N_Vector x, N_Vector y)
+{
+  return nvDotProd_Hip(x, y);
+}
+
+sunbooleantype N_VInvTest_Hip(N_Vector x, N_Vector z)
+{
+  return nvInvTest_Hip(x, z);
+}
+
+void N_VInv_Hip(N_Vector x, N_Vector z) { nvInv_Hip(x, z); }
+
+sunrealtype N_VL1Norm_Hip(N_Vector x) { return nvL1Norm_Hip(x); }
+
+SUNErrCode N_VLinearCombinationVectorArray_Hip(int nvec, int nsum, sunrealtype* c,
+                                               N_Vector** X, N_Vector* Z)
+{
+  return nvLinearCombinationVectorArray_Hip(nvec, nsum, c, X, Z);
+}
+
+SUNErrCode N_VLinearCombination_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector Z)
+{
+  return nvLinearCombination_Hip(nvec, c, X, Z);
+}
+
+SUNErrCode N_VLinearSumVectorArray_Hip(int nvec, sunrealtype a, N_Vector* X,
+                                       sunrealtype b, N_Vector* Y, N_Vector* Z)
+{
+  return nvLinearSumVectorArray_Hip(nvec, a, X, b, Y, Z);
+}
+
+void N_VLinearSum_Hip(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                      N_Vector z)
+{
+  nvLinearSum_Hip(a, x, b, y, z);
+}
+
+sunrealtype N_VMaxNorm_Hip(N_Vector x) { return nvMaxNorm_Hip(x); }
+
+sunrealtype N_VMinQuotient_Hip(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotient_Hip(num, denom);
+}
+
+sunrealtype N_VMin_Hip(N_Vector x) { return nvMin_Hip(x); }
+
+void N_VPrintFile_Hip(N_Vector v, FILE* outfile)
+{
+  nvPrintFile_Hip(v, outfile);
+}
+
+void N_VPrint_Hip(N_Vector v) { nvPrint_Hip(v); }
+
+void N_VProd_Hip(N_Vector x, N_Vector y, N_Vector z) { nvProd_Hip(x, y, z); }
+
+SUNErrCode N_VScaleAddMultiVectorArray_Hip(int nvec, int nsum, sunrealtype* a,
+                                           N_Vector* X, N_Vector** Y,
+                                           N_Vector** Z)
+{
+  return nvScaleAddMultiVectorArray_Hip(nvec, nsum, a, X, Y, Z);
+}
+
+SUNErrCode N_VScaleAddMulti_Hip(int nvec, sunrealtype* c, N_Vector X,
+                                N_Vector* Y, N_Vector* Z)
+{
+  return nvScaleAddMulti_Hip(nvec, c, X, Y, Z);
+}
+
+SUNErrCode N_VScaleVectorArray_Hip(int nvec, sunrealtype* c, N_Vector* X,
+                                   N_Vector* Z)
+{
+  return nvScaleVectorArray_Hip(nvec, c, X, Z);
+}
+
+void N_VScale_Hip(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvScale_Hip(c, x, z);
+}
+
+void N_VSetDeviceArrayPointer_Hip(sunrealtype* d_vdata_1d, N_Vector v)
+{
+  nvSetDeviceArrayPointer_Hip(d_vdata_1d, v);
+}
+
+void N_VSetHostArrayPointer_Hip(sunrealtype* h_vdata_1d, N_Vector v)
+{
+  nvSetHostArrayPointer_Hip(h_vdata_1d, v);
+}
+
+sunrealtype N_VWL2Norm_Hip(N_Vector x, N_Vector w)
+{
+  return nvWL2Norm_Hip(x, w);
+}
+
+sunrealtype N_VWSqrSumLocal_Hip(N_Vector x, N_Vector w)
+{
+  return nvWSqrSumLocal_Hip(x, w);
+}
+
+sunrealtype N_VWSqrSumMaskLocal_Hip(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWSqrSumMaskLocal_Hip(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormMaskVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
+                                          N_Vector id, sunrealtype* nrm)
+{
+  return nvWrmsNormMaskVectorArray_Hip(nvec, X, W, id, nrm);
+}
+
+sunrealtype N_VWrmsNormMask_Hip(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWrmsNormMask_Hip(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormVectorArray_Hip(int nvec, N_Vector* X, N_Vector* W,
+                                      sunrealtype* nrm)
+{
+  return nvWrmsNormVectorArray_Hip(nvec, X, W, nrm);
+}
+
+sunrealtype N_VWrmsNorm_Hip(N_Vector x, N_Vector w)
+{
+  return nvWrmsNorm_Hip(x, w);
+}
+
+} // extern "C"

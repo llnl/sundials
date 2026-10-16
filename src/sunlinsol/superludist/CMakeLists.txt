@@ -23,7 +23,9 @@ install(CODE "MESSAGE(\"\nInstall SUNLINSOL_SUPERLUDIST\n\")")
 sundials_add_library(
   sundials_sunlinsolsuperludist
   SOURCES sunlinsol_superludist.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superludist.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superludist.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_superludist_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

@@ -130,11 +130,10 @@ operations listed in :numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
 As such, this vector cannot be used with the SUNDIALS direct solvers and preconditioners.
 It also provides methods for copying from the host to the device and vice versa.
 
-The names of the vector operations are obtained from those in
-:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local` by appending the suffix ``_OpenMPDEV`` (e.g.
-``N_VDestroy_OpenMPDEV``).  The module NVECTOR_OPENMPDEV provides the following additional
-user-callable routines:
+These operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
+:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`. The module
+NVECTOR_OPENMPDEV provides the following additional user-callable routines:
 
 .. c:function:: N_Vector N_VNew_OpenMPDEV(sunindextype vec_length, SUNContext sunctx)
 
@@ -152,26 +151,6 @@ user-callable routines:
    This function creates an NVECTOR_OPENMPDEV vector with user-supplied vector data
    arrays ``h_vdata`` and ``d_vdata``. This function does not allocate memory for
    data itself.
-
-
-.. c:function:: sunrealtype *N_VGetHostArrayPointer_OpenMPDEV(N_Vector v)
-
-   This function returns a pointer to the host data array.
-
-
-.. c:function:: sunrealtype *N_VGetDeviceArrayPointer_OpenMPDEV(N_Vector v)
-
-   This function returns a pointer to the device data array.
-
-
-.. c:function:: void N_VPrint_OpenMPDEV(N_Vector v)
-
-   This function prints the content of an NVECTOR_OPENMPDEV vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_OpenMPDEV(N_Vector v, FILE *outfile)
-
-   This function prints the content of an NVECTOR_OPENMPDEV vector to ``outfile``.
 
 
 .. c:function:: void N_VCopyToDevice_OpenMPDEV(N_Vector v)

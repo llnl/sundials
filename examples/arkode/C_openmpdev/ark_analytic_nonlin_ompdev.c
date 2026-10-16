@@ -90,7 +90,7 @@ int main(void)
   /* Initialize data structures */
   y = N_VNew_OpenMPDEV(NEQ, ctx); /* Create OpenMPDEV vector for solution */
   if (check_flag((void*)y, "N_VNew_OpenMPDEV", 0)) { return 1; }
-  y_data    = N_VGetHostArrayPointer_OpenMPDEV(y);
+  y_data    = N_VGetArrayPointer(y);
   y_data[0] = 0.0;                           /* Specify initial condition */
   N_VCopyToDevice_OpenMPDEV(y);              /* Copy to device */
   arkode_mem = ERKStepCreate(f, T0, y, ctx); /* Create the solver memory */
@@ -167,8 +167,8 @@ int main(void)
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   int dev;
-  sunrealtype* y_data    = N_VGetDeviceArrayPointer_OpenMPDEV(y);
-  sunrealtype* ydot_data = N_VGetDeviceArrayPointer_OpenMPDEV(ydot);
+  sunrealtype* y_data    = N_VGetDeviceArrayPointer(y);
+  sunrealtype* ydot_data = N_VGetDeviceArrayPointer(ydot);
 
   dev = omp_get_default_device();
 

@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <nvector/nvector_pthreads.h>
+#include <nvector/nvector_pthreads_deprecated.h>
 #include <sundials/priv/sundials_context_impl.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
@@ -40,6 +40,69 @@
 #define HALF   SUN_RCONST(0.5)
 #define ONE    SUN_RCONST(1.0)
 #define ONEPT5 SUN_RCONST(1.5)
+
+/* Functions attached to the N_Vector */
+static void nvAbs_Pthreads(N_Vector x, N_Vector z);
+static void nvAddConst_Pthreads(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode nvBufPack_Pthreads(N_Vector x, void* buf);
+static SUNErrCode nvBufSize_Pthreads(N_Vector x, sunindextype* size);
+static SUNErrCode nvBufUnpack_Pthreads(N_Vector x, void* buf);
+static N_Vector nvCloneEmpty_Pthreads(N_Vector w);
+static N_Vector nvClone_Pthreads(N_Vector w);
+static void nvCompare_Pthreads(sunrealtype c, N_Vector x, N_Vector z);
+static SUNErrCode nvConstVectorArray_Pthreads(int nvec, sunrealtype c,
+                                              N_Vector* Z);
+static void nvConst_Pthreads(sunrealtype c, N_Vector z);
+static sunbooleantype nvConstrMask_Pthreads(N_Vector c, N_Vector x, N_Vector m);
+static void nvDestroy_Pthreads(N_Vector v);
+static void nvDiv_Pthreads(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvDotProdMulti_Pthreads(int nvec, N_Vector x, N_Vector* Y,
+                                          sunrealtype* dotprods);
+static sunrealtype nvDotProd_Pthreads(N_Vector x, N_Vector y);
+static sunrealtype* nvGetArrayPointer_Pthreads(N_Vector v);
+static sunindextype nvGetLength_Pthreads(N_Vector v);
+static N_Vector_ID nvGetVectorID_Pthreads(N_Vector v);
+static sunbooleantype nvInvTest_Pthreads(N_Vector x, N_Vector z);
+static void nvInv_Pthreads(N_Vector x, N_Vector z);
+static sunrealtype nvL1Norm_Pthreads(N_Vector x);
+static SUNErrCode nvLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
+                                                          sunrealtype* c,
+                                                          N_Vector** X,
+                                                          N_Vector* Z);
+static SUNErrCode nvLinearCombination_Pthreads(int nvec, sunrealtype* c,
+                                               N_Vector* X, N_Vector z);
+static SUNErrCode nvLinearSumVectorArray_Pthreads(int nvec, sunrealtype a,
+                                                  N_Vector* X, sunrealtype b,
+                                                  N_Vector* Y, N_Vector* Z);
+static void nvLinearSum_Pthreads(sunrealtype a, N_Vector x, sunrealtype b,
+                                 N_Vector y, N_Vector z);
+static sunrealtype nvMaxNorm_Pthreads(N_Vector x);
+static sunrealtype nvMinQuotient_Pthreads(N_Vector num, N_Vector denom);
+static sunrealtype nvMin_Pthreads(N_Vector x);
+static void nvPrintFile_Pthreads(N_Vector v, FILE* outfile);
+static void nvPrint_Pthreads(N_Vector v);
+static void nvProd_Pthreads(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
+                                                      sunrealtype* a,
+                                                      N_Vector* X, N_Vector** Y,
+                                                      N_Vector** Z);
+static SUNErrCode nvScaleAddMulti_Pthreads(int nvec, sunrealtype* a, N_Vector x,
+                                           N_Vector* Y, N_Vector* Z);
+static SUNErrCode nvScaleVectorArray_Pthreads(int nvec, sunrealtype* c,
+                                              N_Vector* X, N_Vector* Z);
+static void nvScale_Pthreads(sunrealtype c, N_Vector x, N_Vector z);
+static void nvSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v);
+static sunrealtype nvWL2Norm_Pthreads(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumLocal_Pthreads(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumMaskLocal_Pthreads(N_Vector x, N_Vector w,
+                                               N_Vector id);
+static SUNErrCode nvWrmsNormMaskVectorArray_Pthreads(int nvec, N_Vector* X,
+                                                     N_Vector* W, N_Vector id,
+                                                     sunrealtype* nrm);
+static sunrealtype nvWrmsNormMask_Pthreads(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode nvWrmsNormVectorArray_Pthreads(int nvec, N_Vector* X,
+                                                 N_Vector* W, sunrealtype* nrm);
+static sunrealtype nvWrmsNorm_Pthreads(N_Vector x, N_Vector w);
 
 /* Private functions for special cases of vector operations */
 static void VCopy_Pthreads(N_Vector x, N_Vector z);             /* z=x       */
@@ -157,7 +220,7 @@ static void nvInitThreadData(Pthreads_Data* thread_data);
  * Returns vector type ID. Used to identify vector implementation
  * from abstract N_Vector interface.
  */
-N_Vector_ID N_VGetVectorID_Pthreads(SUNDIALS_MAYBE_UNUSED N_Vector v)
+N_Vector_ID nvGetVectorID_Pthreads(SUNDIALS_MAYBE_UNUSED N_Vector v)
 {
   return SUNDIALS_NVEC_PTHREADS;
 }
@@ -184,60 +247,60 @@ N_Vector N_VNewEmpty_Pthreads(sunindextype length, int num_threads,
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid     = N_VGetVectorID_Pthreads;
-  v->ops->nvclone           = N_VClone_Pthreads;
-  v->ops->nvcloneempty      = N_VCloneEmpty_Pthreads;
-  v->ops->nvdestroy         = N_VDestroy_Pthreads;
-  v->ops->nvgetarraypointer = N_VGetArrayPointer_Pthreads;
-  v->ops->nvsetarraypointer = N_VSetArrayPointer_Pthreads;
-  v->ops->nvgetlength       = N_VGetLength_Pthreads;
-  v->ops->nvgetlocallength  = N_VGetLength_Pthreads;
+  v->ops->nvgetvectorid     = nvGetVectorID_Pthreads;
+  v->ops->nvclone           = nvClone_Pthreads;
+  v->ops->nvcloneempty      = nvCloneEmpty_Pthreads;
+  v->ops->nvdestroy         = nvDestroy_Pthreads;
+  v->ops->nvgetarraypointer = nvGetArrayPointer_Pthreads;
+  v->ops->nvsetarraypointer = nvSetArrayPointer_Pthreads;
+  v->ops->nvgetlength       = nvGetLength_Pthreads;
+  v->ops->nvgetlocallength  = nvGetLength_Pthreads;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_Pthreads;
-  v->ops->nvconst        = N_VConst_Pthreads;
-  v->ops->nvprod         = N_VProd_Pthreads;
-  v->ops->nvdiv          = N_VDiv_Pthreads;
-  v->ops->nvscale        = N_VScale_Pthreads;
-  v->ops->nvabs          = N_VAbs_Pthreads;
-  v->ops->nvinv          = N_VInv_Pthreads;
-  v->ops->nvaddconst     = N_VAddConst_Pthreads;
-  v->ops->nvdotprod      = N_VDotProd_Pthreads;
-  v->ops->nvmaxnorm      = N_VMaxNorm_Pthreads;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_Pthreads;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_Pthreads;
-  v->ops->nvmin          = N_VMin_Pthreads;
-  v->ops->nvwl2norm      = N_VWL2Norm_Pthreads;
-  v->ops->nvl1norm       = N_VL1Norm_Pthreads;
-  v->ops->nvcompare      = N_VCompare_Pthreads;
-  v->ops->nvinvtest      = N_VInvTest_Pthreads;
-  v->ops->nvconstrmask   = N_VConstrMask_Pthreads;
-  v->ops->nvminquotient  = N_VMinQuotient_Pthreads;
+  v->ops->nvlinearsum    = nvLinearSum_Pthreads;
+  v->ops->nvconst        = nvConst_Pthreads;
+  v->ops->nvprod         = nvProd_Pthreads;
+  v->ops->nvdiv          = nvDiv_Pthreads;
+  v->ops->nvscale        = nvScale_Pthreads;
+  v->ops->nvabs          = nvAbs_Pthreads;
+  v->ops->nvinv          = nvInv_Pthreads;
+  v->ops->nvaddconst     = nvAddConst_Pthreads;
+  v->ops->nvdotprod      = nvDotProd_Pthreads;
+  v->ops->nvmaxnorm      = nvMaxNorm_Pthreads;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_Pthreads;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_Pthreads;
+  v->ops->nvmin          = nvMin_Pthreads;
+  v->ops->nvwl2norm      = nvWL2Norm_Pthreads;
+  v->ops->nvl1norm       = nvL1Norm_Pthreads;
+  v->ops->nvcompare      = nvCompare_Pthreads;
+  v->ops->nvinvtest      = nvInvTest_Pthreads;
+  v->ops->nvconstrmask   = nvConstrMask_Pthreads;
+  v->ops->nvminquotient  = nvMinQuotient_Pthreads;
 
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = N_VDotProd_Pthreads;
-  v->ops->nvmaxnormlocal     = N_VMaxNorm_Pthreads;
-  v->ops->nvminlocal         = N_VMin_Pthreads;
-  v->ops->nvl1normlocal      = N_VL1Norm_Pthreads;
-  v->ops->nvinvtestlocal     = N_VInvTest_Pthreads;
-  v->ops->nvconstrmasklocal  = N_VConstrMask_Pthreads;
-  v->ops->nvminquotientlocal = N_VMinQuotient_Pthreads;
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_Pthreads;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_Pthreads;
+  v->ops->nvdotprodlocal     = nvDotProd_Pthreads;
+  v->ops->nvmaxnormlocal     = nvMaxNorm_Pthreads;
+  v->ops->nvminlocal         = nvMin_Pthreads;
+  v->ops->nvl1normlocal      = nvL1Norm_Pthreads;
+  v->ops->nvinvtestlocal     = nvInvTest_Pthreads;
+  v->ops->nvconstrmasklocal  = nvConstrMask_Pthreads;
+  v->ops->nvminquotientlocal = nvMinQuotient_Pthreads;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_Pthreads;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_Pthreads;
 
   /* single buffer reduction operations */
-  v->ops->nvdotprodmultilocal = N_VDotProdMulti_Pthreads;
+  v->ops->nvdotprodmultilocal = nvDotProdMulti_Pthreads;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_Pthreads;
-  v->ops->nvbufpack   = N_VBufPack_Pthreads;
-  v->ops->nvbufunpack = N_VBufUnpack_Pthreads;
+  v->ops->nvbufsize   = nvBufSize_Pthreads;
+  v->ops->nvbufpack   = nvBufPack_Pthreads;
+  v->ops->nvbufunpack = nvBufUnpack_Pthreads;
 
   /* debugging functions */
-  v->ops->nvprint     = N_VPrint_Pthreads;
-  v->ops->nvprintfile = N_VPrintFile_Pthreads;
+  v->ops->nvprint     = nvPrint_Pthreads;
+  v->ops->nvprintfile = nvPrintFile_Pthreads;
 
   /* Create content */
   content = NULL;
@@ -319,19 +382,19 @@ N_Vector N_VMake_Pthreads(sunindextype length, int num_threads,
 /* ----------------------------------------------------------------------------
  * Function to return number of vector elements
  */
-sunindextype N_VGetLength_Pthreads(N_Vector v) { return NV_LENGTH_PT(v); }
+sunindextype nvGetLength_Pthreads(N_Vector v) { return NV_LENGTH_PT(v); }
 
 /* ----------------------------------------------------------------------------
  * Function to print a vector to stdout
  */
 
-void N_VPrint_Pthreads(N_Vector x) { N_VPrintFile_Pthreads(x, stdout); }
+void nvPrint_Pthreads(N_Vector x) { nvPrintFile_Pthreads(x, stdout); }
 
 /* ----------------------------------------------------------------------------
  * Function to print a vector to outfile
  */
 
-void N_VPrintFile_Pthreads(N_Vector x, FILE* outfile)
+void nvPrintFile_Pthreads(N_Vector x, FILE* outfile)
 {
   sunindextype i, N;
   sunrealtype* xd;
@@ -357,7 +420,7 @@ void N_VPrintFile_Pthreads(N_Vector x, FILE* outfile)
  * Create new vector from existing vector without attaching data
  */
 
-N_Vector N_VCloneEmpty_Pthreads(N_Vector w)
+N_Vector nvCloneEmpty_Pthreads(N_Vector w)
 {
   SUNFunctionBegin(w->sunctx);
 
@@ -393,7 +456,7 @@ N_Vector N_VCloneEmpty_Pthreads(N_Vector w)
  * Create new vector from existing vector and attach data
  */
 
-N_Vector N_VClone_Pthreads(N_Vector w)
+N_Vector nvClone_Pthreads(N_Vector w)
 {
   SUNFunctionBegin(w->sunctx);
 
@@ -402,7 +465,7 @@ N_Vector N_VClone_Pthreads(N_Vector w)
   sunindextype length;
 
   v = NULL;
-  v = N_VCloneEmpty_Pthreads(w);
+  v = nvCloneEmpty_Pthreads(w);
   SUNCheckLastErrNull();
 
   length = NV_LENGTH_PT(w);
@@ -427,7 +490,7 @@ N_Vector N_VClone_Pthreads(N_Vector w)
  * Destroy vector and free vector memory
  */
 
-void N_VDestroy_Pthreads(N_Vector v)
+void nvDestroy_Pthreads(N_Vector v)
 {
   if (v == NULL) { return; }
 
@@ -463,7 +526,7 @@ void N_VDestroy_Pthreads(N_Vector v)
  * Get vector data pointer
  */
 
-sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v)
+sunrealtype* nvGetArrayPointer_Pthreads(N_Vector v)
 {
   return ((sunrealtype*)NV_DATA_PT(v));
 }
@@ -472,7 +535,7 @@ sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v)
  * Set vector data pointer
  */
 
-void N_VSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v)
+void nvSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v)
 {
   if (NV_LENGTH_PT(v) > 0) { NV_DATA_PT(v) = v_data; }
 
@@ -483,8 +546,8 @@ void N_VSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v)
  * Compute linear sum z[i] = a*x[i]+b*y[i]
  */
 
-void N_VLinearSum_Pthreads(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
-                           N_Vector z)
+void nvLinearSum_Pthreads(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                          N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -649,7 +712,7 @@ static void* nvLinearSumPt(void* thread_data)
  * Assigns constant value to all vector elements, z[i] = c
  */
 
-void N_VConst_Pthreads(sunrealtype c, N_Vector z)
+void nvConst_Pthreads(sunrealtype c, N_Vector z)
 {
   SUNFunctionBegin(z->sunctx);
 
@@ -729,7 +792,7 @@ static void* nvConstPt(void* thread_data)
  * Compute componentwise product z[i] = x[i]*y[i]
  */
 
-void N_VProd_Pthreads(N_Vector x, N_Vector y, N_Vector z)
+void nvProd_Pthreads(N_Vector x, N_Vector y, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -810,7 +873,7 @@ static void* nvProdPt(void* thread_data)
  * Compute componentwise division z[i] = x[i]/y[i]
  */
 
-void N_VDiv_Pthreads(N_Vector x, N_Vector y, N_Vector z)
+void nvDiv_Pthreads(N_Vector x, N_Vector y, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -891,7 +954,7 @@ static void* nvDivPt(void* thread_data)
  * Compute scaler multiplication z[i] = c*x[i]
  */
 
-void N_VScale_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
+void nvScale_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -992,7 +1055,7 @@ static void* nvScalePt(void* thread_data)
  * Compute absolute value of vector components z[i] = SUNRabs(x[i])
  */
 
-void N_VAbs_Pthreads(N_Vector x, N_Vector z)
+void nvAbs_Pthreads(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1071,7 +1134,7 @@ static void* nvAbsPt(void* thread_data)
  * Compute componentwise inverse z[i] = 1 / x[i]
  */
 
-void N_VInv_Pthreads(N_Vector x, N_Vector z)
+void nvInv_Pthreads(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1150,7 +1213,7 @@ static void* nvInvPt(void* thread_data)
  * Compute componentwise addition of a scaler to a vector z[i] = x[i] + b
  */
 
-void N_VAddConst_Pthreads(N_Vector x, sunrealtype b, N_Vector z)
+void nvAddConst_Pthreads(N_Vector x, sunrealtype b, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1232,7 +1295,7 @@ static void* nvAddConstPt(void* thread_data)
  * Computes the dot product of two vectors, a = sum(x[i]*y[i])
  */
 
-sunrealtype N_VDotProd_Pthreads(N_Vector x, N_Vector y)
+sunrealtype nvDotProd_Pthreads(N_Vector x, N_Vector y)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1330,7 +1393,7 @@ static void* nvDotProdPt(void* thread_data)
  * Computes max norm of the vector
  */
 
-sunrealtype N_VMaxNorm_Pthreads(N_Vector x)
+sunrealtype nvMaxNorm_Pthreads(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1429,10 +1492,10 @@ static void* nvMaxNormPt(void* thread_data)
  * Computes weighted root mean square norm of a vector
  */
 
-sunrealtype N_VWrmsNorm_Pthreads(N_Vector x, N_Vector w)
+sunrealtype nvWrmsNorm_Pthreads(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
-  sunrealtype sqrsum = N_VWSqrSumLocal_Pthreads(x, w);
+  sunrealtype sqrsum = nvWSqrSumLocal_Pthreads(x, w);
   SUNCheckLastErrNoRet();
   return (SUNRsqrt(sqrsum / (NV_LENGTH_PT(x))));
 }
@@ -1441,7 +1504,7 @@ sunrealtype N_VWrmsNorm_Pthreads(N_Vector x, N_Vector w)
  * Computes weighted square sum of a vector
  */
 
-sunrealtype N_VWSqrSumLocal_Pthreads(N_Vector x, N_Vector w)
+sunrealtype nvWSqrSumLocal_Pthreads(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1539,10 +1602,10 @@ static void* nvWSqrSumPt(void* thread_data)
  * Computes weighted root mean square norm of a masked vector
  */
 
-sunrealtype N_VWrmsNormMask_Pthreads(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWrmsNormMask_Pthreads(N_Vector x, N_Vector w, N_Vector id)
 {
   SUNFunctionBegin(x->sunctx);
-  sunrealtype sqrsummask = N_VWSqrSumMaskLocal_Pthreads(x, w, id);
+  sunrealtype sqrsummask = nvWSqrSumMaskLocal_Pthreads(x, w, id);
   SUNCheckLastErrNoRet();
   return (SUNRsqrt(sqrsummask / (NV_LENGTH_PT(x))));
 }
@@ -1551,7 +1614,7 @@ sunrealtype N_VWrmsNormMask_Pthreads(N_Vector x, N_Vector w, N_Vector id)
  * Computes weighted square sum of a masked vector
  */
 
-sunrealtype N_VWSqrSumMaskLocal_Pthreads(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWSqrSumMaskLocal_Pthreads(N_Vector x, N_Vector w, N_Vector id)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1654,7 +1717,7 @@ static void* nvWSqrSumMaskPt(void* thread_data)
  * Finds the minimum component of a vector
  */
 
-sunrealtype N_VMin_Pthreads(N_Vector x)
+sunrealtype nvMin_Pthreads(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1756,7 +1819,7 @@ static void* nvMinPt(void* thread_data)
  * Computes weighted L2 norm of a vector
  */
 
-sunrealtype N_VWL2Norm_Pthreads(N_Vector x, N_Vector w)
+sunrealtype nvWL2Norm_Pthreads(N_Vector x, N_Vector w)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1854,7 +1917,7 @@ static void* nvWL2NormPt(void* thread_data)
  * Computes L1 norm of a vector
  */
 
-sunrealtype N_VL1Norm_Pthreads(N_Vector x)
+sunrealtype nvL1Norm_Pthreads(N_Vector x)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -1950,7 +2013,7 @@ static void* nvL1NormPt(void* thread_data)
  * Compare vector component values to a scaler
  */
 
-void N_VCompare_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
+void nvCompare_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -2032,7 +2095,7 @@ static void* nvComparePt(void* thread_data)
  * Compute componentwise inverse z[i] = ONE/x[i] and check if x[i] == ZERO
  */
 
-sunbooleantype N_VInvTest_Pthreads(N_Vector x, N_Vector z)
+sunbooleantype nvInvTest_Pthreads(N_Vector x, N_Vector z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -2126,7 +2189,7 @@ static void* nvInvTestPt(void* thread_data)
  * Compute constraint mask of a vector
  */
 
-sunbooleantype N_VConstrMask_Pthreads(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMask_Pthreads(N_Vector c, N_Vector x, N_Vector m)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -2231,7 +2294,7 @@ static void* nvConstrMaskPt(void* thread_data)
  * Compute minimum componentwise quotient
  */
 
-sunrealtype N_VMinQuotient_Pthreads(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_Pthreads(N_Vector num, N_Vector denom)
 {
   SUNFunctionBegin(num->sunctx);
 
@@ -2339,8 +2402,8 @@ static void* nvMinQuotientPt(void* thread_data)
  * Compute the linear combination z = c[i]*X[i]
  */
 
-SUNErrCode N_VLinearCombination_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
-                                         N_Vector z)
+SUNErrCode nvLinearCombination_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
+                                        N_Vector z)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -2356,7 +2419,7 @@ SUNErrCode N_VLinearCombination_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
   /* should have called N_VScale */
   if (nvec == 1)
   {
-    N_VScale_Pthreads(c[0], X[0], z);
+    nvScale_Pthreads(c[0], X[0], z);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -2364,7 +2427,7 @@ SUNErrCode N_VLinearCombination_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
   /* should have called N_VLinearSum */
   if (nvec == 2)
   {
-    N_VLinearSum_Pthreads(c[0], X[0], c[1], X[1], z);
+    nvLinearSum_Pthreads(c[0], X[0], c[1], X[1], z);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -2478,8 +2541,8 @@ static void* nvLinearCombinationPt(void* thread_data)
  * Compute multiple linear sums Z[i] = Y[i] + a*x
  */
 
-SUNErrCode N_VScaleAddMulti_Pthreads(int nvec, sunrealtype* a, N_Vector x,
-                                     N_Vector* Y, N_Vector* Z)
+SUNErrCode nvScaleAddMulti_Pthreads(int nvec, sunrealtype* a, N_Vector x,
+                                    N_Vector* Y, N_Vector* Z)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -2495,7 +2558,7 @@ SUNErrCode N_VScaleAddMulti_Pthreads(int nvec, sunrealtype* a, N_Vector x,
   /* should have called N_VLinearSum */
   if (nvec == 1)
   {
-    N_VLinearSum_Pthreads(a[0], x, ONE, Y[0], Z[0]);
+    nvLinearSum_Pthreads(a[0], x, ONE, Y[0], Z[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -2595,8 +2658,8 @@ static void* nvScaleAddMultiPt(void* thread_data)
  * Compute the dot product of a vector with multiple vectors, a[i] = sum(x*Y[i])
  */
 
-SUNErrCode N_VDotProdMulti_Pthreads(int nvec, N_Vector x, N_Vector* Y,
-                                    sunrealtype* dotprods)
+SUNErrCode nvDotProdMulti_Pthreads(int nvec, N_Vector x, N_Vector* Y,
+                                   sunrealtype* dotprods)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -2613,7 +2676,7 @@ SUNErrCode N_VDotProdMulti_Pthreads(int nvec, N_Vector x, N_Vector* Y,
   /* should have called N_VDotProd */
   if (nvec == 1)
   {
-    dotprods[0] = N_VDotProd_Pthreads(x, Y[0]);
+    dotprods[0] = nvDotProd_Pthreads(x, Y[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -2720,9 +2783,9 @@ static void* nvDotProdMultiPt(void* thread_data)
  * Compute multiple linear sums Z[i] = a*X[i] + b*Y[i]
  */
 
-SUNErrCode N_VLinearSumVectorArray_Pthreads(int nvec, sunrealtype a,
-                                            N_Vector* X, sunrealtype b,
-                                            N_Vector* Y, N_Vector* Z)
+SUNErrCode nvLinearSumVectorArray_Pthreads(int nvec, sunrealtype a, N_Vector* X,
+                                           sunrealtype b, N_Vector* Y,
+                                           N_Vector* Z)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -2743,7 +2806,7 @@ SUNErrCode N_VLinearSumVectorArray_Pthreads(int nvec, sunrealtype a,
   /* should have called N_VLinearSum */
   if (nvec == 1)
   {
-    N_VLinearSum_Pthreads(a, X[0], b, Y[0], Z[0]);
+    nvLinearSum_Pthreads(a, X[0], b, Y[0], Z[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -2910,8 +2973,8 @@ static void* nvLinearSumVectorArrayPt(void* thread_data)
  * Scale multiple vectors Z[i] = c[i]*X[i]
  */
 
-SUNErrCode N_VScaleVectorArray_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
-                                        N_Vector* Z)
+SUNErrCode nvScaleVectorArray_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
+                                       N_Vector* Z)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -2927,7 +2990,7 @@ SUNErrCode N_VScaleVectorArray_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
   /* should have called N_VScale */
   if (nvec == 1)
   {
-    N_VScale_Pthreads(c[0], X[0], Z[0]);
+    nvScale_Pthreads(c[0], X[0], Z[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -3025,7 +3088,7 @@ static void* nvScaleVectorArrayPt(void* thread_data)
  * Set multiple vectors to a constant value Z[i] = c
  */
 
-SUNErrCode N_VConstVectorArray_Pthreads(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode nvConstVectorArray_Pthreads(int nvec, sunrealtype c, N_Vector* Z)
 {
   SUNFunctionBegin(Z[0]->sunctx);
 
@@ -3041,7 +3104,7 @@ SUNErrCode N_VConstVectorArray_Pthreads(int nvec, sunrealtype c, N_Vector* Z)
   /* should have called N_VConst */
   if (nvec == 1)
   {
-    N_VConst_Pthreads(c, Z[0]);
+    nvConst_Pthreads(c, Z[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -3120,8 +3183,8 @@ static void* nvConstVectorArrayPt(void* thread_data)
  * Compute the weighted root mean square norm of multiple vectors
  */
 
-SUNErrCode N_VWrmsNormVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
-                                           sunrealtype* nrm)
+SUNErrCode nvWrmsNormVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
+                                          sunrealtype* nrm)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -3138,7 +3201,7 @@ SUNErrCode N_VWrmsNormVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
   /* should have called N_VWrmsNorm */
   if (nvec == 1)
   {
-    nrm[0] = N_VWrmsNorm_Pthreads(X[0], W[0]);
+    nrm[0] = nvWrmsNorm_Pthreads(X[0], W[0]);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -3243,8 +3306,8 @@ static void* nvWrmsNormVectorArrayPt(void* thread_data)
  * Compute the weighted root mean square norm of multiple vectors
  */
 
-SUNErrCode N_VWrmsNormMaskVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
-                                               N_Vector id, sunrealtype* nrm)
+SUNErrCode nvWrmsNormMaskVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
+                                              N_Vector id, sunrealtype* nrm)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -3261,7 +3324,7 @@ SUNErrCode N_VWrmsNormMaskVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* 
   /* should have called N_VWrmsNorm */
   if (nvec == 1)
   {
-    nrm[0] = N_VWrmsNormMask_Pthreads(X[0], W[0], id);
+    nrm[0] = nvWrmsNormMask_Pthreads(X[0], W[0], id);
     SUNCheckLastErr();
     return SUN_SUCCESS;
   }
@@ -3372,9 +3435,9 @@ static void* nvWrmsNormMaskVectorArrayPt(void* thread_data)
  * Scale and add a vector to multiple vectors Z = Y + a*X
  */
 
-SUNErrCode N_VScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
-                                                sunrealtype* a, N_Vector* X,
-                                                N_Vector** Y, N_Vector** Z)
+SUNErrCode nvScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
+                                               sunrealtype* a, N_Vector* X,
+                                               N_Vector** Y, N_Vector** Z)
 {
   SUNFunctionBegin(X[0]->sunctx);
 
@@ -3399,7 +3462,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
     /* should have called N_VLinearSum */
     if (nsum == 1)
     {
-      N_VLinearSum_Pthreads(a[0], X[0], ONE, Y[0][0], Z[0][0]);
+      nvLinearSum_Pthreads(a[0], X[0], ONE, Y[0][0], Z[0][0]);
       SUNCheckLastErr();
       return SUN_SUCCESS;
     }
@@ -3416,7 +3479,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
       ZZ[j] = Z[j][0];
     }
 
-    SUNCheckCall(N_VScaleAddMulti_Pthreads(nsum, a, X[0], YY, ZZ));
+    SUNCheckCall(nvScaleAddMulti_Pthreads(nsum, a, X[0], YY, ZZ));
 
     free(YY);
     free(ZZ);
@@ -3430,7 +3493,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
   /* should have called N_VLinearSumVectorArray */
   if (nsum == 1)
   {
-    SUNCheckCall(N_VLinearSumVectorArray_Pthreads(nvec, a[0], X, ONE, Y[0], Z[0]));
+    SUNCheckCall(nvLinearSumVectorArray_Pthreads(nvec, a[0], X, ONE, Y[0], Z[0]));
     return SUN_SUCCESS;
   }
 
@@ -3542,9 +3605,9 @@ static void* nvScaleAddMultiVectorArrayPt(void* thread_data)
  * Compute a linear combination for multiple vectors
  */
 
-SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
-                                                    sunrealtype* c,
-                                                    N_Vector** X, N_Vector* Z)
+SUNErrCode nvLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
+                                                   sunrealtype* c, N_Vector** X,
+                                                   N_Vector* Z)
 {
   SUNFunctionBegin(X[0][0]->sunctx);
 
@@ -3569,7 +3632,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
     /* should have called N_VScale */
     if (nsum == 1)
     {
-      N_VScale_Pthreads(c[0], X[0][0], Z[0]);
+      nvScale_Pthreads(c[0], X[0][0], Z[0]);
       SUNCheckLastErr();
       return SUN_SUCCESS;
     }
@@ -3577,7 +3640,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
     /* should have called N_VLinearSum */
     if (nsum == 2)
     {
-      N_VLinearSum_Pthreads(c[0], X[0][0], c[1], X[1][0], Z[0]);
+      nvLinearSum_Pthreads(c[0], X[0][0], c[1], X[1][0], Z[0]);
       SUNCheckLastErr();
       return SUN_SUCCESS;
     }
@@ -3588,7 +3651,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
 
     for (i = 0; i < nsum; i++) { Y[i] = X[i][0]; }
 
-    SUNCheckCall(N_VLinearCombination_Pthreads(nsum, c, Y, Z[0]));
+    SUNCheckCall(nvLinearCombination_Pthreads(nsum, c, Y, Z[0]));
 
     free(Y);
     return SUN_SUCCESS;
@@ -3605,7 +3668,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
 
     for (j = 0; j < nvec; j++) { ctmp[j] = c[0]; }
 
-    SUNCheckCall(N_VScaleVectorArray_Pthreads(nvec, ctmp, X[0], Z));
+    SUNCheckCall(nvScaleVectorArray_Pthreads(nvec, ctmp, X[0], Z));
 
     free(ctmp);
     return SUN_SUCCESS;
@@ -3614,8 +3677,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
   /* should have called N_VLinearSumVectorArray */
   if (nsum == 2)
   {
-    SUNCheckCall(
-      N_VLinearSumVectorArray_Pthreads(nvec, c[0], X[0], c[1], X[1], Z));
+    SUNCheckCall(nvLinearSumVectorArray_Pthreads(nvec, c[0], X[0], c[1], X[1], Z));
     return SUN_SUCCESS;
   }
 
@@ -3751,7 +3813,7 @@ static void* nvLinearCombinationVectorArrayPt(void* thread_data)
  * Set buffer size
  */
 
-SUNErrCode N_VBufSize_Pthreads(N_Vector x, sunindextype* size)
+SUNErrCode nvBufSize_Pthreads(N_Vector x, sunindextype* size)
 {
   *size = NV_LENGTH_PT(x) * ((sunindextype)sizeof(sunrealtype));
   return SUN_SUCCESS;
@@ -3761,7 +3823,7 @@ SUNErrCode N_VBufSize_Pthreads(N_Vector x, sunindextype* size)
  * Pack butter
  */
 
-SUNErrCode N_VBufPack_Pthreads(N_Vector x, void* buf)
+SUNErrCode nvBufPack_Pthreads(N_Vector x, void* buf)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -3842,7 +3904,7 @@ static void* VBufPack_PT(void* thread_data)
  * Unpack butter
  */
 
-SUNErrCode N_VBufUnpack_Pthreads(N_Vector x, void* buf)
+SUNErrCode nvBufUnpack_Pthreads(N_Vector x, void* buf)
 {
   SUNFunctionBegin(x->sunctx);
 
@@ -5383,20 +5445,20 @@ SUNErrCode N_VEnableFusedOps_Pthreads(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = N_VLinearCombination_Pthreads;
-    v->ops->nvscaleaddmulti     = N_VScaleAddMulti_Pthreads;
-    v->ops->nvdotprodmulti      = N_VDotProdMulti_Pthreads;
+    v->ops->nvlinearcombination = nvLinearCombination_Pthreads;
+    v->ops->nvscaleaddmulti     = nvScaleAddMulti_Pthreads;
+    v->ops->nvdotprodmulti      = nvDotProdMulti_Pthreads;
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = N_VLinearSumVectorArray_Pthreads;
-    v->ops->nvscalevectorarray         = N_VScaleVectorArray_Pthreads;
-    v->ops->nvconstvectorarray         = N_VConstVectorArray_Pthreads;
-    v->ops->nvwrmsnormvectorarray      = N_VWrmsNormVectorArray_Pthreads;
-    v->ops->nvwrmsnormmaskvectorarray  = N_VWrmsNormMaskVectorArray_Pthreads;
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Pthreads;
+    v->ops->nvlinearsumvectorarray     = nvLinearSumVectorArray_Pthreads;
+    v->ops->nvscalevectorarray         = nvScaleVectorArray_Pthreads;
+    v->ops->nvconstvectorarray         = nvConstVectorArray_Pthreads;
+    v->ops->nvwrmsnormvectorarray      = nvWrmsNormVectorArray_Pthreads;
+    v->ops->nvwrmsnormmaskvectorarray  = nvWrmsNormMaskVectorArray_Pthreads;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Pthreads;
     v->ops->nvlinearcombinationvectorarray =
-      N_VLinearCombinationVectorArray_Pthreads;
+      nvLinearCombinationVectorArray_Pthreads;
     /* enable single buffer reduction operations */
-    v->ops->nvdotprodmultilocal = N_VDotProdMulti_Pthreads;
+    v->ops->nvdotprodmultilocal = nvDotProdMulti_Pthreads;
   }
   else
   {
@@ -5422,50 +5484,50 @@ SUNErrCode N_VEnableFusedOps_Pthreads(N_Vector v, sunbooleantype tf)
 
 SUNErrCode N_VEnableLinearCombination_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvlinearcombination = tf ? N_VLinearCombination_Pthreads : NULL;
+  v->ops->nvlinearcombination = tf ? nvLinearCombination_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableScaleAddMulti_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvscaleaddmulti = tf ? N_VScaleAddMulti_Pthreads : NULL;
+  v->ops->nvscaleaddmulti = tf ? nvScaleAddMulti_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableDotProdMulti_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvdotprodmulti      = tf ? N_VDotProdMulti_Pthreads : NULL;
-  v->ops->nvdotprodmultilocal = tf ? N_VDotProdMulti_Pthreads : NULL;
+  v->ops->nvdotprodmulti      = tf ? nvDotProdMulti_Pthreads : NULL;
+  v->ops->nvdotprodmultilocal = tf ? nvDotProdMulti_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableLinearSumVectorArray_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvlinearsumvectorarray = tf ? N_VLinearSumVectorArray_Pthreads : NULL;
+  v->ops->nvlinearsumvectorarray = tf ? nvLinearSumVectorArray_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableScaleVectorArray_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvscalevectorarray = tf ? N_VScaleVectorArray_Pthreads : NULL;
+  v->ops->nvscalevectorarray = tf ? nvScaleVectorArray_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableConstVectorArray_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvconstvectorarray = tf ? N_VConstVectorArray_Pthreads : NULL;
+  v->ops->nvconstvectorarray = tf ? nvConstVectorArray_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableWrmsNormVectorArray_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvwrmsnormvectorarray = tf ? N_VWrmsNormVectorArray_Pthreads : NULL;
+  v->ops->nvwrmsnormvectorarray = tf ? nvWrmsNormVectorArray_Pthreads : NULL;
   return SUN_SUCCESS;
 }
 
 SUNErrCode N_VEnableWrmsNormMaskVectorArray_Pthreads(N_Vector v, sunbooleantype tf)
 {
-  v->ops->nvwrmsnormmaskvectorarray = tf ? N_VWrmsNormMaskVectorArray_Pthreads
+  v->ops->nvwrmsnormmaskvectorarray = tf ? nvWrmsNormMaskVectorArray_Pthreads
                                          : NULL;
   return SUN_SUCCESS;
 }
@@ -5473,7 +5535,7 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_Pthreads(N_Vector v, sunbooleantype 
 SUNErrCode N_VEnableScaleAddMultiVectorArray_Pthreads(N_Vector v,
                                                       sunbooleantype tf)
 {
-  v->ops->nvscaleaddmultivectorarray = tf ? N_VScaleAddMultiVectorArray_Pthreads
+  v->ops->nvscaleaddmultivectorarray = tf ? nvScaleAddMultiVectorArray_Pthreads
                                           : NULL;
   return SUN_SUCCESS;
 }
@@ -5482,6 +5544,206 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Pthreads(N_Vector v,
                                                           sunbooleantype tf)
 {
   v->ops->nvlinearcombinationvectorarray =
-    tf ? N_VLinearCombinationVectorArray_Pthreads : NULL;
+    tf ? nvLinearCombinationVectorArray_Pthreads : NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+void N_VAbs_Pthreads(N_Vector x, N_Vector z) { nvAbs_Pthreads(x, z); }
+
+void N_VAddConst_Pthreads(N_Vector x, sunrealtype b, N_Vector z)
+{
+  nvAddConst_Pthreads(x, b, z);
+}
+
+SUNErrCode N_VBufPack_Pthreads(N_Vector x, void* buf)
+{
+  return nvBufPack_Pthreads(x, buf);
+}
+
+SUNErrCode N_VBufSize_Pthreads(N_Vector x, sunindextype* size)
+{
+  return nvBufSize_Pthreads(x, size);
+}
+
+SUNErrCode N_VBufUnpack_Pthreads(N_Vector x, void* buf)
+{
+  return nvBufUnpack_Pthreads(x, buf);
+}
+
+N_Vector N_VCloneEmpty_Pthreads(N_Vector w) { return nvCloneEmpty_Pthreads(w); }
+
+N_Vector N_VClone_Pthreads(N_Vector w) { return nvClone_Pthreads(w); }
+
+void N_VCompare_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvCompare_Pthreads(c, x, z);
+}
+
+SUNErrCode N_VConstVectorArray_Pthreads(int nvec, sunrealtype c, N_Vector* Z)
+{
+  return nvConstVectorArray_Pthreads(nvec, c, Z);
+}
+
+void N_VConst_Pthreads(sunrealtype c, N_Vector z) { nvConst_Pthreads(c, z); }
+
+sunbooleantype N_VConstrMask_Pthreads(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMask_Pthreads(c, x, m);
+}
+
+void N_VDestroy_Pthreads(N_Vector v) { nvDestroy_Pthreads(v); }
+
+void N_VDiv_Pthreads(N_Vector x, N_Vector y, N_Vector z)
+{
+  nvDiv_Pthreads(x, y, z);
+}
+
+SUNErrCode N_VDotProdMulti_Pthreads(int nvec, N_Vector x, N_Vector* Y,
+                                    sunrealtype* dotprods)
+{
+  return nvDotProdMulti_Pthreads(nvec, x, Y, dotprods);
+}
+
+sunrealtype N_VDotProd_Pthreads(N_Vector x, N_Vector y)
+{
+  return nvDotProd_Pthreads(x, y);
+}
+
+sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v)
+{
+  return nvGetArrayPointer_Pthreads(v);
+}
+
+sunindextype N_VGetLength_Pthreads(N_Vector v)
+{
+  return nvGetLength_Pthreads(v);
+}
+
+N_Vector_ID N_VGetVectorID_Pthreads(N_Vector v)
+{
+  return nvGetVectorID_Pthreads(v);
+}
+
+sunbooleantype N_VInvTest_Pthreads(N_Vector x, N_Vector z)
+{
+  return nvInvTest_Pthreads(x, z);
+}
+
+void N_VInv_Pthreads(N_Vector x, N_Vector z) { nvInv_Pthreads(x, z); }
+
+sunrealtype N_VL1Norm_Pthreads(N_Vector x) { return nvL1Norm_Pthreads(x); }
+
+SUNErrCode N_VLinearCombinationVectorArray_Pthreads(int nvec, int nsum,
+                                                    sunrealtype* c,
+                                                    N_Vector** X, N_Vector* Z)
+{
+  return nvLinearCombinationVectorArray_Pthreads(nvec, nsum, c, X, Z);
+}
+
+SUNErrCode N_VLinearCombination_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
+                                         N_Vector z)
+{
+  return nvLinearCombination_Pthreads(nvec, c, X, z);
+}
+
+SUNErrCode N_VLinearSumVectorArray_Pthreads(int nvec, sunrealtype a,
+                                            N_Vector* X, sunrealtype b,
+                                            N_Vector* Y, N_Vector* Z)
+{
+  return nvLinearSumVectorArray_Pthreads(nvec, a, X, b, Y, Z);
+}
+
+void N_VLinearSum_Pthreads(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                           N_Vector z)
+{
+  nvLinearSum_Pthreads(a, x, b, y, z);
+}
+
+sunrealtype N_VMaxNorm_Pthreads(N_Vector x) { return nvMaxNorm_Pthreads(x); }
+
+sunrealtype N_VMinQuotient_Pthreads(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotient_Pthreads(num, denom);
+}
+
+sunrealtype N_VMin_Pthreads(N_Vector x) { return nvMin_Pthreads(x); }
+
+void N_VPrintFile_Pthreads(N_Vector v, FILE* outfile)
+{
+  nvPrintFile_Pthreads(v, outfile);
+}
+
+void N_VPrint_Pthreads(N_Vector v) { nvPrint_Pthreads(v); }
+
+void N_VProd_Pthreads(N_Vector x, N_Vector y, N_Vector z)
+{
+  nvProd_Pthreads(x, y, z);
+}
+
+SUNErrCode N_VScaleAddMultiVectorArray_Pthreads(int nvec, int nsum,
+                                                sunrealtype* a, N_Vector* X,
+                                                N_Vector** Y, N_Vector** Z)
+{
+  return nvScaleAddMultiVectorArray_Pthreads(nvec, nsum, a, X, Y, Z);
+}
+
+SUNErrCode N_VScaleAddMulti_Pthreads(int nvec, sunrealtype* a, N_Vector x,
+                                     N_Vector* Y, N_Vector* Z)
+{
+  return nvScaleAddMulti_Pthreads(nvec, a, x, Y, Z);
+}
+
+SUNErrCode N_VScaleVectorArray_Pthreads(int nvec, sunrealtype* c, N_Vector* X,
+                                        N_Vector* Z)
+{
+  return nvScaleVectorArray_Pthreads(nvec, c, X, Z);
+}
+
+void N_VScale_Pthreads(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvScale_Pthreads(c, x, z);
+}
+
+void N_VSetArrayPointer_Pthreads(sunrealtype* v_data, N_Vector v)
+{
+  nvSetArrayPointer_Pthreads(v_data, v);
+}
+
+sunrealtype N_VWL2Norm_Pthreads(N_Vector x, N_Vector w)
+{
+  return nvWL2Norm_Pthreads(x, w);
+}
+
+sunrealtype N_VWSqrSumLocal_Pthreads(N_Vector x, N_Vector w)
+{
+  return nvWSqrSumLocal_Pthreads(x, w);
+}
+
+sunrealtype N_VWSqrSumMaskLocal_Pthreads(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWSqrSumMaskLocal_Pthreads(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormMaskVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
+                                               N_Vector id, sunrealtype* nrm)
+{
+  return nvWrmsNormMaskVectorArray_Pthreads(nvec, X, W, id, nrm);
+}
+
+sunrealtype N_VWrmsNormMask_Pthreads(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWrmsNormMask_Pthreads(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormVectorArray_Pthreads(int nvec, N_Vector* X, N_Vector* W,
+                                           sunrealtype* nrm)
+{
+  return nvWrmsNormVectorArray_Pthreads(nvec, X, W, nrm);
+}
+
+sunrealtype N_VWrmsNorm_Pthreads(N_Vector x, N_Vector w)
+{
+  return nvWrmsNorm_Pthreads(x, w);
 }

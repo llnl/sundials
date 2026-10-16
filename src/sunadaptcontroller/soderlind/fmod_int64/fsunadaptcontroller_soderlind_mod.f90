@@ -30,13 +30,6 @@ module fsunadaptcontroller_soderlind_mod
  ! DECLARATION CONSTRUCTS
  public :: FSUNAdaptController_Soderlind
  public :: FSUNAdaptController_SetParams_Soderlind
- public :: FSUNAdaptController_GetType_Soderlind
- public :: FSUNAdaptController_EstimateStep_Soderlind
- public :: FSUNAdaptController_Reset_Soderlind
- public :: FSUNAdaptController_SetDefaults_Soderlind
- public :: FSUNAdaptController_Write_Soderlind
- public :: FSUNAdaptController_SetErrorBias_Soderlind
- public :: FSUNAdaptController_UpdateH_Soderlind
  public :: FSUNAdaptController_PID
  public :: FSUNAdaptController_SetParams_PID
  public :: FSUNAdaptController_PI
@@ -72,70 +65,6 @@ real(C_DOUBLE), intent(in) :: farg3
 real(C_DOUBLE), intent(in) :: farg4
 real(C_DOUBLE), intent(in) :: farg5
 real(C_DOUBLE), intent(in) :: farg6
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_GetType_Soderlind(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_GetType_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_EstimateStep_Soderlind(farg1, farg2, farg3, farg4, farg5) &
-bind(C, name="_wrap_FSUNAdaptController_EstimateStep_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT), intent(in) :: farg3
-real(C_DOUBLE), intent(in) :: farg4
-type(C_PTR), value :: farg5
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Reset_Soderlind(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_Reset_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetDefaults_Soderlind(farg1) &
-bind(C, name="_wrap_FSUNAdaptController_SetDefaults_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_Write_Soderlind(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_Write_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_SetErrorBias_Soderlind(farg1, farg2) &
-bind(C, name="_wrap_FSUNAdaptController_SetErrorBias_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-integer(C_INT) :: fresult
-end function
-
-function swigc_FSUNAdaptController_UpdateH_Soderlind(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNAdaptController_UpdateH_Soderlind") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
-real(C_DOUBLE), intent(in) :: farg3
 integer(C_INT) :: fresult
 end function
 
@@ -304,121 +233,6 @@ farg4 = k3
 farg5 = k4
 farg6 = k5
 fresult = swigc_FSUNAdaptController_SetParams_Soderlind(farg1, farg2, farg3, farg4, farg5, farg6)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_GetType_Soderlind(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(SUNAdaptController_Type) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_GetType_Soderlind(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_EstimateStep_Soderlind(c, h, p, dsm, hnew) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-integer(C_INT), intent(in) :: p
-real(C_DOUBLE), intent(in) :: dsm
-real(C_DOUBLE), dimension(*), target, intent(inout) :: hnew
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-integer(C_INT) :: farg3 
-real(C_DOUBLE) :: farg4 
-type(C_PTR) :: farg5 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = p
-farg4 = dsm
-farg5 = c_loc(hnew(1))
-fresult = swigc_FSUNAdaptController_EstimateStep_Soderlind(farg1, farg2, farg3, farg4, farg5)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Reset_Soderlind(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_Reset_Soderlind(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetDefaults_Soderlind(c) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-
-farg1 = c_loc(c)
-fresult = swigc_FSUNAdaptController_SetDefaults_Soderlind(farg1)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_Write_Soderlind(c, fptr) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-type(C_PTR) :: fptr
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = fptr
-fresult = swigc_FSUNAdaptController_Write_Soderlind(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_SetErrorBias_Soderlind(c, bias) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: bias
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-
-farg1 = c_loc(c)
-farg2 = bias
-fresult = swigc_FSUNAdaptController_SetErrorBias_Soderlind(farg1, farg2)
-swig_result = fresult
-end function
-
-function FSUNAdaptController_UpdateH_Soderlind(c, h, dsm) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNAdaptController), target, intent(inout) :: c
-real(C_DOUBLE), intent(in) :: h
-real(C_DOUBLE), intent(in) :: dsm
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
-real(C_DOUBLE) :: farg3 
-
-farg1 = c_loc(c)
-farg2 = h
-farg3 = dsm
-fresult = swigc_FSUNAdaptController_UpdateH_Soderlind(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

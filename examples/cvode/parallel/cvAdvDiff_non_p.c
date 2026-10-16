@@ -248,7 +248,7 @@ static void SetIC(N_Vector u, sunrealtype dx, sunindextype my_length,
 
   /* Set pointer to data array and get local length of u. */
   udata     = N_VGetArrayPointer(u);
-  my_length = N_VGetLocalLength_Parallel(u);
+  my_length = N_VGetLocalLength(u);
 
   /* Load initial profile into u vector */
   for (i = 1; i <= my_length; i++)
@@ -331,11 +331,11 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   horac = data->hacoef;
 
   /* Extract parameters for parallel computation. */
-  comm  = data->comm;
-  npes  = data->npes;                        /* Number of processes. */
-  my_pe = data->my_pe;                       /* Current process number. */
-  my_length = N_VGetLocalLength_Parallel(u); /* Number of local elements of u. */
-  z = data->z;
+  comm      = data->comm;
+  npes      = data->npes;           /* Number of processes. */
+  my_pe     = data->my_pe;          /* Current process number. */
+  my_length = N_VGetLocalLength(u); /* Number of local elements of u. */
+  z         = data->z;
 
   /* Compute related parameters. */
   my_pe_m1 = my_pe - 1;

@@ -135,12 +135,10 @@ NVECTOR_SERIAL functions
 The NVECTOR_SERIAL module defines serial implementations of all vector
 operations listed in :numref:`NVectors.Ops.Standard`,
 :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local`.  Their names are obtained from those in
-those sections by appending the suffix ``_Serial``
-(e.g. ``N_VDestroy_Serial``).  All the standard vector operations
-listed in :numref:`NVectors.Ops.Standard` with the suffix ``_Serial``
-appended are callable via the Fortran 2003 interface by prepending an
-``F`` (e.g. ``FN_VDestroy_Serial``).
+:numref:`NVectors.Ops.Local`. These operations are invoked through the generic
+functions in those sections. The standard operations are callable through the
+Fortran 2003 interface by prepending an ``F`` to the generic function name
+(e.g., ``FN_VDestroy``).
 
 The module NVECTOR_SERIAL provides the following additional
 user-callable routines:
@@ -163,16 +161,6 @@ user-callable routines:
    user-provided data array, *v_data*.
 
    (This function does *not* allocate memory for ``v_data`` itself.)
-
-
-.. c:function:: void N_VPrint_Serial(N_Vector v)
-
-   This function prints the content of a serial vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Serial(N_Vector v, FILE *outfile)
-
-   This function prints the content of a serial vector to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_SERIAL

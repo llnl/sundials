@@ -40,7 +40,7 @@ SWIGEXPORT double * _wrap_FN_VGetArrayPointer_Serial(N_Vector farg1) {
   sunrealtype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
-  result = (sunrealtype *)N_VGetArrayPointer_Serial(arg1);
+  result = (sunrealtype *)N_VGetArrayPointer(arg1);
   fresult = result;
   return fresult;
 }
@@ -71,6 +71,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 fresult = swigc_FN_VGetArrayPointer_Serial(farg1)
-call c_f_pointer(fresult, swig_result, [FN_VGetLength_Serial(v)])
+call c_f_pointer(fresult, swig_result, [FN_VGetLength(v)])
 end function
 %}

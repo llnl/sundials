@@ -97,31 +97,6 @@ user-callable routines:
    This function returns the local vector underneath the MPIPlusX NVECTOR.
 
 
-.. c:function:: sunindextype N_VGetLocalLength_MPIPlusX(N_Vector v)
-
-   This function returns the local length of the vector underneath the MPIPlusX NVECTOR.
-
-   Usage:
-
-   .. code-block:: c
-
-      local_length = N_VGetLocalLength_MPIPlusX(v);
-
-
-.. c:function:: sunrealtype *N_VGetArrayPointer_MPIPlusX(N_Vector v)
-
-   This function returns the data array pointer for the local vector.
-
-   If the local vector does not support the :c:func:`N_VGetArrayPointer`
-   operation, then ``NULL`` is returned.
-
-
-.. c:function:: void N_VSetArrayPointer_MPIPlusX(sunrealtype *v_data, N_Vector v)
-
-   This function sets the data array pointer for the local vector if
-   the local vector implements the :c:func:`N_VSetArrayPointer` operation.
-
-
 The NVECTOR_MPIPLUSX module does not implement any fused or vector array
 operations. Instead users should enable/disable fused operations on the
 local vector.

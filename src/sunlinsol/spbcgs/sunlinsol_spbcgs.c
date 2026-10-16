@@ -26,7 +26,7 @@
 
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_spbcgs.h>
+#include <sunlinsol/sunlinsol_spbcgs_deprecated.h>
 #include "sundials_logger_impl.h"
 
 #include "sundials_cli.h"
@@ -50,6 +50,41 @@
  * Un-exported implementation specific routines
  * ----------------------------------------------------------------------------
  */
+
+static SUNErrCode sunLinSolFree_SPBCGS(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_SPBCGS(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_SPBCGS(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_SPBCGS(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_SPBCGS(SUNLinearSolver S);
+
+static int sunLinSolNumIters_SPBCGS(SUNLinearSolver S);
+
+static sunrealtype sunLinSolResNorm_SPBCGS(SUNLinearSolver S);
+
+static N_Vector sunLinSolResid_SPBCGS(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolSetATimes_SPBCGS(SUNLinearSolver S, void* A_data,
+                                            SUNATimesFn ATimes);
+
+static SUNErrCode sunLinSolSetPreconditioner_SPBCGS(SUNLinearSolver S,
+                                                    void* P_data,
+                                                    SUNPSetupFn Pset,
+                                                    SUNPSolveFn Psol);
+
+static SUNErrCode sunLinSolSetScalingVectors_SPBCGS(SUNLinearSolver S,
+                                                    N_Vector s1, N_Vector s2);
+
+static SUNErrCode sunLinSolSetZeroGuess_SPBCGS(SUNLinearSolver S,
+                                               sunbooleantype onoff);
+
+static int sunLinSolSetup_SPBCGS(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_SPBCGS(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                 N_Vector b, sunrealtype tol);
 
 static SUNErrCode setFromCommandLine_SPBCGS(SUNLinearSolver S, const char* LSid,
                                             int argc, char* argv[]);
@@ -95,21 +130,21 @@ SUNLinearSolver SUNLinSol_SPBCGS(N_Vector y, int pretype, int maxl,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  S->ops->gettype           = SUNLinSolGetType_SPBCGS;
-  S->ops->getid             = SUNLinSolGetID_SPBCGS;
-  S->ops->setatimes         = SUNLinSolSetATimes_SPBCGS;
+  S->ops->gettype           = sunLinSolGetType_SPBCGS;
+  S->ops->getid             = sunLinSolGetID_SPBCGS;
+  S->ops->setatimes         = sunLinSolSetATimes_SPBCGS;
   S->ops->setoptions        = SUNLinSolSetOptions_SPBCGS;
-  S->ops->setpreconditioner = SUNLinSolSetPreconditioner_SPBCGS;
-  S->ops->setscalingvectors = SUNLinSolSetScalingVectors_SPBCGS;
-  S->ops->setzeroguess      = SUNLinSolSetZeroGuess_SPBCGS;
-  S->ops->initialize        = SUNLinSolInitialize_SPBCGS;
-  S->ops->setup             = SUNLinSolSetup_SPBCGS;
-  S->ops->solve             = SUNLinSolSolve_SPBCGS;
-  S->ops->numiters          = SUNLinSolNumIters_SPBCGS;
-  S->ops->resnorm           = SUNLinSolResNorm_SPBCGS;
-  S->ops->resid             = SUNLinSolResid_SPBCGS;
-  S->ops->lastflag          = SUNLinSolLastFlag_SPBCGS;
-  S->ops->free              = SUNLinSolFree_SPBCGS;
+  S->ops->setpreconditioner = sunLinSolSetPreconditioner_SPBCGS;
+  S->ops->setscalingvectors = sunLinSolSetScalingVectors_SPBCGS;
+  S->ops->setzeroguess      = sunLinSolSetZeroGuess_SPBCGS;
+  S->ops->initialize        = sunLinSolInitialize_SPBCGS;
+  S->ops->setup             = sunLinSolSetup_SPBCGS;
+  S->ops->solve             = sunLinSolSolve_SPBCGS;
+  S->ops->numiters          = sunLinSolNumIters_SPBCGS;
+  S->ops->resnorm           = sunLinSolResNorm_SPBCGS;
+  S->ops->resid             = sunLinSolResid_SPBCGS;
+  S->ops->lastflag          = sunLinSolLastFlag_SPBCGS;
+  S->ops->free              = sunLinSolFree_SPBCGS;
 
   /* Create content */
   content = NULL;
@@ -284,17 +319,17 @@ SUNErrCode SUNLinSol_SPBCGSSetMaxl(SUNLinearSolver S, int maxl)
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_ITERATIVE);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_SPBCGS(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_SPBCGS);
 }
 
-SUNErrCode SUNLinSolInitialize_SPBCGS(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_SPBCGS(SUNLinearSolver S)
 {
   SUNFunctionBegin(S->sunctx);
 
@@ -320,7 +355,7 @@ SUNErrCode SUNLinSolInitialize_SPBCGS(SUNLinearSolver S)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetATimes_SPBCGS(SUNLinearSolver S, void* ATData,
+SUNErrCode sunLinSolSetATimes_SPBCGS(SUNLinearSolver S, void* ATData,
                                      SUNATimesFn ATimes)
 {
   SUNFunctionBegin(S->sunctx);
@@ -331,7 +366,7 @@ SUNErrCode SUNLinSolSetATimes_SPBCGS(SUNLinearSolver S, void* ATData,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetPreconditioner_SPBCGS(SUNLinearSolver S, void* PData,
+SUNErrCode sunLinSolSetPreconditioner_SPBCGS(SUNLinearSolver S, void* PData,
                                              SUNPSetupFn Psetup,
                                              SUNPSolveFn Psolve)
 {
@@ -344,7 +379,7 @@ SUNErrCode SUNLinSolSetPreconditioner_SPBCGS(SUNLinearSolver S, void* PData,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetScalingVectors_SPBCGS(SUNLinearSolver S, N_Vector s1,
+SUNErrCode sunLinSolSetScalingVectors_SPBCGS(SUNLinearSolver S, N_Vector s1,
                                              N_Vector s2)
 {
   SUNFunctionBegin(S->sunctx);
@@ -355,7 +390,7 @@ SUNErrCode SUNLinSolSetScalingVectors_SPBCGS(SUNLinearSolver S, N_Vector s1,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNLinSolSetZeroGuess_SPBCGS(SUNLinearSolver S, sunbooleantype onoff)
+SUNErrCode sunLinSolSetZeroGuess_SPBCGS(SUNLinearSolver S, sunbooleantype onoff)
 {
   SUNFunctionBegin(S->sunctx);
   /* set flag indicating a zero initial guess */
@@ -363,7 +398,7 @@ SUNErrCode SUNLinSolSetZeroGuess_SPBCGS(SUNLinearSolver S, sunbooleantype onoff)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
+int sunLinSolSetup_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
 {
   SUNFunctionBegin(S->sunctx);
 
@@ -392,7 +427,7 @@ int SUNLinSolSetup_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A)
   return (LASTFLAG(S));
 }
 
-int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
+int sunLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
                           N_Vector x, N_Vector b, sunrealtype delta)
 {
   SUNFunctionBegin(S->sunctx);
@@ -887,31 +922,31 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNDIALS_MAYBE_UNUSED SUNMatrix A,
   }
 }
 
-int SUNLinSolNumIters_SPBCGS(SUNLinearSolver S)
+int sunLinSolNumIters_SPBCGS(SUNLinearSolver S)
 {
   /* return the stored 'numiters' value */
   return (SPBCGS_CONTENT(S)->numiters);
 }
 
-sunrealtype SUNLinSolResNorm_SPBCGS(SUNLinearSolver S)
+sunrealtype sunLinSolResNorm_SPBCGS(SUNLinearSolver S)
 {
   /* return the stored 'resnorm' value */
   return (SPBCGS_CONTENT(S)->resnorm);
 }
 
-N_Vector SUNLinSolResid_SPBCGS(SUNLinearSolver S)
+N_Vector sunLinSolResid_SPBCGS(SUNLinearSolver S)
 {
   /* return the stored 'r' vector */
   return (SPBCGS_CONTENT(S)->r);
 }
 
-sunindextype SUNLinSolLastFlag_SPBCGS(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_SPBCGS(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_SPBCGS(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_SPBCGS(SUNLinearSolver S)
 {
   if (S->content)
   {
@@ -962,4 +997,80 @@ SUNErrCode SUNLinSolFree_SPBCGS(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolFree_SPBCGS(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolGetID_SPBCGS(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolGetType_SPBCGS(S);
+}
+
+SUNErrCode SUNLinSolInitialize_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_SPBCGS(S);
+}
+
+sunindextype SUNLinSolLastFlag_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_SPBCGS(S);
+}
+
+int SUNLinSolNumIters_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolNumIters_SPBCGS(S);
+}
+
+sunrealtype SUNLinSolResNorm_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolResNorm_SPBCGS(S);
+}
+
+N_Vector SUNLinSolResid_SPBCGS(SUNLinearSolver S)
+{
+  return sunLinSolResid_SPBCGS(S);
+}
+
+SUNErrCode SUNLinSolSetATimes_SPBCGS(SUNLinearSolver S, void* A_data,
+                                     SUNATimesFn ATimes)
+{
+  return sunLinSolSetATimes_SPBCGS(S, A_data, ATimes);
+}
+
+SUNErrCode SUNLinSolSetPreconditioner_SPBCGS(SUNLinearSolver S, void* P_data,
+                                             SUNPSetupFn Pset, SUNPSolveFn Psol)
+{
+  return sunLinSolSetPreconditioner_SPBCGS(S, P_data, Pset, Psol);
+}
+
+SUNErrCode SUNLinSolSetScalingVectors_SPBCGS(SUNLinearSolver S, N_Vector s1,
+                                             N_Vector s2)
+{
+  return sunLinSolSetScalingVectors_SPBCGS(S, s1, s2);
+}
+
+SUNErrCode SUNLinSolSetZeroGuess_SPBCGS(SUNLinearSolver S, sunbooleantype onoff)
+{
+  return sunLinSolSetZeroGuess_SPBCGS(S, onoff);
+}
+
+int SUNLinSolSetup_SPBCGS(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_SPBCGS(S, A);
+}
+
+int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                          N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_SPBCGS(S, A, x, b, tol);
 }

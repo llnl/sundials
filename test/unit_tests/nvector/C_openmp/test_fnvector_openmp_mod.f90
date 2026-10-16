@@ -45,9 +45,9 @@ contains
     !===== Setup ====
     x => FN_VMake_OpenMP(N, xdata, 2, sunctx)
     call FN_VConst(ONE, x)
-    y => FN_VClone_OpenMP(x)
+    y => FN_VClone(x)
     call FN_VConst(ONE, y)
-    z => FN_VClone_OpenMP(x)
+    z => FN_VClone(x)
     call FN_VConst(ONE, z)
 
     xvecs = FN_VCloneVectorArray(nv, x)
@@ -58,58 +58,58 @@ contains
 
     ! test constructors
     tmp => FN_VNewEmpty_OpenMP(N, 2, sunctx)
-    call FN_VDestroy_OpenMP(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VMake_OpenMP(N, xdata, 2, sunctx)
-    call FN_VDestroy_OpenMP(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VNew_OpenMP(N, 2, sunctx)
-    call FN_VDestroy_OpenMP(tmp)
-    tmp => FN_VCloneEmpty_OpenMP(x)
-    call FN_VDestroy_OpenMP(tmp)
+    call FN_VDestroy(tmp)
+    tmp => FN_VCloneEmpty(x)
+    call FN_VDestroy(tmp)
 
     ! test generic vector functions
-    ival = FN_VGetVectorID_OpenMP(x)
-    xptr => FN_VGetArrayPointer_OpenMP(x)
-    call FN_VSetArrayPointer_OpenMP(xdata, x)
+    ival = FN_VGetVectorID(x)
+    xptr => FN_VGetArrayPointer(x)
+    call FN_VSetArrayPointer(xdata, x)
     ival = FN_VGetCommunicator(x)
-    ival = FN_VGetLength_OpenMP(x)
+    ival = FN_VGetLength(x)
 
     ! test standard vector operations
-    call FN_VLinearSum_OpenMP(ONE, x, ONE, y, z)
-    call FN_VConst_OpenMP(ONE, z)
-    call FN_VProd_OpenMP(x, y, z)
-    call FN_VDiv_OpenMP(x, y, z)
-    call FN_VScale_OpenMP(ONE, x, y)
-    call FN_VAbs_OpenMP(x, y)
-    call FN_VInv_OpenMP(x, z)
-    call FN_VAddConst_OpenMP(x, ONE, z)
-    rval = FN_VDotProd_OpenMP(x, y)
-    rval = FN_VMaxNorm_OpenMP(x)
-    rval = FN_VWrmsNorm_OpenMP(x, y)
-    rval = FN_VWrmsNormMask_OpenMP(x, y, z)
-    rval = FN_VMin_OpenMP(x)
-    rval = FN_VWL2Norm_OpenMP(x, y)
-    rval = FN_VL1Norm_OpenMP(x)
-    call FN_VCompare_OpenMP(ONE, x, y)
-    ival = FN_VInvTest_OpenMP(x, y)
-    ival = FN_VConstrMask_OpenMP(z, x, y)
-    rval = FN_VMinQuotient_OpenMP(x, y)
+    call FN_VLinearSum(ONE, x, ONE, y, z)
+    call FN_VConst(ONE, z)
+    call FN_VProd(x, y, z)
+    call FN_VDiv(x, y, z)
+    call FN_VScale(ONE, x, y)
+    call FN_VAbs(x, y)
+    call FN_VInv(x, z)
+    call FN_VAddConst(x, ONE, z)
+    rval = FN_VDotProd(x, y)
+    rval = FN_VMaxNorm(x)
+    rval = FN_VWrmsNorm(x, y)
+    rval = FN_VWrmsNormMask(x, y, z)
+    rval = FN_VMin(x)
+    rval = FN_VWL2Norm(x, y)
+    rval = FN_VL1Norm(x)
+    call FN_VCompare(ONE, x, y)
+    ival = FN_VInvTest(x, y)
+    ival = FN_VConstrMask(z, x, y)
+    rval = FN_VMinQuotient(x, y)
 
     ! test fused vector operations
-    ival = FN_VLinearCombination_OpenMP(int(nv, 4), nvarr, xvecs, x)
-    ival = FN_VScaleAddMulti_OpenMP(int(nv, 4), nvarr, x, xvecs, zvecs)
-    ival = FN_VDotProdMulti_OpenMP(int(nv, 4), x, xvecs, nvarr)
+    ival = FN_VLinearCombination(int(nv, 4), nvarr, xvecs, x)
+    ival = FN_VScaleAddMulti(int(nv, 4), nvarr, x, xvecs, zvecs)
+    ival = FN_VDotProdMulti(int(nv, 4), x, xvecs, nvarr)
 
     ! test vector array operations
-    ival = FN_VLinearSumVectorArray_OpenMP(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
-    ival = FN_VScaleVectorArray_OpenMP(int(nv, 4), nvarr, xvecs, zvecs)
-    ival = FN_VConstVectorArray_OpenMP(int(nv, 4), ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_OpenMP(int(nv, 4), xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_OpenMP(int(nv, 4), xvecs, xvecs, x, nvarr)
+    ival = FN_VLinearSumVectorArray(int(nv, 4), ONE, xvecs, ONE, xvecs, zvecs)
+    ival = FN_VScaleVectorArray(int(nv, 4), nvarr, xvecs, zvecs)
+    ival = FN_VConstVectorArray(int(nv, 4), ONE, xvecs)
+    ival = FN_VWrmsNormVectorArray(int(nv, 4), xvecs, xvecs, nvarr)
+    ival = FN_VWrmsNormMaskVectorArray(int(nv, 4), xvecs, xvecs, x, nvarr)
 
     !==== Cleanup =====
-    call FN_VDestroy_OpenMP(x)
-    call FN_VDestroy_OpenMP(y)
-    call FN_VDestroy_OpenMP(z)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
+    call FN_VDestroy(z)
     call FN_VDestroyVectorArray(xvecs, nv)
     call FN_VDestroyVectorArray(zvecs, nv)
 
@@ -136,7 +136,7 @@ contains
     fails = Test_FN_VLinearCombination(x, N, 0)
 
     !=== cleanup ====
-    call FN_VDestroy_OpenMP(x)
+    call FN_VDestroy(x)
 
   end function unit_tests
 

@@ -50,10 +50,10 @@ contains
     !===== Test =====
 
     ! test the MPIPlusX specific operations
-    xptr => FN_VGetArrayPointer_MPIPlusX(x)
+    xptr => FN_VGetArrayPointer(x)
     local => FN_VGetLocalVector_MPIPlusX(x)
-    ival = FN_VGetLocalLength_MPIPlusX(x)
-    ival = FN_VGetVectorID_MPIPlusX(x)
+    ival = FN_VGetLocalLength(x)
+    ival = FN_VGetVectorID(x)
 
     !==== Cleanup =====
     call FN_VDestroy(local)

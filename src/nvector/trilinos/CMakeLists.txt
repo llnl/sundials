@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvectrilinos
   SOURCES nvector_trilinos.cpp
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_trilinos.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_trilinos_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core Tpetra::all_libs
   OUTPUT_NAME sundials_nvectrilinos

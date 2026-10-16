@@ -56,18 +56,17 @@ Fortran interfaces.  When access to raw vector data is needed, it is recommended
 to extract the PETSc vector first, and then use PETSc methods to access the
 data.  Usage examples of NVECTOR_PETSC is provided in example programs for IDA.
 
-The names of vector operations are obtained from those in
-:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`, :numref:`NVectors.Ops.Array`, and
-:numref:`NVectors.Ops.Local` by appending the suffice ``_Petsc``
-(e.g. ``N_VDestroy_Petsc``).  The module NVECTOR_PETSC provides the
-following additional user-callable routines:
+These operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
+:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`. The module
+NVECTOR_PETSC provides the following additional user-callable routines:
 
 
 .. c:function:: N_Vector N_VNewEmpty_Petsc(MPI_Comm comm, sunindextype local_length, sunindextype global_length, SUNContext sunctx)
 
    This function creates a new PETSC ``N_Vector`` with the pointer to
    the wrapped PETSc vector set to ``NULL``. It is used by the
-   ``N_VMake_Petsc`` and ``N_VClone_Petsc`` implementations.  It
+   ``N_VMake_Petsc`` and ``N_VClone`` implementations.  It
    should be used only with great caution.
 
 
@@ -81,16 +80,6 @@ following additional user-callable routines:
 .. c:function:: Vec *N_VGetVector_Petsc(N_Vector v)
 
    This function returns a pointer to the underlying PETSc vector.
-
-
-.. c:function:: void N_VPrint_Petsc(N_Vector v)
-
-   This function prints the global content of a wrapped PETSc vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Petsc(N_Vector v, const char fname[])
-
-   This function prints the global content of a wrapped PETSc vector to ``fname``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_PETSC

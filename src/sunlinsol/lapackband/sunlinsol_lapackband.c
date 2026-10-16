@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_lapackband.h>
+#include <sunlinsol/sunlinsol_lapackband_deprecated.h>
 
 #include "sundials_lapack_defs.h"
 #include "sundials_macros.h"
@@ -50,6 +50,27 @@
 #define LAPACKBAND_CONTENT(S) ((SUNLinearSolverContent_LapackBand)(S->content))
 #define PIVOTS(S)             (LAPACKBAND_CONTENT(S)->pivots)
 #define LASTFLAG(S)           (LAPACKBAND_CONTENT(S)->last_flag)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_LapackBand(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_LapackBand(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_LapackBand(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_LapackBand(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_LapackBand(SUNLinearSolver S);
+
+static int sunLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                     N_Vector b, sunrealtype tol);
 
 /*
  * -----------------------------------------------------------------
@@ -88,13 +109,13 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_LapackBand;
-  S->ops->getid      = SUNLinSolGetID_LapackBand;
-  S->ops->initialize = SUNLinSolInitialize_LapackBand;
-  S->ops->setup      = SUNLinSolSetup_LapackBand;
-  S->ops->solve      = SUNLinSolSolve_LapackBand;
-  S->ops->lastflag   = SUNLinSolLastFlag_LapackBand;
-  S->ops->free       = SUNLinSolFree_LapackBand;
+  S->ops->gettype    = sunLinSolGetType_LapackBand;
+  S->ops->getid      = sunLinSolGetID_LapackBand;
+  S->ops->initialize = sunLinSolInitialize_LapackBand;
+  S->ops->setup      = sunLinSolSetup_LapackBand;
+  S->ops->solve      = sunLinSolSolve_LapackBand;
+  S->ops->lastflag   = sunLinSolLastFlag_LapackBand;
+  S->ops->free       = sunLinSolFree_LapackBand;
 
   /* Create content */
   content = NULL;
@@ -130,25 +151,25 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_LapackBand(
+SUNLinearSolver_Type sunLinSolGetType_LapackBand(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_LapackBand(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_LapackBand(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_LAPACKBAND);
 }
 
-SUNErrCode SUNLinSolInitialize_LapackBand(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_LapackBand(SUNLinearSolver S)
 {
   /* all solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
 {
   sunindextype n, ml, mu, ldim, ier;
 
@@ -176,7 +197,7 @@ int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                               N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   sunindextype n, ml, mu, ldim, one, ier;
@@ -215,12 +236,12 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return SUN_SUCCESS;
 }
 
-sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_LapackBand(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_LapackBand(SUNLinearSolver S)
 {
   /* return with success if already freed */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -244,4 +265,42 @@ SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S)
+{
+  return sunLinSolFree_LapackBand(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_LapackBand(SUNLinearSolver S)
+{
+  return sunLinSolGetID_LapackBand(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_LapackBand(SUNLinearSolver S)
+{
+  return sunLinSolGetType_LapackBand(S);
+}
+
+SUNErrCode SUNLinSolInitialize_LapackBand(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_LapackBand(S);
+}
+
+sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_LapackBand(S);
+}
+
+int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_LapackBand(S, A);
+}
+
+int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                              N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_LapackBand(S, A, x, b, tol);
 }

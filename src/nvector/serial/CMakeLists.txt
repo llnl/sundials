@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvecserial
   SOURCES nvector_serial.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_serial.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_serial_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

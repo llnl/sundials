@@ -1399,7 +1399,7 @@ static int InitUserData(UserData* udata)
 static int FreeUserData(UserData* udata)
 {
   // Free Linear solver
-  if (udata->LS != NULL) { SUNLinSolFree_PCG(udata->LS); }
+  if (udata->LS != NULL) { SUNLinSolFree(udata->LS); }
 
   // Free hypre preconditioner data
   if (udata->grid != NULL) { HYPRE_StructGridDestroy(udata->grid); }

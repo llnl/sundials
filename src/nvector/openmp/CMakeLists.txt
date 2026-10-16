@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvecopenmp
   SOURCES nvector_openmp.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_openmp.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_openmp_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

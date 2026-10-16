@@ -135,20 +135,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_LapackBand module defines band implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_LapackBand``
-
-* ``SUNLinSolInitialize_LapackBand`` -- this does nothing, since all
-  consistency checks are performed at solver creation.
-
-* ``SUNLinSolSetup_LapackBand`` -- this calls either
-  ``DGBTRF`` or ``SGBTRF`` to perform the :math:`LU` factorization.
-
-* ``SUNLinSolSolve_LapackBand`` -- this calls either
-  ``DGBTRS`` or ``SGBTRS`` to use the :math:`LU` factors and
-  ``pivots`` array to perform the solve.
-
-* ``SUNLinSolLastFlag_LapackBand``
-
-* ``SUNLinSolFree_LapackBand``
+:numref:`SUNLinSol.API`.

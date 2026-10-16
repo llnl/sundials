@@ -219,32 +219,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_SPBCGS module defines implementations of all
 "iterative" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_SPBCGS``
-
-* ``SUNLinSolInitialize_SPBCGS``
-
-* ``SUNLinSolSetATimes_SPBCGS``
-
-* ``SUNLinSolSetPreconditioner_SPBCGS``
-
-* ``SUNLinSolSetScalingVectors_SPBCGS``
-
-* ``SUNLinSolSetZeroGuess_SPBCGS`` -- note the solver assumes a non-zero guess
-  by default and the zero guess flag is reset to ``SUNFALSE`` after each call to
-  ``SUNLinSolSolve_SPBCGS``.
-
-* ``SUNLinSolSetup_SPBCGS``
-
-* ``SUNLinSolSolve_SPBCGS``
-
-* ``SUNLinSolNumIters_SPBCGS``
-
-* ``SUNLinSolResNorm_SPBCGS``
-
-* ``SUNLinSolResid_SPBCGS``
-
-* ``SUNLinSolLastFlag_SPBCGS``
-
-* ``SUNLinSolFree_SPBCGS``
+:numref:`SUNLinSol.API`.

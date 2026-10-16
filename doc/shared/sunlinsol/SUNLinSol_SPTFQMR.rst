@@ -223,32 +223,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_SPTFQMR module defines implementations of all
 "iterative" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_SPTFQMR``
-
-* ``SUNLinSolInitialize_SPTFQMR``
-
-* ``SUNLinSolSetATimes_SPTFQMR``
-
-* ``SUNLinSolSetPreconditioner_SPTFQMR``
-
-* ``SUNLinSolSetScalingVectors_SPTFQMR``
-
-* ``SUNLinSolSetZeroGuess_SPTFQMR`` -- note the solver assumes a non-zero guess
-  by default and the zero guess flag is reset to ``SUNFALSE`` after each call to
-  ``SUNLinSolSolve_SPTFQMR``.
-
-* ``SUNLinSolSetup_SPTFQMR``
-
-* ``SUNLinSolSolve_SPTFQMR``
-
-* ``SUNLinSolNumIters_SPTFQMR``
-
-* ``SUNLinSolResNorm_SPTFQMR``
-
-* ``SUNLinSolResid_SPTFQMR``
-
-* ``SUNLinSolLastFlag_SPTFQMR``
-
-* ``SUNLinSolFree_SPTFQMR``
+:numref:`SUNLinSol.API`.

@@ -491,11 +491,11 @@ int main(int argc, char* argv[])
       SUNSparseMatrix_Print(I, stdout);
     }
     printf("\nx =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
     printf("\ny =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
   }
   else { printf("SUCCESS: SUNMatrix module passed all tests \n \n"); }
 
@@ -576,15 +576,15 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     printf("\nC =\n");
     SUNSparseMatrix_Print(C, stdout);
     printf("\nx =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
     printf("\ny =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
     printf("\nu =\n");
-    N_VPrint_Serial(u);
+    N_VPrint(u);
     printf("\nv =\n");
-    N_VPrint_Serial(v);
+    N_VPrint(v);
     SUNMatDestroy(C);
     N_VDestroy(u);
     N_VDestroy(v);
@@ -637,15 +637,15 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     printf("\nD =\n");
     SUNSparseMatrix_Print(D, stdout);
     printf("\nx =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
     printf("\ny =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
     printf("\nu =\n");
-    N_VPrint_Serial(u);
+    N_VPrint(u);
     printf("\nv =\n");
-    N_VPrint_Serial(v);
+    N_VPrint(v);
     SUNMatDestroy(C);
     SUNMatDestroy(D);
     N_VDestroy(u);
@@ -703,13 +703,13 @@ int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix B, N_Vector x, N_Vector y,
     printf("\nE =\n");
     SUNSparseMatrix_Print(E, stdout);
     printf("\nx =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
     printf("\ny =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\nu =\n");
-    N_VPrint_Serial(u);
+    N_VPrint(u);
     printf("\nv =\n");
-    N_VPrint_Serial(v);
+    N_VPrint(v);
     SUNMatDestroy(C);
     SUNMatDestroy(D);
     SUNMatDestroy(E);
@@ -783,9 +783,9 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     printf("\nB =\n");
     SUNSparseMatrix_Print(B, stdout);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
     printf("\nw =\n");
-    N_VPrint_Serial(w);
+    N_VPrint(w);
     SUNMatDestroy(B);
     N_VDestroy(z);
     N_VDestroy(w);
@@ -837,9 +837,9 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     printf("\nC =\n");
     SUNSparseMatrix_Print(C, stdout);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
     printf("\nw =\n");
-    N_VPrint_Serial(w);
+    N_VPrint(w);
     SUNMatDestroy(B);
     SUNMatDestroy(C);
     N_VDestroy(z);
@@ -892,9 +892,9 @@ int Test_SUNMatScaleAddI2(SUNMatrix A, N_Vector x, N_Vector y)
     printf("\nD =\n");
     SUNSparseMatrix_Print(D, stdout);
     printf("\nz =\n");
-    N_VPrint_Serial(z);
+    N_VPrint(z);
     printf("\ny =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     SUNMatDestroy(B);
     SUNMatDestroy(C);
     SUNMatDestroy(D);
@@ -1113,8 +1113,8 @@ int check_vector(N_Vector x, N_Vector y, sunrealtype tol)
   ydata = N_VGetArrayPointer(y);
 
   /* check data lengths */
-  xldata = N_VGetLength_Serial(x);
-  yldata = N_VGetLength_Serial(y);
+  xldata = N_VGetLength(x);
+  yldata = N_VGetLength(y);
 
   if (xldata != yldata)
   {

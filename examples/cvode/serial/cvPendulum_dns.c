@@ -221,8 +221,8 @@ int main(int argc, char* argv[])
   }
 
   /* Free memory */
-  N_VDestroy_Serial(yref);
-  N_VDestroy_Serial(yy0);
+  N_VDestroy(yref);
+  N_VDestroy(yy0);
   SUNMatDestroy(A);
   SUNLinSolFree(LS);
   CVodeFree(&cvode_mem);
@@ -288,7 +288,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
   retval = CVodeReInit(cvode_mem, ZERO, yy0);
   if (check_retval(&retval, "CVodeReInit", 1))
   {
-    N_VDestroy_Serial(yy);
+    N_VDestroy(yy);
     return (retval);
   }
 
@@ -296,7 +296,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
   retval = CVodeSStolerances(cvode_mem, rtol, atol);
   if (check_retval(&retval, "CVodeSStolerances", 1))
   {
-    N_VDestroy_Serial(yy);
+    N_VDestroy(yy);
     return (retval);
   }
 
@@ -330,7 +330,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
     retval = CVodeSetStopTime(cvode_mem, tout);
     if (check_retval(&retval, "CVodeSetStopTime", 1))
     {
-      N_VDestroy_Serial(yy);
+      N_VDestroy(yy);
       fclose(FID);
       return (retval);
     }
@@ -339,7 +339,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
     retval = CVode(cvode_mem, tout, yy, &t, CV_NORMAL);
     if (check_retval(&retval, "CVode", 1))
     {
-      N_VDestroy_Serial(yy);
+      N_VDestroy(yy);
       fclose(FID);
       return (retval);
     }
@@ -378,7 +378,7 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
          x, y, xd, yd, g);
 
   /* Free solution vector */
-  N_VDestroy_Serial(yy);
+  N_VDestroy(yy);
 
   /* Get integrator stats */
   retval = CVodeGetNumSteps(cvode_mem, &nst);
@@ -492,7 +492,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
     retval = CVodeSetStopTime(cvode_mem, tout);
     if (check_retval(&retval, "CVodeSetStopTime", 1))
     {
-      N_VDestroy_Serial(yy);
+      N_VDestroy(yy);
       SUNMatDestroy(A);
       SUNLinSolFree(LS);
       CVodeFree(&cvode_mem);
@@ -504,7 +504,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
     retval = CVode(cvode_mem, tf, yy, &t, CV_NORMAL);
     if (check_retval(&retval, "CVode", 1))
     {
-      N_VDestroy_Serial(yy);
+      N_VDestroy(yy);
       SUNMatDestroy(A);
       SUNLinSolFree(LS);
       CVodeFree(&cvode_mem);
@@ -541,7 +541,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
   yydata[3] = thd * COS(th);
 
   /* Free memory */
-  N_VDestroy_Serial(yy);
+  N_VDestroy(yy);
   SUNMatDestroy(A);
   SUNLinSolFree(LS);
   CVodeFree(&cvode_mem);

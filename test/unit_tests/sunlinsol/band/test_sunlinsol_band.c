@@ -188,9 +188,9 @@ int main(int argc, char* argv[])
     printf("\nA (factored) =\n");
     SUNBandMatrix_Print(A, stdout);
     printf("\nx (original) =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\nx (computed) =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
   }
   else { printf("SUCCESS: SUNLinSol module passed all tests \n \n"); }
 
@@ -217,7 +217,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
-  local_length = N_VGetLength_Serial(X);
+  local_length = N_VGetLength(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++)

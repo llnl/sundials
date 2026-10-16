@@ -28,7 +28,7 @@
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_superlumt.h>
+#include <sunlinsol/sunlinsol_superlumt_deprecated.h>
 
 #include "sundials_cli.h"
 #include "sundials_macros.h"
@@ -64,6 +64,21 @@
  * Un-exported implementation specific routines
  * ----------------------------------------------------------------------------
  */
+
+static SUNErrCode sunLinSolFree_SuperLUMT(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_SuperLUMT(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_SuperLUMT(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_SuperLUMT(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_SuperLUMT(SUNLinearSolver S);
+
+static int sunLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                    N_Vector b, sunrealtype tol);
 
 static SUNErrCode setFromCommandLine_SuperLUMT(SUNLinearSolver S,
                                                const char* LSid, int argc,
@@ -111,14 +126,14 @@ SUNLinearSolver SUNLinSol_SuperLUMT(N_Vector y, SUNMatrix A, int num_threads,
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_SuperLUMT;
-  S->ops->getid      = SUNLinSolGetID_SuperLUMT;
-  S->ops->initialize = SUNLinSolInitialize_SuperLUMT;
+  S->ops->gettype    = sunLinSolGetType_SuperLUMT;
+  S->ops->getid      = sunLinSolGetID_SuperLUMT;
+  S->ops->initialize = sunLinSolInitialize_SuperLUMT;
   S->ops->setoptions = SUNLinSolSetOptions_SuperLUMT;
-  S->ops->setup      = SUNLinSolSetup_SuperLUMT;
-  S->ops->solve      = SUNLinSolSolve_SuperLUMT;
-  S->ops->lastflag   = SUNLinSolLastFlag_SuperLUMT;
-  S->ops->free       = SUNLinSolFree_SuperLUMT;
+  S->ops->setup      = sunLinSolSetup_SuperLUMT;
+  S->ops->solve      = sunLinSolSolve_SuperLUMT;
+  S->ops->lastflag   = sunLinSolLastFlag_SuperLUMT;
+  S->ops->free       = sunLinSolFree_SuperLUMT;
 
   /* Create content */
   content = NULL;
@@ -316,18 +331,18 @@ SUNErrCode SUNLinSol_SuperLUMTSetOrdering(SUNLinearSolver S, int ordering_choice
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_SuperLUMT(
+SUNLinearSolver_Type sunLinSolGetType_SuperLUMT(
   SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return SUNLINEARSOLVER_DIRECT;
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_SuperLUMT(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_SuperLUMT(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return SUNLINEARSOLVER_SUPERLUMT;
 }
 
-SUNErrCode SUNLinSolInitialize_SuperLUMT(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_SuperLUMT(SUNLinearSolver S)
 {
   /* force a first factorization */
   FIRSTFACTORIZE(S) = 1;
@@ -339,7 +354,7 @@ SUNErrCode SUNLinSolInitialize_SuperLUMT(SUNLinearSolver S)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
 {
   int_t retval;
   int panel_size, relax, lwork;
@@ -406,7 +421,7 @@ int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
   return (LASTFLAG(S));
 }
 
-int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+int sunLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                              N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   int_t retval;
@@ -442,12 +457,12 @@ int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   return (LASTFLAG(S));
 }
 
-sunindextype SUNLinSolLastFlag_SuperLUMT(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_SuperLUMT(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_SuperLUMT(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_SuperLUMT(SUNLinearSolver S)
 {
   /* return with success if already freed */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -523,4 +538,42 @@ SUNErrCode SUNLinSolFree_SuperLUMT(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_SuperLUMT(SUNLinearSolver S)
+{
+  return sunLinSolFree_SuperLUMT(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_SuperLUMT(SUNLinearSolver S)
+{
+  return sunLinSolGetID_SuperLUMT(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_SuperLUMT(SUNLinearSolver S)
+{
+  return sunLinSolGetType_SuperLUMT(S);
+}
+
+SUNErrCode SUNLinSolInitialize_SuperLUMT(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_SuperLUMT(S);
+}
+
+sunindextype SUNLinSolLastFlag_SuperLUMT(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_SuperLUMT(S);
+}
+
+int SUNLinSolSetup_SuperLUMT(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_SuperLUMT(S, A);
+}
+
+int SUNLinSolSolve_SuperLUMT(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                             N_Vector b, sunrealtype tol)
+{
+  return sunLinSolSolve_SuperLUMT(S, A, x, b, tol);
 }

@@ -88,65 +88,14 @@ SUNNonlinearSolver SUNNonlinSol_FixedPointSens(int count, N_Vector y, int m,
                                                SUNContext sunctx);
 
 /* core functions */
-SUNDIALS_EXPORT
-SUNNonlinearSolver_Type SUNNonlinSolGetType_FixedPoint(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolInitialize_FixedPoint(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS, N_Vector y0,
-                                 N_Vector y, N_Vector w, sunrealtype tol,
-                                 sunbooleantype callSetup, void* mem);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolFree_FixedPoint(SUNNonlinearSolver NLS);
 
 /* set functions */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetOptions_FixedPoint(SUNNonlinearSolver NLS,
-                                             const char* NLSid,
-                                             const char* file_name, int argc,
-                                             char* argv[]);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetSysFn_FixedPoint(SUNNonlinearSolver NLS,
-                                           SUNNonlinSolSysFn SysFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetConvTestFn_FixedPoint(SUNNonlinearSolver NLS,
-                                                SUNNonlinSolConvTestFn CTestFn,
-                                                void* ctest_data);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetMaxIters_FixedPoint(SUNNonlinearSolver NLS,
-                                              int maxiters);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetDamping_FixedPoint(SUNNonlinearSolver NLS,
                                              sunrealtype beta);
 
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetNormFn_FixedPoint(SUNNonlinearSolver NLS,
-                                            SUNNonlinSolNormFn NormFn,
-                                            void* norm_fn_data);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetGetUpdateNormFn_FixedPoint(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
-
 /* get functions */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumIters_FixedPoint(SUNNonlinearSolver NLS,
-                                              long int* niters);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetCurIter_FixedPoint(SUNNonlinearSolver NLS, int* iter);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumConvFails_FixedPoint(SUNNonlinearSolver NLS,
-                                                  long int* nconvfails);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_FixedPoint(SUNNonlinearSolver NLS,

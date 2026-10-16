@@ -25,6 +25,7 @@ sundials_add_library(
   sundials_sunlinsoldense
   SOURCES sunlinsol_dense.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_dense.h
+          ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_dense_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

@@ -27,13 +27,33 @@
 #include <nvector/nvector_petsc.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
-#include <sunnonlinsol/sunnonlinsol_petscsnes.h>
+#include <sunnonlinsol/sunnonlinsol_petscsnes_deprecated.h>
 
 #include "sundials_macros.h"
 
 #define SUNNLS_SNES_CONTENT(NLS) \
   ((SUNNonlinearSolverContent_PetscSNES)(NLS->content))
 #define SUNNLS_SNESOBJ(NLS) (SUNNLS_SNES_CONTENT(NLS)->snes)
+
+/* Functions attached to the N_Vector */
+static SUNErrCode sunNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS);
+
+static SUNErrCode sunNonlinSolGetNumConvFails_PetscSNES(SUNNonlinearSolver NLS,
+                                                        long int* nconvfails);
+
+static SUNErrCode sunNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS,
+                                                    long int* nni);
+
+static SUNNonlinearSolver_Type sunNonlinSolGetType_PetscSNES(SUNNonlinearSolver NLS);
+
+static SUNErrCode sunNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS);
+
+static SUNErrCode sunNonlinSolSetSysFn_PetscSNES(SUNNonlinearSolver NLS,
+                                                 SUNNonlinSolSysFn SysFn);
+
+static int sunNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0,
+                                       N_Vector y, N_Vector w, sunrealtype tol,
+                                       sunbooleantype callLSetup, void* mem);
 
 /* private function which translates the SNESFunction form to the SUNNonlinSolSysFn form */
 static PetscErrorCode PetscSysFn(SNES snes, Vec x, Vec f, void* ctx);
@@ -63,13 +83,13 @@ SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes, SUNContext sunc
   if (NLS == NULL) { return NULL; }
 
   /* Attach operations */
-  NLS->ops->gettype         = SUNNonlinSolGetType_PetscSNES;
-  NLS->ops->initialize      = SUNNonlinSolInitialize_PetscSNES;
-  NLS->ops->solve           = SUNNonlinSolSolve_PetscSNES;
-  NLS->ops->free            = SUNNonlinSolFree_PetscSNES;
-  NLS->ops->setsysfn        = SUNNonlinSolSetSysFn_PetscSNES;
-  NLS->ops->getnumiters     = SUNNonlinSolGetNumIters_PetscSNES;
-  NLS->ops->getnumconvfails = SUNNonlinSolGetNumConvFails_PetscSNES;
+  NLS->ops->gettype         = sunNonlinSolGetType_PetscSNES;
+  NLS->ops->initialize      = sunNonlinSolInitialize_PetscSNES;
+  NLS->ops->solve           = sunNonlinSolSolve_PetscSNES;
+  NLS->ops->free            = sunNonlinSolFree_PetscSNES;
+  NLS->ops->setsysfn        = sunNonlinSolSetSysFn_PetscSNES;
+  NLS->ops->getnumiters     = sunNonlinSolGetNumIters_PetscSNES;
+  NLS->ops->getnumconvfails = sunNonlinSolGetNumConvFails_PetscSNES;
 
   /*
    * Create content
@@ -134,14 +154,14 @@ SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes, SUNContext sunc
   ============================================================================*/
 
 /* get the type of SUNNonlinearSolver */
-SUNNonlinearSolver_Type SUNNonlinSolGetType_PetscSNES(
+SUNNonlinearSolver_Type sunNonlinSolGetType_PetscSNES(
   SUNDIALS_MAYBE_UNUSED SUNNonlinearSolver NLS)
 {
   return (SUNNONLINEARSOLVER_ROOTFIND);
 }
 
 /* performs any initialization needed */
-SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)
+SUNErrCode sunNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)
 {
   PetscErrorCode ptcerr;
 
@@ -158,7 +178,7 @@ SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)
 }
 
 /*------------------------------------------------------------------------------
-  SUNNonlinSolSolve_PetscSNES: Performs the nonlinear solve F(y) = 0 or G(y) = y
+  sunNonlinSolSolve_PetscSNES: Performs the nonlinear solve F(y) = 0 or G(y) = y
 
   Successful solve return code:
     SUN_SUCCESS = 0
@@ -174,7 +194,7 @@ SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)
   Note return values beginning with * are package specific values returned by
   the Sys function provided to the nonlinear solver.
   ----------------------------------------------------------------------------*/
-int SUNNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
+int sunNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
                                 N_Vector w, SUNDIALS_MAYBE_UNUSED sunrealtype tol,
                                 SUNDIALS_MAYBE_UNUSED sunbooleantype callLSetup,
                                 void* mem)
@@ -245,7 +265,7 @@ int SUNNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
 }
 
 /* free the SUNNonlinearSolver */
-SUNErrCode SUNNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS)
+SUNErrCode sunNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS)
 {
   /* return if NLS is already free */
   if (NLS == NULL) { return SUN_SUCCESS; }
@@ -259,11 +279,11 @@ SUNErrCode SUNNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS)
     }
     if (SUNNLS_SNES_CONTENT(NLS)->y)
     {
-      N_VDestroy_Petsc(SUNNLS_SNES_CONTENT(NLS)->y);
+      N_VDestroy(SUNNLS_SNES_CONTENT(NLS)->y);
     }
     if (SUNNLS_SNES_CONTENT(NLS)->f)
     {
-      N_VDestroy_Petsc(SUNNLS_SNES_CONTENT(NLS)->f);
+      N_VDestroy(SUNNLS_SNES_CONTENT(NLS)->f);
     }
     free(NLS->content);
     NLS->content = NULL;
@@ -287,7 +307,7 @@ SUNErrCode SUNNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS)
   ============================================================================*/
 
 /* set the system residual function */
-SUNErrCode SUNNonlinSolSetSysFn_PetscSNES(SUNNonlinearSolver NLS,
+SUNErrCode sunNonlinSolSetSysFn_PetscSNES(SUNNonlinearSolver NLS,
                                           SUNNonlinSolSysFn SysFn)
 {
   /* check that the nonlinear solver is non-null */
@@ -340,7 +360,7 @@ SUNErrCode SUNNonlinSolGetSysFn_PetscSNES(SUNNonlinearSolver NLS,
 }
 
 /* get the number of iterations performed in the last solve */
-SUNErrCode SUNNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS, long int* nni)
+SUNErrCode sunNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS, long int* nni)
 {
   int ierr;
   sunindextype niters;
@@ -363,7 +383,7 @@ SUNErrCode SUNNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS, long int* n
 
 /* get the total number of nonlinear convergence failures in the
    lifetime of this SUNNonlinearSolver object */
-SUNErrCode SUNNonlinSolGetNumConvFails_PetscSNES(SUNNonlinearSolver NLS,
+SUNErrCode sunNonlinSolGetNumConvFails_PetscSNES(SUNNonlinearSolver NLS,
                                                  long int* nconvfails)
 {
   /* check that the nonlinear solver is non-null */
@@ -399,4 +419,45 @@ static PetscErrorCode PetscSysFn(SUNDIALS_MAYBE_UNUSED SNES snes, Vec x, Vec f,
    * indicate an error instead of retval so that we don't overlap with one of
    * the standard PETSc error codes */
   return (retval != 0) ? -1 : 0;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNNonlinSolFree_PetscSNES(SUNNonlinearSolver NLS)
+{
+  return sunNonlinSolFree_PetscSNES(NLS);
+}
+
+SUNErrCode SUNNonlinSolGetNumConvFails_PetscSNES(SUNNonlinearSolver NLS,
+                                                 long int* nconvfails)
+{
+  return sunNonlinSolGetNumConvFails_PetscSNES(NLS, nconvfails);
+}
+
+SUNErrCode SUNNonlinSolGetNumIters_PetscSNES(SUNNonlinearSolver NLS, long int* nni)
+{
+  return sunNonlinSolGetNumIters_PetscSNES(NLS, nni);
+}
+
+SUNNonlinearSolver_Type SUNNonlinSolGetType_PetscSNES(SUNNonlinearSolver NLS)
+{
+  return sunNonlinSolGetType_PetscSNES(NLS);
+}
+
+SUNErrCode SUNNonlinSolInitialize_PetscSNES(SUNNonlinearSolver NLS)
+{
+  return sunNonlinSolInitialize_PetscSNES(NLS);
+}
+
+SUNErrCode SUNNonlinSolSetSysFn_PetscSNES(SUNNonlinearSolver NLS,
+                                          SUNNonlinSolSysFn SysFn)
+{
+  return sunNonlinSolSetSysFn_PetscSNES(NLS, SysFn);
+}
+
+int SUNNonlinSolSolve_PetscSNES(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
+                                N_Vector w, sunrealtype tol,
+                                sunbooleantype callLSetup, void* mem)
+{
+  return sunNonlinSolSolve_PetscSNES(NLS, y0, y, w, tol, callLSetup, mem);
 }

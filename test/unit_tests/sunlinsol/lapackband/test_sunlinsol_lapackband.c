@@ -151,12 +151,12 @@ int main(int argc, char* argv[])
   {
     printf("FAIL: SUNLinSol module failed %i tests \n \n", fails);
     printf("\nanswer =\n");
-    N_VPrint_Serial(y);
+    N_VPrint(y);
     printf("\ncomputed =\n");
-    N_VPrint_Serial(x);
+    N_VPrint(x);
     printf("\ndiff (answer-computed) =\n");
-    N_VLinearSum_Serial(SUN_RCONST(1.0), y, -SUN_RCONST(1.0), x, x);
-    N_VPrint_Serial(x);
+    N_VLinearSum(SUN_RCONST(1.0), y, -SUN_RCONST(1.0), x, x);
+    N_VPrint(x);
     if (print_matrix_on_fail)
     {
       printf("\nA (original) =\n");
@@ -191,7 +191,7 @@ int check_vector(N_Vector X, N_Vector Y, sunrealtype tol)
 
   Xdata        = N_VGetArrayPointer(X);
   Ydata        = N_VGetArrayPointer(Y);
-  local_length = N_VGetLength_Serial(X);
+  local_length = N_VGetLength(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++)

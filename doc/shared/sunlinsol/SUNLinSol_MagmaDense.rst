@@ -57,16 +57,8 @@ SUNLinearSolver_MagmaDense Functions
 -------------------------------------
 
 The SUNLinearSolver_MagmaDense module defines implementations of all "direct"
-linear solver operations listed in :numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_MagmaDense``
-* ``SUNLinSolInitialize_MagmaDense``
-* ``SUNLinSolSetup_MagmaDense``
-* ``SUNLinSolSolve_MagmaDense``
-* ``SUNLinSolLastFlag_MagmaDense``
-* ``SUNLinSolFree_MagmaDense``
-
-In addition, the module provides the following user-callable routines:
+linear solver operations listed in :numref:`SUNLinSol.API`. In addition, the
+module provides the following user-callable routines:
 
 
 .. c:function:: SUNLinearSolver SUNLinSol_MagmaDense(N_Vector y, SUNMatrix A, SUNContext sunctx)

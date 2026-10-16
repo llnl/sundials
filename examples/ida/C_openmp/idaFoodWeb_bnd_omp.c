@@ -324,12 +324,12 @@ int main(int argc, char* argv[])
   SUNLinSolFree(LS);
   SUNMatDestroy(A);
 
-  N_VDestroy_OpenMP(cc);
-  N_VDestroy_OpenMP(cp);
-  N_VDestroy_OpenMP(id);
+  N_VDestroy(cc);
+  N_VDestroy(cp);
+  N_VDestroy(id);
 
   SUNDlsMat_destroyMat(webdata->acoef);
-  N_VDestroy_OpenMP(webdata->rates);
+  N_VDestroy(webdata->rates);
   free(webdata);
 
   SUNContext_Free(&ctx);

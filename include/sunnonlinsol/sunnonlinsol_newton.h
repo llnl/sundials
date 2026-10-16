@@ -78,66 +78,14 @@ SUNNonlinearSolver SUNNonlinSol_NewtonSens(int count, N_Vector y,
                                            SUNContext sunctx);
 
 /* core functions */
-SUNDIALS_EXPORT
-SUNNonlinearSolver_Type SUNNonlinSolGetType_Newton(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolInitialize_Newton(SUNNonlinearSolver NLS);
-
-SUNDIALS_EXPORT
-int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS, N_Vector y0, N_Vector y,
-                             N_Vector w, sunrealtype tol,
-                             sunbooleantype callLSetup, void* mem);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolFree_Newton(SUNNonlinearSolver NLS);
 
 /* set functions */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetSysFn_Newton(SUNNonlinearSolver NLS,
-                                       SUNNonlinSolSysFn SysFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetLSetupFn_Newton(SUNNonlinearSolver NLS,
-                                          SUNNonlinSolLSetupFn LSetupFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetLSolveFn_Newton(SUNNonlinearSolver NLS,
-                                          SUNNonlinSolLSolveFn LSolveFn);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetConvTestFn_Newton(SUNNonlinearSolver NLS,
-                                            SUNNonlinSolConvTestFn CTestFn,
-                                            void* ctest_data);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetMaxIters_Newton(SUNNonlinearSolver NLS, int maxiters);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolSetComputeStiffnessRatio_Newton(SUNNonlinearSolver NLS,
                                                        sunbooleantype onoff);
 
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetGetUpdateNormFn_Newton(
-  SUNNonlinearSolver NLS, SUNNonlinSolGetUpdateNormFn GetUpdateNormFn,
-  void* getupdatenorm_data);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolSetNormFn_Newton(SUNNonlinearSolver NLS,
-                                        SUNNonlinSolNormFn NormFn,
-                                        void* norm_fn_data);
-
 /* get functions */
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumIters_Newton(SUNNonlinearSolver NLS,
-                                          long int* niters);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetCurIter_Newton(SUNNonlinearSolver NLS, int* iter);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNNonlinSolGetNumConvFails_Newton(SUNNonlinearSolver NLS,
-                                              long int* nconvfails);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNNonlinSolGetSysFn_Newton(SUNNonlinearSolver NLS,

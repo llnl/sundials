@@ -55,9 +55,9 @@ contains
 
     x => FN_VNew_ManyVector(int(nsubvecs, myindextype), subvecs, sunctx)
     call FN_VConst(ONE, x)
-    y => FN_VClone_ManyVector(x)
+    y => FN_VClone(x)
     call FN_VConst(ONE, y)
-    z => FN_VClone_ManyVector(x)
+    z => FN_VClone(x)
     call FN_VConst(ONE, z)
 
     xvecs = FN_VCloneVectorArray(nv, x)
@@ -67,42 +67,42 @@ contains
     !===== Test =====
 
     ! test generic vector functions
-    ival = FN_VGetVectorID_ManyVector(x)
+    ival = FN_VGetVectorID(x)
     ival = FN_VGetCommunicator(x)
-    ival = FN_VGetLength_ManyVector(x)
+    ival = FN_VGetLength(x)
 
     ! test standard vector operations
-    call FN_VLinearSum_ManyVector(ONE, x, ONE, y, z)
-    call FN_VConst_ManyVector(ONE, z)
-    call FN_VProd_ManyVector(x, y, z)
-    call FN_VDiv_ManyVector(x, y, z)
-    call FN_VScale_ManyVector(ONE, x, y)
-    call FN_VAbs_ManyVector(x, y)
-    call FN_VInv_ManyVector(x, z)
-    call FN_VAddConst_ManyVector(x, ONE, z)
-    rval = FN_VDotProdLocal_ManyVector(x, y)
-    rval = FN_VMaxNormLocal_ManyVector(x)
-    rval = FN_VWrmsNorm_ManyVector(x, y)
-    rval = FN_VWrmsNormMask_ManyVector(x, y, z)
-    rval = FN_VMinLocal_ManyVector(x)
-    rval = FN_VWL2Norm_ManyVector(x, y)
-    rval = FN_VL1NormLocal_ManyVector(x)
-    call FN_VCompare_ManyVector(ONE, x, y)
-    ival = FN_VInvTestLocal_ManyVector(x, y)
-    ival = FN_VConstrMaskLocal_ManyVector(z, x, y)
-    rval = FN_VMinQuotientLocal_ManyVector(x, y)
+    call FN_VLinearSum(ONE, x, ONE, y, z)
+    call FN_VConst(ONE, z)
+    call FN_VProd(x, y, z)
+    call FN_VDiv(x, y, z)
+    call FN_VScale(ONE, x, y)
+    call FN_VAbs(x, y)
+    call FN_VInv(x, z)
+    call FN_VAddConst(x, ONE, z)
+    rval = FN_VDotProdLocal(x, y)
+    rval = FN_VMaxNormLocal(x)
+    rval = FN_VWrmsNorm(x, y)
+    rval = FN_VWrmsNormMask(x, y, z)
+    rval = FN_VMinLocal(x)
+    rval = FN_VWL2Norm(x, y)
+    rval = FN_VL1NormLocal(x)
+    call FN_VCompare(ONE, x, y)
+    ival = FN_VInvTestLocal(x, y)
+    ival = FN_VConstrMaskLocal(z, x, y)
+    rval = FN_VMinQuotientLocal(x, y)
 
     ! test fused vector operations
-    ival = FN_VLinearCombination_ManyVector(nv, nvarr, xvecs, x)
-    ival = FN_VScaleAddMulti_ManyVector(nv, nvarr, x, xvecs, zvecs)
-    ival = FN_VDotProdMulti_ManyVector(nv, x, xvecs, nvarr)
+    ival = FN_VLinearCombination(nv, nvarr, xvecs, x)
+    ival = FN_VScaleAddMulti(nv, nvarr, x, xvecs, zvecs)
+    ival = FN_VDotProdMulti(nv, x, xvecs, nvarr)
 
     ! test vector array operations
-    ival = FN_VLinearSumVectorArray_ManyVector(nv, ONE, xvecs, ONE, xvecs, zvecs)
-    ival = FN_VScaleVectorArray_ManyVector(nv, nvarr, xvecs, zvecs)
-    ival = FN_VConstVectorArray_ManyVector(nv, ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_ManyVector(nv, xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_ManyVector(nv, xvecs, xvecs, x, nvarr)
+    ival = FN_VLinearSumVectorArray(nv, ONE, xvecs, ONE, xvecs, zvecs)
+    ival = FN_VScaleVectorArray(nv, nvarr, xvecs, zvecs)
+    ival = FN_VConstVectorArray(nv, ONE, xvecs)
+    ival = FN_VWrmsNormVectorArray(nv, xvecs, xvecs, nvarr)
+    ival = FN_VWrmsNormMaskVectorArray(nv, xvecs, xvecs, x, nvarr)
 
     ! test the ManyVector specific operations
     ival = FN_VGetNumSubvectors_ManyVector(x)
@@ -113,9 +113,9 @@ contains
 
     !==== Cleanup =====
     call FN_VDestroyVectorArray(subvecs, nsubvecs)
-    call FN_VDestroy_ManyVector(x)
-    call FN_VDestroy_ManyVector(y)
-    call FN_VDestroy_ManyVector(z)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
+    call FN_VDestroy(z)
     call FN_VDestroyVectorArray(xvecs, nv)
     call FN_VDestroyVectorArray(zvecs, nv)
 
@@ -151,7 +151,7 @@ contains
 
     !=== cleanup ====
     call FN_VDestroyVectorArray(subvecs, nsubvecs)
-    call FN_VDestroy_ManyVector(x)
+    call FN_VDestroy(x)
 
   end function unit_tests
 

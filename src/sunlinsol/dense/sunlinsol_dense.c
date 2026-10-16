@@ -24,7 +24,7 @@
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_dense.h>
+#include <sunlinsol/sunlinsol_dense_deprecated.h>
 
 #include "sundials_logger_impl.h"
 #include "sundials_macros.h"
@@ -40,6 +40,27 @@
 #define DENSE_CONTENT(S) ((SUNLinearSolverContent_Dense)(S->content))
 #define PIVOTS(S)        (DENSE_CONTENT(S)->pivots)
 #define LASTFLAG(S)      (DENSE_CONTENT(S)->last_flag)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_Dense(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_Dense(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_Dense(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_Dense(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_Dense(SUNLinearSolver S);
+
+static int sunLinSolSetup_Dense(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_Dense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                                N_Vector b, sunrealtype tol);
 
 /*
  * -----------------------------------------------------------------
@@ -73,13 +94,13 @@ SUNLinearSolver SUNLinSol_Dense(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_Dense;
-  S->ops->getid      = SUNLinSolGetID_Dense;
-  S->ops->initialize = SUNLinSolInitialize_Dense;
-  S->ops->setup      = SUNLinSolSetup_Dense;
-  S->ops->solve      = SUNLinSolSolve_Dense;
-  S->ops->lastflag   = SUNLinSolLastFlag_Dense;
-  S->ops->free       = SUNLinSolFree_Dense;
+  S->ops->gettype    = sunLinSolGetType_Dense;
+  S->ops->getid      = sunLinSolGetID_Dense;
+  S->ops->initialize = sunLinSolInitialize_Dense;
+  S->ops->setup      = sunLinSolSetup_Dense;
+  S->ops->solve      = sunLinSolSolve_Dense;
+  S->ops->lastflag   = sunLinSolLastFlag_Dense;
+  S->ops->free       = sunLinSolFree_Dense;
 
   /* Create content */
   content = NULL;
@@ -107,24 +128,24 @@ SUNLinearSolver SUNLinSol_Dense(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_Dense(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DENSE);
 }
 
-SUNErrCode SUNLinSolInitialize_Dense(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_Dense(SUNLinearSolver S)
 {
   /* all solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_Dense(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_Dense(SUNLinearSolver S, SUNMatrix A)
 {
   SUNFunctionBegin(S->sunctx);
   sunrealtype** A_cols;
@@ -150,7 +171,7 @@ int SUNLinSolSetup_Dense(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_Dense(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+int sunLinSolSolve_Dense(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
                          SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   SUNFunctionBegin(S->sunctx);
@@ -181,13 +202,13 @@ int SUNLinSolSolve_Dense(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
   return SUN_SUCCESS;
 }
 
-sunindextype SUNLinSolLastFlag_Dense(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_Dense(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return (LASTFLAG(S));
 }
 
-SUNErrCode SUNLinSolFree_Dense(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_Dense(SUNLinearSolver S)
 {
   /* return if S is already free */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -211,4 +232,42 @@ SUNErrCode SUNLinSolFree_Dense(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_Dense(SUNLinearSolver S)
+{
+  return sunLinSolFree_Dense(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_Dense(SUNLinearSolver S)
+{
+  return sunLinSolGetID_Dense(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_Dense(SUNLinearSolver S)
+{
+  return sunLinSolGetType_Dense(S);
+}
+
+SUNErrCode SUNLinSolInitialize_Dense(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_Dense(S);
+}
+
+sunindextype SUNLinSolLastFlag_Dense(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_Dense(S);
+}
+
+int SUNLinSolSetup_Dense(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_Dense(S, A);
+}
+
+int SUNLinSolSolve_Dense(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+                         sunrealtype tol)
+{
+  return sunLinSolSolve_Dense(S, A, x, b, tol);
 }

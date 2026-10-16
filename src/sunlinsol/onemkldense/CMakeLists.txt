@@ -21,7 +21,9 @@ install(CODE "MESSAGE(\"\nInstall SUNLINSOL_ONEMKLDENSE\n\")")
 sundials_add_library(
   sundials_sunlinsolonemkldense
   SOURCES sunlinsol_onemkldense.cpp
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_onemkldense.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_onemkldense.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_onemkldense_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

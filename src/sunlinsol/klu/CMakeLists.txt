@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_sunlinsolklu
   SOURCES sunlinsol_klu.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_klu.h
+          ${SUNDIALS_SOURCE_DIR}/include/sunlinsol/sunlinsol_klu_deprecated.h
   INCLUDE_SUBDIR sunlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

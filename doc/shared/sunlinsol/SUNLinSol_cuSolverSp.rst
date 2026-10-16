@@ -63,26 +63,8 @@ SUNLinSol_cuSolverSp_batchQR functions
 --------------------------------------
 
 The ``SUNLinearSolver_cuSolverSp_batchQR`` module defines implementations of
-all "direct" linear solver operations listed in :numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_cuSolverSp_batchQR``
-
-* ``SUNLinSolInitialize_cuSolverSp_batchQR`` -- this sets the
-  ``first_factorize`` flag to 1
-
-* ``SUNLinSolSetup_cuSolverSp_batchQR`` -- this always copies the
-  relevant SUNMATRIX_SPARSE data to the GPU; if this is the first setup
-  it will perform symbolic analysis on the system
-
-* ``SUNLinSolSolve_cuSolverSp_batchQR`` -- this calls the
-  ``cusolverSpXcsrqrsvBatched`` routine to perform factorization
-
-* ``SUNLinSolLastFlag_cuSolverSp_batchQR``
-
-* ``SUNLinSolFree_cuSolverSp_batchQR``
-
-
-In addition, the module provides the following user-callable routines:
+all "direct" linear solver operations listed in :numref:`SUNLinSol.API`. In
+addition, the module provides the following user-callable routines:
 
 .. c:function:: SUNLinearSolver SUNLinSol_cuSolverSp_batchQR(N_Vector y, SUNMatrix A, cusolverHandle_t cusol, SUNContext sunctx)
 

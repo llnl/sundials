@@ -79,7 +79,7 @@ not adhere to all of these rules.
 
    .. code-block:: c
 
-      SUNErrCode N_VLinearCombination_Serial(int nvec, realtype* c, N_Vector* X, N_Vector z)
+      static SUNErrCode nvLinearCombination_Serial(int nvec, realtype* c, N_Vector* X, N_Vector z)
       {
          SUNFunctionBegin(X[0]->sunctx); // Correct
 
@@ -94,7 +94,7 @@ not adhere to all of these rules.
          // ...
       }
 
-      SUNErrCode N_VLinearCombination_Serial(int nvec, realtype* c, N_Vector* X, N_Vector z)
+      static SUNErrCode nvLinearCombination_Serial(int nvec, realtype* c, N_Vector* X, N_Vector z)
       {
          int          i;
          sunindextype j, N;

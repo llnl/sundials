@@ -32,6 +32,7 @@ sundials_add_library(
   sundials_nvecparallel
   SOURCES nvector_parallel.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_parallel.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_parallel_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

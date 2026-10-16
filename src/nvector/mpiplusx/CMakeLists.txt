@@ -32,6 +32,7 @@ sundials_add_library(
   sundials_nvecmpiplusx
   SOURCES nvector_mpiplusx.c
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_mpiplusx.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_mpiplusx_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES sundials_nvecmpimanyvector_obj

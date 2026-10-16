@@ -23,7 +23,9 @@ install(CODE "MESSAGE(\"\nInstall SUNNONLINSOL_NEWTON\n\")")
 sundials_add_library(
   sundials_sunnonlinsolnewton
   SOURCES sunnonlinsol_newton.c
-  HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_newton.h
+  HEADERS
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_newton.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunnonlinsol/sunnonlinsol_newton_deprecated.h
   INCLUDE_SUBDIR sunnonlinsol
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES

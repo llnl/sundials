@@ -306,7 +306,7 @@ int main(int argc, char* argv[])
   {
     MPI_Abort(comm, 1);
   }
-  N_VDestroy_Petsc(constraints);
+  N_VDestroy(constraints);
 
   /*
    * Create SNES context, then wrap the SNES context in a SUNNonlinsol_PetscSNES
@@ -392,12 +392,12 @@ int main(int argc, char* argv[])
 
   IDAFree(&ida_mem);
 
-  N_VDestroy_Petsc(id);
-  N_VDestroy_Petsc(res);
-  N_VDestroy_Petsc(up);
-  N_VDestroy_Petsc(uu);
+  N_VDestroy(id);
+  N_VDestroy(res);
+  N_VDestroy(up);
+  N_VDestroy(uu);
 
-  N_VDestroy_Petsc(data->pp);
+  N_VDestroy(data->pp);
   DMDestroy(&data->da);
   free(data);
 
