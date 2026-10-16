@@ -56,7 +56,11 @@ struct SUNDomEigEstimatorContent_Power_
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
 
-  sunbooleantype is_complex; /* Flag for complex eigenvalue request */
+  SUNPreRhsFn prerhs_fn; /* User provided Preprocess RHS function */
+  void* prerhs_fn_data;  /* Preprocess RHS function data */
+
+  sunbooleantype is_complex;    /* Flag for complex eigenvalue request */
+  sunbooleantype Fy_is_current; /* Flag to track if Fy is current */
 };
 
 typedef struct SUNDomEigEstimatorContent_Power_* SUNDomEigEstimatorContent_Power;
@@ -79,6 +83,11 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Power(SUNDomEigEstimator DEE,
                                            void* rhs_data, SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Power(SUNDomEigEstimator DEE,
+                                                void* prerhs_fn_data,
+                                                SUNPreRhsFn prerhs_fn);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetMaxIters_Power(SUNDomEigEstimator DEE,
                                                 long int max_iters);
 
@@ -96,7 +105,7 @@ SUNErrCode SUNDomEigEstimator_SetInitialGuess_Power(SUNDomEigEstimator DEE,
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Power(
-  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v, N_Vector Fv);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetIsReal_Power(SUNDomEigEstimator DEE,

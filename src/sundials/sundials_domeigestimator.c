@@ -66,6 +66,7 @@ SUNDomEigEstimator SUNDomEigEstimator_NewEmpty(SUNContext sunctx)
   /* initialize operations to NULL */
   ops->setatimes                = NULL;
   ops->setrhs                   = NULL;
+  ops->setprerhs                = NULL;
   ops->setrhslinearizationpoint = NULL;
   ops->setoptions               = NULL;
   ops->setmaxiters              = NULL;
@@ -209,14 +210,30 @@ SUNErrCode SUNDomEigEstimator_SetRhs(SUNDomEigEstimator DEE, void* rhs_data,
   return (ier);
 }
 
+SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE,
+                                          void* prerhs_fn_data,
+                                          SUNPreRhsFn prerhs_fn)
+{
+  SUNErrCode ier;
+  SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
+  if (DEE->ops->setprerhs)
+  {
+    ier = DEE->ops->setprerhs(DEE, prerhs_fn_data, prerhs_fn);
+  }
+  else { ier = SUN_SUCCESS; }
+  SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
+  return (ier);
+}
+
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE,
-                                                       sunrealtype t, N_Vector v)
+                                                       sunrealtype t,
+                                                       N_Vector v, N_Vector Fv)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
   if (DEE->ops->setrhslinearizationpoint)
   {
-    ier = DEE->ops->setrhslinearizationpoint(DEE, t, v);
+    ier = DEE->ops->setrhslinearizationpoint(DEE, t, v, Fv);
   }
   else { ier = SUN_SUCCESS; }
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));

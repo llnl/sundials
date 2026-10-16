@@ -165,12 +165,15 @@ The SUNDomEigEstimator_Arnoldi module defines the *content* field of a
      int num_warmups;
      long int num_iters;
      sunbooleantype warmup_to_tol;
+     sunbooleantype Fy_is_current;
      sunrealtype tol_warmup;
      sunrealtype rhs_linT;
      long int num_ATimes;
      SUNRhsFn rhsfn;
      void* rhs_data;
      long int nfevals;
+     SUNPreRhsFn prerhs_fn;
+     void* prerhs_fn_data;
      sunrealtype* LAPACK_A;
      sunrealtype* LAPACK_wr;
      sunrealtype* LAPACK_wi;
@@ -211,6 +214,13 @@ information:
 * ``rhs_data`` - pointer to the data structure for ``rhsfn``,
 
 * ``nfevals`` - number of RHS evaluations,
+
+* ``prerhs_fn`` - user provided preprocessing RHS function,
+
+* ``prerhs_fn_data`` - pointer to the data structure for ``prerhs_fn``,
+
+* ``Fy_is_current`` - flag indicating whether ``Fy`` holds the RHS value at the
+  current linearization point,
 
 * ``num_ATimes`` - number of calls to the ``ATimes`` function,
 
@@ -262,15 +272,17 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 
 * ``SUNDomEigEstimator_SetATimes_Arnoldi``
 
-*  ``SUNDomEigEstimator_SetRhs_Arnoldi``
+* ``SUNDomEigEstimator_SetRhs_Arnoldi``
+
+* ``SUNDomEigEstimator_SetPreRhsFn_Arnoldi``
 
 * ``SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi``
 
 * ``SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi``
 
-*  ``SUNDomEigEstimator_SetRelTol_Arnoldi``
+* ``SUNDomEigEstimator_SetRelTol_Arnoldi``
 
-*  ``SUNDomEigEstimator_SetInitialGuess_Arnoldi``
+* ``SUNDomEigEstimator_SetInitialGuess_Arnoldi``
 
 * ``SUNDomEigEstimator_Initialize_Arnoldi``
 

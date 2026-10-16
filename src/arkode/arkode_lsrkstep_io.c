@@ -550,17 +550,10 @@ int LSRKStepSetDomEigEstimator(void* arkode_mem, SUNDomEigEstimator DEE)
     return ARK_ILL_INPUT;
   }
 
-  /* Attach the DEE pointer to the step memory */
+  /* Attach the DEE pointer to the step memory. The RHS function, the
+     preprocessing function, and the linearization point are passed to the
+     DEE in lsrkStep_ComputeNewDomEig before each estimate. */
   step_mem->DEE = DEE;
-
-  /* Set the ATimes function for the DEE with A_data = arkode_mem */
-  retval = SUNDomEigEstimator_SetATimes(DEE, arkode_mem, lsrkStep_DQJtimes);
-  if (retval != SUN_SUCCESS)
-  {
-    arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                    "SUNDomEigEstimator_SetATimes failed");
-    return ARK_DEE_FAIL;
-  }
 
   return ARK_SUCCESS;
 }
