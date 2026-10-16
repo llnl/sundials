@@ -34,8 +34,8 @@ static int InitializeClearCache(int cachesize);
 static int FinalizeClearCache(void);
 
 /* private data for clearing cache */
-static sunindextype N;    /* data length */
-static sunrealtype* data; /* host data   */
+static sunindextype N;           /* data length */
+static sunrealtype* data = NULL; /* host data   */
 
 /* ----------------------------------------------------------------------
  * Main NVector Testing Routine
@@ -277,7 +277,7 @@ static int InitializeClearCache(int cachesize)
 
 static int FinalizeClearCache(void)
 {
-  if (data) { free(data); }
+  free(data);
   return (0);
 }
 
