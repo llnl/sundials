@@ -1,0 +1,39 @@
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+sundials_add_example(
+  cv_adv_diff_diag_hip cv_adv_diff_diag_hip.cpp NO_TEST
+  INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
+                cv_adv_diff_diag_hip_1_1.out
+  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                 ${EXE_EXTRA_LINK_LIBS})
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+  target_link_libraries(cv_adv_diff_diag_hip PRIVATE sundials_cvode_fused_hip)
+endif()
+foreach(example_args "0 0" "0 1" "1 1")
+  string(REGEX REPLACE " " "_" test_name cv_adv_diff_diag_hip_${example_args})
+  sundials_add_test(
+    ${test_name} cv_adv_diff_diag_hip
+    TEST_ARGS ${example_args}
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE ${test_name}.out
+    EXAMPLE_TYPE develop)
+endforeach()
+sundials_add_example(
+  cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp
+  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                 ${EXE_EXTRA_LINK_LIBS})
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+  target_link_libraries(cv_adv_diff_kry_hip PRIVATE sundials_cvode_fused_hip)
+endif()

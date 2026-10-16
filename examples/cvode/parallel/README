@@ -1,6 +1,0 @@
-List of parallel CVODE examples
-
-  cvAdvDiff_non_p       : 1-D advection-diffusion (nonstiff)
-  cvAdvDiff_diag_p      : 1-D advection-diffusion with Adams and diagonal linear solver
-  cvDiurnal_kry_bbd_p   : 2-D 2-species diurnal advection-diffusion with BBD preconditioner
-  cvDiurnal_kry_p       : 2-D 2-species diurnal advection-diffusion

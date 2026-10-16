@@ -25,7 +25,7 @@ sundials_add_library(
   SOURCES nvector_cuda.cu
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_cuda.h
   INCLUDE_SUBDIR nvector
-  LINK_LIBRARIES PUBLIC sundials_core
+  LINK_LIBRARIES PUBLIC sundials_core CUDA::cudart
   OBJECT_LIBRARIES sundials_sunmemcuda_obj
   OUTPUT_NAME sundials_nveccuda
   VERSION ${nveclib_VERSION}

@@ -91,6 +91,8 @@ if(SUNDIALS_ENABLE_NVECTOR_KOKKOS)
               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   install(FILES ${PROJECT_SOURCE_DIR}/include/nvector/nvector_kokkos.hpp
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/nvector")
+  set_target_properties(sundials_nveckokkos PROPERTIES EXPORT_NAME nveckokkos)
+  install(TARGETS sundials_nveckokkos EXPORT sundials-targets)
   set(_SUNDIALS_INSTALLED_COMPONENTS
       "nveckokkos;${_SUNDIALS_INSTALLED_COMPONENTS}"
       CACHE INTERNAL "" FORCE)
