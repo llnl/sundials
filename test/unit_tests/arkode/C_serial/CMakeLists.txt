@@ -35,6 +35,7 @@ set(ARKODE_unit_tests
     "ark_test_interp\;-100"
     "ark_test_interp\;-10000"
     "ark_test_interp\;-1000000"
+    "ark_test_lsrkstep_domeig_warmups\;"
     "ark_test_mass\;"
     "ark_test_reset\;"
     "ark_test_splittingstep_coefficients\;"
@@ -80,6 +81,7 @@ foreach(test_tuple ${ARKODE_unit_tests})
               sundials_sunadaptcontrollerimexgus_obj
               sundials_sunadaptcontrollersoderlind_obj
               sundials_adjointcheckpointscheme_fixed_obj
+              sundials_sundomeigestpower_obj
               ${EXE_EXTRA_LINK_LIBS})
 
     # Tell CMake that we depend on the ARKODE library since it does not pick

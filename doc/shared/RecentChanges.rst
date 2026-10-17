@@ -24,4 +24,10 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Fixed a bug in LSRKStep where calling
+:c:func:`LSRKStepSetNumDomEigEstPreprocessIters` after the first dominant
+eigenvalue estimate set the number of preprocessing iterations of the attached
+``SUNDomEigEstimator`` to the value for the initial estimate instead of the
+requested value.
+
 **Deprecation Notices**

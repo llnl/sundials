@@ -394,7 +394,9 @@ int LSRKStepSetNumDomEigEstPreprocessIters(void* arkode_mem, int num_iters)
   if (step_mem->DEE)
   {
     retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
-                                                      step_mem->num_init_warmups);
+                                                      step_mem->init_warmup
+                                                        ? step_mem->num_init_warmups
+                                                        : step_mem->num_warmups);
     if (retval != SUN_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
