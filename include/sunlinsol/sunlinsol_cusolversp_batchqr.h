@@ -64,16 +64,6 @@ SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_cuSolverSp_batchQR(
 
 /*
  * ----------------------------------------------------------------------------
- *  cuSolverSp implementations of SUNLinearSolver operations
- * ----------------------------------------------------------------------------
- */
-
-SUNDIALS_EXPORT SUNLinearSolver_Type
-
-  SUNDIALS_EXPORT SUNLinearSolver_ID
-
-    /*
- * ----------------------------------------------------------------------------
  *  Additional get and set functions.
  * ----------------------------------------------------------------------------
  */

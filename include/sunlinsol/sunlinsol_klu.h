@@ -127,10 +127,6 @@ SUNDIALS_EXPORT sun_klu_symbolic* SUNLinSol_KLUGetSymbolic(SUNLinearSolver S);
 SUNDIALS_EXPORT sun_klu_numeric* SUNLinSol_KLUGetNumeric(SUNLinearSolver S);
 SUNDIALS_EXPORT sun_klu_common* SUNLinSol_KLUGetCommon(SUNLinearSolver S);
 
-/* -----------------------------------------------
- *  Implementations of SUNLinearSolver operations
- * ----------------------------------------------- */
-
 #ifdef __cplusplus
 }
 #endif

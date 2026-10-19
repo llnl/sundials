@@ -87,8 +87,6 @@ SUNDIALS_EXPORT
 SUNNonlinearSolver SUNNonlinSol_FixedPointSens(int count, N_Vector y, int m,
                                                SUNContext sunctx);
 
-/* core functions */
-
 /* set functions */
 
 SUNDIALS_EXPORT

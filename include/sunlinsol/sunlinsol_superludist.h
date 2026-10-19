@@ -119,12 +119,6 @@ SUNDIALS_EXPORT xSOLVEstruct_t* SUNLinSol_SuperLUDIST_GetSOLVEstruct(
 SUNDIALS_EXPORT SuperLUStat_t* SUNLinSol_SuperLUDIST_GetSuperLUStat(
   SUNLinearSolver LS);
 
-/*
- * ----------------------------------------------------------------------------
- *  SuperLU-DIST implementations of SUNLinearSolver operations
- * ----------------------------------------------------------------------------
- */
-
 #ifdef __cplusplus
 }
 #endif
