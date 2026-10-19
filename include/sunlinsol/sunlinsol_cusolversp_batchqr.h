@@ -68,8 +68,8 @@ SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_cuSolverSp_batchQR(
  * ----------------------------------------------------------------------------
  */
 
-    SUNDIALS_EXPORT void
-    SUNLinSol_cuSolverSp_batchQR_GetDescription(SUNLinearSolver S, char** desc);
+SUNDIALS_EXPORT void SUNLinSol_cuSolverSp_batchQR_GetDescription(SUNLinearSolver S,
+                                                                 char** desc);
 
 SUNDIALS_EXPORT void SUNLinSol_cuSolverSp_batchQR_SetDescription(
   SUNLinearSolver S, const char* desc);
