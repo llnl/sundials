@@ -95,7 +95,7 @@ replaced with ``N_VScale``. To continue using ``N_VScale_Serial``, include
 operations and their new headers is provided below.
 
 +------------------------+----------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Component              | Deprecated function families                 | New headers to restore deprecated opertions                                                         |
+| Component              | Deprecated function families                 | New headers to restore deprecated operations                                                        |
 +========================+==============================================+=====================================================================================================+
 | ``SUNAdaptController`` | 21 ``SUNAdaptController_*_<implementation>`` | ``sunadaptcontroller_imexgus_deprecated.h``, ``sunadaptcontroller_mrihtol_deprecated.h``,           |
 |                        | operations                                   | ``sunadaptcontroller_soderlind_deprecated.h``                                                       |
