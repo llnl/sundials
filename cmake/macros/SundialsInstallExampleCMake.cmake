@@ -77,8 +77,8 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       get_filename_component(_installed_source "${_source}" NAME)
       list(APPEND _installed_sources "${_installed_source}")
 
-      # Relative source paths are interpreted in this function's directory,
-      # not the directory in which the target and source properties were set.
+      # Relative source paths are interpreted in this function's directory, not
+      # the directory in which the target and source properties were set.
       if(IS_ABSOLUTE "${_source}")
         set(_property_source "${_source}")
       else()
@@ -109,9 +109,9 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         list(APPEND _languages C)
       endif()
 
-      get_source_file_property(_cuda_format "${_property_source}"
-                               TARGET_DIRECTORY
-                               ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
+      get_source_file_property(
+        _cuda_format "${_property_source}" TARGET_DIRECTORY
+        ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
       if(_cuda_format AND NOT _cuda_format STREQUAL "NOTFOUND")
         string(
           APPEND
