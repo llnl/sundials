@@ -65,8 +65,6 @@ SUNDIALS_EXPORT
 SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes,
                                           SUNContext sunctx);
 
-/* SUNNonlinearSolver API functions */
-
 /* Implementation specific functions */
 
 SUNDIALS_EXPORT

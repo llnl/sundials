@@ -77,8 +77,6 @@ SUNDIALS_EXPORT
 SUNNonlinearSolver SUNNonlinSol_NewtonSens(int count, N_Vector y,
                                            SUNContext sunctx);
 
-/* core functions */
-
 /* set functions */
 
 SUNDIALS_EXPORT
