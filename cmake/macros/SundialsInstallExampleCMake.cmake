@@ -116,8 +116,8 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
                                ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
       if(_cuda_format STREQUAL "NOTFOUND" AND NOT IS_ABSOLUTE "${_source}")
         get_source_file_property(
-          _cuda_format "${_absolute_source}" TARGET_DIRECTORY ${_target}
-          CUDA_SOURCE_PROPERTY_FORMAT)
+          _cuda_format "${_absolute_source}" TARGET_DIRECTORY
+          ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
       endif()
       if(_cuda_format AND NOT _cuda_format STREQUAL "NOTFOUND")
         string(
