@@ -17,6 +17,9 @@
  * Kvaerno-Prothero-Robinson ODE test problem, see .cpp file for details
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_CV_KPR_HPP
+#define SUNDIALS_CV_KPR_HPP
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -121,3 +124,5 @@ static int ReadInputs(std::vector<std::string>& args, Options& opts,
 }
 
 /*---- end of file ----*/
+
+#endif // SUNDIALS_CV_KPR_HPP

@@ -244,13 +244,6 @@ for the NVECTOR_SYCL module.
    add a vector to multiple vectors fused operation in the SYCL vector. The
    return value is a :c:type:`SUNErrCode`.
 
-..
-   .. cpp:function:: SUNErrCode N_VEnableDotProdMulti_Sycl(N_Vector v, sunbooleantype tf)
-
-      This function enables (``SUNTRUE``) or disables (``SUNFALSE``) the multiple
-      dot products fused operation in the SYCL vector. The return value is
-      a :c:type:`SUNErrCode`.
-
 .. cpp:function:: SUNErrCode N_VEnableLinearSumVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 
    This function enables (``SUNTRUE``) or disables (``SUNFALSE``) the linear sum
@@ -265,19 +258,6 @@ for the NVECTOR_SYCL module.
 
    This function enables (``SUNTRUE``) or disables (``SUNFALSE``) the const
    operation for vector arrays in the SYCL vector. The return value is a :c:type:`SUNErrCode`.
-
-..
-   .. cpp:function:: SUNErrCode N_VEnableWrmsNormVectorArray_Sycl(N_Vector v, sunbooleantype tf)
-
-      This function enables (``SUNTRUE``) or disables (``SUNFALSE``) the WRMS norm
-      operation for vector arrays in the SYCL vector.  The return value is
-      a :c:type:`SUNErrCode`.
-
-   .. cpp:function:: SUNErrCode N_VEnableWrmsNormMaskVectorArray_Sycl(N_Vector v, sunbooleantype tf)
-
-      This function enables (``SUNTRUE``) or disables (``SUNFALSE``) the masked WRMS
-      norm operation for vector arrays in the SYCL vector.  The return value is
-      a :c:type:`SUNErrCode`.
 
 .. cpp:function:: SUNErrCode N_VEnableScaleAddMultiVectorArray_Sycl(N_Vector v, sunbooleantype tf)
 

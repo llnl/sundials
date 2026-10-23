@@ -16,8 +16,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef KIN_HEAT2D_NONLIN_HYPRE_PFMG_HPP
-#define KIN_HEAT2D_NONLIN_HYPRE_PFMG_HPP
+#ifndef SUNDIALS_KIN_HEAT2D_NONLIN_HYPRE_PFMG_HPP
+#define SUNDIALS_KIN_HEAT2D_NONLIN_HYPRE_PFMG_HPP
 
 #include <cmath>
 #include <cstdio>

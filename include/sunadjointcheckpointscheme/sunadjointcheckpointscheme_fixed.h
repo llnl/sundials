@@ -15,8 +15,8 @@
  * SUNAdjointCheckpointScheme_Fixed class declaration.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNADJOINTCHECKPOINTSCHEME_FIXED_H
-#define _SUNADJOINTCHECKPOINTSCHEME_FIXED_H
+#ifndef SUNDIALS_SUNADJOINTCHECKPOINTSCHEME_FIXED_H
+#define SUNDIALS_SUNADJOINTCHECKPOINTSCHEME_FIXED_H
 
 #include <sundials/sundials_adjointcheckpointscheme.h>
 #include <sundials/sundials_core.h>
@@ -60,4 +60,4 @@ SUNErrCode SUNAdjointCheckpointScheme_EnableDense_Fixed(
 }
 #endif
 
-#endif /* _SUNADJOINTCHECKPOINTSCHEME_FIXED_H */
+#endif /* SUNDIALS_SUNADJOINTCHECKPOINTSCHEME_FIXED_H */

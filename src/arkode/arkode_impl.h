@@ -17,8 +17,8 @@
  * Implementation header file for the main ARKODE integrator.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_IMPL_H
-#define _ARKODE_IMPL_H
+#ifndef SUNDIALS_ARKODE_IMPL_H
+#define SUNDIALS_ARKODE_IMPL_H
 
 #include <stdarg.h>
 
@@ -616,9 +616,6 @@ struct ARKodeMemRec
 
 /* Prototype of internal rwtSet function */
 int arkRwtSet(N_Vector ycur, N_Vector weight, void* data);
-
-/* Prototype of internal explicit stability estimation function */
-int arkExpStab(N_Vector y, sunrealtype t, sunrealtype* hstab, void* user_data);
 
 /*===============================================================
   HIGH LEVEL ERROR HANDLER, USED THROUGHOUT ARKODE

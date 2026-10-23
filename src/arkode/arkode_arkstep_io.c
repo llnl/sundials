@@ -2260,7 +2260,7 @@ int ARKStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
   return (ARKodePrintAllStats(arkode_mem, outfile, fmt));
 }
 
-char* ARKStepGetReturnFlagName(long int flag)
+const char* ARKStepGetReturnFlagName(long int flag)
 {
   return (ARKodeGetReturnFlagName(flag));
 }

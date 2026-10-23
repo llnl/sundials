@@ -19,8 +19,8 @@
  * supports up to 3 dimensions and an arbitrary number of degrees of freedom.
  * ----------------------------------------------------------------------------*/
 
-#ifndef _SIMPLEPARGRID_H
-#define _SIMPLEPARGRID_H
+#ifndef SUNDIALS_PARALLELGRID_HPP
+#define SUNDIALS_PARALLELGRID_HPP
 
 #include <fstream>
 #include <iomanip>

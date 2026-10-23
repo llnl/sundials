@@ -17,8 +17,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _NVECTOR_HIP_ARRAY_KERNELS_CUH_
-#define _NVECTOR_HIP_ARRAY_KERNELS_CUH_
+#ifndef SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
+#define SUNDIALS_VECTORARRAYKERNELS_HIP_HPP
 
 #include <limits>
 
@@ -206,4 +206,4 @@ __global__ void linearCombinationVectorArrayKernel(int nv, int ns, T* c, T** xd,
 } // namespace hip
 } // namespace sundials
 
-#endif // _NVECTOR_HIP_ARRAY_KERNELS_CUH_
+#endif // SUNDIALS_VECTORARRAYKERNELS_HIP_HPP

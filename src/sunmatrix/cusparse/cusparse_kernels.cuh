@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNCUSPARSE_MATRIX_KERNELS_CUH_
-#define _SUNCUSPARSE_MATRIX_KERNELS_CUH_
+#ifndef SUNDIALS_CUSPARSE_KERNELS_CUH
+#define SUNDIALS_CUSPARSE_KERNELS_CUH
 
 #include <cuda_runtime.h>
 #include <sunmatrix/sunmatrix_cusparse.h>

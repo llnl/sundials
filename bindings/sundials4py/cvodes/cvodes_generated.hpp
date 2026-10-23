@@ -1,4 +1,4 @@
-// #ifndef _CVODES_H
+// #ifndef SUNDIALS_CVODES_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1715,7 +1715,7 @@ m.def(
 //
 // #endif
 //
-// #ifndef _CVSLS_H
+// #ifndef SUNDIALS_CVODES_LS_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -2051,7 +2051,7 @@ m.def("CVodeSetLinearSolutionScalingB", CVodeSetLinearSolutionScalingB,
 //
 // #endif
 //
-// #ifndef _CVPROJ_H
+// #ifndef SUNDIALS_CVODES_PROJ_H
 //
 // #ifdef __cplusplus
 // #endif

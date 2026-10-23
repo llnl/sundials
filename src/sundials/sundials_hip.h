@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h>
 
-#ifndef _SUNDIALS_HIP_H
-#define _SUNDIALS_HIP_H
+#ifndef SUNDIALS_SUNDIALS_HIP_H
+#define SUNDIALS_SUNDIALS_HIP_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -74,4 +74,4 @@ inline sunbooleantype SUNDIALS_HIP_Assert(hipError_t hiperr, const char* file,
 }
 #endif
 
-#endif /* _SUNDIALS_HIP_H */
+#endif /* SUNDIALS_SUNDIALS_HIP_H */

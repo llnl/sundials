@@ -155,6 +155,7 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   ark_mem->step_setusecompensatedsums     = NULL;
   ark_mem->step_resize                    = mriStep_Resize;
   ark_mem->step_reset                     = mriStep_Reset;
+  ark_mem->step_setstepdirection          = mriStep_SetStepDirection;
   ark_mem->step_free                      = mriStep_Free;
   ark_mem->step_printmem                  = mriStep_PrintMem;
   ark_mem->step_setdefaults               = mriStep_SetDefaults;
@@ -602,6 +603,29 @@ int mriStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR)
   }
 
   return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
+  mriStep_SetStepDirection:
+
+  This routine sets the integration direction of the inner
+  stepper after the MRIStep integration direction is changed.
+  ---------------------------------------------------------------*/
+int mriStep_SetStepDirection(ARKodeMem ark_mem, sunrealtype stepdir)
+{
+  ARKodeMRIStepMem step_mem;
+  int retval = mriStep_AccessStepMem(ark_mem, __func__, &step_mem);
+  if (retval != ARK_SUCCESS) { return retval; }
+
+  SUNErrCode err = SUNStepper_SetStepDirection(step_mem->stepper, stepdir);
+  if (err != SUN_SUCCESS)
+  {
+    arkProcessError(ark_mem, ARK_SUNSTEPPER_ERR, __LINE__, __func__,
+                    __FILE__, "Setting the step direction for the inner SUNStepper failed");
+    return ARK_SUNSTEPPER_ERR;
+  }
+
+  return ARK_SUCCESS;
 }
 
 /*---------------------------------------------------------------
@@ -2065,7 +2089,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return retval;
       }
       retval = mriStep_StageERKFast(ark_mem, step_mem, t0, tf, ark_mem->ycur,
-                                    ark_mem->tempv2, need_inner_dsm);
+                                    need_inner_dsm);
       if (retval != ARK_SUCCESS)
       {
         *nflagPtr = CONV_FAIL;
@@ -2282,7 +2306,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return retval;
       }
       retval = mriStep_StageERKFast(ark_mem, step_mem, t0, tf, ark_mem->ycur,
-                                    ark_mem->tempv2, SUNFALSE);
+                                    SUNFALSE);
       if (retval != ARK_SUCCESS)
       {
         *nflagPtr = CONV_FAIL;
@@ -2354,7 +2378,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
         return retval;
       }
       retval = mriStep_StageERKFast(ark_mem, step_mem, t0, tf, ark_mem->ycur,
-                                    ark_mem->tempv2, need_inner_dsm);
+                                    need_inner_dsm);
       if (retval != ARK_SUCCESS)
       {
         *nflagPtr = CONV_FAIL;
@@ -2483,7 +2507,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   int stage, j;                       /* stage indices              */
   int retval;                         /* reusable return flag       */
   N_Vector ytilde;                    /* embedded solution          */
-  N_Vector ytemp;                     /* temporary vector           */
   SUNAdaptController_Type adapt_type; /* timestep adaptivity type   */
   sunbooleantype embedding;           /* flag indicating embedding  */
   sunbooleantype solution;            /*   or solution stages       */
@@ -2505,7 +2528,6 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
-  ytemp  = ark_mem->tempv2;
 
   /* initialize the current stage index */
   step_mem->istage = step_mem->cur_stage = 0;
@@ -2681,8 +2703,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     /* Evolve fast IVP for this stage, potentially get inner dsm on
        all non-embedding stages */
     retval = mriStep_StageERKFast(ark_mem, step_mem, ark_mem->tn, ark_mem->tcur,
-                                  ark_mem->ycur, ytemp,
-                                  need_inner_dsm && !embedding);
+                                  ark_mem->ycur, need_inner_dsm && !embedding);
     if (retval != ARK_SUCCESS)
     {
       *nflagPtr = CONV_FAIL;
@@ -2999,7 +3020,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   int stage, nextstage;               /* current/next stages        */
   int retval;                         /* reusable return flag       */
   N_Vector ytilde;                    /* embedded solution          */
-  N_Vector ytemp;                     /* temporary vector           */
   SUNAdaptController_Type adapt_type; /* timestep adaptivity type   */
   sunrealtype t0, tf;                 /* start/end of each stage    */
   sunbooleantype embedding;           /* flag indicating embedding  */
@@ -3020,7 +3040,6 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
-  ytemp  = ark_mem->tempv2;
 
   /* initial time for step */
   t0 = ark_mem->tn;
@@ -3205,7 +3224,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
       /* Evolve fast IVP for this stage, potentially get inner dsm on all
          non-embedding stages */
       retval = mriStep_StageERKFast(ark_mem, step_mem, t0, tf, ark_mem->ycur,
-                                    ytemp, need_inner_dsm && !embedding);
+                                    need_inner_dsm && !embedding);
       if (retval != ARK_SUCCESS)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",
@@ -3784,17 +3803,17 @@ int mriStep_CheckCoupling(ARKodeMem ark_mem)
   This routine performs a single MRI stage, is, with explicit
   slow time scale and fast time scale that requires evolution.
 
-  On input, ycur is the initial condition for the fast IVP at t0.
-  On output, ycur is the solution of the fast IVP at tf.
-  The vector ytemp is only used if temporal adaptivity is enabled,
-  and the fast error is not provided by the fast integrator.
+  t0 is the initial time for the fast IVP, and tf is the final
+  time. When this function is called, the SUNStepper has already
+  been reset to the initial time t0 and initial condition ycur by
+  the takeStep* function. On output, ycur is the solution of the
+  fast IVP at tf.
 
   get_inner_dsm indicates whether this stage is one that should
   accumulate an inner temporal error estimate.
   ---------------------------------------------------------------*/
 int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                          sunrealtype t0, sunrealtype tf, N_Vector ycur,
-                         SUNDIALS_MAYBE_UNUSED N_Vector ytemp,
                          sunbooleantype get_inner_dsm)
 {
   int retval;                         /* reusable return flag */

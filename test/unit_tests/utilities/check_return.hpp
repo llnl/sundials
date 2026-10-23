@@ -17,6 +17,9 @@
  * Utility functions for checking function returns
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_CHECK_RETURN_HPP
+#define SUNDIALS_CHECK_RETURN_HPP
+
 #include <iostream>
 #include <string>
 
@@ -37,3 +40,5 @@ inline int check_ptr(void* ptr, const std::string& funcname)
   std::cerr << "ERROR: " << funcname << " returned NULL" << std::endl;
   return 1;
 }
+
+#endif // SUNDIALS_CHECK_RETURN_HPP

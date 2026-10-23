@@ -18,6 +18,9 @@
  * ark_sod_lsrk.cpp for more details.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_ARK_SOD_LSRK_HPP
+#define SUNDIALS_ARK_SOD_LSRK_HPP
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -539,3 +542,5 @@ static int CloseOutput(ARKODEParameters& uopts)
 }
 
 //---- end of file ----
+
+#endif // SUNDIALS_ARK_SOD_LSRK_HPP

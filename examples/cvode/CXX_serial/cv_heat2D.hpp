@@ -19,6 +19,9 @@
  * See cv_heat2D.cpp for more information.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_CV_HEAT2D_HPP
+#define SUNDIALS_CV_HEAT2D_HPP
+
 #include <cmath>
 #include <cstdio>
 #include <fstream>
@@ -342,3 +345,5 @@ static int CloseOutput(UserData& udata)
 
   return 0;
 }
+
+#endif // SUNDIALS_CV_HEAT2D_HPP

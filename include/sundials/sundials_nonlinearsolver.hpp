@@ -17,8 +17,8 @@
  * C++ view of SUNDIALS SUNNonlinearSolver
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_NONLINEARSOLVER_HPP
-#define _SUNDIALS_NONLINEARSOLVER_HPP
+#ifndef SUNDIALS_SUNDIALS_NONLINEARSOLVER_HPP
+#define SUNDIALS_SUNDIALS_NONLINEARSOLVER_HPP
 
 #include <utility>
 

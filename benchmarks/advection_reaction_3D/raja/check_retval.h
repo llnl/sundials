@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CHECK_RETVAL_H_
-#define _SUNDIALS_CHECK_RETVAL_H_
+#ifndef SUNDIALS_CHECK_RETVAL_H
+#define SUNDIALS_CHECK_RETVAL_H
 
 #include <stdio.h>
 

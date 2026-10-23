@@ -18,6 +18,9 @@
  * evaluate the performance of an NVECTOR module implementation.
  * -----------------------------------------------------------------*/
 
+#ifndef SUNDIALS_TEST_NVECTOR_PERFORMANCE_H
+#define SUNDIALS_TEST_NVECTOR_PERFORMANCE_H
+
 #include <math.h>
 
 /* define constants */
@@ -102,3 +105,5 @@ void rand_realtype_constraints(sunrealtype* data, sunindextype len);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // SUNDIALS_TEST_NVECTOR_PERFORMANCE_H

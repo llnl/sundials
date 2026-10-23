@@ -18,8 +18,8 @@
  * Implementation header file for ARKODE's MRI time stepper module.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARKODE_MRISTEP_IMPL_H
-#define _ARKODE_MRISTEP_IMPL_H
+#ifndef SUNDIALS_ARKODE_MRISTEP_IMPL_H
+#define SUNDIALS_ARKODE_MRISTEP_IMPL_H
 
 /* Public header file */
 #include "arkode/arkode_mristep.h"
@@ -280,6 +280,7 @@ int mriStep_GetStageIndex(ARKodeMem ark_mem, int* stage, int* max_stages);
 int mriStep_PrintAllStats(ARKodeMem ark_mem, FILE* outfile, SUNOutputFormat fmt);
 int mriStep_WriteParameters(ARKodeMem ark_mem, FILE* fp);
 int mriStep_Reset(ARKodeMem ark_mem, sunrealtype tR, N_Vector yR);
+int mriStep_SetStepDirection(ARKodeMem ark_mem, sunrealtype stepdir);
 int mriStep_Resize(ARKodeMem ark_mem, N_Vector y0, sunrealtype hscale,
                    sunrealtype t0, ARKVecResizeFn resize, void* resize_data);
 int mriStep_ComputeState(ARKodeMem ark_mem, N_Vector zcor, N_Vector z);
@@ -298,7 +299,7 @@ int mriStep_SetCoupling(ARKodeMem ark_mem);
 int mriStep_CheckCoupling(ARKodeMem ark_mem);
 int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
                          sunrealtype t0, sunrealtype tf, N_Vector ycur,
-                         N_Vector ytemp, sunbooleantype get_inner_dsm);
+                         sunbooleantype get_inner_dsm);
 int mriStep_StageERKNoFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, int is);
 int mriStep_StageDIRKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, int is,
                           int* nflagPtr);

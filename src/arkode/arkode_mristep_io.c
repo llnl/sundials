@@ -1293,7 +1293,7 @@ int MRIStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
   return (ARKodePrintAllStats(arkode_mem, outfile, fmt));
 }
 
-char* MRIStepGetReturnFlagName(long int flag)
+const char* MRIStepGetReturnFlagName(long int flag)
 {
   return (ARKodeGetReturnFlagName(flag));
 }

@@ -1184,38 +1184,32 @@ int KINPrintAllStats(void* kinmem, FILE* outfile, SUNOutputFormat fmt)
  * -----------------------------------------------------------------
  */
 
-char* KINGetReturnFlagName(long int flag)
+const char* KINGetReturnFlagName(long int flag)
 {
-  char* name;
-
-  name = (char*)malloc(24 * sizeof(char));
-
   switch (flag)
   {
-  case KIN_SUCCESS: sprintf(name, "KIN_SUCCESS"); break;
-  case KIN_INITIAL_GUESS_OK: sprintf(name, "KIN_INITIAL_GUESS_OK"); break;
-  case KIN_STEP_LT_STPTOL: sprintf(name, "KIN_STEP_LT_STPTOL"); break;
-  case KIN_WARNING: sprintf(name, "KIN_WARNING"); break;
-  case KIN_MEM_NULL: sprintf(name, "KIN_MEM_NULL"); break;
-  case KIN_ILL_INPUT: sprintf(name, "KIN_ILL_INPUT"); break;
-  case KIN_NO_MALLOC: sprintf(name, "KIN_NO_MALLOC"); break;
-  case KIN_MEM_FAIL: sprintf(name, "KIN_MEM_FAIL"); break;
-  case KIN_LINESEARCH_NONCONV: sprintf(name, "KIN_LINESEARCH_NONCONV"); break;
-  case KIN_MAXITER_REACHED: sprintf(name, "KIN_MAXITER_REACHED"); break;
-  case KIN_MXNEWT_5X_EXCEEDED: sprintf(name, "KIN_MXNEWT_5X_EXCEEDED"); break;
-  case KIN_LINESEARCH_BCFAIL: sprintf(name, "KIN_LINESEARCH_BCFAIL"); break;
-  case KIN_LINSOLV_NO_RECOVERY: sprintf(name, "KIN_LINSOLV_NO_RECOVERY"); break;
-  case KIN_LINIT_FAIL: sprintf(name, "KIN_LINIT_FAIL"); break;
-  case KIN_LSETUP_FAIL: sprintf(name, "KIN_LSETUP_FAIL"); break;
-  case KIN_LSOLVE_FAIL: sprintf(name, "KIN_LSOLVE_FAIL"); break;
-  case KIN_SYSFUNC_FAIL: sprintf(name, "KIN_SYSFUNC_FAIL"); break;
-  case KIN_FIRST_SYSFUNC_ERR: sprintf(name, "KIN_FIRST_SYSFUNC_ERR"); break;
-  case KIN_REPTD_SYSFUNC_ERR: sprintf(name, "KIN_REPTD_SYSFUNC_ERR"); break;
-  case KIN_VECTOROP_ERR: sprintf(name, "KIN_VECTOROP_ERR"); break;
-  case KIN_CONTEXT_ERR: sprintf(name, "KIN_CONTEXT_ERR"); break;
-  case KIN_DAMPING_FN_ERR: sprintf(name, "KIN_DAMPING_FN_ERR"); break;
-  default: sprintf(name, "NONE");
+  case KIN_SUCCESS: return "KIN_SUCCESS";
+  case KIN_INITIAL_GUESS_OK: return "KIN_INITIAL_GUESS_OK";
+  case KIN_STEP_LT_STPTOL: return "KIN_STEP_LT_STPTOL";
+  case KIN_WARNING: return "KIN_WARNING";
+  case KIN_MEM_NULL: return "KIN_MEM_NULL";
+  case KIN_ILL_INPUT: return "KIN_ILL_INPUT";
+  case KIN_NO_MALLOC: return "KIN_NO_MALLOC";
+  case KIN_MEM_FAIL: return "KIN_MEM_FAIL";
+  case KIN_LINESEARCH_NONCONV: return "KIN_LINESEARCH_NONCONV";
+  case KIN_MAXITER_REACHED: return "KIN_MAXITER_REACHED";
+  case KIN_MXNEWT_5X_EXCEEDED: return "KIN_MXNEWT_5X_EXCEEDED";
+  case KIN_LINESEARCH_BCFAIL: return "KIN_LINESEARCH_BCFAIL";
+  case KIN_LINSOLV_NO_RECOVERY: return "KIN_LINSOLV_NO_RECOVERY";
+  case KIN_LINIT_FAIL: return "KIN_LINIT_FAIL";
+  case KIN_LSETUP_FAIL: return "KIN_LSETUP_FAIL";
+  case KIN_LSOLVE_FAIL: return "KIN_LSOLVE_FAIL";
+  case KIN_SYSFUNC_FAIL: return "KIN_SYSFUNC_FAIL";
+  case KIN_FIRST_SYSFUNC_ERR: return "KIN_FIRST_SYSFUNC_ERR";
+  case KIN_REPTD_SYSFUNC_ERR: return "KIN_REPTD_SYSFUNC_ERR";
+  case KIN_VECTOROP_ERR: return "KIN_VECTOROP_ERR";
+  case KIN_CONTEXT_ERR: return "KIN_CONTEXT_ERR";
+  case KIN_DAMPING_FN_ERR: return "KIN_DAMPING_FN_ERR";
+  default: return "NONE";
   }
-
-  return (name);
 }

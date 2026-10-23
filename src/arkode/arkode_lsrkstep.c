@@ -1344,8 +1344,8 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
     else if (j == step_mem->req_stages && ark_mem->PostProcessStepFn)
     {
-      retval = ark_mem->PostProcessStepFn(ark_mem->tcur + ark_mem->h * cj,
-                                          ark_mem->ycur, ark_mem->user_data);
+      retval = ark_mem->PostProcessStepFn(ark_mem->tcur, ark_mem->ycur,
+                                          ark_mem->user_data);
       if (retval != 0)
       {
         SUNLogInfo(ARK_LOGGER, "end-stages-list",

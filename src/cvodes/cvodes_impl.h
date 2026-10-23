@@ -17,8 +17,8 @@
  * Implementation header file for the main CVODES integrator.
  * -----------------------------------------------------------------*/
 
-#ifndef _CVODES_IMPL_H
-#define _CVODES_IMPL_H
+#ifndef SUNDIALS_CVODES_IMPL_H
+#define SUNDIALS_CVODES_IMPL_H
 
 #include <stdarg.h>
 
@@ -1144,11 +1144,6 @@ int cvEwtSet(N_Vector ycur, N_Vector weight, void* data);
 
 void cvProcessError(CVodeMem cv_mem, int error_code, int line, const char* func,
                     const char* file, const char* msgfmt, ...);
-
-/* Prototype of internal ErrHandler function */
-
-void cvErrHandler(int error_code, const char* module, const char* function,
-                  char* msg, void* data);
 
 /* Nonlinear solver initialization */
 

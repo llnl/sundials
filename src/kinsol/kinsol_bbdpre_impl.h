@@ -19,8 +19,8 @@
  * KINBBDPRE module header file (private version)
  * -----------------------------------------------------------------*/
 
-#ifndef _KINBBDPRE_IMPL_H
-#define _KINBBDPRE_IMPL_H
+#ifndef SUNDIALS_KINSOL_BBDPRE_IMPL_H
+#define SUNDIALS_KINSOL_BBDPRE_IMPL_H
 
 #include <kinsol/kinsol_bbdpre.h>
 #include <sunlinsol/sunlinsol_band.h>

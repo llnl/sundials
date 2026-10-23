@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _SUNMATRIX_CUSPARSE_H
-#define _SUNMATRIX_CUSPARSE_H
+#ifndef SUNDIALS_SUNMATRIX_CUSPARSE_H
+#define SUNDIALS_SUNMATRIX_CUSPARSE_H
 
 #include <cuda_runtime.h>
 #include <cusparse.h>

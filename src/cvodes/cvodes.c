@@ -180,7 +180,6 @@
  *
  *   Error message handling functions
  *      cvProcessError
- *      cvErrHandler
  *
  * -----------------------------------------------------------------*/
 

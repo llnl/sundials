@@ -17,8 +17,8 @@
  * SUNDIALS logging class implementation.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_LOGGER_IMPL_H
-#define _SUNDIALS_LOGGER_IMPL_H
+#ifndef SUNDIALS_SUNDIALS_LOGGER_IMPL_H
+#define SUNDIALS_SUNDIALS_LOGGER_IMPL_H
 
 #include <stdarg.h>
 #include <sundials/priv/sundials_logger_macros.h>
@@ -164,4 +164,4 @@ struct SUNLogger_
   SUNLoggerFlushMsgFn flush_msg;
 };
 
-#endif /* _SUNDIALS_LOGGER_IMPL_H */
+#endif /* SUNDIALS_SUNDIALS_LOGGER_IMPL_H */

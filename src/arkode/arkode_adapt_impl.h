@@ -18,8 +18,8 @@
  * utilities.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_ADAPT_IMPL_H
-#define _ARKODE_ADAPT_IMPL_H
+#ifndef SUNDIALS_ARKODE_ADAPT_IMPL_H
+#define SUNDIALS_ARKODE_ADAPT_IMPL_H
 
 #include <arkode/arkode.h>
 #include <stdarg.h>

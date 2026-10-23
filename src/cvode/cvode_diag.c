@@ -244,26 +244,20 @@ int CVDiagGetLastFlag(void* cvode_mem, long int* flag)
  * -----------------------------------------------------------------
  */
 
-char* CVDiagGetReturnFlagName(long int flag)
+const char* CVDiagGetReturnFlagName(long int flag)
 {
-  char* name;
-
-  name = (char*)malloc(30 * sizeof(char));
-
   switch (flag)
   {
-  case CVDIAG_SUCCESS: sprintf(name, "CVDIAG_SUCCESS"); break;
-  case CVDIAG_MEM_NULL: sprintf(name, "CVDIAG_MEM_NULL"); break;
-  case CVDIAG_LMEM_NULL: sprintf(name, "CVDIAG_LMEM_NULL"); break;
-  case CVDIAG_ILL_INPUT: sprintf(name, "CVDIAG_ILL_INPUT"); break;
-  case CVDIAG_MEM_FAIL: sprintf(name, "CVDIAG_MEM_FAIL"); break;
-  case CVDIAG_INV_FAIL: sprintf(name, "CVDIAG_INV_FAIL"); break;
-  case CVDIAG_RHSFUNC_UNRECVR: sprintf(name, "CVDIAG_RHSFUNC_UNRECVR"); break;
-  case CVDIAG_RHSFUNC_RECVR: sprintf(name, "CVDIAG_RHSFUNC_RECVR"); break;
-  default: sprintf(name, "NONE");
+  case CVDIAG_SUCCESS: return "CVDIAG_SUCCESS";
+  case CVDIAG_MEM_NULL: return "CVDIAG_MEM_NULL";
+  case CVDIAG_LMEM_NULL: return "CVDIAG_LMEM_NULL";
+  case CVDIAG_ILL_INPUT: return "CVDIAG_ILL_INPUT";
+  case CVDIAG_MEM_FAIL: return "CVDIAG_MEM_FAIL";
+  case CVDIAG_INV_FAIL: return "CVDIAG_INV_FAIL";
+  case CVDIAG_RHSFUNC_UNRECVR: return "CVDIAG_RHSFUNC_UNRECVR";
+  case CVDIAG_RHSFUNC_RECVR: return "CVDIAG_RHSFUNC_RECVR";
+  default: return "NONE";
   }
-
-  return (name);
 }
 
 /*

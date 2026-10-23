@@ -1,4 +1,4 @@
-// #ifndef _SUNNONLINSOL_NEWTON_H
+// #ifndef SUNDIALS_SUNNONLINSOL_NEWTON_H
 //
 // #ifdef __cplusplus
 // #endif

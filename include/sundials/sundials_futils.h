@@ -17,8 +17,8 @@
  * SUNDIALS FILE utility definitions.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_FUTILS_H
-#define _SUNDIALS_FUTILS_H
+#ifndef SUNDIALS_SUNDIALS_FUTILS_H
+#define SUNDIALS_SUNDIALS_FUTILS_H
 
 #include <stdio.h>
 
@@ -32,6 +32,10 @@ extern "C" {
 /* Create a file pointer with the given file name and mode. */
 SUNDIALS_EXPORT
 SUNErrCode SUNFileOpen(const char* filename, const char* modes, FILE** fp);
+
+/* Flush a file pointer's buffer. */
+SUNDIALS_EXPORT
+SUNErrCode SUNFileFlush(FILE* fp);
 
 SUNDIALS_DEPRECATED_EXPORT_MSG("Use SUNFileOpen")
 SUNErrCode SUNDIALSFileOpen(const char* filename, const char* modes, FILE** fp);

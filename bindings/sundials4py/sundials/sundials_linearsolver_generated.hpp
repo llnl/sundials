@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_ITERATIVE_H
+// #ifndef SUNDIALS_SUNDIALS_ITERATIVE_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -288,7 +288,7 @@ m.def(
 //
 // #endif
 //
-// #ifndef _SUNLINEARSOLVER_H
+// #ifndef SUNDIALS_SUNDIALS_LINEARSOLVER_H
 //
 // #ifdef __cplusplus
 // #endif

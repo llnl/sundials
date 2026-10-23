@@ -1,4 +1,4 @@
-// #ifndef _SUNDOMEIGEST_H
+// #ifndef SUNDIALS_SUNDIALS_DOMEIGESTIMATOR_H
 //
 // #ifdef __cplusplus
 // #endif

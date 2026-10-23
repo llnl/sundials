@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_ERRORS_H
+// #ifndef SUNDIALS_SUNDIALS_ERRORS_H
 //
 // #ifdef __cplusplus
 // #endif

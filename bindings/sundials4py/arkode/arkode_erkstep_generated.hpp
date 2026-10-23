@@ -1,4 +1,4 @@
-// #ifndef _ERKSTEP_H
+// #ifndef SUNDIALS_ARKODE_ERKSTEP_H
 //
 // #ifdef __cplusplus
 // #endif

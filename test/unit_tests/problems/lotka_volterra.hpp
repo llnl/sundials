@@ -23,8 +23,8 @@
  * respectively.
  * ---------------------------------------------------------------------------*/
 
-#ifndef _LOTKA_VOLTERRA_HPP
-#define _LOTKA_VOLTERRA_HPP
+#ifndef SUNDIALS_LOTKA_VOLTERRA_HPP
+#define SUNDIALS_LOTKA_VOLTERRA_HPP
 
 #include <sundials/sundials_core.hpp>
 #include <sunmatrix/sunmatrix_dense.h>
