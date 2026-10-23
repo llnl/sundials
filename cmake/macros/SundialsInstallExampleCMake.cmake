@@ -215,6 +215,10 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
     foreach(_property IN ITEMS CUDA_ARCHITECTURES CXX_STANDARD LINKER_LANGUAGE)
       get_target_property(_value ${_target} ${_property})
       if(_value AND NOT _value STREQUAL "_value-NOTFOUND")
+        # CUDA sources may consume C++ compile features from dependencies.
+        if(_property STREQUAL "CXX_STANDARD")
+          list(APPEND _languages CXX)
+        endif()
         string(
           APPEND _target_commands
           "set_property(TARGET ${_target} PROPERTY ${_property} ${_value})\n")
