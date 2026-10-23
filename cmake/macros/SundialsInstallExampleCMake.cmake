@@ -77,16 +77,19 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
       get_filename_component(_installed_source "${_source}" NAME)
       list(APPEND _installed_sources "${_installed_source}")
 
-      # Relative source paths are interpreted in this function's directory, not
-      # the directory in which the target and source properties were set.
-      if(IS_ABSOLUTE "${_source}")
-        set(_property_source "${_source}")
-      else()
-        set(_property_source "${_target_source_dir}/${_source}")
+      # Preserve the target's source spelling for scoped property lookup, and
+      # fall back to its absolute path when the relative path is interpreted
+      # from this function's directory.
+      if(NOT IS_ABSOLUTE "${_source}")
+        set(_absolute_source "${_target_source_dir}/${_source}")
       endif()
 
-      get_source_file_property(_language "${_property_source}" TARGET_DIRECTORY
+      get_source_file_property(_language "${_source}" TARGET_DIRECTORY
                                ${_target} LANGUAGE)
+      if(_language STREQUAL "NOTFOUND" AND NOT IS_ABSOLUTE "${_source}")
+        get_source_file_property(_language "${_absolute_source}"
+                                 TARGET_DIRECTORY ${_target} LANGUAGE)
+      endif()
       if(_language AND NOT _language STREQUAL "NOTFOUND")
         list(APPEND _languages "${_language}")
         get_filename_component(_extension "${_source}" LAST_EXT)
@@ -109,9 +112,13 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         list(APPEND _languages C)
       endif()
 
-      get_source_file_property(
-        _cuda_format "${_property_source}" TARGET_DIRECTORY
-        ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
+      get_source_file_property(_cuda_format "${_source}" TARGET_DIRECTORY
+                               ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
+      if(_cuda_format STREQUAL "NOTFOUND" AND NOT IS_ABSOLUTE "${_source}")
+        get_source_file_property(
+          _cuda_format "${_absolute_source}" TARGET_DIRECTORY ${_target}
+          CUDA_SOURCE_PROPERTY_FORMAT)
+      endif()
       if(_cuda_format AND NOT _cuda_format STREQUAL "NOTFOUND")
         string(
           APPEND
