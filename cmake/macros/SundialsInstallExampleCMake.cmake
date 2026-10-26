@@ -215,9 +215,15 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
     foreach(_property IN ITEMS CUDA_ARCHITECTURES CXX_STANDARD LINKER_LANGUAGE)
       get_target_property(_value ${_target} ${_property})
       if(_value AND NOT _value STREQUAL "_value-NOTFOUND")
-        # CUDA sources may consume C++ compile features from dependencies.
         if(_property STREQUAL "CXX_STANDARD")
-          list(APPEND _languages CXX)
+          # Accelerator sources may consume C++ compile features from
+          # dependencies. Ignore the globally initialized C++ standard for
+          # targets that do not use C++ or an accelerator language.
+          if(CUDA IN_LIST _languages OR HIP IN_LIST _languages)
+            list(APPEND _languages CXX)
+          elseif(NOT CXX IN_LIST _languages)
+            continue()
+          endif()
         endif()
         string(
           APPEND _target_commands
