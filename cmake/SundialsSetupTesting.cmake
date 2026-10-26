@@ -180,8 +180,9 @@ if(SUNDIALS_ENABLE_CODE_COVERAGE)
     COMMAND ${CMAKE_COMMAND} -E make_directory "${SUNDIALS_COVERAGE_OUTPUT_DIR}"
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j 2
     COMMAND
-      "${GCOVR_EXECUTABLE}" --root "${PROJECT_SOURCE_DIR}" --filter src/
-      --filter include/ --print-summary --txt-summary
+      "${GCOVR_EXECUTABLE}" "${PROJECT_BINARY_DIR}" --root
+      "${PROJECT_SOURCE_DIR}" --filter "${PROJECT_SOURCE_DIR}/src/" --filter
+      "${PROJECT_SOURCE_DIR}/include/" --print-summary --txt
       "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.txt" --xml-pretty --xml
       "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.xml" --gcov-executable
       "${SUNDIALS_GCOV_EXECUTABLE}" --html-details

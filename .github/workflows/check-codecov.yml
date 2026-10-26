@@ -69,6 +69,10 @@ jobs:
           envfile: env/coverage.sh
 
       - name: Run make codecov
+        env:
+          # Match the test-driver runtime environment when codecov reruns CTest.
+          SUNLOGGER_INFO_FILENAME: ""
+          OMP_NUM_THREADS: "4"
         run: |
           . /opt/python-venv/sundocs/bin/activate
           build_dir=$(find "$GITHUB_WORKSPACE/test" -maxdepth 1 -type d \
