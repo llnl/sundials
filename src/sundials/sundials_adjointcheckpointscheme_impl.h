@@ -38,6 +38,7 @@ struct SUNAdjointCheckpointScheme_
   SUNAdjointCheckpointScheme_Ops ops;
   void* content;
   SUNContext sunctx;
+  sunbooleantype enabled;
 };
 
 #endif /* SUNDIALS_ADJOINTCHECKPOINTSCHEME_IMPL_H_ */

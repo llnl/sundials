@@ -96,6 +96,8 @@ set(ARKODE_examples
     "ark_KrylovDemo_prec.c\;2\;exclude-single"
     "ark_lotka_volterra_ASA.c\;--check-freq 1\;develop"
     "ark_lotka_volterra_ASA.c\;--check-freq 5\;develop"
+    "ark_lotka_volterra_mri_ASA.c\;--check-freq 1\;develop"
+    "ark_lotka_volterra_mri_ASA.c\;--check-freq 5\;develop"
     "ark_onewaycouple_mri.c\;\;develop"
     "ark_reaction_diffusion_mri.c\;\;develop"
     "ark_robertson_constraints.c\;\;exclude-single"

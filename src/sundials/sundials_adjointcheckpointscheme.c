@@ -38,6 +38,7 @@ SUNErrCode SUNAdjointCheckpointScheme_NewEmpty(
   self->sunctx  = sunctx;
   self->content = NULL;
   self->ops     = NULL;
+  self->enabled = SUNTRUE;
 
   SUNAdjointCheckpointScheme_Ops ops = NULL;
   ops                                = malloc(sizeof(*ops));
@@ -63,6 +64,13 @@ SUNErrCode SUNAdjointCheckpointScheme_NeedsSaving(SUNAdjointCheckpointScheme sel
 {
   SUNFunctionBegin(self->sunctx);
   SUNDIALS_MARK_FUNCTION_BEGIN(SUNCTX_->profiler);
+
+  if (!self->enabled)
+  {
+    *yes_or_no = SUNFALSE;
+    SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
+    return SUN_SUCCESS;
+  }
 
   if (self->ops->needssaving)
   {
@@ -114,20 +122,31 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector(SUNAdjointCheckpointScheme self
 SUNErrCode SUNAdjointCheckpointScheme_Destroy(
   SUNAdjointCheckpointScheme* check_scheme_ptr)
 {
-  SUNFunctionBegin((*check_scheme_ptr)->sunctx);
-  SUNDIALS_MARK_FUNCTION_BEGIN(SUNCTX_->profiler);
-  if ((*check_scheme_ptr)->ops->destroy)
+  if (check_scheme_ptr == NULL) { return SUN_SUCCESS; }
+
+  SUNErrCode err = SUN_SUCCESS;
+  if (*check_scheme_ptr != NULL)
   {
-    SUNErrCode err = (*check_scheme_ptr)->ops->destroy(check_scheme_ptr);
-    SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
-    return err;
-  }
-  else if (*check_scheme_ptr)
-  {
+    SUNFunctionBegin((*check_scheme_ptr)->sunctx);
+    SUNDIALS_MARK_FUNCTION_BEGIN(SUNCTX_->profiler);
+    if ((*check_scheme_ptr)->ops->destroy)
+    {
+      err = (*check_scheme_ptr)->ops->destroy(*check_scheme_ptr);
+    }
+
     free((*check_scheme_ptr)->ops);
     free(*check_scheme_ptr);
+    SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
   }
-  SUNDIALS_MARK_FUNCTION_END(SUNCTX_->profiler);
+  *check_scheme_ptr = NULL;
+  return err;
+}
+
+SUNErrCode SUNAdjointCheckpointScheme_Enable(SUNAdjointCheckpointScheme self,
+                                             sunbooleantype enable_or_disable)
+{
+  SUNFunctionBegin(self->sunctx);
+  self->enabled = enable_or_disable;
   return SUN_SUCCESS;
 }
 

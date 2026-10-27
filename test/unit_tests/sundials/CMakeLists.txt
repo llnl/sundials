@@ -14,7 +14,8 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "test_sundials_datanode\;" "test_sundials_stlvector\;"
+set(unit_tests "test_sundials_adjointstepper\;" "test_sundials_datanode\;"
+               "test_sundials_stlvector\;"
                "test_sundials_hashmap\;" "test_sundials_logger\;")
 
 if(SUNDIALS_ENABLE_ERROR_CHECKS)
@@ -33,6 +34,10 @@ if(TARGET GTest::gtest_main AND TARGET GTest::gmock)
     target_link_libraries(
       ${test} PRIVATE sundials_core sundials_nvecserial sundials_sunmemsys_obj
                       GTest::gtest_main GTest::gmock)
+
+    if(test STREQUAL "test_sundials_adjointstepper")
+      target_include_directories(${test} PRIVATE ${PROJECT_SOURCE_DIR}/src/sundials)
+    endif()
 
     if(test STREQUAL "test_sundials_logger")
       gtest_discover_tests(${test} PROPERTIES LABELS "logging")

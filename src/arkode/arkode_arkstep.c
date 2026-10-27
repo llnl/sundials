@@ -3733,7 +3733,7 @@ int ARKStepCreateAdjointStepper(void* arkode_mem, SUNAdjRhsFn adj_fe,
   step_mem_adj->adj_fe    = adj_fe;
   ark_mem_adj->do_adjoint = SUNTRUE;
 
-  retval = ARKodeSetFixedStep(arkode_mem_adj, -ark_mem->h);
+  retval = ARKodeSetFixedStep(arkode_mem_adj, -ark_mem->hin);
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,

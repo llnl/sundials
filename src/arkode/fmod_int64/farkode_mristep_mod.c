@@ -735,7 +735,7 @@ SWIGEXPORT int _wrap_FMRIStepReInit(void *farg1, ARKRhsFn farg2, ARKRhsFn farg3,
   sunrealtype arg4 ;
   N_Vector arg5 = (N_Vector) 0 ;
   int result;
-  
+
   arg1 = (void *)(farg1);
   arg2 = (ARKRhsFn)(farg2);
   arg3 = (ARKRhsFn)(farg3);
@@ -786,6 +786,104 @@ SWIGEXPORT int _wrap_FMRIStepReInitExtSTS(void *farg1, ARKRhsFn farg2, ARKRhsFn 
   arg5 = (sunrealtype)(*farg5);
   arg6 = (N_Vector)(farg6);
   result = (int)MRIStepReInitExtSTS(arg1,arg2,arg3,arg4,arg5,arg6);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepInnerAdjointProblem_Create(void *farg1, SUNAdjRhsFn farg2, N_Vector farg3, void *farg4, void *farg5) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  SUNAdjRhsFn arg2 = (SUNAdjRhsFn) 0 ;
+  N_Vector arg3 = (N_Vector) 0 ;
+  void *arg4 = (void *) 0 ;
+  MRIStepInnerAdjointProblem *arg5 = (MRIStepInnerAdjointProblem *) 0 ;
+  int result;
+
+  arg1 = (void *)(farg1);
+  arg2 = (SUNAdjRhsFn)(farg2);
+  arg3 = (N_Vector)(farg3);
+  arg4 = (void *)(farg4);
+  arg5 = (MRIStepInnerAdjointProblem *)(farg5);
+  result = (int)MRIStepInnerAdjointProblem_Create(arg1,arg2,arg3,arg4,arg5);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepInnerAdjointProblem_GetAdjRhsFn(void *farg1, void *farg2) {
+  int fresult ;
+  MRIStepInnerAdjointProblem arg1 = (MRIStepInnerAdjointProblem) 0 ;
+  SUNAdjRhsFn *arg2 = (SUNAdjRhsFn *) 0 ;
+  int result;
+
+  arg1 = (MRIStepInnerAdjointProblem)(farg1);
+  arg2 = (SUNAdjRhsFn *)(farg2);
+  result = (int)MRIStepInnerAdjointProblem_GetAdjRhsFn(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepInnerAdjointProblem_GetTerminalState(void *farg1, void *farg2) {
+  int fresult ;
+  MRIStepInnerAdjointProblem arg1 = (MRIStepInnerAdjointProblem) 0 ;
+  N_Vector *arg2 = (N_Vector *) 0 ;
+  int result;
+
+  arg1 = (MRIStepInnerAdjointProblem)(farg1);
+  arg2 = (N_Vector *)(farg2);
+  result = (int)MRIStepInnerAdjointProblem_GetTerminalState(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepInnerAdjointProblem_GetUserData(void *farg1, void *farg2) {
+  int fresult ;
+  MRIStepInnerAdjointProblem arg1 = (MRIStepInnerAdjointProblem) 0 ;
+  void **arg2 = (void **) 0 ;
+  int result;
+
+  arg1 = (MRIStepInnerAdjointProblem)(farg1);
+  arg2 = (void **)(farg2);
+  result = (int)MRIStepInnerAdjointProblem_GetUserData(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_FMRIStepInnerAdjointProblem_Free(void *farg1) {
+  MRIStepInnerAdjointProblem arg1 = (MRIStepInnerAdjointProblem) 0 ;
+
+  arg1 = (MRIStepInnerAdjointProblem)(farg1);
+  MRIStepInnerAdjointProblem_Free(arg1);
+}
+
+
+SWIGEXPORT int _wrap_FMRIStepCreateAdjointStepper(void *farg1, void *farg2, SUNAdjRhsFn farg3, SUNAdjRhsFn farg4, void *farg5, double const *farg6, N_Vector farg7, void *farg8, void *farg9) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  SUNAdjointStepper arg2 = (SUNAdjointStepper) 0 ;
+  SUNAdjRhsFn arg3 = (SUNAdjRhsFn) 0 ;
+  SUNAdjRhsFn arg4 = (SUNAdjRhsFn) 0 ;
+  MRIStepInnerAdjointProblem arg5 = (MRIStepInnerAdjointProblem) 0 ;
+  sunrealtype arg6 ;
+  N_Vector arg7 = (N_Vector) 0 ;
+  SUNContext arg8 = (SUNContext) 0 ;
+  SUNAdjointStepper *arg9 = (SUNAdjointStepper *) 0 ;
+  int result;
+
+  arg1 = (void *)(farg1);
+  arg2 = (SUNAdjointStepper)(farg2);
+  arg3 = (SUNAdjRhsFn)(farg3);
+  arg4 = (SUNAdjRhsFn)(farg4);
+  arg5 = (MRIStepInnerAdjointProblem)(farg5);
+  arg6 = (sunrealtype)(*farg6);
+  arg7 = (N_Vector)(farg7);
+  arg8 = (SUNContext)(farg8);
+  arg9 = (SUNAdjointStepper *)(farg9);
+  result = (int)MRIStepCreateAdjointStepper(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   fresult = (int)(result);
   return fresult;
 }
@@ -2125,6 +2223,4 @@ SWIGEXPORT int _wrap_FMRIStepGetNumRhsEvals(void *farg1, long *farg2, long *farg
   fresult = (int)(result);
   return fresult;
 }
-
-
 

@@ -65,7 +65,9 @@ SUNErrCode SUNStepper_Create(SUNContext sunctx, SUNStepper* stepper_ptr)
 
 SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
 {
-  if (stepper_ptr != NULL)
+  if (stepper_ptr == NULL) { return SUN_SUCCESS; }
+
+  if (*stepper_ptr != NULL)
   {
     const SUNStepper_Ops ops = (*stepper_ptr)->ops;
     if (ops && ops->destroy) { ops->destroy(*stepper_ptr); }
@@ -75,8 +77,8 @@ SUNErrCode SUNStepper_Destroy(SUNStepper* stepper_ptr)
 #endif
     (*stepper_ptr)->python = NULL;
     free(*stepper_ptr);
-    *stepper_ptr = NULL;
   }
+  *stepper_ptr = NULL;
 
   return SUN_SUCCESS;
 }

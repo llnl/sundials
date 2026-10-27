@@ -50,7 +50,7 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_Destroy_Fixed(
-  SUNAdjointCheckpointScheme* check_scheme_ptr);
+  SUNAdjointCheckpointScheme check_scheme);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_EnableDense_Fixed(

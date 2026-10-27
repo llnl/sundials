@@ -70,6 +70,7 @@ set(unit_tests
     "ark_test_adjoint_ark.cpp\;--check-freq 1 --dont-keep\;"
     "ark_test_adjoint_ark.cpp\;--check-freq 2 --dont-keep\;"
     "ark_test_adjoint_ark.cpp\;--check-freq 5 --dont-keep\;"
+    "ark_test_adjoint_mri.cpp\;\;"
     "ark_test_prealloc_arkstep.cpp\;1\;"
     "ark_test_prealloc_erkstep.cpp\;1\;"
     "ark_test_prealloc_forcingstep.cpp\;1\;"
