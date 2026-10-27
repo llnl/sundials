@@ -67,13 +67,8 @@ jobs:
           precision: ${{ matrix.precision }}
           tpls: ${{ matrix.tpls }}
           envfile: env/coverage.sh
-          phase: BUILD
 
-      - name: Run make codecov
-        env:
-          # Match the test-driver runtime environment when codecov runs CTest.
-          SUNLOGGER_INFO_FILENAME: ""
-          OMP_NUM_THREADS: "4"
+      - name: Generate coverage report
         run: |
           . /opt/python-venv/sundocs/bin/activate
           build_dir=$(find "$GITHUB_WORKSPACE/test" -maxdepth 1 -type d \
@@ -84,7 +79,7 @@ jobs:
             exit 1
           fi
 
-          make -C "$build_dir" codecov
+          make -C "$build_dir" codecov-report
           mkdir -p coverage
           cp -R "$build_dir/coverage/." coverage/
 

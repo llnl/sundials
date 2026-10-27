@@ -92,7 +92,8 @@ you want to measure:
 
 The ``codecov`` target builds the configured tests, runs CTest, and writes text, XML, and HTML
 reports to ``build-codecov/coverage``. To exercise additional third-party-library paths, configure
-the build with the corresponding TPL options enabled.
+the build with the corresponding TPL options enabled. The ``codecov-report`` target only regenerates
+the reports from existing coverage data, without rebuilding or rerunning tests.
 
 Answer Files
 ------------
