@@ -175,17 +175,16 @@ if(SUNDIALS_ENABLE_CODE_COVERAGE)
   set(SUNDIALS_COVERAGE_OUTPUT_DIR "${PROJECT_BINARY_DIR}/coverage")
 
   set(SUNDIALS_COVERAGE_REPORT_COMMANDS
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${SUNDIALS_COVERAGE_OUTPUT_DIR}"
-    COMMAND
-      "${GCOVR_EXECUTABLE}" "${PROJECT_BINARY_DIR}" --root
-      "${PROJECT_SOURCE_DIR}" --filter "${PROJECT_SOURCE_DIR}/src/" --filter
-      "${PROJECT_SOURCE_DIR}/include/" --print-summary --txt
-      "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.txt" --xml-pretty --xml
-      "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.xml" --gcov-executable
-      "${SUNDIALS_GCOV_EXECUTABLE}" --gcov-ignore-parse-errors
-      negative_hits.warn_once_per_file --gcov-ignore-parse-errors
-      suspicious_hits.warn_once_per_file --html-details
-      "${SUNDIALS_COVERAGE_OUTPUT_DIR}/index.html")
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+      "${SUNDIALS_COVERAGE_OUTPUT_DIR}" COMMAND "${GCOVR_EXECUTABLE}"
+      "${PROJECT_BINARY_DIR}" --root "${PROJECT_SOURCE_DIR}" --filter
+      "${PROJECT_SOURCE_DIR}/src/" --filter "${PROJECT_SOURCE_DIR}/include/"
+      --print-summary --txt "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.txt"
+      --xml-pretty --xml "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.xml"
+      --gcov-executable "${SUNDIALS_GCOV_EXECUTABLE}"
+      --gcov-ignore-parse-errors negative_hits.warn_once_per_file
+      --gcov-ignore-parse-errors suspicious_hits.warn_once_per_file
+      --html-details "${SUNDIALS_COVERAGE_OUTPUT_DIR}/index.html")
 
   add_custom_target(
     codecov-report
@@ -198,7 +197,7 @@ if(SUNDIALS_ENABLE_CODE_COVERAGE)
     codecov
     COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}" --parallel
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j 2
-    ${SUNDIALS_COVERAGE_REPORT_COMMANDS}
+            ${SUNDIALS_COVERAGE_REPORT_COMMANDS}
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     USES_TERMINAL
     COMMENT "Building, testing, and measuring SUNDIALS code coverage")
