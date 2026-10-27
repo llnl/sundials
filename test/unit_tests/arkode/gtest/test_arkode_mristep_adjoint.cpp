@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <memory>
 #include <string>
 
 #include <gtest/gtest.h>
@@ -61,6 +62,9 @@ struct UserData // TODO(SBR): this is inconsistent with problem user data
   sunbooleantype zero_fast              = SUNFALSE;
   bool slow_rhs_enabled                 = true;
   long int slow_rhs_calls               = 0;
+  long int fast_rhs_calls               = 0;
+  long int slow_adj_rhs_calls           = 0;
+  long int fast_adj_rhs_calls           = 0;
 };
 
 struct Result
@@ -75,6 +79,17 @@ struct Result
   suncountertype adjoint_steps = 0;
   bool has_interpolated_state  = false;
   bool valid                   = false;
+  sunrealtype cost             = SUN_RCONST(0.0);
+  std::array<long int, 2> forward_rhs_calls{};
+  std::array<long int, 4> reverse_rhs_calls{};
+};
+
+struct RunOptions
+{
+  MRIStepCoupling coupling = nullptr;
+  int perturb              = -1;
+  sunrealtype delta        = SUN_RCONST(0.0);
+  bool forward_only        = false;
 };
 
 struct Resources
@@ -124,6 +139,7 @@ static int slow_rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int fast_rhs(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   auto* data = static_cast<UserData*>(user_data);
+  data->fast_rhs_calls++;
   if (data->zero_fast)
   {
     N_VConst(SUN_RCONST(0.0), ydot);
@@ -196,6 +212,7 @@ static int adj_rhs_impl(sunrealtype t, N_Vector y, N_Vector sens,
 static int slow_adj_rhs(sunrealtype t, N_Vector y, N_Vector sens,
                         N_Vector sens_dot, void* user_data)
 {
+  static_cast<UserData*>(user_data)->slow_adj_rhs_calls++;
   return adj_rhs_impl(t, y, sens, sens_dot, static_cast<UserData*>(user_data),
                       false);
 }
@@ -203,6 +220,7 @@ static int slow_adj_rhs(sunrealtype t, N_Vector y, N_Vector sens,
 static int fast_adj_rhs(sunrealtype t, N_Vector y, N_Vector sens,
                         N_Vector sens_dot, void* user_data)
 {
+  static_cast<UserData*>(user_data)->fast_adj_rhs_calls++;
   return adj_rhs_impl(t, y, sens, sens_dot, static_cast<UserData*>(user_data),
                       true);
 }
@@ -269,18 +287,27 @@ static sunrealtype max_error(const Actual& actual, const Expected& expected);
 
 static void run_mristep(const TestConfig& config, bool zero_fast, Result& result,
                         bool reinit = false, bool interpolate = false,
-                        bool forbid_slow_rhs_during_adjoint = false)
+                        bool forbid_slow_rhs_during_adjoint = false,
+                        const RunOptions& options           = {})
 {
   Resources resources;
   UserData data;
   data.has_mu    = config.has_mu;
   data.zero_fast = zero_fast;
+  if (options.perturb >= 2)
+  {
+    data.parameters[options.perturb - 2] += options.delta;
+  }
 
   resources.helper = SUNMemoryHelper_Sys(resources.sunctx);
   ASSERT_NE(resources.helper, nullptr);
   resources.y = N_VNew_Serial(2, resources.sunctx);
   ASSERT_NE(resources.y, nullptr);
   N_VConst(SUN_RCONST(1.0), resources.y);
+  if (options.perturb >= 0 && options.perturb < 2)
+  {
+    N_VGetArrayPointer(resources.y)[options.perturb] += options.delta;
+  }
 
   resources.inner_mem = ERKStepCreate(fast_rhs, t0, resources.y,
                                       resources.sunctx);
@@ -301,7 +328,8 @@ static void run_mristep(const TestConfig& config, bool zero_fast, Result& result
             ARK_SUCCESS);
 
   MRIStepCoupling coupling = nullptr;
-  if (zero_fast)
+  if (options.coupling) { coupling = MRIStepCoupling_Copy(options.coupling); }
+  else if (zero_fast)
   {
     ARKodeButcherTable table =
       ARKodeButcherTable_LoadERK(ARKODE_FORWARD_EULER_1_1);
@@ -332,6 +360,18 @@ static void run_mristep(const TestConfig& config, bool zero_fast, Result& result
             ARK_SUCCESS);
   EXPECT_GT(result.forward_steps, 0);
   const long int forward_slow_rhs_calls = data.slow_rhs_calls;
+  result.forward_rhs_calls     = {data.slow_rhs_calls, data.fast_rhs_calls};
+  const sunrealtype* forward_y = N_VGetArrayPointer(resources.y);
+  for (int i = 0; i < 2; i++)
+  {
+    sunrealtype difference = forward_y[i] - SUN_RCONST(1.0);
+    result.cost += SUN_RCONST(0.5) * difference * difference;
+  }
+  if (options.forward_only)
+  {
+    result.valid = true;
+    return;
+  }
   if (forbid_slow_rhs_during_adjoint) { data.slow_rhs_enabled = false; }
 
   create_terminal_state(resources, data);
@@ -461,6 +501,9 @@ static void run_mristep(const TestConfig& config, bool zero_fast, Result& result
   {
     EXPECT_EQ(data.slow_rhs_calls, forward_slow_rhs_calls);
   }
+  result.reverse_rhs_calls = {data.slow_rhs_calls - result.forward_rhs_calls[0],
+                              data.fast_rhs_calls - result.forward_rhs_calls[1],
+                              data.slow_adj_rhs_calls, data.fast_adj_rhs_calls};
   save_result(resources, result, forward_time, adjoint_time);
 }
 
@@ -613,6 +656,84 @@ TEST(MRIStepAdjointValidationTest, RejectsAnEmptyForwardHistory)
   EXPECT_EQ(resources.outer_adjoint, nullptr);
 }
 
+/* Fail one clone at a time to exercise ownership before and after the
+   parameter vectors are transferred into the augmented ManyVector. */
+static int clones_before_failure;
+
+static N_Vector clone_with_failure(N_Vector w)
+{
+  if (clones_before_failure-- == 0) { return nullptr; }
+  return N_VClone_Serial(w);
+}
+
+TEST(MRIStepAdjointLifecycleTest, InnerCreationCleansUpAfterCloneFailure)
+{
+  for (sunbooleantype has_mu : {SUNFALSE, SUNTRUE})
+  {
+    SCOPED_TRACE(has_mu);
+    Resources resources;
+    UserData data;
+    data.has_mu      = has_mu;
+    resources.helper = SUNMemoryHelper_Sys(resources.sunctx);
+    ASSERT_NE(resources.helper, nullptr);
+    resources.y = N_VNew_Serial(2, resources.sunctx);
+    ASSERT_NE(resources.y, nullptr);
+    N_VConst(SUN_RCONST(1.0), resources.y);
+    resources.inner_mem = ERKStepCreate(fast_rhs, t0, resources.y,
+                                        resources.sunctx);
+    ASSERT_NE(resources.inner_mem, nullptr);
+    ASSERT_EQ(ARKodeSetUserData(resources.inner_mem, &data), ARK_SUCCESS);
+    ASSERT_EQ(ARKodeSetFixedStep(resources.inner_mem, SUN_RCONST(0.005)),
+              ARK_SUCCESS);
+    ASSERT_EQ(ARKodeCreateSUNStepper(resources.inner_mem,
+                                     &resources.inner_sunstepper),
+              ARK_SUCCESS);
+    resources.outer_mem = MRIStepCreate(slow_rhs, nullptr, t0, resources.y,
+                                        resources.inner_sunstepper,
+                                        resources.sunctx);
+    ASSERT_NE(resources.outer_mem, nullptr);
+    ASSERT_EQ(ARKodeSetUserData(resources.outer_mem, &data), ARK_SUCCESS);
+    ASSERT_EQ(ARKodeSetFixedStep(resources.outer_mem, SUN_RCONST(0.1)),
+              ARK_SUCCESS);
+    MRIStepCoupling coupling = MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_ERK45a);
+    ASSERT_NE(coupling, nullptr);
+    const int nforcing = coupling->nmat;
+    ASSERT_EQ(MRIStepSetCoupling(resources.outer_mem, coupling), ARK_SUCCESS);
+    MRIStepCoupling_Free(coupling);
+    sunrealtype tret;
+    ASSERT_GE(ARKodeEvolve(resources.outer_mem, tf, resources.y, &tret,
+                           ARK_NORMAL),
+              ARK_SUCCESS);
+    create_terminal_state(resources, data);
+    ASSERT_NE(resources.sf, nullptr);
+
+    for (int fail_at = 0; fail_at < nforcing + has_mu + 1; fail_at++)
+    {
+      SCOPED_TRACE(fail_at);
+      clones_before_failure          = fail_at;
+      resources.lambda->ops->nvclone = clone_with_failure;
+      if (has_mu) { resources.mu->ops->nvclone = clone_with_failure; }
+      const int retval =
+        MRIStepInnerAdjointProblem_Create(resources.outer_mem, fast_adj_rhs,
+                                          resources.sf, &data,
+                                          &resources.inner_problem);
+      resources.lambda->ops->nvclone = N_VClone_Serial;
+      if (has_mu) { resources.mu->ops->nvclone = N_VClone_Serial; }
+      EXPECT_EQ(retval, ARK_MEM_FAIL);
+      ASSERT_EQ(resources.inner_problem, nullptr);
+      EXPECT_EQ(N_VGetSubvector_ManyVector(resources.sf, 0), resources.lambda);
+      EXPECT_EQ(N_VGetArrayPointer(resources.lambda)[0],
+                N_VGetArrayPointer(resources.y)[0] - SUN_RCONST(1.0));
+      if (has_mu) { EXPECT_EQ(N_VMaxNorm(resources.mu), SUN_RCONST(0.0)); }
+    }
+    EXPECT_EQ(MRIStepInnerAdjointProblem_Create(resources.outer_mem,
+                                                fast_adj_rhs, resources.sf,
+                                                &data, &resources.inner_problem),
+              ARK_SUCCESS);
+    EXPECT_NE(resources.inner_problem, nullptr);
+  }
+}
+
 TEST(MRIStepAdjointLifecycleTest, ReInitReusesWorkspaceAndCheckpointSequence)
 {
   const TestConfig config{"ReInit",
@@ -713,6 +834,148 @@ TEST_P(MRIStepAdjointTest, ZeroFastRhsMatchesErkAdjoint)
   {
     EXPECT_LE(max_error(mri_result.mu, erk_result.mu), tolerance);
   }
+}
+
+/* These tables exercise repeated abscissae in the middle of a step. The
+ * identity variant retains a dependency on stage 1 across stage 2. */
+static MRIStepCoupling repeated_stage_table(bool identity)
+{
+  MRIStepCoupling table = MRIStepCoupling_Alloc(2, 4, MRISTEP_EXPLICIT);
+  if (!table) { return nullptr; }
+  table->q    = 1;
+  table->p    = 0;
+  table->c[1] = table->c[2] = SUN_RCONST(0.5);
+  table->c[3]               = SUN_RCONST(1.0);
+  table->W[0][1][0]         = SUN_RCONST(0.5);
+  if (identity)
+  {
+    table->W[0][3][0] = -SUN_RCONST(0.5);
+    table->W[0][3][1] = SUN_RCONST(1.0);
+  }
+  else
+  {
+    table->W[0][2][0] = -SUN_RCONST(0.5);
+    table->W[1][2][0] = SUN_RCONST(0.5);
+    table->W[0][2][1] = SUN_RCONST(0.5);
+    table->W[1][2][1] = -SUN_RCONST(0.5);
+    table->W[0][3][0] = -SUN_RCONST(0.25);
+    table->W[0][3][2] = SUN_RCONST(0.75);
+  }
+  return table;
+}
+
+using CouplingPtr =
+  std::unique_ptr<MRIStepCouplingMem, decltype(&MRIStepCoupling_Free)>;
+
+TEST(MRIStepCouplingTest, StifflyAccurateStageIsFinalSolutionStage)
+{
+  for (auto type : {MRISTEP_EXPLICIT, MRISTEP_IMPLICIT, MRISTEP_IMEX})
+  {
+    SCOPED_TRACE(type);
+    CouplingPtr table(MRIStepCoupling_Alloc(2, 4, type), &MRIStepCoupling_Free);
+    ASSERT_NE(table, nullptr);
+    table->q    = 1;
+    table->c[1] = table->c[2] = table->c[3] = SUN_RCONST(1.0);
+    if (table->W) { table->W[0][1][0] = SUN_RCONST(1.0); }
+    if (table->G) { table->G[0][1][0] = SUN_RCONST(1.0); }
+
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 0), MRISTAGE_FIRST);
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 1), MRISTAGE_ERK_FAST);
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 2), MRISTAGE_ERK_NOFAST);
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 3), MRISTAGE_STIFF_ACC);
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 4), MRISTAGE_ERK_NOFAST);
+
+    // A nonzero algebraic correction at the final time is not an identity.
+    if (table->W) { table->W[1][3][0] = SUN_RCONST(1.0); }
+    if (table->G) { table->G[1][3][0] = SUN_RCONST(1.0); }
+    EXPECT_EQ(mriStepCoupling_GetStageType(table.get(), 3), MRISTAGE_ERK_NOFAST);
+  }
+}
+
+TEST_P(MRIStepAdjointTest, AlgebraicStagesMatchDiscreteFiniteDifferences)
+{
+  const TestConfig& config    = GetParam();
+  const sunrealtype delta     = std::cbrt(SUN_UNIT_ROUNDOFF);
+  const sunrealtype tolerance = SUN_RCONST(100.0) * delta * delta;
+  for (int variant = 0; variant < 3; variant++)
+  {
+    SCOPED_TRACE(variant);
+    CouplingPtr table(variant == 0
+                        ? MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_ERK22b)
+                        : repeated_stage_table(variant == 2),
+                      MRIStepCoupling_Free);
+    ASSERT_NE(table, nullptr);
+    RunOptions options;
+    options.coupling = table.get();
+    Result adjoint;
+    run_mristep(config, false, adjoint, false, false, false, options);
+    ASSERT_TRUE(adjoint.valid);
+    for (int component = 0; component < (config.has_mu ? 6 : 2); component++)
+    {
+      SCOPED_TRACE(component);
+      options.forward_only = true;
+      options.perturb      = component;
+      options.delta        = delta;
+      Result plus;
+      run_mristep(config, false, plus, false, false, false, options);
+      ASSERT_TRUE(plus.valid);
+      options.delta = -delta;
+      Result minus;
+      run_mristep(config, false, minus, false, false, false, options);
+      ASSERT_TRUE(minus.valid);
+      sunrealtype difference = (plus.cost - minus.cost) /
+                               (SUN_RCONST(2.0) * delta);
+      sunrealtype gradient = component < 2 ? adjoint.lambda[component]
+                                           : adjoint.mu[component - 2];
+      EXPECT_NEAR(gradient, difference, tolerance);
+    }
+  }
+}
+
+TEST_P(MRIStepAdjointTest, RedundantFinalStageAddsNoRhsEvaluations)
+{
+  const TestConfig& config = GetParam();
+  CouplingPtr base(MRIStepCoupling_LoadTable(ARKODE_MRI_GARK_ERK22b),
+                   MRIStepCoupling_Free);
+  ASSERT_NE(base, nullptr);
+  CouplingPtr padded(MRIStepCoupling_Alloc(base->nmat, base->stages + 1,
+                                           MRISTEP_EXPLICIT),
+                     MRIStepCoupling_Free);
+  ASSERT_NE(padded, nullptr);
+  padded->q = base->q;
+  padded->p = base->p;
+  for (int i = 0; i < base->stages; i++)
+  {
+    padded->c[i] = base->c[i];
+    for (int k = 0; k < base->nmat; k++)
+    {
+      for (int j = 0; j < base->stages; j++)
+      {
+        padded->W[k][i][j] = base->W[k][i][j];
+      }
+    }
+  }
+  padded->c[base->stages] = SUN_RCONST(1.0);
+  // An embedding-only dependency must not trigger an adjoint evaluation.
+  padded->W[0][padded->stages][base->stages - 1] = SUN_RCONST(0.25);
+  padded->W[0][padded->stages][0]                = -SUN_RCONST(0.25);
+
+  RunOptions options;
+  options.coupling = base.get();
+  Result original;
+  run_mristep(config, false, original, false, false, false, options);
+  ASSERT_TRUE(original.valid);
+  options.coupling = padded.get();
+  Result redundant;
+  run_mristep(config, false, redundant, false, false, false, options);
+  ASSERT_TRUE(redundant.valid);
+  const sunrealtype tolerance = SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF;
+  EXPECT_LE(max_error(original.state, redundant.state), tolerance);
+  EXPECT_LE(max_error(original.lambda, redundant.lambda), tolerance);
+  EXPECT_LE(max_error(original.mu, redundant.mu), tolerance);
+  EXPECT_EQ(original.forward_rhs_calls, redundant.forward_rhs_calls);
+  EXPECT_EQ(original.reverse_rhs_calls, redundant.reverse_rhs_calls);
+  EXPECT_EQ(original.reverse_rhs_calls[2], 2 * original.forward_steps);
 }
 
 static std::string config_name(const testing::TestParamInfo<TestConfig>& info)

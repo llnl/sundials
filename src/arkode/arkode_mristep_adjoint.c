@@ -166,6 +166,18 @@ static int mriStepInnerAdjointProblem_Rhs(sunrealtype t, N_Vector y,
   return ARK_SUCCESS;
 }
 
+static int mriStepInnerAdjointCreateFailure(MRIStepInnerAdjointProblem problem,
+                                            N_Vector* parameter_vectors,
+                                            int nparameters,
+                                            N_Vector parameters, N_Vector lambda)
+{
+  N_VDestroyVectorArray(parameter_vectors, nparameters);
+  N_VDestroy(parameters);
+  N_VDestroy(lambda);
+  MRIStepInnerAdjointProblem_Free(problem);
+  return ARK_MEM_FAIL;
+}
+
 int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
                                       N_Vector sf, void* user_data,
                                       MRIStepInnerAdjointProblem* problem_ptr)
@@ -173,12 +185,14 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
   ARKodeMem ark_mem;
   ARKodeMRIStepMem step_mem;
   MRIStepInnerAdjointProblem problem = NULL;
-  N_Vector lambda_f, mu_f, lambda, parameters;
+  N_Vector lambda_f, mu_f;
+  N_Vector lambda             = NULL;
+  N_Vector parameters         = NULL;
   N_Vector* parameter_vectors = NULL;
   N_Vector outer_vectors[2];
   N_Vector view_vectors[2];
   sunindextype nsens;
-  int nparameters;
+  int nparameters = 0;
   int retval;
 
   if (!problem_ptr)
@@ -234,7 +248,11 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
 
   problem = (MRIStepInnerAdjointProblem)
     calloc(1, sizeof(struct MRIStepInnerAdjointProblem_));
-  if (!problem) { return ARK_MEM_FAIL; }
+  if (!problem)
+  {
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
+  }
 
   problem->adj_f     = adj_f;
   problem->user_data = user_data;
@@ -246,17 +264,16 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
   parameter_vectors = (N_Vector*)calloc((size_t)nparameters, sizeof(N_Vector));
   if (!parameter_vectors)
   {
-    MRIStepInnerAdjointProblem_Free(problem);
-    return ARK_MEM_FAIL;
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
   }
   for (int k = 0; k < problem->nforcing; k++)
   {
     parameter_vectors[k] = N_VClone(lambda_f);
     if (!parameter_vectors[k])
     {
-      N_VDestroyVectorArray(parameter_vectors, nparameters);
-      MRIStepInnerAdjointProblem_Free(problem);
-      return ARK_MEM_FAIL;
+      return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                              nparameters, parameters, lambda);
     }
     N_VConst(SUN_RCONST(0.0), parameter_vectors[k]);
   }
@@ -265,9 +282,8 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
     parameter_vectors[problem->nforcing] = N_VClone(mu_f);
     if (!parameter_vectors[problem->nforcing])
     {
-      N_VDestroyVectorArray(parameter_vectors, nparameters);
-      MRIStepInnerAdjointProblem_Free(problem);
-      return ARK_MEM_FAIL;
+      return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                              nparameters, parameters, lambda);
     }
     N_VScale(SUN_RCONST(1.0), mu_f, parameter_vectors[problem->nforcing]);
   }
@@ -275,19 +291,18 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
   parameters = N_VNew_ManyVector(nparameters, parameter_vectors, ark_mem->sunctx);
   if (!parameters)
   {
-    N_VDestroyVectorArray(parameter_vectors, nparameters);
-    MRIStepInnerAdjointProblem_Free(problem);
-    return ARK_MEM_FAIL;
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
   }
   ((N_VectorContent_ManyVector)parameters->content)->own_data = SUNTRUE;
   free(parameter_vectors);
+  parameter_vectors = NULL;
 
   lambda = N_VClone(lambda_f);
   if (!lambda)
   {
-    N_VDestroy(parameters);
-    MRIStepInnerAdjointProblem_Free(problem);
-    return ARK_MEM_FAIL;
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
   }
   N_VScale(SUN_RCONST(1.0), lambda_f, lambda);
 
@@ -296,10 +311,8 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
   problem->sf      = N_VNew_ManyVector(2, outer_vectors, ark_mem->sunctx);
   if (!problem->sf)
   {
-    N_VDestroy(parameters);
-    N_VDestroy(lambda);
-    MRIStepInnerAdjointProblem_Free(problem);
-    return ARK_MEM_FAIL;
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
   }
   ((N_VectorContent_ManyVector)problem->sf->content)->own_data = SUNTRUE;
 
@@ -308,13 +321,16 @@ int MRIStepInnerAdjointProblem_Create(void* arkode_mem, SUNAdjRhsFn adj_f,
   {
     view_vectors[1] = N_VGetSubvector_ManyVector(parameters, problem->nforcing);
   }
+  /* The augmented state now owns these vectors; the views only borrow them. */
+  lambda                 = NULL;
+  parameters             = NULL;
   problem->sens_view = N_VNew_ManyVector(nsens, view_vectors, ark_mem->sunctx);
   problem->sens_dot_view = N_VNew_ManyVector(nsens, view_vectors,
                                              ark_mem->sunctx);
   if (!problem->sens_view || !problem->sens_dot_view)
   {
-    MRIStepInnerAdjointProblem_Free(problem);
-    return ARK_MEM_FAIL;
+    return mriStepInnerAdjointCreateFailure(problem, parameter_vectors,
+                                            nparameters, parameters, lambda);
   }
 
   *problem_ptr = problem;
@@ -369,7 +385,7 @@ static int mriStep_fse_Adj(sunrealtype t, N_Vector sens_partial_stage,
   MRIStepAdjointData adj_data = step_mem->adj_data;
   if (!adj_data || !adj_data->fse || !adj_data->stage_states ||
       ark_mem->adj_stage_idx < 0 ||
-      ark_mem->adj_stage_idx >= step_mem->stages + 1)
+      ark_mem->adj_stage_idx >= adj_data->nstages_allocated)
   {
     return ARK_ILL_INPUT;
   }
@@ -404,7 +420,7 @@ void mriStep_FreeAdjointData(ARKodeMRIStepMem step_mem)
   if (!step_mem || !step_mem->adj_data) { return; }
 
   MRIStepAdjointData adj_data = step_mem->adj_data;
-  int nstages                 = step_mem->stages + 1;
+  int nstages                 = adj_data->nstages_allocated;
 
   N_VDestroyVectorArray(adj_data->stage_states, nstages);
   N_VDestroyVectorArray(adj_data->slow_accum, nstages);
@@ -419,7 +435,7 @@ static int mriStepAdjointCreateData(ARKodeMRIStepMem step_mem,
                                     SUNAdjointStepper inner_stepper,
                                     N_Vector state_template)
 {
-  int nstages = step_mem->stages + 1;
+  int nstages = step_mem->stages - 1;
 
   MRIStepAdjointData adj_data = (MRIStepAdjointData)calloc(1, sizeof(*adj_data));
   if (!adj_data) { return ARK_MEM_FAIL; }
@@ -428,11 +444,20 @@ static int mriStepAdjointCreateData(ARKodeMRIStepMem step_mem,
   adj_data->fse                  = adj_fse;
   adj_data->inner_stepper        = inner_stepper;
   adj_data->inner_checkpoint_idx = 0;
-  adj_data->stage_states = (N_Vector*)calloc((size_t)nstages, sizeof(N_Vector));
-  adj_data->slow_accum   = (N_Vector*)calloc((size_t)nstages, sizeof(N_Vector));
-  adj_data->stage_times  = (sunrealtype*)calloc((size_t)nstages,
-                                                sizeof(sunrealtype));
-  if (!adj_data->stage_states || !adj_data->slow_accum || !adj_data->stage_times)
+  adj_data->nstages_allocated    = nstages;
+  if (nstages > 0)
+  {
+    adj_data->stage_states = (N_Vector*)calloc((size_t)nstages, sizeof(N_Vector));
+    adj_data->slow_accum = (N_Vector*)calloc((size_t)nstages, sizeof(N_Vector));
+    if (!adj_data->stage_states || !adj_data->slow_accum)
+    {
+      mriStep_FreeAdjointData(step_mem);
+      return ARK_MEM_FAIL;
+    }
+  }
+  adj_data->stage_times = (sunrealtype*)calloc((size_t)step_mem->stages,
+                                               sizeof(sunrealtype));
+  if (!adj_data->stage_times)
   {
     mriStep_FreeAdjointData(step_mem);
     return ARK_MEM_FAIL;
@@ -469,10 +494,13 @@ static int mriStepAdjointLoadStages(ARKodeMem ark_mem,
   *missing = SUNFALSE;
   for (int stage = 0; stage < step_mem->stages; stage++)
   {
+    /* The final stage needs its time, but not its state, in the reverse sweep. */
+    N_Vector* state = (stage < adj_data->nstages_allocated)
+                        ? &adj_data->stage_states[stage]
+                        : &adj_data->inner_state;
     SUNErrCode err =
       SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme,
-                                            step_idx, slot++, SUNTRUE,
-                                            &adj_data->stage_states[stage],
+                                            step_idx, slot++, SUNTRUE, state,
                                             &adj_data->stage_times[stage]);
     if (err == SUN_ERR_CHECKPOINT_NOT_FOUND)
     {
@@ -498,11 +526,11 @@ static int mriStepAdjointLoadStages(ARKodeMem ark_mem,
     }
   }
 
+  sunrealtype terminal_time;
   SUNErrCode err =
     SUNAdjointCheckpointScheme_LoadVector(ark_mem->checkpoint_scheme, step_idx,
-                                          slot, SUNTRUE,
-                                          &adj_data->stage_states[step_mem->stages],
-                                          &adj_data->stage_times[step_mem->stages]);
+                                          slot, SUNTRUE, &adj_data->inner_state,
+                                          &terminal_time);
   if (err == SUN_ERR_CHECKPOINT_NOT_FOUND)
   {
     *missing = SUNTRUE;
@@ -513,22 +541,26 @@ static int mriStepAdjointLoadStages(ARKodeMem ark_mem,
   return ARK_SUCCESS;
 }
 
+static suncountertype mriStepAdjointTerminalSlot(ARKodeMRIStepMem step_mem)
+{
+  suncountertype slot = step_mem->stages;
+  for (int stage = 0; stage < step_mem->stages; stage++)
+  {
+    if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, stage)) { slot++; }
+  }
+  return slot;
+}
+
 static int mriStepAdjointRecomputeOuter(ARKodeMem ark_mem,
                                         MRIStepAdjointData adj_data,
                                         SUNAdjointStepper adj_stepper,
                                         suncountertype curr_step)
 {
   ARKodeMRIStepMem step_mem    = (ARKodeMRIStepMem)ark_mem->step_mem;
-  N_Vector checkpoint          = adj_data->stage_states[0];
-  suncountertype terminal_slot = 0;
+  N_Vector checkpoint          = adj_data->inner_state;
+  suncountertype terminal_slot = mriStepAdjointTerminalSlot(step_mem);
   SUNAdjointCheckpointScheme inner_scheme =
     adj_data->inner_stepper->checkpoint_scheme;
-
-  for (int stage = 0; stage < step_mem->stages; stage++)
-  {
-    terminal_slot++;
-    if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, stage)) { terminal_slot++; }
-  }
 
   for (suncountertype start_step = curr_step; start_step >= 0; start_step--)
   {
@@ -561,12 +593,8 @@ static int mriStepAdjointConsumeStages(ARKodeMem ark_mem,
 {
   ARKodeMRIStepMem step_mem = (ARKodeMRIStepMem)ark_mem->step_mem;
   sunrealtype t;
-  suncountertype slot = 1; /* include the terminal state */
-  for (int stage = 0; stage < step_mem->stages; stage++)
-  {
-    slot++;
-    if (mriStep_AdjointNeedsRhsCheckpoint(step_mem, stage)) { slot++; }
-  }
+  /* Include the terminal state, then consume slots in reverse order. */
+  suncountertype slot = mriStepAdjointTerminalSlot(step_mem) + 1;
   while (slot > 0)
   {
     slot--;
@@ -650,45 +678,106 @@ static int mriStepAdjointSolveInner(
   return ARK_SUCCESS;
 }
 
-static int mriStepAdjointAccumulateStage(
-  ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, ARKodeMem fwd_ark_mem,
-  ARKodeMRIStepMem fwd_step_mem, MRIStepAdjointData adj_data,
-  MRIStepAdjointState* sens, MRIStepAdjointState* slow_input,
-  MRIStepAdjointState* slow_output, MRIStepInnerAdjointState* inner_sens,
-  int stage)
+/* Only solution-stage dependencies require an adjoint RHS evaluation. The
+ * stage map also includes embedding dependencies, which are not reversed. */
+static sunbooleantype mriStepAdjointNeedsSlowRhs(ARKodeMRIStepMem step_mem,
+                                                 int stage)
 {
-  sunrealtype t0     = adj_data->stage_times[stage - 1];
-  sunrealtype tf     = adj_data->stage_times[stage];
-  sunrealtype rcdiff = fwd_ark_mem->h / (tf - t0);
-
-  for (int j = 0; j < stage; j++)
+  if (step_mem->stage_map[stage] < 0) { return SUNFALSE; }
+  for (int i = stage + 1; i < step_mem->stages; i++)
   {
-    if (fwd_step_mem->stage_map[j] < 0) { continue; }
-    for (int k = 0; k < fwd_step_mem->MRIC->nmat; k++)
+    sunrealtype coefficient = SUN_RCONST(0.0);
+    for (int k = 0; k < step_mem->MRIC->nmat; k++)
     {
-      sunrealtype coefficient = rcdiff * fwd_step_mem->MRIC->W[k][stage][j];
-      N_VLinearSum(SUN_RCONST(1.0), adj_data->slow_accum[j], coefficient,
-                   inner_sens->omega[k], adj_data->slow_accum[j]);
+      sunrealtype w = step_mem->MRIC->W[k][i][stage];
+      if (step_mem->stagetypes[i] == MRISTAGE_ERK_FAST && w != SUN_RCONST(0.0))
+      {
+        return SUNTRUE;
+      }
+      coefficient += w / (k + SUN_RCONST(1.0));
+    }
+    if (step_mem->stagetypes[i] == MRISTAGE_ERK_NOFAST &&
+        coefficient != SUN_RCONST(0.0))
+    {
+      return SUNTRUE;
     }
   }
+  return SUNFALSE;
+}
 
-  int current_stage = stage - 1;
-  N_VScale(SUN_RCONST(1.0), adj_data->slow_accum[current_stage],
-           slow_input->lambda);
+static int mriStepAdjointAccumulateStage(ARKodeMem fwd_ark_mem,
+                                         ARKodeMRIStepMem fwd_step_mem,
+                                         MRIStepAdjointData adj_data,
+                                         MRIStepAdjointState* sens,
+                                         MRIStepInnerAdjointState* inner_sens,
+                                         int stage)
+{
+  switch (fwd_step_mem->stagetypes[stage])
+  {
+  case MRISTAGE_ERK_FAST:
+  {
+    sunrealtype t0     = adj_data->stage_times[stage - 1];
+    sunrealtype tf     = adj_data->stage_times[stage];
+    sunrealtype rcdiff = fwd_ark_mem->h / (tf - t0);
+    for (int j = 0; j < stage; j++)
+    {
+      if (fwd_step_mem->stage_map[j] < 0) { continue; }
+      for (int k = 0; k < fwd_step_mem->MRIC->nmat; k++)
+      {
+        sunrealtype coefficient = rcdiff * fwd_step_mem->MRIC->W[k][stage][j];
+        if (coefficient == SUN_RCONST(0.0)) { continue; }
+        N_VLinearSum(SUN_RCONST(1.0), adj_data->slow_accum[j], coefficient,
+                     inner_sens->omega[k], adj_data->slow_accum[j]);
+      }
+    }
+    N_VScale(SUN_RCONST(1.0), inner_sens->lambda, sens->lambda);
+    if (sens->mu) { N_VScale(SUN_RCONST(1.0), inner_sens->mu, sens->mu); }
+    break;
+  }
+  case MRISTAGE_ERK_NOFAST:
+  {
+    int retval = mriStep_RKCoeffs(fwd_step_mem->MRIC, stage,
+                                  fwd_step_mem->stage_map, fwd_step_mem->Ae_row,
+                                  fwd_step_mem->Ai_row);
+    if (retval != ARK_SUCCESS) { return retval; }
+    for (int j = 0; j < stage; j++)
+    {
+      int map = fwd_step_mem->stage_map[j];
+      if (map < 0) { continue; }
+      sunrealtype coefficient = fwd_ark_mem->h * fwd_step_mem->Ae_row[map];
+      if (coefficient == SUN_RCONST(0.0)) { continue; }
+      N_VLinearSum(SUN_RCONST(1.0), adj_data->slow_accum[j], coefficient,
+                   sens->lambda, adj_data->slow_accum[j]);
+    }
+    break;
+  }
+  case MRISTAGE_STIFF_ACC: break;
+  default: return ARK_INVALID_TABLE;
+  }
+  return ARK_SUCCESS;
+}
+
+static int mriStepAdjointApplySlowRhs(
+  ARKodeMem ark_mem, ARKodeMRIStepMem step_mem, ARKodeMRIStepMem fwd_step_mem,
+  MRIStepAdjointData adj_data, MRIStepAdjointState* sens,
+  MRIStepAdjointState* slow_input, MRIStepAdjointState* slow_output, int stage)
+{
+  if (!mriStepAdjointNeedsSlowRhs(fwd_step_mem, stage)) { return ARK_SUCCESS; }
+
+  N_VScale(SUN_RCONST(1.0), adj_data->slow_accum[stage], slow_input->lambda);
   if (sens->mu) { N_VConst(SUN_RCONST(0.0), slow_input->mu); }
 
-  ark_mem->adj_stage_idx = current_stage;
-  int retval             = step_mem->fse(adj_data->stage_times[current_stage],
-                                         ark_mem->tempv2, ark_mem->tempv3,
-                                         ark_mem->user_data);
+  ark_mem->adj_stage_idx = stage;
+  int retval = step_mem->fse(adj_data->stage_times[stage], ark_mem->tempv2,
+                             ark_mem->tempv3, ark_mem->user_data);
   if (retval != 0) { return ARK_RHSFUNC_FAIL; }
 
-  N_VLinearSum(SUN_RCONST(1.0), inner_sens->lambda, SUN_RCONST(1.0),
+  N_VLinearSum(SUN_RCONST(1.0), sens->lambda, SUN_RCONST(1.0),
                slow_output->lambda, sens->lambda);
   if (sens->mu)
   {
-    N_VLinearSum(SUN_RCONST(1.0), inner_sens->mu, SUN_RCONST(1.0),
-                 slow_output->mu, sens->mu);
+    N_VLinearSum(SUN_RCONST(1.0), sens->mu, SUN_RCONST(1.0), slow_output->mu,
+                 sens->mu);
   }
   return ARK_SUCCESS;
 }
@@ -754,20 +843,25 @@ int mriStep_TakeStep_Adjoint(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagP
   }
 
   N_VScale(SUN_RCONST(1.0), ark_mem->yn, ark_mem->ycur);
-  for (int i = 0; i < step_mem->stages; i++)
+  for (int i = 0; i < adj_data->nstages_allocated; i++)
   {
     N_VConst(SUN_RCONST(0.0), adj_data->slow_accum[i]);
   }
 
   for (int stage = step_mem->stages - 1; stage >= 1; stage--)
   {
-    retval = mriStepAdjointSolveInner(fwd_ark_mem, adj_data, fwd_step_mem,
-                                      inner_problem, &sens, &inner_sens, stage);
+    if (fwd_step_mem->stagetypes[stage] == MRISTAGE_ERK_FAST)
+    {
+      retval = mriStepAdjointSolveInner(fwd_ark_mem, adj_data, fwd_step_mem,
+                                        inner_problem, &sens, &inner_sens, stage);
+      if (retval != ARK_SUCCESS) { return retval; }
+    }
+    retval = mriStepAdjointAccumulateStage(fwd_ark_mem, fwd_step_mem, adj_data,
+                                           &sens, &inner_sens, stage);
     if (retval != ARK_SUCCESS) { return retval; }
-    retval = mriStepAdjointAccumulateStage(ark_mem, step_mem, fwd_ark_mem,
-                                           fwd_step_mem, adj_data, &sens,
-                                           &slow_input, &slow_output,
-                                           &inner_sens, stage);
+    retval = mriStepAdjointApplySlowRhs(ark_mem, step_mem, fwd_step_mem,
+                                        adj_data, &sens, &slow_input,
+                                        &slow_output, stage - 1);
     if (retval != ARK_SUCCESS) { return retval; }
   }
 

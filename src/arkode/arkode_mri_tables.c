@@ -756,7 +756,7 @@ void MRIStepCoupling_Write(MRIStepCoupling MRIC, FILE* outfile)
  * MRISTAGE_ERK_NOFAST  -- standard ERK stage
  * MRISTAGE_DIRK_NOFAST -- standard DIRK stage
  * MRISTAGE_DIRK_FAST   -- coupled DIRK + MIS-like stage
- * MRISTAGE_STIFF_ACC   -- "extra" stiffly-accurate stage
+ * MRISTAGE_STIFF_ACC   -- "extra" final stiffly-accurate stage
  *
  * for each nontrivial stage, or embedding stage, in an MRI-like method.
  * Otherwise (i.e., stage is not in [1,MRIC->stages]), returns
@@ -843,8 +843,9 @@ int mriStepCoupling_GetStageType(MRIStepCoupling MRIC, int is)
     cdiff = (SUNRabs(MRIC->c[is - 1] - MRIC->c[is - 2]) > tol);
   }
 
-  /* make determination */
-  if (!(Gdiag || Grow || Wrow || cdiff) && (is > 0))
+  /* Only the final solution stage can be stiffly accurate. Intermediate
+     identity stages and identity embeddings use the algebraic ERK path. */
+  if (!(Gdiag || Grow || Wrow || cdiff) && (is == MRIC->stages - 1))
   { /* stiffly-accurate stage */
     return (MRISTAGE_STIFF_ACC);
   }

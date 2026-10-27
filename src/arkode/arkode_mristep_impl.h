@@ -72,6 +72,7 @@ typedef struct MRIStepAdjointData_
 {
   SUNAdjRhsFn fse;
   SUNAdjointStepper inner_stepper;
+  int nstages_allocated;
   N_Vector* stage_states;
   N_Vector* slow_accum;
   sunrealtype* stage_times;
