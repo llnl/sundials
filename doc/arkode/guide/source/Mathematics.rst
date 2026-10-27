@@ -2857,14 +2857,14 @@ and :math:`\mu_{n-1}` starting from :math:`\lambda_n` and :math:`\mu_n` as
 
 .. _ARKODE.Mathematics.ASA.MRIGARK:
 
-Discrete adjoint for MRI-GARK methods
--------------------------------------
+Discrete adjoint for explicit MRI-GARK methods
+----------------------------------------------
 
 The discrete adjoint of an explicit MRI-GARK method reverses both the sequence
 of slow stages and the numerical integrations used to solve the fast stage
 IVPs. For the forward step from :math:`t_{n-1}` to :math:`t_n`, the stages
-satisfy :math:`z_1=y_{n-1}` and :math:`z_s=y_n`. For
-:math:`i=2,\ldots,s`, the :math:`i`-th fast forward IVP is
+satisfy :math:`z_1=y_{n-1}` and :math:`z_s=y_n`. For stages
+:math:`i=2,\ldots,s`, the fast forward IVP is
 
 .. math::
    v_i(t^S_{n,i-1}) &= z_{i-1}, \\
@@ -2876,27 +2876,28 @@ Here :math:`\tau_i(t)=(t-t^S_{n,i-1})/(h_n^S\Delta c_i^S)` is the normalized
 time for fast interval :math:`i`.
 
 When differentiating through an explicit MRI-GARK method and applying the chain
-rule, we need to compute derivatives of :math:`z_{i}` in
+rule, we need to compute derivatives of :math:`z_i` in
 :eq:`ARKODE_MRIGARK_ADJOINT_FORWARD_STAGE` with respect to :math:`p` and
 :math:`z_j` for :math:`j = 1, \dots, i-1`. By exploiting properties of linear
-dependence, this can be done by first solving the following IVPs:
+dependence, this can be done by first solving the following IVPs from
+:math:`t^S_{n,i}` to :math:`t^S_{n,i-1}`:
 
 .. math::
-   \kappa_i(t^S_{n,i}) &= \Lambda_{i}, & \quad
-   \kappa_i'(t) &= f_y^{F}(t, v_i(t), p)^* \kappa_i(t), \\
+   \kappa_i(t^S_{n,i}) &= \Lambda_{i}, & \quad  
+   \kappa_i'(t) &= -f_y^{F}(t, v_i(t), p)^* \kappa_i(t), \\
    \xi_i(t^S_{n,i}) &= \nu_{i}, & \quad
-   \xi_i'(t) &= f_p^{F}(t, v_i(t), p)^* \kappa_i(t), \\
+   \xi_i'(t) &= -f_p^{F}(t, v_i(t), p)^* \kappa_i(t), \\
    \chi_{i,\ell}(t^S_{n,i}) &= 0, & \quad
-   \chi_{i,\ell}'(t) &= -\tau_i(t)^{\ell} \kappa_i(t),
-   \quad \ell = 0, \ldots, d, \quad i=2,\ldots,s.
+   \chi_{i,\ell}'(t) &= -\tau_i(t)^{\ell-1} \kappa_i(t),
+   \quad \ell = 1, \ldots, k, \quad i=2,\ldots,s.
    :label: ARKODE_MRIGARK_ADJOINT_IVPS
 
-Define the accumulated forcing sensitivity associated with slow stage
-:math:`i=1,\ldots,s-1` by
+The accumulated forcing sensitivity associated with slow stage
+:math:`i=1,\ldots,s-1` is
 
 .. math::
    G_i = \sum_{j=i+1}^{s} \frac{1}{\Delta c_j^S}
-      \sum_{\ell=0}^{d} \Omega_{j,i,\ell+1}
+      \sum_{\ell=1}^{k} \Omega_{j,i,\ell}
       \chi_{j,\ell}(t^S_{n,j-1}).
 
 Each moment :math:`\chi_{j,\ell}` is evaluated at the beginning of its own fast
@@ -2914,14 +2915,15 @@ interval. Then the reverse stage recursion and adjoint step are
    \mu_{n-1} &= \nu_1.
 
 Equation :eq:`ARKODE_MRIGARK_ADJOINT_IVPS` gives a continuous description of each
-inner adjoint problem. In practice, MRIStep applies the discrete adjoint of the
-selected inner integrator which needs Jacobians of the inner RHS with respect to
-state and parameters. To account for the extra :math:`\chi` variables, the
-Jacobian taken with respect to parameters is augmented as follows:
+inner adjoint problem on a nonzero fast interval. In practice, MRIStep applies
+the discrete adjoint of the selected inner integrator, which needs Jacobians
+of the inner RHS with respect to state and parameters. To account for the
+extra :math:`\chi` variables, the Jacobian taken with respect to parameters
+is augmented as follows:
 
 .. math::
    \begin{bmatrix}
-      I & \tau_i(t) I & \cdots & \tau_i(t)^d I & \frac{\partial f^F(t, y, p)}{\partial p}
+      I & \tau_i(t) I & \cdots & \tau_i(t)^{k-1} I & \frac{\partial f^F(t, y, p)}{\partial p}
    \end{bmatrix}.
 
 The Jacobian taken with respect to state, :math:`\partial f^F/\partial y`, does
