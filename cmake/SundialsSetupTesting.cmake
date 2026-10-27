@@ -185,7 +185,8 @@ if(SUNDIALS_ENABLE_CODE_COVERAGE)
       "${PROJECT_SOURCE_DIR}/include/" --print-summary --txt
       "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.txt" --xml-pretty --xml
       "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.xml" --gcov-executable
-      "${SUNDIALS_GCOV_EXECUTABLE}" --html-details
+      "${SUNDIALS_GCOV_EXECUTABLE}" --gcov-ignore-parse-errors
+      suspicious_hits.warn_once_per_file --html-details
       "${SUNDIALS_COVERAGE_OUTPUT_DIR}/index.html"
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     USES_TERMINAL

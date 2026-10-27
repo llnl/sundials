@@ -67,10 +67,11 @@ jobs:
           precision: ${{ matrix.precision }}
           tpls: ${{ matrix.tpls }}
           envfile: env/coverage.sh
+          phase: BUILD
 
       - name: Run make codecov
         env:
-          # Match the test-driver runtime environment when codecov reruns CTest.
+          # Match the test-driver runtime environment when codecov runs CTest.
           SUNLOGGER_INFO_FILENAME: ""
           OMP_NUM_THREADS: "4"
         run: |
