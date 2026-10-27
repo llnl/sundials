@@ -6843,11 +6843,20 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
   sunrealtype enorm_k, enorm_km1, enorm_km2; /* error norms */
   sunrealtype terr_k, terr_km1, terr_km2;    /* local truncation error norms */
 
+  sunbooleantype sensi_sim = IDA_mem->ida_sensi && IDA_mem->ida_errconS &&
+                             (IDA_mem->ida_ism == IDA_SIMULTANEOUS);
+  int retval;
+
   /* Compute error for order k. */
   enorm_k = IDAWrmsNorm(IDA_mem, IDA_mem->ida_ee, IDA_mem->ida_ewt,
                         IDA_mem->ida_suppressalg);
-  *err_k  = IDA_mem->ida_sigma[IDA_mem->ida_kk] * enorm_k;
-  terr_k  = (IDA_mem->ida_kk + 1) * (*err_k);
+  if (sensi_sim)
+  {
+    enorm_k = IDASensWrmsNormUpdate(IDA_mem, enorm_k, IDA_mem->ida_eeS,
+                                    IDA_mem->ida_ewtS, IDA_mem->ida_suppressalg);
+  }
+  *err_k = IDA_mem->ida_sigma[IDA_mem->ida_kk] * enorm_k;
+  terr_k = (IDA_mem->ida_kk + 1) * (*err_k);
 
   SUNLogDebug(IDA_LOGGER, "estimate-error-order-k",
               "err_k = " SUN_FORMAT_G ", terr_k = " SUN_FORMAT_G, *err_k, terr_k);
@@ -6861,8 +6870,18 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
                  IDA_mem->ida_delta);
     enorm_km1 = IDAWrmsNorm(IDA_mem, IDA_mem->ida_delta, IDA_mem->ida_ewt,
                             IDA_mem->ida_suppressalg);
-    *err_km1  = IDA_mem->ida_sigma[IDA_mem->ida_kk - 1] * enorm_km1;
-    terr_km1  = IDA_mem->ida_kk * (*err_km1);
+    if (sensi_sim)
+    {
+      retval = N_VLinearSumVectorArray(IDA_mem->ida_Ns, ONE,
+                                       IDA_mem->ida_phiS[IDA_mem->ida_kk], ONE,
+                                       IDA_mem->ida_eeS, IDA_mem->ida_deltaS);
+      if (retval != IDA_SUCCESS) { return (IDA_VECTOROP_ERR); }
+      enorm_km1 = IDASensWrmsNormUpdate(IDA_mem, enorm_km1, IDA_mem->ida_deltaS,
+                                        IDA_mem->ida_ewtS,
+                                        IDA_mem->ida_suppressalg);
+    }
+    *err_km1 = IDA_mem->ida_sigma[IDA_mem->ida_kk - 1] * enorm_km1;
+    terr_km1 = IDA_mem->ida_kk * (*err_km1);
 
     SUNLogDebug(IDA_LOGGER, "estimate-error-order-km1",
                 "err_km1 = " SUN_FORMAT_G ", terr_km1 = " SUN_FORMAT_G,
@@ -6875,8 +6894,19 @@ static int IDATestError(IDAMem IDA_mem, sunrealtype ck, sunrealtype* err_k,
                    IDA_mem->ida_delta, IDA_mem->ida_delta);
       enorm_km2 = IDAWrmsNorm(IDA_mem, IDA_mem->ida_delta, IDA_mem->ida_ewt,
                               IDA_mem->ida_suppressalg);
-      *err_km2  = IDA_mem->ida_sigma[IDA_mem->ida_kk - 2] * enorm_km2;
-      terr_km2  = (IDA_mem->ida_kk - 1) * (*err_km2);
+      if (sensi_sim)
+      {
+        retval = N_VLinearSumVectorArray(IDA_mem->ida_Ns, ONE,
+                                         IDA_mem->ida_phiS[IDA_mem->ida_kk - 1],
+                                         ONE, IDA_mem->ida_deltaS,
+                                         IDA_mem->ida_deltaS);
+        if (retval != IDA_SUCCESS) { return (IDA_VECTOROP_ERR); }
+        enorm_km2 = IDASensWrmsNormUpdate(IDA_mem, enorm_km2,
+                                          IDA_mem->ida_deltaS, IDA_mem->ida_ewtS,
+                                          IDA_mem->ida_suppressalg);
+      }
+      *err_km2 = IDA_mem->ida_sigma[IDA_mem->ida_kk - 2] * enorm_km2;
+      terr_km2 = (IDA_mem->ida_kk - 1) * (*err_km2);
 
       SUNLogDebug(IDA_LOGGER, "estimate-error-order-km2",
                   "err_km2 = " SUN_FORMAT_G ", terr_km2 = " SUN_FORMAT_G,
