@@ -1,20 +1,21 @@
 List of serial IDAS examples
 
-  idasAkzoNob_ASAi_dns  : adjoint sensitivity for the chemical Akzo-Nobel problem
-  idasAkzoNob_dns       : chemical Akzo-Nobel problem
-  idasFoodWeb_bnd       : 2-D food web system, banded Jacobian
-  idasHeat2D_bnd        : 2-D heat equation, banded Jacobian
-  idasHeat2D_kry        : 2-D heat equation, diagonal preconditioner
-  idasHessian_ASA_FSA   : computation of Hessian for Robertson kinetics system
-  idasKrylovDemo_ls     : demonstration program with 3 Krylov solvers
-  idasRoberts_dns       : 3-species Robertson kinetics system with user Jacobian
-  idasRoberts_klu       : Robertson system with KLU sparse linear solver
-  idasRoberts_sps       : Robertson system with SuperLUMT sparse linear solver
-  idasRoberts_FSA_dns   : forward sensitivity for Robertson kinetics system
-  idasRoberts_FSA_klu   : FSA for Robertson system with KLU sparse linear solver
-  idasRoberts_FSA_sps   : FSA for Robertson system with SuperLUMT sparse solver
-  idasRoberts_ASAi_dns  : adjoint sensitivity for Robertson kinetics system
-  idasRoberts_ASAi_klu  : ASA for Robertson system with KLU sparse linear solver
-  idasRoberts_ASAi_sps  : ASA for Robertson system with SuperLUMT sparse solver
-  idasSlCrank_dns       : slider-crank simulation
-  idasSlCrank_FSA_dns   : forward sensitivity for slider-crank
+  idasAkzoNob_ASAi_dns    : adjoint sensitivity for the chemical Akzo-Nobel problem
+  idasAkzoNob_dns         : chemical Akzo-Nobel problem
+  idasFoodWeb_bnd         : 2-D food web system, banded Jacobian
+  idasHeat2D_bnd          : 2-D heat equation, banded Jacobian
+  idasHeat2D_kry          : 2-D heat equation, diagonal preconditioner
+  idasHeat2D_sparseDQ_klu : 2-D heat equation with KLU and internal DQ Jacobian
+  idasHessian_ASA_FSA     : computation of Hessian for Robertson kinetics system
+  idasKrylovDemo_ls       : demonstration program with 3 Krylov solvers
+  idasRoberts_dns         : 3-species Robertson kinetics system with user Jacobian
+  idasRoberts_klu         : Robertson system with KLU sparse linear solver
+  idasRoberts_sps         : Robertson system with SuperLUMT sparse linear solver
+  idasRoberts_FSA_dns     : forward sensitivity for Robertson kinetics system
+  idasRoberts_FSA_klu     : FSA for Robertson system with KLU sparse linear solver
+  idasRoberts_FSA_sps     : FSA for Robertson system with SuperLUMT sparse solver
+  idasRoberts_ASAi_dns    : adjoint sensitivity for Robertson kinetics system
+  idasRoberts_ASAi_klu    : ASA for Robertson system with KLU sparse linear solver
+  idasRoberts_ASAi_sps    : ASA for Robertson system with SuperLUMT sparse solver
+  idasSlCrank_dns         : slider-crank simulation
+  idasSlCrank_FSA_dns     : forward sensitivity for slider-crank

@@ -30,6 +30,9 @@ target_link_libraries(
   PRIVATE $<TARGET_OBJECTS:sundials_kinsol_obj>
           sundials_sunmemsys_obj
           sundials_nvecserial_obj
+          sundials_sunmatrixband_obj
+          sundials_sunmatrixdense_obj
+          sundials_sunmatrixsparse_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
           # Use only the auto object files directly here since the auto object
