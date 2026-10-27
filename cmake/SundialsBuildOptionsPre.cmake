@@ -262,7 +262,7 @@ sundials_option(SUNDIALS_INSTALL_CMAKEDIR STRING "${DOCSTR}"
                 "${CMAKE_INSTALL_LIBDIR}/cmake/sundials")
 
 # ---------------------------------------------------------------
-# Options to enable compiler warnings, address sanitizer
+# Options to enable compiler warnings, sanitizers, and code coverage
 # ---------------------------------------------------------------
 
 sundials_option(
@@ -323,6 +323,10 @@ sundials_option(
   ADVANCED
   DEPRECATED_NAMES
   ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)
+
+sundials_option(
+  SUNDIALS_ENABLE_CODE_COVERAGE BOOL
+  "Enable code coverage instrumentation and the codecov target" OFF ADVANCED)
 
 # ---------------------------------------------------------------
 # Options to enable SUNDIALS debugging

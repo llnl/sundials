@@ -1196,6 +1196,16 @@ def main():
 
     add_arg(
         group,
+        "--code-coverage",
+        "SUNDIALS_ENABLE_CODE_COVERAGE",
+        "SUNDIALS_ENABLE_CODE_COVERAGE",
+        "OFF",
+        "BOOL",
+        "SUNDIALS code coverage instrumentation",
+    )
+
+    add_arg(
+        group,
         "--no-gtest",
         "SUNDIALS_TEST_ENABLE_GTEST",
         "SUNDIALS_TEST_ENABLE_GTEST",

@@ -157,6 +157,53 @@ if(SUNDIALS_TEST_CONTAINER_EXE)
 endif()
 
 #
+# Create `make codecov`
+#
+if(SUNDIALS_ENABLE_CODE_COVERAGE)
+  find_program(GCOVR_EXECUTABLE gcovr REQUIRED)
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang"
+     OR (CXX_FOUND AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
+     OR (Fortran_FOUND AND CMAKE_Fortran_COMPILER_ID MATCHES "Clang|AppleClang"
+        ))
+    find_program(LLVM_COV_EXECUTABLE llvm-cov REQUIRED)
+    set(SUNDIALS_GCOV_EXECUTABLE "${LLVM_COV_EXECUTABLE} gcov")
+  else()
+    set(SUNDIALS_GCOV_EXECUTABLE gcov)
+  endif()
+
+  set(SUNDIALS_COVERAGE_OUTPUT_DIR "${PROJECT_BINARY_DIR}/coverage")
+
+  set(SUNDIALS_COVERAGE_REPORT_COMMANDS
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+      "${SUNDIALS_COVERAGE_OUTPUT_DIR}" COMMAND "${GCOVR_EXECUTABLE}"
+      "${PROJECT_BINARY_DIR}" --root "${PROJECT_SOURCE_DIR}" --filter
+      "${PROJECT_SOURCE_DIR}/src/" --filter "${PROJECT_SOURCE_DIR}/include/"
+      --print-summary --txt "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.txt"
+      --xml-pretty --xml "${SUNDIALS_COVERAGE_OUTPUT_DIR}/coverage.xml"
+      --gcov-executable "${SUNDIALS_GCOV_EXECUTABLE}"
+      --gcov-ignore-parse-errors negative_hits.warn_once_per_file
+      --gcov-ignore-parse-errors suspicious_hits.warn_once_per_file
+      --html-details "${SUNDIALS_COVERAGE_OUTPUT_DIR}/index.html")
+
+  add_custom_target(
+    codecov-report
+    ${SUNDIALS_COVERAGE_REPORT_COMMANDS}
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    USES_TERMINAL
+    COMMENT "Generating SUNDIALS code coverage reports")
+
+  add_custom_target(
+    codecov
+    COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}" --parallel
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j 2
+            ${SUNDIALS_COVERAGE_REPORT_COMMANDS}
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    USES_TERMINAL
+    COMMENT "Building, testing, and measuring SUNDIALS code coverage")
+endif()
+
+#
 # Check if GTest is needed
 #
 if(SUNDIALS_TEST_ENABLE_GTEST)

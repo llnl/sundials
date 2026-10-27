@@ -62,6 +62,39 @@ following CMake options.
 
    Default: ON (when unit tests are enabled)
 
+Code Coverage
+-------------
+
+Code coverage can be run locally with the ``codecov`` target. It requires ``gcovr`` and a GNU or
+Clang compiler. From the root of a SUNDIALS checkout, configure a coverage build with the tests
+you want to measure:
+
+.. cmakeoption:: SUNDIALS_ENABLE_CODE_COVERAGE
+
+   Enable code coverage instrumentation and the ``codecov`` target
+
+   Default: OFF
+
+   .. versionadded:: x.y.z
+
+.. code-block:: shell
+
+   $ python3 -m pip install gcovr
+   $ cmake -S . -B build-codecov \
+       -D CMAKE_BUILD_TYPE=Debug \
+       -D SUNDIALS_ENABLE_CODE_COVERAGE=ON \
+       -D SUNDIALS_ENABLE_CXX_EXAMPLES=ON \
+       -D SUNDIALS_TEST_ENABLE_DEV_TESTS=ON \
+       -D SUNDIALS_TEST_ENABLE_UNIT_TESTS=ON \
+       -D SUNDIALS_TEST_ENABLE_GTEST=OFF
+   $ cd build-codecov
+   $ make codecov
+
+The ``codecov`` target builds the configured tests, runs CTest, and writes text, XML, and HTML
+reports to ``build-codecov/coverage``. To exercise additional third-party-library paths, configure
+the build with the corresponding TPL options enabled. The ``codecov-report`` target only regenerates
+the reports from existing coverage data, without rebuilding or rerunning tests.
+
 Answer Files
 ------------
 

@@ -428,6 +428,40 @@ if(SUNDIALS_ENABLE_BENCHMARKS
   sundials_add_warning_flags(CXX)
 endif()
 
+if(SUNDIALS_ENABLE_CODE_COVERAGE)
+  set(_SUNDIALS_COVERAGE_LANGUAGES C)
+
+  if(CXX_FOUND)
+    list(APPEND _SUNDIALS_COVERAGE_LANGUAGES CXX)
+  endif()
+
+  if(Fortran_FOUND)
+    list(APPEND _SUNDIALS_COVERAGE_LANGUAGES Fortran)
+  endif()
+
+  message(STATUS "Enabling code coverage instrumentation")
+
+  foreach(lang ${_SUNDIALS_COVERAGE_LANGUAGES})
+    set(_compiler_id "${CMAKE_${lang}_COMPILER_ID}")
+    if(NOT _compiler_id MATCHES "GNU|Clang|AppleClang")
+      message(
+        FATAL_ERROR
+          "SUNDIALS_ENABLE_CODE_COVERAGE requires a GNU or Clang ${lang} compiler"
+      )
+    endif()
+
+    set(CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS} --coverage")
+
+    foreach(config DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+      set(CMAKE_${lang}_FLAGS_${config}
+          "${CMAKE_${lang}_FLAGS_${config}} -O0 -g")
+    endforeach()
+  endforeach()
+
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+endif()
+
 # ===============================================================
 # CUDA settings
 # ===============================================================

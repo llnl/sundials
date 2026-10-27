@@ -18,6 +18,9 @@ update the names accordingly.
 
 ### New Features and Enhancements
 
+Added the `SUNDIALS_ENABLE_CODE_COVERAGE` CMake option and `codecov` target for generating code
+coverage reports.
+
 Added the utility function, `SUNFileFlush` for flushing file pointers. This is
 useful when using the Fortran 2003 interfaces.
 

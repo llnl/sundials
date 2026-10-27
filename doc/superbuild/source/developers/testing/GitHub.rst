@@ -32,7 +32,6 @@ The minimal/short testing runs on more platforms: Windows (MinGW and MSVC), and 
 only one configuration (using 64-bit indices and double precision) and without third-party
 libraries.
 
-
 Building the Docker containers for CI
 -------------------------------------
 

@@ -15,6 +15,10 @@ inputs:
     description: "Optional phase passed to test_driver.sh as --phase <PHASE> (e.g., BUILD)"
     required: false
     default: ""
+  envfile:
+    description: "Environment setup script passed to test_driver.sh"
+    required: false
+    default: env/docker.sh
 
 runs:
   using: composite
@@ -39,7 +43,7 @@ runs:
         fi
         ./test_driver.sh \
         --testtype CUSTOM \
-        --env env/docker.sh \
+        --env "${{ inputs.envfile }}" \
         --tpls ${{ inputs.tpls }} \
         --sunrealtype ${{ inputs.precision }} \
         --indexsize ${{ inputs.indexsize }} \
