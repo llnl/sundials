@@ -1,7 +1,7 @@
 ! ------------------------------------------------------------------
 ! Programmer(s): Daniel M. Margolis @ UMBC
 !                based off the previous Fortran-77 example program,
-!                cvode/cv_adv_diff/fortran/cv_advdiff_bnd_f2003.f90
+!                cvode/fcmix_serial/fcvAdvDiff_bnd.f
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
 ! Copyright (c) 2025-2026, Lawrence Livermore National Security,

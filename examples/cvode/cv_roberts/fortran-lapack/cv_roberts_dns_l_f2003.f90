@@ -1,7 +1,7 @@
 ! ------------------------------------------------------------------
 ! Programmer(s): Daniel M. Margolis @ UMBC
 !                based off the previous Fortran-77 example program,
-!                cvode/cv_roberts/fortran-lapack/cv_roberts_dns_l_f2003.f90
+!                cvode/fcmix_serial/fcvRoberts_dnsL.f
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
 ! Copyright (c) 2025-2026, Lawrence Livermore National Security,
