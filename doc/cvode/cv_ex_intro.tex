@@ -12,12 +12,11 @@ illustrate the use of various integrator options, various linear solver
 options, and various {\nvector} modules.
 %%
 With the exception of ''demo''-type example files, the names of all the examples
-distributed with {\sundials} are of the form \verb![slv][PbName]_[ls]_[prec]_[p]!,
+distributed with {\sundials} are of the form \verb![slv]_[pb_name]_[ls]_[prec]_[p]!,
 where
 \begin{description}
-\item [{[slv]}] identifies the solver (for {\cvode} examples this is \id{cv},
-  while for {\fcvode} examples, this is \id{fcv});
-\item [{[PbName]}] identifies the problem;
+\item [{[slv]}] identifies the solver (\id{cv} for all {\cvode} examples);
+\item [{[pb_name]}] identifies the problem in lowercase, with words separated by underscores;
 \item [{[ls]}] identifies the linear solver module used (for examples using
   fixed-point iteration for the nonlinear system solver, \id{non} specifies
   that no linear solver was used);
@@ -25,6 +24,7 @@ where
   or \id{bbd} for {\cvbbdpre}
   (only if applicable, for examples using a Krylov linear solver);
 \item [{[p]}] indicates an example using the parallel vector module {\nvecp}.
+\item All Fortran 2003 examples append the suffix \id{\_f2003}.
 \end{description}
 
 \vspace{0.2in}\noindent
@@ -46,7 +46,7 @@ Supplied in the C variants under the problem directories in
 \item \id{cv\_roberts\_dns\_constraints}
   is the same as \id{cv\_roberts\_dns} but imposes the constraint
   $u \geq 0.0$ for all components.
-\item \id{cv\_roberts\_dnsL}
+\item \id{cv\_roberts\_dns\_l}
   is the same as \id{cv\_roberts\_dns} but uses the LAPACK
   implementation of {\sunlinsollapdense}.
 \item \id{cv\_roberts\_dns\_uw}
@@ -74,7 +74,7 @@ Supplied in the C variants under the problem directories in
   This program solves the problem with the BDF method and Newton
   iteration, with the {\sunlinsolband} linear solver, {\cvls}
   interface, and a user-supplied Jacobian routine.
-\item \id{cv\_adv\_diff\_bndL}
+\item \id{cv\_adv\_diff\_bnd\_l}
   is the same as \id{cv\_adv\_diff\_bnd} but uses the LAPACK
   implementation of {\sunlinsollapband}.
 \item \id{cv\_diurnal\_kry}
@@ -221,14 +221,14 @@ all in Fortran 2003 and using the {\sundials} Fortran interface modules:
 \item \id{cv\_brusselator\_dns\_f2003} solves the Brusselator problem,
   a 3x3 nonlinear system, using the {\sunlinsoldense} linear solver.
 \item \id{cv\_diurnal\_kry\_f2003} solves the same problem as
-  \id{cv\_Diurnal\_kry}
+  \id{cv\_diurnal\_kry}
 \item \id{cv\_diurnal\_kry\_bp\_f2003} solves the same problem as
-  \id{cv\_Diurnal\_kry\_bp}
-\item \id{cv\_advdiff\_bnd\_f2003} solves the same problem as
-  \id{cv\_AdvDiff\_bnd}.
+  \id{cv\_diurnal\_kry\_bp}
+\item \id{cv\_adv\_diff\_bnd\_f2003} solves the same problem as
+  \id{cv\_adv\_diff\_bnd}.
 \item \id{cv\_roberts\_dns\_f2003} solves the same problem as
   \id{cv\_roberts\_dns}.
-\item \id{cv\_roberts\_dnsL\_f2003} solves the same problem as
+\item \id{cv\_roberts\_dns\_l\_f2003} solves the same problem as
   \id{cv\_roberts\_dns}, using the LAPACK dense solver.
 \item \id{cv\_roberts\_dns\_constraints\_f2003} solves the same problem as
   \id{cv\_roberts\_dns\_constraints}.
@@ -257,19 +257,19 @@ example listed earlier, except where noted.
 \begin{itemize}
 \item The \id{cv\_adv\_diff\_kry\_raja} example uses RAJA.
 \item The \id{cv\_adv\_diff\_sludist} example uses SuperLU\_DIST.
-\item The \id{cv\_heat2D} and \id{cv\_kpr} examples are serial. The latter
+\item The \id{cv\_heat\_2d} and \id{cv\_kpr} examples are serial. The latter
   solves a size-2 system, the Kvaerno-Prothero-Robinson test.
-\item The \id{cv\_heat2D\_p} example uses MPI.
-\item The \id{cv\_heat2D\_hypre\_ls} and
-  \id{cv\_heat2D\_hypre\_pfmg} examples use hypre.
+\item The \id{cv\_heat\_2d\_p} example uses MPI.
+\item The \id{cv\_heat\_2d\_hypre\_ls} and
+  \id{cv\_heat\_2d\_hypre\_pfmg} examples use hypre.
 \item The \id{cv\_adv\_diff\_kry\_sycl} example uses SYCL.
 \item The \id{cv\_roberts\_blockdiag\_onemkl} example uses oneMKL.
-\item The \id{cv\_heat2D\_ginkgo} and
+\item The \id{cv\_heat\_2d\_ginkgo} and
   \id{cv\_kpr\_ginkgo} examples use Ginkgo.
 \item The HIP examples are \id{cv\_adv\_diff\_diag\_hip} and
   \id{cv\_adv\_diff\_kry\_hip}.
 \item The Kokkos examples are \id{cv\_bruss\_batched\_kokkos} and
-  \id{cv\_bruss\_batched\_kokkos\_2D}.
+  \id{cv\_bruss\_batched\_kokkos\_2d}.
 \item The \id{cv\_bruss\_batched\_magma} example uses MAGMA.
 
 \end{itemize}
