@@ -24,4 +24,10 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Fixed a bug in LSRKStep where the dominant eigenvalue was not recomputed after
+:c:func:`ARKodeResize`, so steps after a resize could use the dominant
+eigenvalue of the previous problem size until the update frequency set with
+:c:func:`LSRKStepSetDomEigFrequency` elapsed, or for the rest of the simulation
+when the dominant eigenvalue was declared constant.
+
 **Deprecation Notices**
