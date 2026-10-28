@@ -190,7 +190,7 @@ int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set MRIStep coupling table for ExtSTS method.");
+                    "Failed to reinitialize MRIStep for ExtSTS method.");
     return retval;
   }
 
@@ -199,7 +199,7 @@ int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set reinitialize LSRKStep for ExtSTS method.");
+                    "Failed to reinitialize LSRKStep for ExtSTS method.");
     return retval;
   }
 
