@@ -13,7 +13,11 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_roberts_dns ida_roberts_dns.c
-  INSTALL_FILES ida_roberts_dns_stats.csv
+  ida_roberts_dns ida_roberts_dns.c NO_TEST
+  INSTALL_FILES ida_roberts_dns.out ida_roberts_dns_stats.csv
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
+sundials_add_test(
+  ida_roberts_dns ida_roberts_dns
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE ida_roberts_dns.out)

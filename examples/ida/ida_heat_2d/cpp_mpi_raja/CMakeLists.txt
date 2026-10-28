@@ -26,12 +26,11 @@ sundials_add_example(
   ida_heat_2d_kry_p_mpiraja ida_heat_2d_kry_p_mpiraja.cpp
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
-  INCLUDE_DIRECTORIES PRIVATE ${MPI_CXX_INCLUDE_DIRS}
   LINK_LIBRARIES
     PRIVATE
     ${IDA_C_LIBS}
     sundials_nvecmpiplusx
     sundials_nvecraja
-    ${MPI_CXX_LIBRARIES}
+    MPI::MPI_CXX
     ${EXE_EXTRA_LINK_LIBS}
     ${_other_libs})
