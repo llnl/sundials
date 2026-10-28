@@ -125,7 +125,7 @@ OpenMP example
 --------------
 
 Supplied in the ``examples/kinsol/kin_food_web/c_openmp`` directory is an example
-``kinFoodweb_kry_omp``, which solves the same problem as ``kinFoodweb_kry``, but
+``kin_food_web_kry_omp``, which solves the same problem as ``kin_food_web_kry``, but
 using the :ref:`OpenMP vector <NVectors.OpenMP>`.
 
 MPI + CUDA example
