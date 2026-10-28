@@ -4294,21 +4294,21 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
 
-.. c:function:: char* ARKodeGetReturnFlagName(long int flag)
+.. c:function:: const char* ARKodeGetReturnFlagName(long int flag)
 
    Returns the name of the ARKODE constant corresponding to *flag*.
    See :ref:`ARKODE.Constants`.
 
    :param flag: a return flag from an ARKODE function.
 
-   :return: The return value is a string containing the name of
-            the corresponding constant.
-
-   .. warning::
-
-      The user is responsible for freeing the returned string.
+   :return: A string literal containing the name of the corresponding constant.
+            The returned string must not be modified or freed by the user.
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
+
+   .. versionchanged:: x.y.z
+
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. c:function:: int ARKodeGetNumExpSteps(void* arkode_mem, long int* expsteps)

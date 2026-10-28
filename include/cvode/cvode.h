@@ -254,7 +254,7 @@ SUNDIALS_EXPORT int CVodeGetNumConstraintCorrections(void* cvode_mem,
 SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);
-SUNDIALS_EXPORT char* CVodeGetReturnFlagName(long int flag);
+SUNDIALS_EXPORT const char* CVodeGetReturnFlagName(long int flag);
 
 /* Free function */
 SUNDIALS_EXPORT void CVodeFree(void** cvode_mem);

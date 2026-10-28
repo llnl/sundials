@@ -63,7 +63,7 @@ int SPRKStepEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetDky instead")
 int SPRKStepGetDky(void* arkode_mem, sunrealtype t, int k, N_Vector dky);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetReturnFlagName instead")
-char* SPRKStepGetReturnFlagName(long int flag);
+const char* SPRKStepGetReturnFlagName(long int flag);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetCurrentState instead")
 int SPRKStepGetCurrentState(void* arkode_mem, N_Vector* state);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetCurrentStep instead")
