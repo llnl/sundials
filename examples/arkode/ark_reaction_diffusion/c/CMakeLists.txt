@@ -15,6 +15,8 @@
 sundials_add_example(
   ark_reaction_diffusion_mri ark_reaction_diffusion_mri.c
   EXAMPLE_TYPE develop
-  INSTALL_FILES plot_sol.py plot_sol_log.py ark_reaction_diffusion_mri_fast_stats.csv ark_reaction_diffusion_mri_slow_stats.csv
+  INSTALL_FILES
+    plot_sol.py plot_sol_log.py ark_reaction_diffusion_mri_fast_stats.csv
+    ark_reaction_diffusion_mri_slow_stats.csv
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
