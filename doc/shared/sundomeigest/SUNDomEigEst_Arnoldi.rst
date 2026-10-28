@@ -217,7 +217,7 @@ information:
 
 * ``prerhs_fn`` - user provided preprocessing RHS function,
 
-* ``prerhs_fn_data`` - pointer to the data structure for ``prerhs_fn``,
+* ``prerhs_fn_data`` - pointer to the data structure to be passed back to ``prerhs_fn``,
 
 * ``Fy_is_current`` - flag indicating whether ``Fy`` holds the RHS value at the
   current linearization point,

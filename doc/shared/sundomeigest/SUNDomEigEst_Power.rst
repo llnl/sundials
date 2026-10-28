@@ -282,7 +282,7 @@ information:
 
 * ``prerhs_fn`` - user provided preprocessing RHS function,
 
-* ``prerhs_fn_data`` - pointer to the data structure for ``prerhs_fn``,
+* ``prerhs_fn_data`` - pointer to the data structure to be passed back to ``prerhs_fn``,
 
 * ``is_complex`` - flag indicating whether the dominant eigenvalue is
   complex-valued (default is ``SUNTRUE``),

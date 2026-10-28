@@ -60,7 +60,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   long int nfevals; /* Number of RHS evaluations */
 
   SUNPreRhsFn prerhs_fn; /* User provided Preprocess RHS function */
-  void* prerhs_fn_data;  /* Preprocess RHS function data */
+  void* prerhs_fn_data;  /* Data to be passed back to prerhs_fn */
 
   sunrealtype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
   sunrealtype* LAPACK_wr;    /* Real parts of eigenvalues */

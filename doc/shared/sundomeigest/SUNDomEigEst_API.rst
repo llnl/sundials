@@ -254,7 +254,7 @@ instead of supplying a dummy routine.
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
-      * *prerhs_fn_data* -- pointer to structure for ``prerhs_fn``.
+      * *prerhs_fn_data* -- pointer to the data structure to be passed back to ``prerhs_fn``.
       * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.
 
    **Return value:**
