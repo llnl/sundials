@@ -6,41 +6,14 @@
 
 ### New Features and Enhancements
 
-Reorganized the IDA examples by problem, with implementation language and
-optional third-party libraries represented by variant subdirectories. Each
-variant contains its input files and reference output. The old IDA example
-Makefiles are no longer installed; use the installed CMakeLists.txt files
-instead.
-
-Reorganized the KINSOL examples by problem, with implementation language and
-optional third-party libraries represented by variant subdirectories. Each
-variant contains its input files and reference output. The old KINSOL example
-Makefiles are no longer installed; use the installed CMakeLists.txt files
-instead.
-
-Reorganized the CVODE examples by problem, with implementation language and
-optional third-party libraries represented by variant subdirectories. Each
-variant contains its input files, scripts, and reference output. The old CVODE
+Reorganized the CVODE, ARKODE, CVODES, IDA, IDAS, and KINSOL examples by
+problem, with implementation language and optional third-party libraries
+represented by underscore-separated variant subdirectories. Each variant
+contains its input files, scripts, and reference output. Example filenames
+and executable targets use lowercase, underscore-separated names. The old
 example Makefiles are no longer installed; use the installed CMakeLists.txt
-files instead.
-
-Reorganized the ARKODE examples using the same problem-based structure as the
-CVODE examples, with implementation language and optional third-party
-libraries represented by variant subdirectories. Each variant contains its
-input files, scripts, and reference output. The old ARKODE example Makefiles
-are no longer installed; use the installed CMakeLists.txt files instead.
-
-Reorganized the CVODES examples using the same problem-based structure as the
-CVODE and ARKODE examples. The old CVODES example Makefiles are no longer
-installed; use the installed CMakeLists.txt files instead.
-
-Example filenames and executable targets in ARKODE, CVODES, IDA, IDAS, and
-KINSOL now follow CVODE's lowercase, underscore-separated naming convention.
-The serial and MPI KINSOL diagonal Fortran examples use distinct target names.
-
-Reorganized the IDAS examples using the same problem-based structure as the
-CVODE and ARKODE examples. The old IDAS example Makefiles are no longer
-installed; use the installed CMakeLists.txt files instead.
+files instead. The serial and MPI KINSOL diagonal Fortran examples use
+distinct target names.
 
 The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
 targets are now exported by installed SUNDIALS CMake packages. The installed
