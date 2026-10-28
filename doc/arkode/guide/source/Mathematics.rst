@@ -844,7 +844,7 @@ of the form
 where the three right hand side terms are:
 
 * :math:`f^D(t,y)` contains the components of the system that should
-  be integrated using a *super time stepping* (SSP) method (e.g.,
+  be integrated using a *super time stepping* (STS) method (e.g.,
   diffusion terms),
 
 * :math:`f^E(t,y)` contains the components of the system that should
@@ -864,11 +864,11 @@ and :math:`f^I` match those here.
 
 ExtSTS methods are formed by applying a single time step of a super time
 stepping method from LSRKStep to tackle the modified IVPs :eq:`MRI_fast_IVP`
-and :eq:`MRI_embedding_fast_IVP`.  Due to the limitation of LSRKStep's SSP
-methods to second order accuracy, ExtSTS methods are at most second order,
-although practitioners are free to leverage higher-order MRI methods if the
-diffusive terms in their applications only contribute weakly to the overall
-solution error.
+and :eq:`MRI_embedding_fast_IVP`.  Due to the limitation of LSRKStep's STS
+(RKC and RKL) methods to second order accuracy, ExtSTS methods are at most
+second order, although practitioners are free to leverage higher-order MRI
+methods if the diffusive terms in their applications only contribute weakly
+to the overall solution error.
 
 Aside from their use of STS methods for the modified IVP solves, ExtSTS
 methods introduce no additional constraints on the MRI and STS methods on
