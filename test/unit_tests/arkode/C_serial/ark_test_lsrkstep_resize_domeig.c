@@ -66,11 +66,16 @@ static int run_test(long int dom_eig_freq, SUNContext sunctx)
   long int num_updates_before = 0, num_updates_after = 0;
   int stages_before = 0, stages_after = 0;
 
-  y     = N_VNew_Serial(N_INITIAL, sunctx);
-  y_big = N_VNew_Serial(N_RESIZED, sunctx);
-  if (!y || !y_big)
+  y = N_VNew_Serial(N_INITIAL, sunctx);
+  if (!y)
   {
-    fprintf(stderr, "N_VNew_Serial returned NULL\n");
+    fprintf(stderr, "N_VNew_Serial returned NULL for y\n");
+    return 1;
+  }
+  y_big = N_VNew_Serial(N_RESIZED, sunctx);
+  if (!y_big)
+  {
+    fprintf(stderr, "N_VNew_Serial returned NULL for y_big\n");
     return 1;
   }
   N_VConst(ONE, y);
@@ -82,11 +87,19 @@ static int run_test(long int dom_eig_freq, SUNContext sunctx)
     return 1;
   }
 
-  if (LSRKStepSetDomEigFn(arkode_mem, dom_eig) ||
-      LSRKStepSetDomEigFrequency(arkode_mem, dom_eig_freq) ||
-      ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01)))
+  if (LSRKStepSetDomEigFn(arkode_mem, dom_eig))
   {
-    fprintf(stderr, "Setting LSRKStep options failed\n");
+    fprintf(stderr, "LSRKStepSetDomEigFn failed\n");
+    return 1;
+  }
+  if (LSRKStepSetDomEigFrequency(arkode_mem, dom_eig_freq))
+  {
+    fprintf(stderr, "LSRKStepSetDomEigFrequency failed\n");
+    return 1;
+  }
+  if (ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01)))
+  {
+    fprintf(stderr, "ARKodeSetFixedStep failed\n");
     return 1;
   }
 
@@ -100,9 +113,14 @@ static int run_test(long int dom_eig_freq, SUNContext sunctx)
     }
   }
 
-  if (LSRKStepGetNumDomEigUpdates(arkode_mem, &num_updates_before) ||
-      LSRKStepGetMaxNumStages(arkode_mem, &stages_before))
+  if (LSRKStepGetNumDomEigUpdates(arkode_mem, &num_updates_before))
   {
+    fprintf(stderr, "LSRKStepGetNumDomEigUpdates failed before resize\n");
+    return 1;
+  }
+  if (LSRKStepGetMaxNumStages(arkode_mem, &stages_before))
+  {
+    fprintf(stderr, "LSRKStepGetMaxNumStages failed before resize\n");
     return 1;
   }
   if (num_updates_before != 1)
@@ -125,9 +143,14 @@ static int run_test(long int dom_eig_freq, SUNContext sunctx)
     return 1;
   }
 
-  if (LSRKStepGetNumDomEigUpdates(arkode_mem, &num_updates_after) ||
-      LSRKStepGetMaxNumStages(arkode_mem, &stages_after))
+  if (LSRKStepGetNumDomEigUpdates(arkode_mem, &num_updates_after))
   {
+    fprintf(stderr, "LSRKStepGetNumDomEigUpdates failed after resize\n");
+    return 1;
+  }
+  if (LSRKStepGetMaxNumStages(arkode_mem, &stages_after))
+  {
+    fprintf(stderr, "LSRKStepGetMaxNumStages failed after resize\n");
     return 1;
   }
 
