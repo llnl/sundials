@@ -451,20 +451,31 @@ Optional inputs for ERKStep
       the functions
       :c:func:`ERKStepSetInitStep()`,
       :c:func:`ERKStepSetAdaptivityFn()`,
+      :c:func:`ERKStepSetMinStep()`,
+      :c:func:`ERKStepSetMaxStep()`,
+      :c:func:`ERKStepSetConstraints()`,
+      :c:func:`ERKStepSetMaxNumConstrFails()`,
       :c:func:`ERKStepSetMaxErrTestFails()`,
       :c:func:`ERKStepSetAdaptivityMethod()`,
       :c:func:`ERKStepSetCFLFraction()`,
+      :c:func:`ERKStepSetAdaptivityAdjustment()`,
       :c:func:`ERKStepSetErrorBias()`,
       :c:func:`ERKStepSetFixedStepBounds()`,
+      :c:func:`ERKStepSetMaxCFailGrowth()`,
       :c:func:`ERKStepSetMaxEFailGrowth()`,
       :c:func:`ERKStepSetMaxFirstGrowth()`,
       :c:func:`ERKStepSetMaxGrowth()`,
       :c:func:`ERKStepSetMinReduction()`,
       :c:func:`ERKStepSetSafetyFactor()`,
       :c:func:`ERKStepSetSmallNumEFails()`,
-      :c:func:`ERKStepSetStabilityFn()`, and
-      :c:func:`ERKStepSetAdaptController()`
-      will be ignored, since temporal adaptivity is disabled.
+      :c:func:`ERKStepSetStabilityFn()`,
+      :c:func:`ERKStepSetMaxHnilWarns()`,
+      :c:func:`ERKStepResetAccumulatedError()`,
+      :c:func:`ERKStepSetAdaptController()`, and
+      :c:func:`ERKStepSetAdaptControllerByName()`
+      will return an error, since temporal adaptivity is disabled. To turn
+      temporal adaptivity back on, call :c:func:`ERKStepSetFixedStep()` with
+      a value of 0.0.
 
       If both :c:func:`ERKStepSetFixedStep()` and
       :c:func:`ERKStepSetStopTime()` are used, then the fixed step size

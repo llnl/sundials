@@ -624,6 +624,9 @@ int arkRwtSet(N_Vector ycur, N_Vector weight, void* data);
 void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
                      const char* func, const char* file, const char* msgfmt, ...);
 
+int ark_adaptive_set_error_handler(sunbooleantype fixedstep,
+                                   sunbooleantype step_supports_adaptive);
+
 /*===============================================================
   ARKODE PRIVATE FUNCTION PROTOTYPES
   ===============================================================*/

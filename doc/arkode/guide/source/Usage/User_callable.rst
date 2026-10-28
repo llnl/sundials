@@ -1189,8 +1189,13 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       When using :c:func:`ARKodeSetFixedStep`, any values provided to
       the functions
       :c:func:`ARKodeSetInitStep`,
+      :c:func:`ARKodeSetMinStep`,
+      :c:func:`ARKodeSetMaxStep`,
+      :c:func:`ARKodeSetConstraints`,
+      :c:func:`ARKodeSetMaxNumConstrFails`,
       :c:func:`ARKodeSetMaxErrTestFails`,
       :c:func:`ARKodeSetCFLFraction`,
+      :c:func:`ARKodeSetAdaptivityAdjustment`,
       :c:func:`ARKodeSetErrorBias`,
       :c:func:`ARKodeSetFixedStepBounds`,
       :c:func:`ARKodeSetMaxCFailGrowth`,
@@ -1201,9 +1206,13 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       :c:func:`ARKodeSetSafetyFactor`,
       :c:func:`ARKodeSetSmallNumEFails`,
       :c:func:`ARKodeSetStabilityFn`,
+      :c:func:`ARKodeSetMaxHnilWarns`,
+      :c:func:`ARKodeResetAccumulatedError`,
       :c:func:`ARKodeSetAdaptController`, and
       :c:func:`ARKodeSetAdaptControllerByName`
-      will be ignored, since temporal adaptivity is disabled.
+      will return an error, since temporal adaptivity is disabled. To turn
+      temporal adaptivity back on, call :c:func:`ARKodeSetFixedStep` with
+      a value of 0.0.
 
       If both :c:func:`ARKodeSetFixedStep` and
       :c:func:`ARKodeSetStopTime` are used, then the fixed step size
