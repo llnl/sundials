@@ -31,7 +31,7 @@ foreach(example cvs_roberts_asai_sps cvs_roberts_fsa_sps cvs_roberts_sps)
       EXAMPLE_TYPE
       exclude-single)
   endif()
-  if(NOT SUNDIALS_INDEX_SIZE MATCHES "64")
+  if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
     list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
   endif()
   sundials_add_example(${example} ${example}.c ${example_options})
