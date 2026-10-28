@@ -37,7 +37,7 @@ if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   endif()
 endif()
 
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
   add_subdirectory(fortran)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(fortran-mpi)
