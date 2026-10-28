@@ -13,5 +13,5 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES AND SUNDIALS_ENABLE_PETSC)
-  add_subdirectory(c-mpi-petsc)
+  add_subdirectory(c_mpi_petsc)
 endif()
