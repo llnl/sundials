@@ -19,8 +19,7 @@ sundials_add_example(
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecopenmp
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  ida_food_web_kry_omp ida_food_web_kry_omp.c
-  NO_TEST
+  ida_food_web_kry_omp ida_food_web_kry_omp.c NO_TEST
   INSTALL_FILES ida_food_web_kry_omp.out
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecopenmp
                  ${EXE_EXTRA_LINK_LIBS})

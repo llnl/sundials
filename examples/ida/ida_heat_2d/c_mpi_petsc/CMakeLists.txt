@@ -23,8 +23,7 @@ sundials_add_example(
   ida_heat_2d_petsc_snes ida_heat_2d_petsc_snes.c
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
-  INSTALL_FILES ida_heat_2d_petsc_snes_-pre.out
-                ida_heat_2d_petsc_snes_-jac.out
+  INSTALL_FILES ida_heat_2d_petsc_snes_-pre.out ida_heat_2d_petsc_snes_-jac.out
                 ida_heat_2d_petsc_snes_-jac_-pre.out
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})

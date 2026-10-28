@@ -21,9 +21,9 @@ if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
   set(_other_libs OpenMP::OpenMP_CXX)
 endif()
 set_source_files_properties(ida_heat_2d_kry_raja.cpp PROPERTIES LANGUAGE
-                                                               ${_lang})
+                                                                ${_lang})
 sundials_add_example(
   ida_heat_2d_kry_raja ida_heat_2d_kry_raja.cpp
   EXAMPLE_TYPE develop
-  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecraja
-                 ${EXE_EXTRA_LINK_LIBS} ${_other_libs})
+  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecraja ${EXE_EXTRA_LINK_LIBS}
+                 ${_other_libs})

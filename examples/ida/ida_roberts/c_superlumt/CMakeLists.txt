@@ -19,8 +19,7 @@ else()
   list(APPEND example_options EXAMPLE_TYPE develop)
 endif()
 sundials_add_example(
-  ida_roberts_sps ida_roberts_sps.c
-  ${example_options}
-  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
-                 sundials_sunlinsolsuperlumt ${SUPERLUMT_LIBRARIES}
-                 ${EXE_EXTRA_LINK_LIBS})
+  ida_roberts_sps ida_roberts_sps.c ${example_options}
+  LINK_LIBRARIES
+    PRIVATE ${IDA_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
+    ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})

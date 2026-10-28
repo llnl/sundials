@@ -16,6 +16,5 @@ sundials_add_example(
   ida_heat_2d_kry_p_mpicuda ida_heat_2d_kry_p_mpicuda.cu
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
-  LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${IDA_C_LIBS}
-                 sundials_nvecmpiplusx sundials_nveccuda
-                 ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${IDA_C_LIBS} sundials_nvecmpiplusx
+                 sundials_nveccuda ${EXE_EXTRA_LINK_LIBS})
