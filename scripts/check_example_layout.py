@@ -32,7 +32,7 @@ def check(root, packages):
             for variant in variants:
                 variant_dir = problem_dir / variant
                 variant_cmake = variant_dir / "CMakeLists.txt"
-                if not re.fullmatch(r"(?:c|cpp|fortran|cuda|hip|sycl)(?:-[a-z0-9]+)*", variant):
+                if not re.fullmatch(r"(?:c|cpp|fortran|cuda|hip|sycl)(?:_[a-z0-9]+)*", variant):
                     errors.append(f"{variant_dir}: invalid language/TPL variant name")
                 if not variant_cmake.is_file():
                     errors.append(f"{variant_cmake}: missing variant CMakeLists.txt")
