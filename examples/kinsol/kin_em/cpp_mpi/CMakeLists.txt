@@ -17,6 +17,11 @@ sundials_add_example(
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES kin_em_p.hpp
-  LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecparallel
-                 sundials_nvecmpiplusx sundials_nvecserial MPI::MPI_CXX
-                 ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES
+    PRIVATE
+    ${KINSOL_C_LIBS}
+    sundials_nvecparallel
+    sundials_nvecmpiplusx
+    sundials_nvecserial
+    MPI::MPI_CXX
+    ${EXE_EXTRA_LINK_LIBS})

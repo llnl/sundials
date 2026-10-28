@@ -16,8 +16,14 @@ sundials_add_example(
   kin_diagonal_kry_p_f2003 kin_diagonal_kry_p_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
-  LINK_LIBRARIES PRIVATE MPI::MPI_Fortran ${KINSOL_C_LIBS}
-                 sundials_fkinsol_mod sundials_nvecparallel
-                 sundials_fnvecparallel_mod ${EXE_EXTRA_LINK_LIBS}
+  LINK_LIBRARIES
+    PRIVATE
+    MPI::MPI_Fortran
+    ${KINSOL_C_LIBS}
+    sundials_fkinsol_mod
+    sundials_nvecparallel
+    sundials_fnvecparallel_mod
+    ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY
-             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/kin_diagonal_kry_p_f2003.dir)
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/kin_diagonal_kry_p_f2003.dir
+)

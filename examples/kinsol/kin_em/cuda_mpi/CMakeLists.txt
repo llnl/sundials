@@ -18,5 +18,4 @@ sundials_add_example(
   INSTALL_FILES kin_em_mpicuda.hpp
   INCLUDE_DIRECTORIES PRIVATE ${MPI_CXX_INCLUDE_DIRS}
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecmpiplusx
-                 sundials_nveccuda ${MPI_CXX_LIBRARIES}
-                 ${EXE_EXTRA_LINK_LIBS})
+                 sundials_nveccuda ${MPI_CXX_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
