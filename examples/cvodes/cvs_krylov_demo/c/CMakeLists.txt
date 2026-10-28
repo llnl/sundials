@@ -13,30 +13,30 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsKrylovDemo_ls cvsKrylovDemo_ls.c
-  INSTALL_FILES cvsKrylovDemo_ls_0_1.out cvsKrylovDemo_ls_1.out
-                cvsKrylovDemo_ls_2.out)
-target_link_libraries(cvsKrylovDemo_ls PRIVATE ${CVODES_C_LIBS}
+  cvs_krylov_demo_ls cvs_krylov_demo_ls.c
+  INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
+                cvs_krylov_demo_ls_2.out)
+target_link_libraries(cvs_krylov_demo_ls PRIVATE ${CVODES_C_LIBS}
                                               sundials_nvecserial
                                               ${EXE_EXTRA_LINK_LIBS})
 foreach(test_args 1 2)
   sundials_add_test(
-    cvsKrylovDemo_ls_${test_args} cvsKrylovDemo_ls
+    cvs_krylov_demo_ls_${test_args} cvs_krylov_demo_ls
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvsKrylovDemo_ls_${test_args}.out
+    ANSWER_FILE cvs_krylov_demo_ls_${test_args}.out
     EXAMPLE_TYPE develop)
 endforeach()
 if(SUNDIALS_ENABLE_MONITORING)
   sundials_add_test(
-    cvsKrylovDemo_ls_0_1 cvsKrylovDemo_ls
+    cvs_krylov_demo_ls_0_1 cvs_krylov_demo_ls
     TEST_ARGS 0 1
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvsKrylovDemo_ls_0_1.out
+    ANSWER_FILE cvs_krylov_demo_ls_0_1.out
     EXAMPLE_TYPE develop)
 endif()
 
-sundials_add_example(cvsKrylovDemo_prec cvsKrylovDemo_prec.c)
-target_link_libraries(cvsKrylovDemo_prec PRIVATE ${CVODES_C_LIBS}
+sundials_add_example(cvs_krylov_demo_prec cvs_krylov_demo_prec.c)
+target_link_libraries(cvs_krylov_demo_prec PRIVATE ${CVODES_C_LIBS}
                                                 sundials_nvecserial
                                                 ${EXE_EXTRA_LINK_LIBS})

@@ -2,10 +2,10 @@
  * -----------------------------------------------------------------
  * Programmers: Radu Serban and Alan Hindmarsh, and Cody Balos @ LLNL
  * -----------------------------------------------------------------
- * Modification of the cvsRoberts_FSA_dns to illustrate switching
+ * Modification of the cvs_roberts_fsa_dns to illustrate switching
  * on and off sensitivity computations.
  *
- * Example problem (from cvsRoberts_FSA_dns):
+ * Example problem (from cvs_roberts_fsa_dns):
  *
  * The following is a simple example problem, with the coding
  * needed for its solution by CVODES for Forward Sensitivity

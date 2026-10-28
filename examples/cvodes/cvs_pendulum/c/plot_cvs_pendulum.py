@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------------------
-# matplotlib-based plotting script for cvsPendulum_dns.c example
+# matplotlib-based plotting script for cvs_pendulum_dns.c example
 # -----------------------------------------------------------------------------
 
 # imports
@@ -24,7 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # command line options
-parser = argparse.ArgumentParser(description="Plots cvsPendulum_dns output")
+parser = argparse.ArgumentParser(description="Plots cvs_pendulum_dns output")
 parser.add_argument("sfile", type=str, help="solution output file to read")
 
 # parse inputs
@@ -41,7 +41,7 @@ vx = data[:, 3]
 vy = data[:, 4]
 
 # read reference solution output file
-ref = np.loadtxt("cvsPendulum_dns_ref.txt", dtype=np.double)
+ref = np.loadtxt("cvs_pendulum_dns_ref.txt", dtype=np.double)
 
 # extract positions and velocities
 xr = ref[:, 1]

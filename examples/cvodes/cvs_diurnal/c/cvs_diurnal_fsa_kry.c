@@ -48,9 +48,9 @@
  * Execution:
  *
  * If no sensitivities are desired:
- *    % cvsDiurnal_FSA_kry -nosensi
+ *    % cvs_diurnal_fsa_kry -nosensi
  * If sensitivities are to be computed:
- *    % cvsDiurnal_FSA_kry -sensi sensi_meth err_con
+ *    % cvs_diurnal_fsa_kry -sensi sensi_meth err_con
  * where sensi_meth is one of {sim, stg, stg1} and err_con is one of
  * {t, f}.
  * -----------------------------------------------------------------*/

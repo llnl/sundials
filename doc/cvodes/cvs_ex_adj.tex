@@ -3,17 +3,17 @@
 %===================================================================================
 
 The next three sections describe in detail a serial example
-(\id{cvsRoberts\_ASAi\_dns}) and two parallel examples
-(\id{cvsAdvDiff\_ASAp\_non\_p} and \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p})
+(\id{cvs\_roberts\_asai\_dns}) and two parallel examples
+(\id{cvs\_adv\_diff\_asap\_non\_p} and \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p})
 that perform adjoint sensitivity analysis.  For details on the other
 examples, the reader is directed to the comments in their source files.
 
 %------------------------------------------------------------------------
-\subsection{A serial dense example: cvsRoberts\_ASAi\_dns}\label{ss:cvsRoberts_ASAi_dns}
+\subsection{A serial dense example: cvs\_roberts\_asai\_dns}\label{ss:cvs_roberts_asai_dns}
 
 As a first example of using {\cvodes} for adjoint sensitivity analysis,
-we examine the chemical kinetics problem (from \id{cvsRoberts\_FSA\_dns}) 
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_ODE}
+we examine the chemical kinetics problem (from \id{cvs\_roberts\_fsa\_dns}) 
+\begin{equation}\label{e:cvs_roberts_asai_dns_ODE}
   \begin{split}
     &{\dot y}_1 = -p_1 y_1 + p_2 y_2 y_3   \\
     &{\dot y}_2 =  p_1 y_1 - p_2 y_2 y_3 - p_3 y_2^2 \\
@@ -22,21 +22,21 @@ we examine the chemical kinetics problem (from \id{cvsRoberts\_FSA\_dns})
   \end{split}
 \end{equation}
 for which we want to compute the gradient with respect to $p$ of 
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_G}
+\begin{equation}\label{e:cvs_roberts_asai_dns_G}
   G(p) = \int_{t_0}^{T}  y_3  dt ,
 \end{equation}
 without having to compute the solution sensitivities ${dy}/{dp}$.
 Following the derivation in \ugref{ss:adj_sensi}, and taking into account
-the fact that the initial values of (\ref{e:cvsRoberts_ASAi_dns_ODE}) do not depend on 
+the fact that the initial values of (\ref{e:cvs_roberts_asai_dns_ODE}) do not depend on 
 the parameters $p$, by (\ref{e:dGdp}) this gradient is simply
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_dGdp}
+\begin{equation}\label{e:cvs_roberts_asai_dns_dGdp}
 \frac{dG}{dp} = \int_{t_0}^{T} 
 \left( g_p + \lambda^T f_p \right) dt \, ,
 \end{equation}
 where $g(t,y,p) = y_3$, $f$ is the vector-valued function 
-defining the right-hand side of (\ref{e:cvsRoberts_ASAi_dns_ODE}), and $\lambda$ is 
+defining the right-hand side of (\ref{e:cvs_roberts_asai_dns_ODE}), and $\lambda$ is 
 the solution of the adjoint problem (\ref{e:adj_eqns}),
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_ADJ}
+\begin{equation}\label{e:cvs_roberts_asai_dns_ADJ}
   \begin{split}
     &{\dot\lambda} = - (f_y)^T  \lambda - (g_y)^T \\
     &\lambda(T) = 0 \, .
@@ -44,9 +44,9 @@ the solution of the adjoint problem (\ref{e:adj_eqns}),
 \end{equation}
 
 In order to avoid saving intermediate $\lambda$ values just for the
-evaluation of the integral in (\ref{e:cvsRoberts_ASAi_dns_dGdp}), we extend the
+evaluation of the integral in (\ref{e:cvs_roberts_asai_dns_dGdp}), we extend the
 backward problem with the following $N_p$ quadrature equations
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_XI}
+\begin{equation}\label{e:cvs_roberts_asai_dns_XI}
   \begin{split}
     &{\dot\xi} = g_p^T + f_p^T \lambda \\
     &\xi (T) = 0 \, ,
@@ -54,10 +54,10 @@ backward problem with the following $N_p$ quadrature equations
 \end{equation}
 which yield $\xi(t_0) = - \int_{t_0}^{T} ( g_p^T + f_p^T \lambda) dt$
 and thus ${dG}/{dp} = -\xi^T(t_0)$.
-Similarly, the value of $G$ in (\ref{e:cvsRoberts_ASAi_dns_G}) can be obtained as
+Similarly, the value of $G$ in (\ref{e:cvs_roberts_asai_dns_G}) can be obtained as
 $G = - \zeta(t_0)$, where $\zeta$ is solution of the following quadrature
 equation:
-\begin{equation}\label{e:cvsRoberts_ASAi_dns_ZETA}
+\begin{equation}\label{e:cvs_roberts_asai_dns_ZETA}
   \begin{split}
     &{\dot\zeta} = g = y_3 \\
     &\zeta(T) = 0 \, .
@@ -96,7 +96,7 @@ initializes \id{y} with the initial conditions for the forward problem, allocate
 initializes \id{q} for the quadrature used in computing the value $G$, and finally
 sets the scalar relative tolerance \id{reltolQ} and vector absolute tolerance
 \id{abstolQ} for the quadrature variables.
-No tolerances for the state variables are defined since \id{cvsRoberts\_ASAi\_dns}
+No tolerances for the state variables are defined since \id{cvs\_roberts\_asai\_dns}
 uses its own function to compute the error weights for WRMS norm
 estimates of state solution vectors.
 
@@ -181,26 +181,26 @@ The main program ends by freeing previously allocated memory by calling
 
 The user-supplied functions \id{f} and \id{Jac} for the right-hand side and
 Jacobian of the forward problem are straightforward expressions of its 
-mathematical formulation (\ref{e:cvsRoberts_ASAi_dns_ODE}). 
+mathematical formulation (\ref{e:cvs_roberts_asai_dns_ODE}). 
 The function \id{ewt} is the same as the one for \id{cv\_roberts\_dns\_uw.c}.
 The function \id{fQ} implements
-(\ref{e:cvsRoberts_ASAi_dns_ZETA}), while \id{fB}, \id{JacB}, and \id{fQB} are mere
-translations of the backward problem (\ref{e:cvsRoberts_ASAi_dns_ADJ}) and
-(\ref{e:cvsRoberts_ASAi_dns_XI}).
+(\ref{e:cvs_roberts_asai_dns_ZETA}), while \id{fB}, \id{JacB}, and \id{fQB} are mere
+translations of the backward problem (\ref{e:cvs_roberts_asai_dns_ADJ}) and
+(\ref{e:cvs_roberts_asai_dns_XI}).
 
-The output generated by \id{cvsRoberts\_ASAi\_dns} is shown below.
+The output generated by \id{cvs\_roberts\_asai\_dns} is shown below.
 
-\includeOutput{cvsRoberts\_ASAi\_dns}{../../examples/cvodes/cvs_roberts/c/cvsRoberts_ASAi_dns.out}
+\includeOutput{cvs\_roberts\_asai\_dns}{../../examples/cvodes/cvs_roberts/c/cvs_roberts_asai_dns.out}
 
 %--------------------------------------------------------------------------
 
-\subsection{A parallel nonstiff example: cvsAdvDiff\_ASAp\_non\_p}
-\label{ss:cvsAdvDiff_ASAp_non_p}
+\subsection{A parallel nonstiff example: cvs\_adv\_diff\_asap\_non\_p}
+\label{ss:cvs_adv_diff_asap_non_p}
 
 As an example of using the {\cvodes} adjoint sensitivity module with the
 parallel vector module {\nvecp}, we describe a sample program that solves
 the following problem:  Consider the 1-D advection-diffusion equation
-\begin{equation}\label{e:cvsAdvDiff_ASAp_non_p:orig_pde}
+\begin{equation}\label{e:cvs_adv_diff_asap_non_p:orig_pde}
   \begin{split}
     & \frac{\partial u}{\partial t} = p_1 \frac{\partial^2 u}{\partial x^2} 
     + p_2 \frac{\partial u}{\partial x} \\
@@ -218,11 +218,11 @@ We wish to find, through adjoint sensitivity analysis, the gradient of
 $g(t_f)$ with respect to $p = [p_1 ; p_2]$ and the perturbation in $g(t_f)$
 due to a perturbation $\delta u_0$ in $u_0$.
 
-The approach we take in the program \id{cvsAdvDiff\_ASAp\_non\_p} is to first derive an 
+The approach we take in the program \id{cvs\_adv\_diff\_asap\_non\_p} is to first derive an 
 adjoint PDE which is then discretized in space and integrated backwards
 in time to yield the desired sensitivities. A straightforward extension 
 to PDEs of the derivation given in \ugref{ss:adj_sensi} gives
-\begin{equation}\label{e:cvsAdvDiff_ASAp_non_p:dgdp}
+\begin{equation}\label{e:cvs_adv_diff_asap_non_p:dgdp}
   \frac{dg}{dp} (t_f) = \int_{t_0}^{t_f} dt 
   \int_{x_0}^{x_1} dx \mu \cdot 
   \left[
@@ -231,11 +231,11 @@ to PDEs of the derivation given in \ugref{ss:adj_sensi} gives
   \right ]
 \end{equation}
 and
-\begin{equation}\label{e:cvsAdvDiff_ASAp_non_p:delg}
+\begin{equation}\label{e:cvs_adv_diff_asap_non_p:delg}
   \delta g |_{t_f} = \int_{x_0}^{x_1} \mu(t_0,x) \delta u_0(x) dx \, , 
 \end{equation}
 where $\mu$ is the solution of the adjoint PDE
-\begin{equation}\label{e:cvsAdvDiff_ASAp_non_p:adj_pde}
+\begin{equation}\label{e:cvs_adv_diff_asap_non_p:adj_pde}
   \begin{split}
     & \frac{\partial \mu}{\partial t} + p_1 \frac{\partial^2 \mu}{\partial x^2} 
     - p_2 \frac{\partial \mu}{\partial x} = 0 \\
@@ -243,13 +243,13 @@ where $\mu$ is the solution of the adjoint PDE
     & \mu(t , x_0) = \mu( t , x_1 ) = 0 \, .
   \end{split}
 \end{equation}
-Both the forward problem (\ref{e:cvsAdvDiff_ASAp_non_p:orig_pde}) and the backward
-problem (\ref{e:cvsAdvDiff_ASAp_non_p:adj_pde}) are discretized on a uniform spatial
+Both the forward problem (\ref{e:cvs_adv_diff_asap_non_p:orig_pde}) and the backward
+problem (\ref{e:cvs_adv_diff_asap_non_p:adj_pde}) are discretized on a uniform spatial
 grid of size $M_x + 2$ with central differencing and with boundary values eliminated,
 leaving ODE systems of size $N = M_x$ each.  As always, we deal with the time
-quadratures in (\ref{e:cvsAdvDiff_ASAp_non_p:dgdp}) by introducing the additional
+quadratures in (\ref{e:cvs_adv_diff_asap_non_p:dgdp}) by introducing the additional
 equations
-\begin{equation}\label{e:cvsAdvDiff_ASAp_non_p:quad}
+\begin{equation}\label{e:cvs_adv_diff_asap_non_p:quad}
   \begin{split}
     &{\dot\xi}_1 = \int_{x_0}^{x_1} dx \mu \frac{\partial^2 u}{\partial x^2} \, , \quad
     \xi_1(t_f) = 0 \, , \\
@@ -261,8 +261,8 @@ yielding
 \begin{equation*}
   \frac{dg}{dp} (t_f) = - \left[ \xi_1(t_0) ; \xi_2(t_0) \right ]
 \end{equation*}
-The space integrals in (\ref{e:cvsAdvDiff_ASAp_non_p:delg}) and
-(\ref{e:cvsAdvDiff_ASAp_non_p:quad}) are
+The space integrals in (\ref{e:cvs_adv_diff_asap_non_p:delg}) and
+(\ref{e:cvs_adv_diff_asap_non_p:quad}) are
 evaluated numerically, on the given spatial mesh, using the trapezoidal rule.
 
 Note that $\mu(t_0 , x^*)$ is nothing but the perturbation in $g(t_f)$
@@ -273,9 +273,9 @@ for any perturbation $\delta u_0$.
 Both the forward and the backward problems are solved with the option for nonstiff systems,
 i.e. using the Adams method with fixed-point iteration for the solution of
 the nonlinear systems. The overall structure of the \id{main} function is very
-similar to that of the code \id{cvsRoberts\_ASAi\_dns} discussed previously with 
+similar to that of the code \id{cvs\_roberts\_asai\_dns} discussed previously with 
 differences arising from the use of the parallel {\nvector} module. Unlike 
-\id{cvsRoberts\_ASAi\_dns}, the example \id{cvsAdvDiff\_ASAp\_non\_p} illustrates
+\id{cvs\_roberts\_asai\_dns}, the example \id{cvs\_adv\_diff\_asap\_non\_p} illustrates
 computation of the additional quadrature variables by appending \id{NP} equations
 to the adjoint system.  This approach can be a better alternative to using special
 treatment of the quadrature equations when their number is too small for parallel
@@ -286,21 +286,21 @@ this example uses {\mpi} calls to parallelize the calculations of the
 right-hand side routines \id{f} and \id{fB} and of the spatial integrals involved.
 The forward problem has size \id{NEQ = MX}, while the backward problem has
 size \id{NB = NEQ + NP}, where \id{NP = 2} is the number of quadrature equations
-in (\ref{e:cvsAdvDiff_ASAp_non_p:quad}).
+in (\ref{e:cvs_adv_diff_asap_non_p:quad}).
 The use of the total number of available processes on two problems of different 
 sizes deserves some comments, as this is typical in adjoint sensitivity 
 analysis. Out of the total number of available processes, namely \id{nprocs},
 the first \id{npes = nprocs - 1} processes are dedicated to the integration of
 the ODEs arising from the semi-discretization of the PDEs 
-(\ref{e:cvsAdvDiff_ASAp_non_p:orig_pde}) and (\ref{e:cvsAdvDiff_ASAp_non_p:adj_pde}),
+(\ref{e:cvs_adv_diff_asap_non_p:orig_pde}) and (\ref{e:cvs_adv_diff_asap_non_p:adj_pde}),
 and receive the same load on both the forward and backward integration phases. 
 The last process is reserved for the integration of the quadrature equations 
-(\ref{e:cvsAdvDiff_ASAp_non_p:quad}), and is therefore inactive during the forward 
+(\ref{e:cvs_adv_diff_asap_non_p:quad}), and is therefore inactive during the forward 
 phase. Of course, for problems involving a much larger number of quadrature equations,
 more than one process could be reserved for their integration. 
 An alternative would be to redistribute the \id{NB} backward problem variables 
 over all available processes, without any relationship to the load distribution 
-of the forward phase. However, the approach taken in \id{cvsAdvDiff\_ASAp\_non\_p}
+of the forward phase. However, the approach taken in \id{cvs\_adv\_diff\_asap\_non\_p}
 has the advantage that the communication strategy adopted for the forward problem 
 can be directly transferred to communication among the first \id{npes}
 processes during the backward integration phase. 
@@ -315,37 +315,37 @@ only during the forward phase.
 Using \id{MX} $=40$ on 4 processes, the gradient of $g(t_f)$ with respect to 
 the two problem parameters is obtained as $dg/dp(t_f) = [ -1.13856; -1.01023]$.
 The gradient of $g(t_f)$ with respect to the initial conditions is shown in
-Fig.~\ref{f:cvsAdvDiff_ASAp_non_p}. The gradient is plotted superimposed over the
+Fig.~\ref{f:cvs_adv_diff_asap_non_p}. The gradient is plotted superimposed over the
 initial conditions.
 %%
 \begin{figure}
   {\centerline{\includegraphics[width=0.75\textwidth]{cvsadjnonx_p}}}
-  \caption{Results for the \id{cvsAdvDiff\_ASAp\_non\_p} example problem.
+  \caption{Results for the \id{cvs\_adv\_diff\_asap\_non\_p} example problem.
     The gradient of $g(t_f)$ with respect to the initial conditions $u_0$ 
     is shown superimposed over the values $u_0$.}
-  \label{f:cvsAdvDiff_ASAp_non_p}
+  \label{f:cvs_adv_diff_asap_non_p}
 \end{figure}
 %%
-Sample output generated by \id{cvsAdvDiff\_ASAp\_non\_p}, for \id{MX} $=20$, is
+Sample output generated by \id{cvs\_adv\_diff\_asap\_non\_p}, for \id{MX} $=20$, is
 shown below.
 
-\includeOutput{cvsAdvDiff\_ASAp\_non\_p}{../../examples/cvodes/cvs_adv_diff/c-mpi/cvsAdvDiff_ASAp_non_p.out}
+\includeOutput{cvs\_adv\_diff\_asap\_non\_p}{../../examples/cvodes/cvs_adv_diff/c-mpi/cvs_adv_diff_asap_non_p.out}
 
 
 %--------------------------------------------------------------------------
 
-\subsection{A parallel example using CVBBDPRE: cvsAtmDisp\_ASAi\_kry\_bbd\_p}
-\label{ss:cvsAtmDisp_ASAi_kry_bbd_p}
+\subsection{A parallel example using CVBBDPRE: cvs\_atm\_disp\_asai\_kry\_bbd\_p}
+\label{ss:cvs_atm_disp_asai_kry_bbd_p}
 
 As a more elaborate example of a parallel adjoint sensitivity calculation,
-we describe next the program \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} provided
+we describe next the program \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} provided
 with {\cvodes}. This example models an atmospheric 
 release with an advection-diffusion PDE in 2-D or 3-D and computes the gradient 
 with respect to source parameters of the space-time average of the squared norm
 of the concentration.
 Given a known velocity field $v(t,x)$ and source function $S$, the  transport
 equation for the concentration $c(t,x)$ in a domain $\Omega$ is given by
-\begin{equation}\label{e:cvsAtmDisp_ASAi_kry_bbd_p_PDE}
+\begin{equation}\label{e:cvs_atm_disp_asai_kry_bbd_p_PDE}
   \begin{split}
     \frac{\partial c}{\partial t} - k \nabla^2 c + v \cdot \nabla c + S = 0 \, , 
     &\text{ in } (0,T) \times \Omega \\
@@ -363,17 +363,17 @@ nonzero component in the $x$ direction given by a Poiseuille profile along the
 direction $y$.
 
 Using adjoint sensitivity analysis, the gradient of
-\begin{equation}\label{e:cvsAtmDisp_ASAi_kry_bbd_p_G}
+\begin{equation}\label{e:cvs_atm_disp_asai_kry_bbd_p_G}
   G(p) = \frac{1}{2} \int_0^T \int_\Omega \| c(t,x) \|^2 \, d\Omega \, dt
 \end{equation}
 is obtained as
-\begin{equation}\label{e:cvsAtmDisp_ASAi_kry_bbd_p_dGdp}
+\begin{equation}\label{e:cvs_atm_disp_asai_kry_bbd_p_dGdp}
   \frac{dG}{dp_i} = \int_t \int_\Omega \lambda(t,x) \delta(x-x_i) \, d\Omega \, dt
   = \int_t \lambda(t,x_i) \, dt \, ,
 \end{equation}
 where $x_i$ is the location of the source of intensity $S(x_i)=p_i$, and $\lambda$
 is solution of the adjoint PDE
-\begin{equation}\label{e:cvsAtmDisp_ASAi_kry_bbd_p_ADJ}
+\begin{equation}\label{e:cvs_atm_disp_asai_kry_bbd_p_ADJ}
   \begin{split}
     - \frac{\partial\lambda}{\partial t} - k \nabla^2\lambda - v \cdot \lambda = c(t,x)  \, ,
     &\text{ in } (T,0) \times \Omega \\
@@ -384,7 +384,7 @@ is solution of the adjoint PDE
   \end{split}
 \end{equation}
 %%
-The PDE (\ref{e:cvsAtmDisp_ASAi_kry_bbd_p_PDE}) is semi-discretized in space with 
+The PDE (\ref{e:cvs_atm_disp_asai_kry_bbd_p_PDE}) is semi-discretized in space with 
 central finite differences, with the boundary conditions explicitly taken into account 
 by using layers of ghost cells in every direction. If the direction $x^i$ of $\Omega$
 is discretized into $m_i$ intervals, this leads to a system of ODEs of dimension 
@@ -396,9 +396,9 @@ to two Gaussian sources.
 The source code as supplied runs the 2-D problem.  To obtain the 3-D version,
 add a line \id{\#define~USE3D} at the top of \id{main}.
 
-The adjoint PDE (\ref{e:cvsAtmDisp_ASAi_kry_bbd_p_ADJ}) is discretized to a system of
-ODEs in a similar fashion.  The space integrals in (\ref{e:cvsAtmDisp_ASAi_kry_bbd_p_G})
-and (\ref{e:cvsAtmDisp_ASAi_kry_bbd_p_dGdp}) are simply approximated by their
+The adjoint PDE (\ref{e:cvs_atm_disp_asai_kry_bbd_p_ADJ}) is discretized to a system of
+ODEs in a similar fashion.  The space integrals in (\ref{e:cvs_atm_disp_asai_kry_bbd_p_G})
+and (\ref{e:cvs_atm_disp_asai_kry_bbd_p_dGdp}) are simply approximated by their
 Riemann sums, while the time integrals are resolved by appending pure quadrature
 equations to the systems of ODEs.
 
@@ -417,48 +417,48 @@ components. Since there is no additional communication required for the {\cvbbdp
 preconditioner, a \id{NULL} pointer is passed for \id{gloc} and \id{glocB} in the
 calls to \id{CVBBDPrecInit} and \id{CVBBDPrecInitB}, respectively.
 
-For the sake of clarity, the \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} example does not use
+For the sake of clarity, the \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} example does not use
 the most memory-efficient implementation possible, as the local segment of the 
 solution vectors (\id{y} on the forward phase and \id{yB} on the backward phase)
 and the data received from neighboring processes is loaded into a temporary 
 array \id{y\_ext} which is then used exclusively in computing the local components
 of the right-hand sides.
 
-Note that if \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} is given any command line argument,
+Note that if \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} is given any command line argument,
 it will generate a series of MATLAB files which can be used to visualize the solution.
 The results of a 2-D simulation and adjoint sensitivity analysis with
-\id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} on a $80 \times 80$ grid and $2 \times 4 = 8$
-processes are shown in Fig.~\ref{f:cvsAtmDisp_ASAi_kry_bbd_p2D}.
+\id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} on a $80 \times 80$ grid and $2 \times 4 = 8$
+processes are shown in Fig.~\ref{f:cvs_atm_disp_asai_kry_bbd_p2D}.
 Results in 3-D\footnote{The name of the executable for the 3-D version is
-\id{cvsAtmDisp\_ASAi\_kry\_bbd\_p3D}.},  on a $80 \times 80 \times 40$ grid and 
+\id{cvs\_atm\_disp\_asai\_kry\_bbd\_p3D}.},  on a $80 \times 80 \times 40$ grid and 
 $2 \times 4 \times 2= 16$ processes are shown in 
-Figs.~\ref{f:cvsAtmDisp_ASAi_kry_bbd_p3D_a} and \ref{f:cvsAtmDisp_ASAi_kry_bbd_p3D_b}.
+Figs.~\ref{f:cvs_atm_disp_asai_kry_bbd_p3D_a} and \ref{f:cvs_atm_disp_asai_kry_bbd_p3D_b}.
 %%
 \begin{figure}
   {\centerline{\includegraphics[width=\textwidth]{cvsadjkryx_p2D}}}
-  \caption{Results for the \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} example problem in 2D. 
+  \caption{Results for the \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} example problem in 2D. 
     The gradient with respect to the source parameters is pictured on the left. 
     On the right, the gradient was color-coded and superimposed over the nominal value 
     of the source parameters.}
-  \label{f:cvsAtmDisp_ASAi_kry_bbd_p2D}
+  \label{f:cvs_atm_disp_asai_kry_bbd_p2D}
 \end{figure}
 %%
 %%
 \begin{figure}
   {\centerline{\includegraphics[width=0.75\textwidth]{cvsadjkryx_p3Dcf.png}}}
-  \caption{Results for the \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} example problem in 3D.
-  Nominal values of the source parameters.}\label{f:cvsAtmDisp_ASAi_kry_bbd_p3D_a}
+  \caption{Results for the \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} example problem in 3D.
+  Nominal values of the source parameters.}\label{f:cvs_atm_disp_asai_kry_bbd_p3D_a}
 \end{figure}
 %%
 \begin{figure}
   {\centerline{\includegraphics[width=0.75\textwidth]{cvsadjkryx_p3Dgrad.png}}}
-  \caption{Results for the \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} example problem in 3D.
+  \caption{Results for the \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} example problem in 3D.
   Two isosurfaces of the gradient with respect to the source parameters. They correspond
-  to values of $0.25$ (green) and $0.4$ (blue).}\label{f:cvsAtmDisp_ASAi_kry_bbd_p3D_b}  
+  to values of $0.25$ (green) and $0.4$ (blue).}\label{f:cvs_atm_disp_asai_kry_bbd_p3D_b}  
 \end{figure}
 %%
-A sample output generated by \id{cvsAtmDisp\_ASAi\_kry\_bbd\_p} for a 2D calculation
+A sample output generated by \id{cvs\_atm\_disp\_asai\_kry\_bbd\_p} for a 2D calculation
 is shown below.
 
-\includeOutput{cvsAtmDisp\_ASAi\_kry\_bbd\_p}{../../examples/cvodes/cvs_atmospheric_dispersion/c-mpi/cvsAtmDisp_ASAi_kry_bbd_p.out}
+\includeOutput{cvs\_atm\_disp\_asai\_kry\_bbd\_p}{../../examples/cvodes/cvs_atmospheric_dispersion/c-mpi/cvs_atm_disp_asai_kry_bbd_p.out}
 

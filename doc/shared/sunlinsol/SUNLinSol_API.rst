@@ -1097,4 +1097,4 @@ SUNDIALS package ``SetLinearSolver`` routine, the input :c:type:`SUNMatrix`
 
 For templates of such user-provided "matrix-embedded" SUNLinSol implementations,
 see the SUNDIALS examples ``ark_analytic_mels.c``, ``cv_analytic_mels.c``,
-``cvsAnalytic_mels.c``, ``idaAnalytic_mels.c``, and ``idasAnalytic_mels.c``.
+``cvs_analytic_mels.c``, ``idaAnalytic_mels.c``, and ``idasAnalytic_mels.c``.

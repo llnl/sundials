@@ -82,7 +82,7 @@ CVODE(S) / IDA(S) / ARKODE
    nonzero value, but in time decays to zero, then pure relative error control on ``y[i]``
    makes no sense (and is overly costly) after ``y[i]`` is below some noise level. Then
    ``abstol`` (if scalar) or ``abstol[i]`` (if a vector) needs to be set to that noise level. If the different
-   components have different noise levels, then ``abstol`` should be a vector. See the example  ``cvsRoberts_dns``
+   components have different noise levels, then ``abstol`` should be a vector. See the example  ``cvs_roberts_dns``
    in the CVODE package, and the discussion of it in the CVODE Examples document
    :cite:p:`cvodes_ex`. In that problem, the three components vary between 0 and 1,
    and have different noise levels; hence the ``abstol`` vector. It is impossible to give any

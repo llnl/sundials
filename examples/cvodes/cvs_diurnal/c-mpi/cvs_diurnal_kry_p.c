@@ -41,7 +41,7 @@
  *
  * This version uses MPI for user routines.
  *
- * Execution: mpirun -np N cvsDiurnal_kry_p   with N = NPEX*NPEY
+ * Execution: mpirun -np N cvs_diurnal_kry_p   with N = NPEX*NPEY
  * (see constants below).
  * -----------------------------------------------------------------
  */

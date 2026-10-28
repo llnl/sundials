@@ -13,18 +13,18 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsAdvDiff_FSA_non_f2003 cvsAdvDiff_FSA_non_f2003.f90
-  TEST_NAME cvsAdvDiff_FSA_non_f2003_-sensi_stg_t
+  cvs_adv_diff_fsa_non_f2003 cvs_adv_diff_fsa_non_f2003.f90
+  TEST_NAME cvs_adv_diff_fsa_non_f2003_-sensi_stg_t
   TEST_ARGS -sensi stg t
-  INSTALL_FILES cvsAdvDiff_FSA_non_f2003_-sensi_sim_t.out
+  INSTALL_FILES cvs_adv_diff_fsa_non_f2003_-sensi_sim_t.out
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_fcvodes_mod
                  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
     Fortran_MODULE_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cvsAdvDiff_FSA_non_f2003.dir)
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cvs_adv_diff_fsa_non_f2003.dir)
 sundials_add_test(
-  cvsAdvDiff_FSA_non_f2003_-sensi_sim_t cvsAdvDiff_FSA_non_f2003
+  cvs_adv_diff_fsa_non_f2003_-sensi_sim_t cvs_adv_diff_fsa_non_f2003
   TEST_ARGS -sensi sim t
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvsAdvDiff_FSA_non_f2003_-sensi_sim_t.out
+  ANSWER_FILE cvs_adv_diff_fsa_non_f2003_-sensi_sim_t.out
   EXAMPLE_TYPE develop)

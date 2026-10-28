@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsAtmDisp_ASAi_kry_bbd_p cvsAtmDisp_ASAi_kry_bbd_p.c
+  cvs_atm_disp_asai_kry_bbd_p cvs_atm_disp_asai_kry_bbd_p.c
   MPI_NPROCS 4
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel

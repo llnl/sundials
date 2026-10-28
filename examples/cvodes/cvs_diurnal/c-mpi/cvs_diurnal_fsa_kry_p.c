@@ -67,9 +67,9 @@
  *       the MPI script mpirun is used to run a parallel
  *       application.
  * If no sensitivities are desired:
- *    % mpirun -np N cvsDiurnal_FSA_kry_p -nosensi
+ *    % mpirun -np N cvs_diurnal_fsa_kry_p -nosensi
  * If sensitivities are to be computed:
- *    % mpirun -np N cvsDiurnal_FSA_kry_p -sensi sensi_meth err_con
+ *    % mpirun -np N cvs_diurnal_fsa_kry_p -sensi sensi_meth err_con
  * where sensi_meth is one of {sim, stg, stg1} and err_con is one of
  * {t, f}.
  * -----------------------------------------------------------------

@@ -44,9 +44,9 @@
  * Execution:
  *
  * If no sensitivities are desired:
- *    % cvsAdvDiff_FSA_non -nosensi
+ *    % cvs_adv_diff_fsa_non -nosensi
  * If sensitivities are to be computed:
- *    % cvsAdvDiff_FSA_non -sensi sensi_meth err_con
+ *    % cvs_adv_diff_fsa_non -sensi sensi_meth err_con
  * where sensi_meth is one of {sim, stg, stg1} and err_con is one of
  * {t, f}.
  * -----------------------------------------------------------------*/

@@ -48,9 +48,9 @@
  * Execution:
  *
  * If no sensitivities are desired:
- *    % cvsRoberts_FSA_dns -nosensi
+ *    % cvs_roberts_fsa_dns -nosensi
  * If sensitivities are to be computed:
- *    % cvsRoberts_FSA_dns -sensi sensi_meth err_con
+ *    % cvs_roberts_fsa_dns -sensi sensi_meth err_con
  * where sensi_meth is one of {sim, stg, stg1} and err_con is one of
  * {t, f}.
  * -----------------------------------------------------------------*/

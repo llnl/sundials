@@ -13,23 +13,23 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsDiurnal_FSA_kry_p cvsDiurnal_FSA_kry_p.c
-  TEST_NAME cvsDiurnal_FSA_kry_p_-sensi_stg_t
+  cvs_diurnal_fsa_kry_p cvs_diurnal_fsa_kry_p.c
+  TEST_NAME cvs_diurnal_fsa_kry_p_-sensi_stg_t
   TEST_ARGS -sensi stg t
   MPI_NPROCS 4
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvsDiurnal_FSA_kry_p_-sensi_sim_t.out
+  INSTALL_FILES cvs_diurnal_fsa_kry_p_-sensi_sim_t.out
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  cvsDiurnal_FSA_kry_p_-sensi_sim_t cvsDiurnal_FSA_kry_p
+  cvs_diurnal_fsa_kry_p_-sensi_sim_t cvs_diurnal_fsa_kry_p
   TEST_ARGS -sensi sim t
   MPI_NPROCS 4
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvsDiurnal_FSA_kry_p_-sensi_sim_t.out
+  ANSWER_FILE cvs_diurnal_fsa_kry_p_-sensi_sim_t.out
   EXAMPLE_TYPE exclude-single)
 
-foreach(example cvsDiurnal_kry_bbd_p cvsDiurnal_kry_p)
+foreach(example cvs_diurnal_kry_bbd_p cvs_diurnal_kry_p)
   sundials_add_example(
     ${example} ${example}.c
     MPI_NPROCS 4

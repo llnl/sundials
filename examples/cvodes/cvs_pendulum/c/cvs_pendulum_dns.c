@@ -304,12 +304,12 @@ int GetSol(void* cvode_mem, N_Vector yy0, sunrealtype rtol, sunrealtype atol,
   if (proj)
   {
     sprintf(outname,
-            "cvsPendulum_dns_rtol_%03.2" ESYM "_atol_%03.2" ESYM "_proj.txt",
+            "cvs_pendulum_dns_rtol_%03.2" ESYM "_atol_%03.2" ESYM "_proj.txt",
             rtol, atol);
   }
   else
   {
-    sprintf(outname, "cvsPendulum_dns_rtol_%03.2" ESYM "_atol_%03.2" ESYM ".txt",
+    sprintf(outname, "cvs_pendulum_dns_rtol_%03.2" ESYM "_atol_%03.2" ESYM ".txt",
             rtol, atol);
   }
   FID = fopen(outname, "w");
@@ -472,7 +472,7 @@ int RefSol(sunrealtype tf, N_Vector yref, int nout)
   if (check_retval(&retval, "CVodeSetStopTime", 1)) { return (1); }
 
   /* Open output file */
-  FID = fopen("cvsPendulum_dns_ref.txt", "w");
+  FID = fopen("cvs_pendulum_dns_ref.txt", "w");
 
   /* Output initial condition */
   th  = yydata[0];

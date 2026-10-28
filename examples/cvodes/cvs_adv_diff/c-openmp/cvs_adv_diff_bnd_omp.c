@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Daniel Reynolds and Ting Yan @ UMBC
- *     Based on cvsAdvDiff_bnd.c and parallelized with OpenMP
+ *     Based on cvs_adv_diff_bnd.c and parallelized with OpenMP
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -45,10 +45,10 @@
  *
  * To use the default value or the number of threads from the
  * environment value, run without arguments:
- *      % ./cvsAdvDiff_bnd_omp
+ *      % ./cvs_adv_diff_bnd_omp
  * The environment variable can be over-ridden with a command line
  * argument specifying the number of threads to use, e.g:
- *      % ./cvsAdvDiff_bnd_omp 5
+ *      % ./cvs_adv_diff_bnd_omp 5
  * ----------------------------------------------------------------- */
 
 #include <math.h>

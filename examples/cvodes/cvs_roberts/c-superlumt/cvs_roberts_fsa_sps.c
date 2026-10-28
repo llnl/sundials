@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Ting Yan @ UMBC
- *      Based on cvsRoberts_FSA_dns.c and modified to use SUPERLU_MT
+ *      Based on cvs_roberts_fsa_dns.c and modified to use SUPERLU_MT
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -46,9 +46,9 @@
  * Execution:
  *
  * If no sensitivities are desired:
- *    % cvsRoberts_FSA_sps -nosensi
+ *    % cvs_roberts_fsa_sps -nosensi
  * If sensitivities are to be computed:
- *    % cvsRoberts_FSA_sps -sensi sensi_meth err_con
+ *    % cvs_roberts_fsa_sps -sensi sensi_meth err_con
  * where sensi_meth is one of {sim, stg, stg1} and err_con is one of
  * {t, f}.
  * -----------------------------------------------------------------*/

@@ -13,13 +13,13 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsAnalytic_mels cvsAnalytic_mels.c
-  INSTALL_FILES cvsAnalytic_mels_cvodes.max_order_3.out
+  cvs_analytic_mels cvs_analytic_mels.c
+  INSTALL_FILES cvs_analytic_mels_cvodes.max_order_3.out
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  cvsAnalytic_mels_cvodes.max_order_3 cvsAnalytic_mels
+  cvs_analytic_mels_cvodes.max_order_3 cvs_analytic_mels
   TEST_ARGS cvodes.max_order 3
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvsAnalytic_mels_cvodes.max_order_3.out
+  ANSWER_FILE cvs_analytic_mels_cvodes.max_order_3.out
   EXAMPLE_TYPE develop)

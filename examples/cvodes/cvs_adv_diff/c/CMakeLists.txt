@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cvsAdvDiff_ASAi_bnd cvsAdvDiff_bnd)
+foreach(example cvs_adv_diff_asai_bnd cvs_adv_diff_bnd)
   sundials_add_example(${example} ${example}.c)
   target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS}
                                            sundials_nvecserial
@@ -20,16 +20,16 @@ foreach(example cvsAdvDiff_ASAi_bnd cvsAdvDiff_bnd)
 endforeach()
 
 sundials_add_example(
-  cvsAdvDiff_FSA_non cvsAdvDiff_FSA_non.c
-  TEST_NAME cvsAdvDiff_FSA_non_-sensi_sim_t
+  cvs_adv_diff_fsa_non cvs_adv_diff_fsa_non.c
+  TEST_NAME cvs_adv_diff_fsa_non_-sensi_sim_t
   TEST_ARGS -sensi sim t
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvsAdvDiff_FSA_non_-sensi_stg_t.out
+  INSTALL_FILES cvs_adv_diff_fsa_non_-sensi_stg_t.out
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  cvsAdvDiff_FSA_non_-sensi_stg_t cvsAdvDiff_FSA_non
+  cvs_adv_diff_fsa_non_-sensi_stg_t cvs_adv_diff_fsa_non
   TEST_ARGS -sensi stg t
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvsAdvDiff_FSA_non_-sensi_stg_t.out
+  ANSWER_FILE cvs_adv_diff_fsa_non_-sensi_stg_t.out
   EXAMPLE_TYPE exclude-single)

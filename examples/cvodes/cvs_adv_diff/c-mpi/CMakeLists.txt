@@ -13,31 +13,31 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsAdvDiff_ASAp_non_p cvsAdvDiff_ASAp_non_p.c
+  cvs_adv_diff_asap_non_p cvs_adv_diff_asap_non_p.c
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cvsAdvDiff_FSA_non_p cvsAdvDiff_FSA_non_p.c
-  TEST_NAME cvsAdvDiff_FSA_non_p_-sensi_stg_t
+  cvs_adv_diff_fsa_non_p cvs_adv_diff_fsa_non_p.c
+  TEST_NAME cvs_adv_diff_fsa_non_p_-sensi_stg_t
   TEST_ARGS -sensi stg t
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvsAdvDiff_FSA_non_p_-sensi_sim_t.out
+  INSTALL_FILES cvs_adv_diff_fsa_non_p_-sensi_sim_t.out
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  cvsAdvDiff_FSA_non_p_-sensi_sim_t cvsAdvDiff_FSA_non_p
+  cvs_adv_diff_fsa_non_p_-sensi_sim_t cvs_adv_diff_fsa_non_p
   TEST_ARGS -sensi sim t
   MPI_NPROCS 2
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvsAdvDiff_FSA_non_p_-sensi_sim_t.out
+  ANSWER_FILE cvs_adv_diff_fsa_non_p_-sensi_sim_t.out
   EXAMPLE_TYPE exclude-single)
 
 sundials_add_example(
-  cvsAdvDiff_non_p cvsAdvDiff_non_p.c
+  cvs_adv_diff_non_p cvs_adv_diff_non_p.c
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel

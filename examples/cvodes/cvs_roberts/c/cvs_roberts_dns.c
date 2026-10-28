@@ -195,7 +195,7 @@ int main(void)
   printf(" \n3-species kinetics problem\n\n");
 
   /* Open file for printing statistics */
-  FID = fopen("cvsRoberts_dns_stats.csv", "w");
+  FID = fopen("cvs_roberts_dns_stats.csv", "w");
 
   iout = 0;
   tout = T1;

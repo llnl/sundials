@@ -12,15 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cvsRoberts_ASAi_klu cvsRoberts_klu)
+foreach(example cvs_roberts_asai_klu cvs_roberts_klu)
   sundials_add_example(${example} ${example}.c)
   target_link_libraries(
     ${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                        sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_example(
-  cvsRoberts_FSA_klu cvsRoberts_FSA_klu.c
-  TEST_NAME cvsRoberts_FSA_klu_-sensi_stg1_t
+  cvs_roberts_fsa_klu cvs_roberts_fsa_klu.c
+  TEST_NAME cvs_roberts_fsa_klu_-sensi_stg1_t
   TEST_ARGS -sensi stg1 t
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

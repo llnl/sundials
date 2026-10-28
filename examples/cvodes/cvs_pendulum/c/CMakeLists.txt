@@ -13,8 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvsPendulum_dns cvsPendulum_dns.c
+  cvs_pendulum_dns cvs_pendulum_dns.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES plot_cvsPendulum.py
+  INSTALL_FILES plot_cvs_pendulum.py
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

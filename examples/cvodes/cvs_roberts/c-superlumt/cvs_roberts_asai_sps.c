@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Ting Yan @ UMBC
- *      Based on cvsRoberts_ASAi_dns.c and modified to use KLU
+ *      Based on cvs_roberts_asai_dns.c and modified to use SuperLUMT
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -26,7 +26,7 @@
  * conditions: y1 = 1.0, y2 = y3 = 0. The reaction rates are:
  * p1=0.04, p2=1e4, and p3=3e7. The problem is stiff.
  * This program solves the problem with the BDF method, Newton
- * iteration with the KLU linear solver, and a user-supplied
+ * iteration with the SUPERLU_MT linear solver, and a user-supplied
  * Jacobian routine.
  * It uses a scalar relative tolerance and a vector absolute
  * tolerance.
@@ -62,7 +62,7 @@
 #include <stdlib.h>
 #include <sundials/sundials_math.h> /* defs. of SUNRabs, SUNRexp, etc.      */
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
-#include <sunlinsol/sunlinsol_klu.h> /* access to KLU SUNLinearSolver        */
+#include <sunlinsol/sunlinsol_superlumt.h> /* access to SuperLUMT SUNLinearSolver  */
 #include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix           */
 
 /* Accessor macros */
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
   N_Vector yB, qB;
 
   sunrealtype time;
-  int retval, nnz, ncheck;
+  int retval, nthreads, nnz, ncheck;
 
   long int nst, nstB;
 
@@ -232,9 +232,10 @@ int main(int argc, char* argv[])
   A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
-  /* Create KLU SUNLinearSolver object */
-  LS = SUNLinSol_KLU(y, A, sunctx);
-  if (check_retval((void*)LS, "SUNLinSol_KLU", 0)) { return (1); }
+  /* Create SuperLUMT SUNLinearSolver object */
+  nthreads = 1; /* no. of threads use when factoring the system */
+  LS       = SUNLinSol_SuperLUMT(y, A, nthreads, sunctx);
+  if (check_retval((void*)LS, "SUNLinSol_SuperLUMT", 0)) { return (1); }
 
   /* Attach the matrix and linear solver for the forward problem */
   retval = CVodeSetLinearSolver(cvode_mem, LS, A);
@@ -375,9 +376,9 @@ int main(int argc, char* argv[])
   AB = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
   if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
-  /* Create KLU SUNLinearSolver object */
-  LSB = SUNLinSol_KLU(yB, AB, sunctx);
-  if (check_retval((void*)LSB, "SUNLinSol_KLU", 0)) { return (1); }
+  /* Create SuperLUMT SUNLinearSolver object */
+  LSB = SUNLinSol_SuperLUMT(yB, AB, nthreads, sunctx);
+  if (check_retval((void*)LSB, "SUNLinSol_SuperLUMT", 0)) { return (1); }
 
   /* Attach the matrix and linear solver for the backward problem */
   retval = CVodeSetLinearSolverB(cvode_mem, indexB, LSB, AB);
@@ -524,7 +525,7 @@ int main(int argc, char* argv[])
 
 /*
  * f routine. Compute f(t,y).
-*/
+ */
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
@@ -549,7 +550,7 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 
 /*
  * Jacobian routine. Compute J(t,y).
-*/
+ */
 
 static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
@@ -601,7 +602,7 @@ static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
 
 /*
  * fQ routine. Compute fQ(t,y).
-*/
+ */
 
 static int fQ(sunrealtype t, N_Vector y, N_Vector qdot, void* user_data)
 {
@@ -637,7 +638,7 @@ static int ewt(N_Vector y, N_Vector w, void* user_data)
 
 /*
  * fB routine. Compute fB(t,y,yB).
-*/
+ */
 
 static int fB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector yBdot,
               void* user_dataB)
@@ -731,7 +732,7 @@ static int JacB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector fyB,
 
 /*
  * fQB routine. Compute integrand for quadratures
-*/
+ */
 
 static int fQB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector qBdot,
                void* user_dataB)

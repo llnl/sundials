@@ -12,15 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cvsRoberts_ASAi_sps cvsRoberts_FSA_sps cvsRoberts_sps)
+foreach(example cvs_roberts_asai_sps cvs_roberts_fsa_sps cvs_roberts_sps)
   set(answer_file ${example}.out)
   set(example_options)
-  if(example STREQUAL "cvsRoberts_ASAi_sps")
+  if(example STREQUAL "cvs_roberts_asai_sps")
     list(APPEND example_options EXAMPLE_TYPE exclude-single)
-  elseif(example STREQUAL "cvsRoberts_FSA_sps")
-    set(answer_file cvsRoberts_FSA_sps_-sensi_stg1_t.out)
+  elseif(example STREQUAL "cvs_roberts_fsa_sps")
+    set(answer_file cvs_roberts_fsa_sps_-sensi_stg1_t.out)
     list(APPEND example_options
-         TEST_NAME cvsRoberts_FSA_sps_-sensi_stg1_t
+         TEST_NAME cvs_roberts_fsa_sps_-sensi_stg1_t
          TEST_ARGS -sensi stg1 t
          EXAMPLE_TYPE exclude-single)
   endif()

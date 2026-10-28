@@ -59,7 +59,7 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
     if(_example_rel_dir STREQUAL "cvs_roberts/c")
       sundials_add_test_install(cvodes ${_example_rel_dir}
-                                EXECUTABLE cvsRoberts_dns)
+                                EXECUTABLE cvs_roberts_dns)
     else()
       sundials_add_test_install(cvodes ${_example_rel_dir})
     endif()

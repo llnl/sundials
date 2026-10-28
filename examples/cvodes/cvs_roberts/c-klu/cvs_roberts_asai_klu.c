@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Radu Serban @ LLNL
+ * Programmer(s): Ting Yan @ UMBC
+ *      Based on cvs_roberts_asai_dns.c and modified to use KLU
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -13,7 +14,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
- * -----------------------------------------------------------------
+ *-----------------------------------------------------------------
  * Adjoint sensitivity example problem.
  * The following is a simple example problem, with the coding
  * needed for its solution by CVODES. The problem is from chemical
@@ -25,7 +26,7 @@
  * conditions: y1 = 1.0, y2 = y3 = 0. The reaction rates are:
  * p1=0.04, p2=1e4, and p3=3e7. The problem is stiff.
  * This program solves the problem with the BDF method, Newton
- * iteration with the dense linear solver, and a user-supplied
+ * iteration with the KLU linear solver, and a user-supplied
  * Jacobian routine.
  * It uses a scalar relative tolerance and a vector absolute
  * tolerance.
@@ -61,14 +62,14 @@
 #include <stdlib.h>
 #include <sundials/sundials_math.h> /* defs. of SUNRabs, SUNRexp, etc.      */
 #include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype      */
-#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver      */
-#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix            */
+#include <sunlinsol/sunlinsol_klu.h> /* access to KLU SUNLinearSolver        */
+#include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix           */
 
 /* Accessor macros */
+/* These macros are defined in order to write code with which exactly matched
+   the mathematical problem description given above. */
 
 #define Ith(v, i) NV_Ith_S(v, i - 1) /* i-th vector component, i=1..NEQ */
-#define IJth(A, i, j) \
-  SM_ELEMENT_D(A, i - 1, j - 1) /* (i,j)-th matrix el., i,j=1..NEQ */
 
 /* Problem Constants */
 
@@ -141,7 +142,6 @@ int main(int argc, char* argv[])
   SUNMatrix A, AB;
   SUNLinearSolver LS, LSB;
   void* cvode_mem;
-  FILE* FID;
 
   sunrealtype reltolQ, abstolQ;
   N_Vector y, q;
@@ -154,7 +154,9 @@ int main(int argc, char* argv[])
   N_Vector yB, qB;
 
   sunrealtype time;
-  int retval, ncheck;
+  int retval, nnz, ncheck;
+
+  long int nst, nstB;
 
   CVadjCheckPointRec* ckpnt;
 
@@ -225,19 +227,20 @@ int main(int argc, char* argv[])
   retval = CVodeSetUserData(cvode_mem, data);
   if (check_retval(&retval, "CVodeSetUserData", 1)) { return (1); }
 
-  /* Create dense SUNMatrix for use in linear solves */
-  A = SUNDenseMatrix(NEQ, NEQ, sunctx);
-  if (check_retval((void*)A, "SUNDenseMatrix", 0)) { return (1); }
+  /* Create sparse SUNMatrix for use in linear solves */
+  nnz = NEQ * NEQ; /* max no. of nonzeros entries in the Jac */
+  A   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
+  if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
-  /* Create dense SUNLinearSolver object for use by CVode */
-  LS = SUNLinSol_Dense(y, A, sunctx);
-  if (check_retval((void*)LS, "SUNLinSol_Dense", 0)) { return (1); }
+  /* Create KLU SUNLinearSolver object */
+  LS = SUNLinSol_KLU(y, A, sunctx);
+  if (check_retval((void*)LS, "SUNLinSol_KLU", 0)) { return (1); }
 
-  /* Attach the matrix and linear solver */
+  /* Attach the matrix and linear solver for the forward problem */
   retval = CVodeSetLinearSolver(cvode_mem, LS, A);
   if (check_retval(&retval, "CVodeSetLinearSolver", 1)) { return (1); }
 
-  /* Set the user-supplied Jacobian routine Jac */
+  /* Set the user-supplied Jacobian routine for the forward problem */
   retval = CVodeSetJacFn(cvode_mem, Jac);
   if (check_retval(&retval, "CVodeSetJacFn", 1)) { return (1); }
 
@@ -282,8 +285,11 @@ int main(int argc, char* argv[])
      saves checkpointing data */
   retval = CVodeF(cvode_mem, TOUT, y, &time, CV_NORMAL, &ncheck);
   if (check_retval(&retval, "CVodeF", 1)) { return (1); }
+  retval = CVodeGetNumSteps(cvode_mem, &nst);
+  if (check_retval(&retval, "CVodeGetNumSteps", 1)) { return (1); }
 
-  printf("done (ncheck = %d)\n", ncheck);
+  printf("done ( nst = %ld )\n", nst);
+  printf("\nncheck = %d\n\n", ncheck);
 
   retval = CVodeGetQuad(cvode_mem, &time, q);
   if (check_retval(&retval, "CVodeGetQuad", 1)) { return (1); }
@@ -296,16 +302,7 @@ int main(int argc, char* argv[])
 #else
   printf("G:          %12.4e \n", Ith(q, 1));
 #endif
-  printf("--------------------------------------------------------\n");
-
-  /* Print final statistics to the screen */
-  printf("\nFinal Statistics:\n");
-  retval = CVodePrintAllStats(cvode_mem, stdout, SUN_OUTPUTFORMAT_TABLE);
-
-  /* Print final statistics to a file in CSV format */
-  FID    = fopen("cvsRoberts_ASAi_dns_fwd_stats.csv", "w");
-  retval = CVodePrintAllStats(cvode_mem, FID, SUN_OUTPUTFORMAT_CSV);
-  fclose(FID);
+  printf("--------------------------------------------------------\n\n");
 
   /* Test check point linked list
      (uncomment next block to print check point information) */
@@ -354,7 +351,7 @@ int main(int argc, char* argv[])
   abstolQB = ATOLq;
 
   /* Create and allocate CVODES memory for backward run */
-  printf("\nCreate and allocate CVODES memory for backward run\n");
+  printf("Create and allocate CVODES memory for backward run\n");
 
   /* Call CVodeCreateB to specify the solution method for the backward
      problem. */
@@ -374,19 +371,19 @@ int main(int argc, char* argv[])
   retval = CVodeSetUserDataB(cvode_mem, indexB, data);
   if (check_retval(&retval, "CVodeSetUserDataB", 1)) { return (1); }
 
-  /* Create dense SUNMatrix for use in linear solves */
-  AB = SUNDenseMatrix(NEQ, NEQ, sunctx);
-  if (check_retval((void*)AB, "SUNDenseMatrix", 0)) { return (1); }
+  /* Create sparse SUNMatrix for use in linear solves */
+  AB = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
+  if (check_retval((void*)A, "SUNSparseMatrix", 0)) { return (1); }
 
-  /* Create dense SUNLinearSolver object */
-  LSB = SUNLinSol_Dense(yB, AB, sunctx);
-  if (check_retval((void*)LSB, "SUNLinSol_Dense", 0)) { return (1); }
+  /* Create KLU SUNLinearSolver object */
+  LSB = SUNLinSol_KLU(yB, AB, sunctx);
+  if (check_retval((void*)LSB, "SUNLinSol_KLU", 0)) { return (1); }
 
-  /* Attach the matrix and linear solver */
+  /* Attach the matrix and linear solver for the backward problem */
   retval = CVodeSetLinearSolverB(cvode_mem, indexB, LSB, AB);
   if (check_retval(&retval, "CVodeSetLinearSolverB", 1)) { return (1); }
 
-  /* Set the user-supplied Jacobian routine JacB */
+  /* Set the user-supplied Jacobian routine for the backward problem */
   retval = CVodeSetJacFnB(cvode_mem, indexB, JacB);
   if (check_retval(&retval, "CVodeSetJacFnB", 1)) { return (1); }
 
@@ -432,6 +429,8 @@ int main(int argc, char* argv[])
 
   retval = CVodeB(cvode_mem, T0, CV_NORMAL);
   if (check_retval(&retval, "CVodeB", 1)) { return (1); }
+  CVodeGetNumSteps(CVodeGetAdjCVodeBmem(cvode_mem, indexB), &nstB);
+  printf("Done ( nst = %ld )\n", nstB);
 
   retval = CVodeGetB(cvode_mem, indexB, &time, yB);
   if (check_retval(&retval, "CVodeGetB", 1)) { return (1); }
@@ -446,17 +445,6 @@ int main(int argc, char* argv[])
 
   PrintOutput(time, y, yB, qB);
 
-  /* Print final statistics to the screen */
-  printf("\nFinal Statistics:\n");
-  retval = CVodePrintAllStats(CVodeGetAdjCVodeBmem(cvode_mem, indexB), stdout,
-                              SUN_OUTPUTFORMAT_TABLE);
-
-  /* Print final statistics to a file in CSV format */
-  FID    = fopen("cvsRoberts_ASAi_dns_bkw1_stats.csv", "w");
-  retval = CVodePrintAllStats(CVodeGetAdjCVodeBmem(cvode_mem, indexB), FID,
-                              SUN_OUTPUTFORMAT_CSV);
-  fclose(FID);
-
   /* Reinitialize backward phase (new tB0) */
 
   Ith(yB, 1) = ZERO;
@@ -467,7 +455,7 @@ int main(int argc, char* argv[])
   Ith(qB, 2) = ZERO;
   Ith(qB, 3) = ZERO;
 
-  printf("\nRe-initialize CVODES memory for backward run\n");
+  printf("Re-initialize CVODES memory for backward run\n");
 
   retval = CVodeReInitB(cvode_mem, indexB, TB2, yB);
   if (check_retval(&retval, "CVodeReInitB", 1)) { return (1); }
@@ -494,6 +482,8 @@ int main(int argc, char* argv[])
 
   retval = CVodeB(cvode_mem, T0, CV_NORMAL);
   if (check_retval(&retval, "CVodeB", 1)) { return (1); }
+  CVodeGetNumSteps(CVodeGetAdjCVodeBmem(cvode_mem, indexB), &nstB);
+  printf("Done ( nst = %ld )\n", nstB);
 
   retval = CVodeGetB(cvode_mem, indexB, &time, yB);
   if (check_retval(&retval, "CVodeGetB", 1)) { return (1); }
@@ -506,18 +496,9 @@ int main(int argc, char* argv[])
 
   PrintOutput(time, y, yB, qB);
 
-  /* Print final statistics to the screen */
-  printf("\nFinal Statistics:\n");
-  retval = CVodePrintAllStats(CVodeGetAdjCVodeBmem(cvode_mem, indexB), stdout,
-                              SUN_OUTPUTFORMAT_TABLE);
-
-  /* Print final statistics to a file in CSV format */
-  FID    = fopen("cvsRoberts_ASAi_dns_bkw2_stats.csv", "w");
-  retval = CVodePrintAllStats(CVodeGetAdjCVodeBmem(cvode_mem, indexB), FID,
-                              SUN_OUTPUTFORMAT_CSV);
-  fclose(FID);
-
   /* Free memory */
+  printf("Free memory\n\n");
+
   CVodeFree(&cvode_mem);
   N_VDestroy(y);
   N_VDestroy(q);
@@ -536,14 +517,14 @@ int main(int argc, char* argv[])
 }
 
 /*
- *-------------------------------
- * Functions called by the solver
- *-------------------------------
+ *--------------------------------------------------------------------
+ * FUNCTIONS CALLED BY CVODES
+ *--------------------------------------------------------------------
  */
 
 /*
- * f routine. Compute function f(t,y).
- */
+ * f routine. Compute f(t,y).
+*/
 
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
@@ -573,26 +554,47 @@ static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 static int Jac(sunrealtype t, N_Vector y, N_Vector fy, SUNMatrix J,
                void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  sunrealtype y2, y3;
-  UserData data;
+  sunrealtype* yval;
+  sunindextype* colptrs = SUNSparseMatrix_IndexPointers(J);
+  sunindextype* rowvals = SUNSparseMatrix_IndexValues(J);
+  sunrealtype* data     = SUNSparseMatrix_Data(J);
+  UserData userdata;
   sunrealtype p1, p2, p3;
 
-  y2   = Ith(y, 2);
-  y3   = Ith(y, 3);
-  data = (UserData)user_data;
-  p1   = data->p[0];
-  p2   = data->p[1];
-  p3   = data->p[2];
+  yval = N_VGetArrayPointer(y);
 
-  IJth(J, 1, 1) = -p1;
-  IJth(J, 1, 2) = p2 * y3;
-  IJth(J, 1, 3) = p2 * y2;
-  IJth(J, 2, 1) = p1;
-  IJth(J, 2, 2) = -p2 * y3 - 2 * p3 * y2;
-  IJth(J, 2, 3) = -p2 * y2;
-  IJth(J, 3, 1) = ZERO;
-  IJth(J, 3, 2) = 2 * p3 * y2;
-  IJth(J, 3, 3) = ZERO;
+  userdata = (UserData)user_data;
+  p1       = userdata->p[0];
+  p2       = userdata->p[1];
+  p3       = userdata->p[2];
+
+  SUNMatZero(J);
+
+  colptrs[0] = 0;
+  colptrs[1] = 3;
+  colptrs[2] = 6;
+  colptrs[3] = 9;
+
+  data[0]    = -p1;
+  rowvals[0] = 0;
+  data[1]    = p1;
+  rowvals[1] = 1;
+  data[2]    = ZERO;
+  rowvals[2] = 2;
+
+  data[3]    = p2 * yval[2];
+  rowvals[3] = 0;
+  data[4]    = -p2 * yval[2] - 2 * p3 * yval[1];
+  rowvals[4] = 1;
+  data[5]    = 2 * yval[1];
+  rowvals[5] = 2;
+
+  data[6]    = p2 * yval[1];
+  rowvals[6] = 0;
+  data[7]    = -p2 * yval[1];
+  rowvals[7] = 1;
+  data[8]    = ZERO;
+  rowvals[8] = 2;
 
   return (0);
 }
@@ -682,31 +684,47 @@ static int JacB(sunrealtype t, N_Vector y, N_Vector yB, N_Vector fyB,
                 SUNMatrix JB, void* user_dataB, N_Vector tmp1B, N_Vector tmp2B,
                 N_Vector tmp3B)
 {
-  UserData data;
-  sunrealtype y2, y3;
+  sunrealtype* yvalB;
+  sunindextype* colptrsB = SUNSparseMatrix_IndexPointers(JB);
+  sunindextype* rowvalsB = SUNSparseMatrix_IndexValues(JB);
+  sunrealtype* dataB     = SUNSparseMatrix_Data(JB);
+  UserData userdata;
   sunrealtype p1, p2, p3;
 
-  data = (UserData)user_dataB;
+  yvalB = N_VGetArrayPointer(y);
 
-  /* The p vector */
-  p1 = data->p[0];
-  p2 = data->p[1];
-  p3 = data->p[2];
+  userdata = (UserData)user_dataB;
+  p1       = userdata->p[0];
+  p2       = userdata->p[1];
+  p3       = userdata->p[2];
 
-  /* The y vector */
-  y2 = Ith(y, 2);
-  y3 = Ith(y, 3);
+  SUNMatZero(JB);
 
-  /* Load JB */
-  IJth(JB, 1, 1) = p1;
-  IJth(JB, 1, 2) = -p1;
-  IJth(JB, 1, 3) = ZERO;
-  IJth(JB, 2, 1) = -p2 * y3;
-  IJth(JB, 2, 2) = p2 * y3 + 2.0 * p3 * y2;
-  IJth(JB, 2, 3) = SUN_RCONST(-2.0) * p3 * y2;
-  IJth(JB, 3, 1) = -p2 * y2;
-  IJth(JB, 3, 2) = p2 * y2;
-  IJth(JB, 3, 3) = ZERO;
+  colptrsB[0] = 0;
+  colptrsB[1] = 3;
+  colptrsB[2] = 6;
+  colptrsB[3] = 9;
+
+  dataB[0]    = p1;
+  rowvalsB[0] = 0;
+  dataB[1]    = -p2 * yvalB[2];
+  rowvalsB[1] = 1;
+  dataB[2]    = -p2 * yvalB[1];
+  rowvalsB[2] = 2;
+
+  dataB[3]    = -p1;
+  rowvalsB[3] = 0;
+  dataB[4]    = p2 * yvalB[2] + 2 * p3 * yvalB[1];
+  rowvalsB[4] = 1;
+  dataB[5]    = p2 * yvalB[1];
+  rowvalsB[5] = 2;
+
+  dataB[6]    = ZERO;
+  rowvalsB[6] = 0;
+  dataB[7]    = SUN_RCONST(-2.0) * p3 * yvalB[1];
+  rowvalsB[7] = 1;
+  dataB[8]    = ZERO;
+  rowvalsB[8] = 2;
 
   return (0);
 }
@@ -792,7 +810,7 @@ static void PrintOutput1(sunrealtype time, sunrealtype t, N_Vector y, N_Vector y
          Ith(yB, 3));
   printf("y(t)      : %12.4e %12.4e %12.4e\n", Ith(y, 1), Ith(y, 2), Ith(y, 3));
 #endif
-  printf("--------------------------------------------------------\n");
+  printf("--------------------------------------------------------\n\n");
 }
 
 /*
@@ -825,17 +843,17 @@ static void PrintOutput(sunrealtype tfinal, N_Vector y, N_Vector yB, N_Vector qB
   printf("dG/dp:      %12.4e %12.4e %12.4e\n", -Ith(qB, 1), -Ith(qB, 2),
          -Ith(qB, 3));
 #endif
-  printf("--------------------------------------------------------\n");
+  printf("--------------------------------------------------------\n\n");
 }
 
 /*
- * Check function return value...
- *   opt == 0 means SUNDIALS function allocates memory so check if
- *            returned NULL pointer
- *   opt == 1 means SUNDIALS function returns an integer value so check if
- *            retval < 0
- *   opt == 2 means function allocates memory so check if returned
- *            NULL pointer
+ * Check function return value.
+ *    opt == 0 means SUNDIALS function allocates memory so check if
+ *             returned NULL pointer
+ *    opt == 1 means SUNDIALS function returns an integer value so check if
+ *             retval < 0
+ *    opt == 2 means function allocates memory so check if returned
+ *             NULL pointer
  */
 
 static int check_retval(void* returnvalue, const char* funcname, int opt)

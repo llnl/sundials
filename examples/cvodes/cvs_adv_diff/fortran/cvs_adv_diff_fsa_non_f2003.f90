@@ -14,7 +14,7 @@
 ! SPDX-License-Identifier: BSD-3-Clause
 ! SUNDIALS Copyright End
 ! ------------------------------------------------------------------
-! Based on cvsAdvDiff_FSA_non.c by Scott D. Cohen, Alan C. Hindmarsh,
+! Based on cvs_adv_diff_fsa_non.c by Scott D. Cohen, Alan C. Hindmarsh,
 ! George D. Byrne, and Radu Serban @ LLNL
 ! -----------------------------------------------------------------
 ! Example problem:
@@ -46,9 +46,9 @@
 ! Execution:
 !
 ! If no sensitivities are desired:
-!    % cvsAdvDiff_FSA_non -nosensi
+!    % cvs_adv_diff_fsa_non -nosensi
 ! If sensitivities are to be computed:
-!    % cvsAdvDiff_FSA_non -sensi sensi_meth err_con
+!    % cvs_adv_diff_fsa_non -sensi sensi_meth err_con
 ! where sensi_meth is one of {sim, stg, stg1} and err_con is one of
 ! {t, f}.
 ! -----------------------------------------------------------------*/
@@ -463,7 +463,7 @@ end subroutine
 ! Print help.
 subroutine WrongArgs()
   write (*, *) ""
-  write (*, *) "Usage: ./cvsAdvDiff_FSA_non [-nosensi] [-sensi sensi_meth err_con]"
+  write (*, *) "Usage: ./cvs_adv_diff_fsa_non [-nosensi] [-sensi sensi_meth err_con]"
   write (*, *) "         sensi_meth = sim, stg, or stg1"
   write (*, *) "         err_con    = t or f"
   write (*, *) ""
