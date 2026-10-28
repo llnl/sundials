@@ -13,5 +13,5 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES AND SUNDIALS_ENABLE_MPI)
-  add_subdirectory(c-mpi)
+  add_subdirectory(c_mpi)
 endif()
