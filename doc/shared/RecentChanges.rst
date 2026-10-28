@@ -33,6 +33,10 @@ Reorganized the CVODES examples using the same problem-based structure as the
 CVODE and ARKODE examples. The old CVODES example Makefiles are no longer
 installed; use the installed CMakeLists.txt files instead.
 
+Example filenames and executable targets in ARKODE, CVODES, IDA, IDAS, and
+KINSOL now follow CVODE's lowercase, underscore-separated naming convention.
+The serial and MPI KINSOL diagonal Fortran examples use distinct target names.
+
 Reorganized the IDAS examples using the same problem-based structure as the
 CVODE and ARKODE examples. The old IDAS example Makefiles are no longer
 installed; use the installed CMakeLists.txt files instead.

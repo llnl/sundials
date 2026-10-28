@@ -56,6 +56,12 @@ def check(root, packages):
                         errors.append(f"{file}: variant not registered in problem CMake")
             if file.name.startswith("Makefile"):
                 errors.append(f"{file}: obsolete example Makefile")
+        for document in (root / "doc" / package).rglob("*.rst"):
+            if not document.is_file():
+                continue
+            for include in re.findall(r"literalinclude::\s+(\S+)", document.read_text()):
+                if "examples/" in include and not (document.parent / include).is_file():
+                    errors.append(f"{document}: missing example include {include}")
     return errors
 
 
