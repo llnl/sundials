@@ -12,8 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(_example ark_onewaycouple_mri ark_reaction_diffusion_mri
-                 ark_twowaycouple_mri)
+foreach(_example ark_one_way_couple_mri ark_reaction_diffusion_mri
+                 ark_two_way_couple_mri)
   set(_files)
   if(_example STREQUAL "ark_reaction_diffusion_mri")
     set(_files ark_reaction_diffusion_mri_fast_stats.csv

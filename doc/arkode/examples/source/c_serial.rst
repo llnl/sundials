@@ -888,9 +888,9 @@ be no such messages.
 
 
 
-.. _ark_onewaycouple_mri:
+.. _ark_one_way_couple_mri:
 
-ark_onewaycouple_mri
+ark_one_way_couple_mri
 ================================================
 
 This example simulates a linear system of 3 dependent variables :math:`u`,
@@ -932,9 +932,9 @@ This system has the analytic solution,
 
 
 
-.. _ark_twowaycouple_mri:
+.. _ark_two_way_couple_mri:
 
-ark_twowaycouple_mri
+ark_two_way_couple_mri
 ================================================
 
 This example simulates a linear system of 3 dependent variables :math:`u`,

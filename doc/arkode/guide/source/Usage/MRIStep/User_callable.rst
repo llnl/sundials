@@ -97,10 +97,10 @@ MRIStep initialization and deallocation functions
 
    **Example codes:**
       * ``examples/arkode/ark_brusselator/c/ark_brusselator_mri.c``
-      * ``examples/arkode/ark_mri_step/c/ark_twowaycouple_mri.c``
+      * ``examples/arkode/ark_two_way_couple/c/ark_two_way_couple_mri.c``
       * ``examples/arkode/ark_brusselator/c/ark_brusselator_1d_mri.c``
-      * ``examples/arkode/ark_mri_step/c/ark_onewaycouple_mri.c``
-      * ``examples/arkode/ark_mri_step/c/ark_reaction_diffusion_mri.c``
+      * ``examples/arkode/ark_one_way_couple/c/ark_one_way_couple_mri.c``
+      * ``examples/arkode/ark_reaction_diffusion/c/ark_reaction_diffusion_mri.c``
       * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
       * ``examples/arkode/ark_diffusion_reaction/cpp_mpi/ark_diffusion_reaction_p.cpp``
       * ``examples/arkode/ark_kpr/cpp/ark_kpr_nestedmri.cpp``
