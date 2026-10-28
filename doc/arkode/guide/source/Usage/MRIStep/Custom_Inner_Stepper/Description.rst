@@ -73,7 +73,7 @@ Creating and Destroying an Object
       flag = MRIStepInnerStepper_Create(&inner_stepper);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
    .. note::
 
@@ -124,7 +124,7 @@ Creating and Destroying an Object
       flag = MRIStepInnerStepper_Free(&inner_stepper);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
    .. note::
 
@@ -157,7 +157,7 @@ Attaching and Accessing the Content Pointer
       flag = MRIStepInnerStepper_SetContent(inner_stepper, &my_object_data);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. c:function:: int MRIStepInnerStepper_GetContent(MRIStepInnerStepper stepper, void **content)
@@ -183,7 +183,7 @@ Attaching and Accessing the Content Pointer
       my_object_data = (MyStepperContent*) content;
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. _ARKODE.Usage.MRIStep.CustomInnerStepper.Description.BaseMethods.AttachFunctions:
@@ -210,7 +210,7 @@ Setting Member Functions
       flag = MRIStepInnerStepper_SetEvolveFn(inner_stepper, MyEvolve);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. c:function:: int MRIStepInnerStepper_SetFullRhsFn(MRIStepInnerStepper stepper, MRIStepInnerFullRhsFn fn)
@@ -232,7 +232,7 @@ Setting Member Functions
       flag = MRIStepInnerStepper_SetFullRhsFn(inner_stepper, MyFullRHS);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. c:function:: int MRIStepInnerStepper_SetResetFn(MRIStepInnerStepper stepper, MRIStepInnerResetFn fn)
@@ -254,7 +254,7 @@ Setting Member Functions
       flag = MRIStepInnerStepper_SetResetFn(inner_stepper, MyReset);
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 .. c:function:: int MRIStepInnerStepper_SetAccumulatedErrorGetFn(MRIStepInnerStepper stepper, MRIStepInnerGetAccumulatedError fn)
 
@@ -329,7 +329,7 @@ does not traverse the data directly.
    :retval ARK_ILL_INPUT: if the stepper is ``NULL``
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 
@@ -379,7 +379,7 @@ does not traverse the data directly.
       }
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. _ARKODE.Usage.MRIStep.CustomInnerStepper.Description.ImplMethods:
@@ -416,7 +416,7 @@ member functions:
       it failed unrecoverably.
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 Optional Member Functions
 """""""""""""""""""""""""
@@ -449,7 +449,7 @@ following member functions:
       a nonzero value upon failure.
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
    .. versionchanged:: 6.7.0 (ARKODE 5.7.0)
 
@@ -474,7 +474,7 @@ following member functions:
       value upon failure.
 
    **Example codes:**
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
 
 
 .. c:type:: int (*MRIStepInnerGetAccumulatedError)(MRIStepInnerStepper stepper, sunrealtype* accum_error)

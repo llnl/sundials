@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# This example is a copy of examples/arkode/C_serial/ark_heat1D.c,
+# This example is a copy of examples/arkode/ark_heat_1d/c/ark_heat1D.c,
 # but ported to Python to use sundials4py.
 #
 # The following test simulates a simple 1D heat equation,
