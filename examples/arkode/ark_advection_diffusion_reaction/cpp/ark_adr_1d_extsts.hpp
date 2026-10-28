@@ -15,7 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * Header file for ExtSTS advection-diffusion-reaction equation example, see
- * ark_adr1d_extsts.cpp for more details.
+ * ark_adr_1d_extsts.cpp for more details.
  * ---------------------------------------------------------------------------*/
 
 #ifndef SUNDIALS_ARK_ADR1D_EXTSTS_HPP

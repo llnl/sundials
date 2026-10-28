@@ -16,7 +16,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
-# matplotlib-based plotting script for the serial ark_heat2D example
+# matplotlib-based plotting script for the XBraid serial ark_heat_2d example
 # ------------------------------------------------------------------------------
 
 # imports
@@ -67,7 +67,7 @@ with open(infofile) as fn:
 # ------------------------------------------------------------------------------
 
 # check if the error was output
-fname = "heat2d_error.txt"
+fname = "heat2d_error.000000.txt"
 
 if os.path.isfile(fname):
     plottype = ["solution", "error"]
@@ -79,13 +79,21 @@ for pt in plottype:
     time = np.zeros(nt)
     result = np.zeros((nt, ny, nx))
 
-    # load data
-    data = np.loadtxt("heat2d_" + pt + ".txt", dtype=np.double)
+    tindex = range(0, nt)
 
-    # extract data
-    for i in range(nt):
-        time[i] = data[i, 0]
-        result[i, 0 : ny + 1, 0 : nx + 1] = np.reshape(data[i, 1:], (ny, nx))
+    # read data files
+    i = 0
+    for t in tindex:
+        # output file name
+        datafile = "heat2d_" + pt + "." + repr(t).zfill(6) + ".txt"
+
+        # load data
+        data = np.loadtxt(datafile, dtype=np.double)
+
+        # extract data
+        time[i] = data[0]
+        result[i, 0 : ny + 1, 0 : nx + 1] = np.reshape(data[1:], (ny, nx))
+        i += 1
 
     # determine extents of plots
     maxtemp = 1.1 * result.max()
@@ -102,7 +110,7 @@ for pt in plottype:
     # generate plots
     for tstep in range(nt):
         # set string constants for output plots, current time, mesh size
-        pname = "heat2d_surf_" + pt + "." + repr(tstep).zfill(3) + ".png"
+        pname = "heat2d_surf_" + pt + "." + repr(tstep).zfill(6) + ".png"
         tstr = str(time[tstep])
 
         # plot surface and save to disk

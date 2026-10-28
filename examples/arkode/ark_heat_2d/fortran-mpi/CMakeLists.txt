@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat2D_f2003 ark_heat2D_f2003.f90
+  ark_heat_2d_f2003 ark_heat_2d_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
   EXAMPLE_TYPE develop

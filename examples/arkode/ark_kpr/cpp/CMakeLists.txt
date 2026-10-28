@@ -25,10 +25,10 @@ set(_args
     "2 4 0 -10 0"
     "0 4 0 -10 1 10 1"
     "0 4 0 -10 0 10 1")
-file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_Mt_*.out")
-if(NOT TARGET ark_kpr_Mt)
+file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mt_*.out")
+if(NOT TARGET ark_kpr_mt)
   sundials_add_example(
-    ark_kpr_Mt ark_kpr_Mt.cpp NO_TEST
+    ark_kpr_mt ark_kpr_mt.cpp NO_TEST
     INSTALL_FILES ${_answer_files}
     INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
@@ -41,10 +41,10 @@ foreach(_arg ${_args})
     set(_type exclude-single)
   endif()
   sundials_add_test(
-    ark_kpr_Mt_${_suffix} ark_kpr_Mt
+    ark_kpr_mt_${_suffix} ark_kpr_mt
     TEST_ARGS ${_arg}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ark_kpr_Mt_${_suffix}.out
+    ANSWER_FILE ark_kpr_mt_${_suffix}.out
     EXAMPLE_TYPE ${_type})
 endforeach()
 sundials_add_example(

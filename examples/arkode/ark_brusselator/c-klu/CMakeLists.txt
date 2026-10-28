@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator1D_klu ark_brusselator1D_klu.c
+  ark_brusselator_1d_klu ark_brusselator_1d_klu.c
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

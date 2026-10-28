@@ -64,7 +64,7 @@
  *  --atol <double>  absolute tolerance
  * --------------------------------------------------------------------------*/
 
-#include "ark_brusselator1D.h"
+#include "ark_brusselator_1d.h"
 
 #ifdef USE_RAJA_NVEC
 #define NVECTOR_ID_STRING "RAJA-unmanaged"

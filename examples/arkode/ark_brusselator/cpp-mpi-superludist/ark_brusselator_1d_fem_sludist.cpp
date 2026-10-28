@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------
  * Programmer(s): Cody J. Balos @ LLNL
  *---------------------------------------------------------------
- * Based on example problem ark_brusselator1D_FEM by
+ * Based on example problem ark_brusselator_1d_FEM by
  * Daniel R. Reynolds @ UMBC.
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start

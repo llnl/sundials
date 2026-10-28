@@ -98,7 +98,7 @@ MRIStep initialization and deallocation functions
    **Example codes:**
       * ``examples/arkode/ark_brusselator/c/ark_brusselator_mri.c``
       * ``examples/arkode/ark_mri_step/c/ark_twowaycouple_mri.c``
-      * ``examples/arkode/ark_brusselator/c/ark_brusselator_1D_mri.c``
+      * ``examples/arkode/ark_brusselator/c/ark_brusselator_1d_mri.c``
       * ``examples/arkode/ark_mri_step/c/ark_onewaycouple_mri.c``
       * ``examples/arkode/ark_mri_step/c/ark_reaction_diffusion_mri.c``
       * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
@@ -162,7 +162,7 @@ MRIStep initialization and deallocation functions
          retval = LSRKStepSet*(sts_mem, ...);
 
    **Example codes:**
-      * ``examples/arkode/ark_advection_diffusion_reaction/cpp/ark_adr1d_extsts.cpp``
+      * ``examples/arkode/ark_advection_diffusion_reaction/cpp/ark_adr_1d_extsts.cpp``
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)
@@ -2713,7 +2713,7 @@ MRIStep system resize function
       **Example codes:**
         For an example showing usage of the similar :c:func:`ARKStepResize()`
         routine, see the supplied serial C example problem,
-        ``ark_heat1D_adapt.c``.
+        ``ark_heat_1d_adapt.c``.
 
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 

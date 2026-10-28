@@ -1,5 +1,5 @@
   
- ark_roberts_dnsL_f2003.f90: Robertson ARK ODE serial example problem for ARKODE
+ ark_roberts_dns_l_f2003.f90: Robertson ARK ODE serial example problem for ARKODE
           Three equation chemical kinetics problem.
   
  Linear solver: LAPACK DENSE, with user-supplied Jacobian.

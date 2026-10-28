@@ -13,9 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_adr1d_extsts ark_adr1d_extsts.cpp
+  ark_adr_1d_extsts ark_adr_1d_extsts.cpp
   EXAMPLE_TYPE develop
-  INSTALL_FILES ark_adr1d_extsts.hpp
+  INSTALL_FILES ark_adr_1d_extsts.hpp
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

@@ -516,7 +516,7 @@ static int adaptive_run(void* arkode_mem, N_Vector y, sunrealtype T0,
   if (check_retval(&retval, "ARKodeResStolerance", 1)) { return 1; }
 
   // Open output stream for results, output comment line
-  FILE* UFID = fopen("ark_kpr_Mt_solution.txt", "w");
+  FILE* UFID = fopen("ark_kpr_mt_solution.txt", "w");
   fprintf(UFID, "# t u v uerr verr\n");
 
   // output initial condition to disk

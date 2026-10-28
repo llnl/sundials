@@ -12,8 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(_example ark_heat2D_hypre_ls ark_heat2D_hypre_pfmg
-                 ark_heat2D_hypre_pfmg_imex ark_heat2D_hypre_pfmg_mri)
+foreach(_example ark_heat_2d_hypre_ls ark_heat_2d_hypre_pfmg
+                 ark_heat_2d_hypre_pfmg_imex ark_heat_2d_hypre_pfmg_mri)
   set(_args "--np 2 2")
   string(REPLACE " " "_" _suffix "${_args}")
   sundials_add_example(
@@ -22,7 +22,7 @@ foreach(_example ark_heat2D_hypre_ls ark_heat2D_hypre_pfmg
     MPI_NPROCS 4
     ANSWER_FILE ${_example}_${_suffix}.out
     EXAMPLE_TYPE develop
-    INSTALL_FILES plot_heat2D_p.py
+    INSTALL_FILES plot_heat_2d_p.py
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX sundials_arkode sundials_nvecparallel
                    SUNDIALS::HYPRE ${EXE_EXTRA_LINK_LIBS})
 endforeach()

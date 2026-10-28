@@ -16,7 +16,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # ------------------------------------------------------------------------------
-# matplotlib-based plotting script for the parallel ark_heat2D_p examples
+# matplotlib-based plotting script for the parallel ark_heat_2d_p examples
 # ------------------------------------------------------------------------------
 
 # imports

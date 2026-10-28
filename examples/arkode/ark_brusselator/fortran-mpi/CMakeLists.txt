@@ -13,17 +13,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator1D_task_local_nls_f2003
-  ark_brusselator1D_task_local_nls_f2003.f90
-  TEST_NAME ark_brusselator1D_task_local_nls_f2003_--monitor
+  ark_brusselator_1d_task_local_nls_f2003
+  ark_brusselator_1d_task_local_nls_f2003.f90
+  TEST_NAME ark_brusselator_1d_task_local_nls_f2003_--monitor
   TEST_ARGS --monitor
   MPI_NPROCS 4
   FLOAT_PRECISION 2
-  ANSWER_FILE ark_brusselator1D_task_local_nls_f2003_--monitor.out
+  ANSWER_FILE ark_brusselator_1d_task_local_nls_f2003_--monitor.out
   EXAMPLE_TYPE develop
   INSTALL_FILES
-    ark_brusselator1D_task_local_nls_f2003_--monitor_--explicit_--tf_3.out
-    ark_brusselator1D_task_local_nls_f2003_--monitor_--global-nls.out
+    ark_brusselator_1d_task_local_nls_f2003_--monitor_--explicit_--tf_3.out
+    ark_brusselator_1d_task_local_nls_f2003_--monitor_--global-nls.out
   LINK_LIBRARIES
     PRIVATE
     MPI::MPI_Fortran
@@ -39,11 +39,11 @@ sundials_add_example(
 foreach(_args "--monitor --explicit --tf 3" "--monitor --global-nls")
   string(REPLACE " " "_" _suffix "${_args}")
   sundials_add_test(
-    ark_brusselator1D_task_local_nls_f2003_${_suffix}
-    ark_brusselator1D_task_local_nls_f2003
+    ark_brusselator_1d_task_local_nls_f2003_${_suffix}
+    ark_brusselator_1d_task_local_nls_f2003
     TEST_ARGS ${_args}
     MPI_NPROCS 4
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ark_brusselator1D_task_local_nls_f2003_${_suffix}.out
+    ANSWER_FILE ark_brusselator_1d_task_local_nls_f2003_${_suffix}.out
     EXAMPLE_TYPE develop)
 endforeach()

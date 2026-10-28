@@ -40,7 +40,7 @@ nt = len(mesh)
 nt2 = len(data)
 if nt != nt2:
     sys.exit(
-        "plot_heat1D_adapt.py error: data and mesh files have different numbers of time steps"
+        "plot_heat_1d_adapt.py error: data and mesh files have different numbers of time steps"
     )
 
 # determine minimum/maximum temperature

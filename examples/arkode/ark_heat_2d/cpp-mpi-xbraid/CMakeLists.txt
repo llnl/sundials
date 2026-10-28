@@ -12,16 +12,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(_xbraid_examples ark_heat2D_xbraid ark_heat2D_p_xbraid)
+set(_xbraid_examples ark_heat_2d_xbraid ark_heat_2d_p_xbraid)
 if(SUNDIALS_ENABLE_HYPRE)
-  list(APPEND _xbraid_examples ark_heat2D_hypre_pfmg_xbraid)
+  list(APPEND _xbraid_examples ark_heat_2d_hypre_pfmg_xbraid)
 endif()
 foreach(_example ${_xbraid_examples})
-  if(_example STREQUAL "ark_heat2D_xbraid")
+  if(_example STREQUAL "ark_heat_2d_xbraid")
     set(_args "--x_print_level 0")
     set(_tasks 4)
     set(_type develop)
-  elseif(_example STREQUAL "ark_heat2D_p_xbraid")
+  elseif(_example STREQUAL "ark_heat_2d_p_xbraid")
     set(_args "--np 2 1 2 --x_print_level 0")
     set(_tasks 4)
     set(_type develop)
@@ -38,7 +38,7 @@ foreach(_example ${_xbraid_examples})
   endif()
   sundials_add_example(
     ${_example} ${_example}.cpp NO_TEST
-    INSTALL_FILES plot_heat2D.py ${_example}_${_suffix}.out
+    INSTALL_FILES plot_heat_2d.py ${_example}_${_suffix}.out
     LINK_LIBRARIES PRIVATE ${_libs})
   sundials_add_test(
     ${_example}_${_suffix} ${_example}

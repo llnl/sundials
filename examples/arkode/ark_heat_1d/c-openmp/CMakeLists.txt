@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat1D_omp ark_heat1D_omp.c
+  ark_heat_1d_omp ark_heat_1d_omp.c
   TEST_ARGS 4
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmp

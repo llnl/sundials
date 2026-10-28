@@ -2318,7 +2318,7 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       Similarly programs that assume the nonlinear residual will always call the
       implicit RHS function will need to be updated to account for the RHS value
       reuse when using :c:func:`ARKodeSetAutonomous`. For example,
-      ``examples/arkode/ark_krylov_demo/c/ark_KrylovDemo_prec.c`` assumes that the
+      ``examples/arkode/ark_krylov_demo/c/ark_krylov_demo_prec.c`` assumes that the
       nonlinear residual will be called and will evaluate the implicit RHS
       function before calling the preconditioner setup function. Based on this
       assumption, this example code saves some computations in the RHS
@@ -5714,7 +5714,7 @@ rescale the upcoming time step by the specified factor.  If a value
 
       **Example codes:**
 
-      * ``examples/arkode/ark_heat_1d/c/ark_heat1D_adapt.c``
+      * ``examples/arkode/ark_heat_1d/c/ark_heat_1d_adapt.c``
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 

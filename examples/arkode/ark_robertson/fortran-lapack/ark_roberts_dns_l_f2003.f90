@@ -463,7 +463,7 @@ subroutine PrintHeader(rtol, avtol, y)
   !======= Internals ============
 
   print *, " "
-  print *, "ark_roberts_dnsL_f2003.f90: Robertson ARK ODE serial example problem for ARKODE"
+  print *, "ark_roberts_dns_l_f2003.f90: Robertson ARK ODE serial example problem for ARKODE"
   print *, "         Three equation chemical kinetics problem."
   print *, " "
   print *, "Linear solver: LAPACK DENSE, with user-supplied Jacobian."

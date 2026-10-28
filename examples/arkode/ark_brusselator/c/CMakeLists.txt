@@ -18,9 +18,9 @@ set(_arkode_libs sundials_arkode sundials_nvecserial sundials_sundomeigestpower
 foreach(
   _example
   ark_brusselator
-  ark_brusselator1D
-  ark_brusselator1D_imexmri
-  ark_brusselator_1D_mri
+  ark_brusselator_1d
+  ark_brusselator_1d_imexmri
+  ark_brusselator_1d_mri
   ark_brusselator_fp
   ark_brusselator_lsrk_domeigest
   ark_brusselator_lsrk_externaldomeigest
@@ -43,7 +43,7 @@ foreach(
         ANSWER_FILE ark_brusselator_fp_1.out
         EXAMPLE_TYPE exclude-single)
     endif()
-  elseif(_example STREQUAL "ark_brusselator1D_imexmri")
+  elseif(_example STREQUAL "ark_brusselator_1d_imexmri")
     sundials_add_example(
       ${_example} ${_example}.c
       TEST_NAME ${_example}_0_0.001
@@ -51,12 +51,12 @@ foreach(
       ANSWER_FILE ${_example}_0_0.001.out
       EXAMPLE_TYPE exclude-single
       INSTALL_FILES
-        ark_brusselator1D_imexmri_2_0.001.out
-        ark_brusselator1D_imexmri_3_0.001.out
-        ark_brusselator1D_imexmri_4_0.001.out
-        ark_brusselator1D_imexmri_5_0.001.out
-        ark_brusselator1D_imexmri_6_0.001.out
-        ark_brusselator1D_imexmri_7_0.001.out
+        ark_brusselator_1d_imexmri_2_0.001.out
+        ark_brusselator_1d_imexmri_3_0.001.out
+        ark_brusselator_1d_imexmri_4_0.001.out
+        ark_brusselator_1d_imexmri_5_0.001.out
+        ark_brusselator_1d_imexmri_6_0.001.out
+        ark_brusselator_1d_imexmri_7_0.001.out
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
     foreach(_case 2 3 4 5 6 7)
       sundials_add_test(

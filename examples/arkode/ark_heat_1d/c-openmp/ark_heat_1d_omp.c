@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------
  * Programmer(s): Shelby Lockhart @ LLNL
  *---------------------------------------------------------------
- * Based on the serial code ark_heat1D.c developed by
+ * Based on the serial code ark_heat_1d.c developed by
  * Daniel R. Reynolds @ UMBC and parallelized with OpenMP
  *---------------------------------------------------------------
  * SUNDIALS Copyright Start

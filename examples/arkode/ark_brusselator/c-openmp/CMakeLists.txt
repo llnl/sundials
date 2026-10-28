@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(_example ark_brusselator1D_omp)
+foreach(_example ark_brusselator_1d_omp)
   sundials_add_example(
     ${_example} ${_example}.c
     EXAMPLE_TYPE exclude-single

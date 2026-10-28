@@ -25,11 +25,11 @@ sundials_add_example(
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  ark_brusselator1D_f2003 ark_brusselator1D_f2003.f90 ${_sources}
+  ark_brusselator_1d_f2003 ark_brusselator_1d_f2003.f90 ${_sources}
   EXAMPLE_TYPE develop
   INSTALL_FILES ${_sources}
   PROPERTIES Fortran_MODULE_DIRECTORY
-             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_brusselator1D_f2003.dir
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_brusselator_1d_f2003.dir
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                  ${EXE_EXTRA_LINK_LIBS})
 

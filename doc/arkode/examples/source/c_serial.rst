@@ -479,9 +479,9 @@ function ``g()``.
 
 
 
-.. _ark_brusselator1D:
+.. _ark_brusselator_1d:
 
-ark_brusselator1D
+ark_brusselator_1d
 ============================================
 
 We now investigate a time-dependent system of partial differential
@@ -551,11 +551,11 @@ are printed at the end.
 Solutions
 ---------
 
-.. image:: figs/plot-ark_brusselator1D_1.png
+.. image:: figs/plot-ark_brusselator_1d_1.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator1D_2.png
+.. image:: figs/plot-ark_brusselator_1d_2.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator1D_3.png
+.. image:: figs/plot-ark_brusselator_1d_3.png
    :width: 30 %
 
 Brusselator PDE solution snapshots: left is at time :math:`t=0`,
@@ -565,13 +565,13 @@ center is at time :math:`t=2.9`, right is at time :math:`t=8.8`.
 
 
 
-.. _ark_brusselator1D_klu:
+.. _ark_brusselator_1d_klu:
 
-ark_brusselator1D_klu
+ark_brusselator_1d_klu
 ============================================
 
 This problem is mathematically identical to the preceding problem,
-:ref:`ark_brusselator1D`, but instead of using the SUNMATRIX_BAND
+:ref:`ark_brusselator_1d`, but instead of using the SUNMATRIX_BAND
 banded matrix module and SUNLINSOL_BAND linear solver module, it uses
 the SUNMATRIX_SPARSE sparse matrix module with the SUNLINSOL_KLU
 linear solver module.  These are still provided to ARKODE using the
@@ -583,13 +583,13 @@ Additionally, the solution is only output 10 times instead of 100.
 
 
 
-.. _ark_brusselator1D_FEM_slu:
+.. _ark_brusselator_1d_fem_slu:
 
-ark_brusselator1D_FEM_slu
+ark_brusselator_1d_fem_slu
 ============================================
 
 This problem is mathematically identical to the preceding problems,
-:ref:`ark_brusselator1D` and :ref:`ark_brusselator1D_klu`, but
+:ref:`ark_brusselator_1d` and :ref:`ark_brusselator_1d_klu`, but
 utilizes a different set of numerical methods.
 
 
@@ -618,7 +618,7 @@ After this spatial semi-discretization, the system of three PDEs is
 passed to ARKODE as a system of :math:`3N` coupled ODEs, as with the
 preceding problem.
 
-As with the preceding problem :ref:`ark_brusselator1D_klu`, this
+As with the preceding problem :ref:`ark_brusselator_1d_klu`, this
 example solves the problem with a DIRK method, using a Newton
 iteration, and the SUNMATRIX_SPARSE module.  However, this example
 uses the SUNLINSOL_SUPERLUMT linear solver module, both for the Newton
@@ -635,15 +635,15 @@ are printed at the end.
 Solutions
 ---------
 
-.. image:: figs/plot-ark_brusselator1D_FEM_1.png
+.. image:: figs/plot-ark_brusselator_1d_FEM_1.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator1D_FEM_2.png
+.. image:: figs/plot-ark_brusselator_1d_FEM_2.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator1D_FEM_3.png
+.. image:: figs/plot-ark_brusselator_1d_FEM_3.png
    :width: 30 %
 
 Finite-element Brusselator PDE solution snapshots (created using the
-supplied Python script, ``plot_brusselator1D_FEM.py``): left is at time
+supplied Python script, ``plot_brusselator_1d_fem.py``): left is at time
 :math:`t=0`, center is at time :math:`t=2.9`, right is at time
 :math:`t=8.8`.
 
@@ -651,9 +651,9 @@ supplied Python script, ``plot_brusselator1D_FEM.py``): left is at time
 
 
 
-.. _ark_heat1D:
+.. _ark_heat_1d:
 
-ark_heat1D
+ark_heat_1d
 ============================================================
 
 As with the previous brusselator problem, this example simulates a
@@ -685,7 +685,7 @@ where :math:`\delta` denotes the Dirac delta distribution.
 Numerical method
 ----------------
 
-As with the :ref:`ark_brusselator1D` test problem, this test computes
+As with the :ref:`ark_brusselator_1d` test problem, this test computes
 spatial derivatives using second-order centered differences, with the
 data distributed over :math:`N` points on a uniform spatial grid.
 
@@ -730,12 +730,12 @@ center is at time :math:`t=0.13`, right is at time :math:`t=1.0`.
 
 
 
-.. _ark_heat1D_adapt:
+.. _ark_heat_1d_adapt:
 
-ark_heat1D_adapt
+ark_heat_1d_adapt
 ===================================================
 
-This problem is closely related to the :ref:`ark_heat1D` test problem,
+This problem is closely related to the :ref:`ark_heat_1d` test problem,
 differing in two respects: instead of using a uniform spatial grid, this
 test problem utilizes a dynamically-evolving spatial mesh, and instead
 of a point source it employs a smooth, spatially-varying heating term.
@@ -789,9 +789,9 @@ major ARKODE data structures across vector length changes.
 
 
 
-.. _ark_KrylovDemo_prec:
+.. _ark_krylov_demo_prec:
 
-ark_KrylovDemo_prec
+ark_krylov_demo_prec
 ============================================
 
 This problem is an ARKODE clone of the CVODE problem,

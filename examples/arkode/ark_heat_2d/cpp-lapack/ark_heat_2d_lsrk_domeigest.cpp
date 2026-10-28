@@ -1,8 +1,8 @@
 /* -----------------------------------------------------------------------------
- * Programmer(s): Daniel R. Reynolds @ UMBC
+ * Programmer(s): Mustafa Aggul @ SMU
  *
- * (adapted from ark_heat2D.cpp, co-authored by Daniel Reynolds and David
- * Gardner (LLNL))
+ * (adapted from ark_heat_2d.cpp and adapted from ark_heat_2d_lsrk.cpp,
+ * co-authored by Daniel Reynolds and David Gardner (LLNL))
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -61,7 +61,9 @@
 #include "nvector/nvector_serial.h" // access to the serial N_Vector
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
-#include "sundials/sundials_adaptcontroller.h"
+
+#include <sundomeigest/sundomeigest_arnoldi.h> // access to Arnoldi Iteration module
+#include <sundomeigest/sundomeigest_power.h> // access to Power Iteration module
 
 // Macros for problem constants
 #define PI   SUN_RCONST(3.141592653589793238462643383279502884197169)
@@ -126,6 +128,14 @@ struct UserData
   ofstream eout; // error file stream
   N_Vector e;    // error vector
 
+  // DEE options
+  int dee_id;            // DEE ID
+  int dee_num_init_wups; // number of initial warmups before the first estimate
+  int dee_num_succ_wups; // number of succeeding warmups before each estimate
+  int dee_max_iters;     // max number of iterations
+  int dee_krylov_dim;    // Krylov dimension for DEE
+  double dee_reltol;     // tolerance
+
   // Timing variables
   bool timing; // print timings
   double evolvetime;
@@ -138,11 +148,6 @@ struct UserData
 
 // ODE right hand side function
 static int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data);
-
-// Spectral radius estimation routine
-static int eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
-               sunrealtype* lambdaI, void* user_data, N_Vector temp1,
-               N_Vector temp2, N_Vector temp3);
 
 // -----------------------------------------------------------------------------
 // UserData and input functions
@@ -194,6 +199,10 @@ int main(int argc, char* argv[])
   UserData* udata  = NULL; // user data structure
   N_Vector u       = NULL; // vector for storing solution
   void* arkode_mem = NULL; // ARKODE memory structure
+
+  // Dominant Eigenvalue Estimator (DEE) pointers and variables
+  SUNDomEigEstimator DEE = NULL; /* domeig estimator object */
+  N_Vector q             = NULL; /* random initial eigenvector */
 
   // Timing variables
   chrono::time_point<chrono::steady_clock> t1;
@@ -272,9 +281,63 @@ int main(int argc, char* argv[])
   flag = LSRKStepSetSTSMethod(arkode_mem, udata->method);
   if (check_flag(&flag, "LSRKStepSetSTSMethod", 1)) { return 1; }
 
-  // Select LSRK spectral radius function and options
-  flag = LSRKStepSetDomEigFn(arkode_mem, eig);
-  if (check_flag(&flag, "LSRKStepSetDomEigFn", 1)) { return 1; }
+  /* Set the initial random eigenvector for the DEE */
+  q = N_VClone(u);
+  if (check_flag(q, "N_VClone", 0)) { return 1; }
+
+  sunrealtype* qd = N_VGetArrayPointer(q);
+  for (int i = 0; i < udata->nodes; i++)
+  {
+    qd[i] = (sunrealtype)rand() / (sunrealtype)RAND_MAX;
+  }
+
+  if (udata->dee_id == 0)
+  {
+    /* Create power iteration dominant eigenvalue estimator */
+    DEE = SUNDomEigEstimator_Power(q, udata->dee_max_iters, udata->dee_reltol,
+                                   ctx);
+    if (check_flag(DEE, "SUNDomEigEstimator_Power", 0)) { return 1; }
+  }
+  else if (udata->dee_id == 1)
+  {
+    /* Create Arnoldi dominant eigenvalue estimator */
+    DEE = SUNDomEigEstimator_Arnoldi(q, udata->dee_krylov_dim, ctx);
+    if (check_flag(DEE, "SUNDomEigEstimator_Arnoldi", 0)) { return 1; }
+  }
+  else
+  {
+    cerr << "Invalid DEE ID: " << udata->dee_id << endl;
+    return 1;
+  }
+
+  /* After the DEE creation, random q vector is no longer needed.
+     It is used only to initialize the DEE */
+  N_VDestroy(q);
+
+  /* Attach the DEE to the LSRKStep module.
+  There is no need to set Atimes or initialize since these are all
+  performed after attaching the DEE by LSRKStep. */
+  flag = LSRKStepSetDomEigEstimator(arkode_mem, DEE);
+  if (check_flag(&flag, "LSRKStepSetDomEigEstimator", 2)) { return 1; }
+
+  /* Specify the number of preprocessing warmups before the first estimate call. */
+  flag = LSRKStepSetNumDomEigEstInitPreprocessIters(arkode_mem,
+                                                    udata->dee_num_init_wups);
+  if (check_flag(&flag, "LSRKStepSetNumDomEigEstInitPreprocessIters", 2))
+  {
+    return 1;
+  }
+
+  /* Specify the succeeding warmups before each estimate call.
+     This is the number of warmups that will be performed after the first
+     estimate call and before each subsequent estimate calls. */
+  flag = LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem,
+                                                udata->dee_num_succ_wups);
+  if (check_flag(&flag, "LSRKStepSetNumDomEigEstPreprocessIters", 1))
+  {
+    return 1;
+  }
+
   flag = LSRKStepSetDomEigFrequency(arkode_mem, udata->eigfrequency);
   if (check_flag(&flag, "LSRKStepSetDomEigFrequency", 1)) { return 1; }
 
@@ -385,9 +448,10 @@ int main(int argc, char* argv[])
   // Clean up and return
   // --------------------
 
-  ARKodeFree(&arkode_mem); // Free integrator memory
-  N_VDestroy(u);           // Free vectors
-  FreeUserData(udata);     // Free user data
+  ARKodeFree(&arkode_mem);          // Free integrator memory
+  N_VDestroy(u);                    // Free vectors
+  SUNDomEigEstimator_Destroy(&DEE); /* Free DEE object */
+  FreeUserData(udata);              // Free user data
   delete udata;
   SUNContext_Free(&ctx); // Free context
 
@@ -486,23 +550,6 @@ static int f(sunrealtype t, N_Vector u, N_Vector f, void* user_data)
   return 0;
 }
 
-// Spectral radius estimation routine
-static int eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
-               sunrealtype* lambdaI, void* user_data, N_Vector temp1,
-               N_Vector temp2, N_Vector temp3)
-{
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
-
-  // Fill in spectral radius value
-  *lambdaR = -SUN_RCONST(8.0) * max(udata->kx / udata->dx / udata->dx,
-                                    udata->ky / udata->dy / udata->dy);
-  *lambdaI = SUN_RCONST(0.0);
-
-  // return with success
-  return 0;
-}
-
 // -----------------------------------------------------------------------------
 // UserData and input functions
 // -----------------------------------------------------------------------------
@@ -551,6 +598,14 @@ static int InitUserData(UserData* udata)
   udata->output = 1;  // 0 = no output, 1 = stats output, 2 = output to disk
   udata->nout   = 20; // Number of output times
   udata->e      = NULL;
+
+  // DEE options
+  udata->dee_id            = 1; // DEE ID (0 for PI and 1 for Arnoldi)
+  udata->dee_num_init_wups = 20;
+  udata->dee_num_succ_wups = 5;
+  udata->dee_max_iters     = 100;
+  udata->dee_krylov_dim    = 3;
+  udata->dee_reltol        = 0.005;
 
   // Timing variables
   udata->timing     = false;
@@ -636,10 +691,39 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata)
     {
       udata->maxsteps = stoi((*argv)[arg_idx++]);
     }
+    // DEE options
+    else if (arg == "--dee_id") { udata->dee_id = stoi((*argv)[arg_idx++]); }
+    else if (arg == "--dee_num_init_wups")
+    {
+      udata->dee_num_init_wups = stoi((*argv)[arg_idx++]);
+    }
+    else if (arg == "--dee_num_succ_wups")
+    {
+      udata->dee_num_succ_wups = stoi((*argv)[arg_idx++]);
+    }
+    else if (arg == "--dee_max_iters")
+    {
+      udata->dee_max_iters = stoi((*argv)[arg_idx++]);
+    }
+    else if (arg == "--dee_krylov_dim")
+    {
+      udata->dee_krylov_dim = stoi((*argv)[arg_idx++]);
+    }
+    else if (arg == "--dee_reltol")
+    {
+      udata->dee_reltol = stod((*argv)[arg_idx++]);
+    }
     else if (arg == "--timing") { udata->timing = true; }
     // Help
     else if (arg == "--help")
     {
+      InputHelp();
+      return -1;
+    }
+    // Unknown input
+    else
+    {
+      cerr << "ERROR: Invalid input " << arg << endl;
       InputHelp();
       return -1;
     }
@@ -712,30 +796,42 @@ static void InputHelp()
 {
   cout << endl;
   cout << "Command line options:" << endl;
-  cout << "  --mesh <nx> <ny>        : mesh points in the x and y directions"
-       << endl;
   cout
-    << "  --domain <xu> <yu>      : domain upper bound in the x and y direction"
+    << "  --mesh <nx> <ny>            : mesh points in the x and y directions"
     << endl;
-  cout << "  --k <kx> <ky>           : diffusion coefficients" << endl;
-  cout << "  --noforcing             : disable forcing term" << endl;
-  cout << "  --tf <time>             : final time" << endl;
-  cout << "  --rtol <rtol>           : relative tolerance" << endl;
-  cout << "  --atol <atol>           : absolute tolerance" << endl;
-  cout << "  --fixedstep <step>      : used fixed step size" << endl;
-  cout << "  --controller <ctr>      : time step adaptivity controller" << endl;
-  cout << "  --method <mth>          : LSRK method choice" << endl;
-  cout << "  --eigfrequency <nst>    : dominant eigenvalue update frequency"
+  cout << "  --domain <xu> <yu>             : domain upper bound in the x and "
+          "y direction"
        << endl;
-  cout << "  --stage_max_limit <smax>  : maximum number of stages per step"
+  cout << "  --k <kx> <ky>               : diffusion coefficients" << endl;
+  cout << "  --noforcing                 : disable forcing term" << endl;
+  cout << "  --tf <time>                 : final time" << endl;
+  cout << "  --rtol <rtol>               : relative tolerance" << endl;
+  cout << "  --atol <atol>               : absolute tolerance" << endl;
+  cout << "  --fixedstep <step>          : used fixed step size" << endl;
+  cout << "  --controller <ctr>          : time step adaptivity controller"
        << endl;
-  cout << "  --eigsafety <safety>    : dominant eigenvalue safety factor" << endl;
-  cout << "  --diagnostics           : output diagnostics" << endl;
-  cout << "  --output <level>        : output level" << endl;
-  cout << "  --nout <nout>           : number of outputs" << endl;
-  cout << "  --maxsteps <steps>      : max steps between outputs" << endl;
-  cout << "  --timing                : print timing data" << endl;
-  cout << "  --help                  : print this message and exit" << endl;
+  cout << "  --method <mth>              : LSRK method choice" << endl;
+  cout << "  --eigfrequency <nst>        : dominant eigenvalue update frequency"
+       << endl;
+  cout << "  --stage_max_limit <smax>    : maximum number of stages per step"
+       << endl;
+  cout << "  --eigsafety <safety>        : dominant eigenvalue safety factor"
+       << endl;
+  cout << "  --diagnostics               : output diagnostics" << endl;
+  cout << "  --output <level>            : output level" << endl;
+  cout << "  --nout <nout>               : number of outputs" << endl;
+  cout << "  --maxsteps <steps>          : max steps between outputs" << endl;
+  cout << "  --dee_id <id>               : DomEig Estimator (DEE) id (PI: 0, "
+          "Arnoldi: 1)"
+       << endl;
+  cout << "  --dee_num_init_wups <num>   : number of DEE initial warmups" << endl;
+  cout << "  --dee_num_succ_wups <num>   : number of DEE succeeding warmups"
+       << endl;
+  cout << "  --dee_max_iters <num>       : max iterations in DEE" << endl;
+  cout << "  --dee_krylov_dim <dim>      : Krylov dimension for DEE" << endl;
+  cout << "  --dee_reltol <tol>          : DEE tolerance" << endl;
+  cout << "  --timing                    : print timing data" << endl;
+  cout << "  --help                      : print this message and exit" << endl;
 }
 
 // Print user data
@@ -743,30 +839,37 @@ static int PrintUserData(UserData* udata)
 {
   cout << endl;
   cout << "2D Heat PDE test problem:" << endl;
-  cout << " --------------------------------- " << endl;
-  cout << "  kx             = " << udata->kx << endl;
-  cout << "  ky             = " << udata->ky << endl;
-  cout << "  forcing        = " << udata->forcing << endl;
-  cout << "  tf             = " << udata->tf << endl;
-  cout << "  xu             = " << udata->xu << endl;
-  cout << "  yu             = " << udata->yu << endl;
-  cout << "  nx             = " << udata->nx << endl;
-  cout << "  ny             = " << udata->ny << endl;
-  cout << "  dx             = " << udata->dx << endl;
-  cout << "  dy             = " << udata->dy << endl;
-  cout << " --------------------------------- " << endl;
-  cout << "  rtol           = " << udata->rtol << endl;
-  cout << "  atol           = " << udata->atol << endl;
-  cout << "  fixed h        = " << udata->hfixed << endl;
-  cout << "  controller     = " << udata->controller << endl;
-  cout << "  method         = " << udata->method << endl;
-  cout << "  eigfrequency   = " << udata->eigfrequency << endl;
-  cout << "  stage_max_limit  = " << udata->stage_max_limit << endl;
-  cout << "  eigsafety      = " << udata->eigsafety << endl;
-  cout << " --------------------------------- " << endl;
-  cout << "  output         = " << udata->output << endl;
-  cout << "  max steps      = " << udata->maxsteps << endl;
-  cout << " --------------------------------- " << endl;
+  cout << " ------------------------------------ " << endl;
+  cout << " kx                = " << udata->kx << endl;
+  cout << " ky                = " << udata->ky << endl;
+  cout << " forcing           = " << udata->forcing << endl;
+  cout << " tf                = " << udata->tf << endl;
+  cout << " xu                = " << udata->xu << endl;
+  cout << " yu                = " << udata->yu << endl;
+  cout << " nx                = " << udata->nx << endl;
+  cout << " ny                = " << udata->ny << endl;
+  cout << " dx                = " << udata->dx << endl;
+  cout << " dy                = " << udata->dy << endl;
+  cout << " ------------------------------------ " << endl;
+  cout << " rtol              = " << udata->rtol << endl;
+  cout << " atol              = " << udata->atol << endl;
+  cout << " fixed h           = " << udata->hfixed << endl;
+  cout << " controller        = " << udata->controller << endl;
+  cout << " method            = " << udata->method << endl;
+  cout << " eigfrequency      = " << udata->eigfrequency << endl;
+  cout << " stage_max_limit   = " << udata->stage_max_limit << endl;
+  cout << " eigsafety         = " << udata->eigsafety << endl;
+  cout << " ------------------------------------ " << endl;
+  cout << " output            = " << udata->output << endl;
+  cout << " max steps         = " << udata->maxsteps << endl;
+  cout << " ------------------------------------ " << endl;
+  cout << " dee ID            = " << udata->dee_id << endl;
+  cout << " dee num_init_wups = " << udata->dee_num_init_wups << endl;
+  cout << " dee num_succ_wups = " << udata->dee_num_succ_wups << endl;
+  cout << " dee_max_iters     = " << udata->dee_max_iters << endl;
+  cout << " dee_krylov_dim    = " << udata->dee_krylov_dim << endl;
+  cout << " dee_reltol        = " << udata->dee_reltol << endl;
+  cout << " ------------------------------------ " << endl;
   cout << endl;
 
   return 0;

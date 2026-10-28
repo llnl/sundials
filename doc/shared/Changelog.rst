@@ -716,7 +716,7 @@ added to the ARKODE ERKStep and ARKStep stepper modules. This is based on a new
 set of shared classes, :c:type:`SUNAdjointStepper` and
 :c:type:`SUNAdjointCheckpointScheme`. A new example demonstrating this
 capability can be found in
-``examples/arkode/ark_lotka_volterra/c/ark_lotka_volterra_ASA.c``. See the
+``examples/arkode/ark_lotka_volterra/c/ark_lotka_volterra_asa.c``. See the
 :ref:`ARKODE.Mathematics.ASA` section of the ARKODE user guide for details.
 
 **New Features and Enhancements**
