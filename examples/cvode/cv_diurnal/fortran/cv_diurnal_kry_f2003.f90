@@ -1,7 +1,5 @@
 ! ------------------------------------------------------------------
 ! Programmer(s): Daniel M. Margolis @ UMBC
-!                based off the previous Fortran-77 example program,
-!                cvode/fcmix_serial/fcvDiurnal_kry.f
 ! ------------------------------------------------------------------
 ! SUNDIALS Copyright Start
 ! Copyright (c) 2025-2026, Lawrence Livermore National Security,
