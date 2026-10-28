@@ -12,8 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(idasHessian_ASA_FSA idasHessian_ASA_FSA.c
+sundials_add_example(idas_hessian_asa_fsa idas_hessian_asa_fsa.c
                      EXAMPLE_TYPE exclude-single)
-target_link_libraries(idasHessian_ASA_FSA PRIVATE ${IDAS_C_LIBS}
+target_link_libraries(idas_hessian_asa_fsa PRIVATE ${IDAS_C_LIBS}
                                                   sundials_nvecserial
                                                   ${EXE_EXTRA_LINK_LIBS})

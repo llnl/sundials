@@ -12,12 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idasRoberts_ASAi_sps idasRoberts_FSA_sps idasRoberts_sps)
+foreach(example idas_roberts_asai_sps idas_roberts_fsa_sps idas_roberts_sps)
   set(example_options EXAMPLE_TYPE exclude-single)
-  if(example STREQUAL "idasRoberts_FSA_sps")
-    set(answer_file idasRoberts_FSA_sps_-sensi_stg_t.out)
+  if(example STREQUAL "idas_roberts_fsa_sps")
+    set(answer_file idas_roberts_fsa_sps_-sensi_stg_t.out)
     list(APPEND example_options
-         TEST_NAME idasRoberts_FSA_sps_-sensi_stg_t
+         TEST_NAME idas_roberts_fsa_sps_-sensi_stg_t
          TEST_ARGS -sensi stg t)
   else()
     set(answer_file ${example}.out)

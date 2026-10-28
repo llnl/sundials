@@ -12,14 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idasRoberts_ASAi_dns idasRoberts_dns)
+foreach(example idas_roberts_asai_dns idas_roberts_dns)
   set(example_options)
-  if(example STREQUAL "idasRoberts_ASAi_dns")
+  if(example STREQUAL "idas_roberts_asai_dns")
     list(APPEND example_options EXAMPLE_TYPE exclude-single INSTALL_FILES
-         idasRoberts_ASAi_dns_bkw1_stats.csv
-         idasRoberts_ASAi_dns_fwd_stats.csv)
+         idas_roberts_asai_dns_bkw1_stats.csv
+         idas_roberts_asai_dns_fwd_stats.csv)
   else()
-    list(APPEND example_options INSTALL_FILES idasRoberts_dns_stats.csv)
+    list(APPEND example_options INSTALL_FILES idas_roberts_dns_stats.csv)
   endif()
   sundials_add_example(${example} ${example}.c ${example_options})
   target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
@@ -27,11 +27,11 @@ foreach(example idasRoberts_ASAi_dns idasRoberts_dns)
 endforeach()
 
 sundials_add_example(
-  idasRoberts_FSA_dns idasRoberts_FSA_dns.c
-  TEST_NAME idasRoberts_FSA_dns_-sensi_stg_t
+  idas_roberts_fsa_dns idas_roberts_fsa_dns.c
+  TEST_NAME idas_roberts_fsa_dns_-sensi_stg_t
   TEST_ARGS -sensi stg t
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES idasRoberts_FSA_dns_stats_-sensi_stg_t.csv)
-target_link_libraries(idasRoberts_FSA_dns PRIVATE ${IDAS_C_LIBS}
+  INSTALL_FILES idas_roberts_fsa_dns_stats_-sensi_stg_t.csv)
+target_link_libraries(idas_roberts_fsa_dns PRIVATE ${IDAS_C_LIBS}
                                                  sundials_nvecserial
                                                  ${EXE_EXTRA_LINK_LIBS})

@@ -56,7 +56,7 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
     if(_example_rel_dir STREQUAL "idas_roberts/c")
       sundials_add_test_install(idas ${_example_rel_dir}
-                                EXECUTABLE idasRoberts_dns)
+                                EXECUTABLE idas_roberts_dns)
     else()
       sundials_add_test_install(idas ${_example_rel_dir})
     endif()

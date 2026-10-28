@@ -13,15 +13,15 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idasAnalytic_mels idasAnalytic_mels.c
+  idas_analytic_mels idas_analytic_mels.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES idasAnalytic_mels_idas.init_step_1e-5.out)
-target_link_libraries(idasAnalytic_mels PRIVATE ${IDAS_C_LIBS}
+  INSTALL_FILES idas_analytic_mels_idas.init_step_1e-5.out)
+target_link_libraries(idas_analytic_mels PRIVATE ${IDAS_C_LIBS}
                                                 sundials_nvecserial
                                                 ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  idasAnalytic_mels_idas.init_step_1e-5 idasAnalytic_mels
+  idas_analytic_mels_idas.init_step_1e-5 idas_analytic_mels
   TEST_ARGS idas.init_step 1e-5
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE idasAnalytic_mels_idas.init_step_1e-5.out
+  ANSWER_FILE idas_analytic_mels_idas.init_step_1e-5.out
   EXAMPLE_TYPE exclude-single)

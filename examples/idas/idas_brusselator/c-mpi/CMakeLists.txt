@@ -12,8 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idasBruss_ASAp_kry_bbd_p idasBruss_FSA_kry_bbd_p
-                idasBruss_kry_bbd_p)
+foreach(example idas_bruss_asap_kry_bbd_p idas_bruss_fsa_kry_bbd_p
+                idas_bruss_kry_bbd_p)
   sundials_add_example(
     ${example} ${example}.c
     MPI_NPROCS 4

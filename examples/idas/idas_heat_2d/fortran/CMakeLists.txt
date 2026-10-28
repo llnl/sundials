@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idasHeat2D_kry_f2003 idasHeat2D_kry_f2003.f90
+  idas_heat_2d_kry_f2003 idas_heat_2d_kry_f2003.f90
   LINK_LIBRARIES sundials_fidas_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY
-             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/idasHeat2D_kry_f2003.dir)
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/idas_heat_2d_kry_f2003.dir)

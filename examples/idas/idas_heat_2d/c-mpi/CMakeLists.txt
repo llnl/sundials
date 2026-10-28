@@ -13,15 +13,15 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idasHeat2D_FSA_kry_bbd_p idasHeat2D_FSA_kry_bbd_p.c
-  TEST_NAME idasHeat2D_FSA_kry_bbd_p_-sensi_stg_t
+  idas_heat_2d_fsa_kry_bbd_p idas_heat_2d_fsa_kry_bbd_p.c
+  TEST_NAME idas_heat_2d_fsa_kry_bbd_p_-sensi_stg_t
   TEST_ARGS -sensi stg t
   MPI_NPROCS 4
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDAS_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
 
-foreach(example idasHeat2D_kry_bbd_p idasHeat2D_kry_p)
+foreach(example idas_heat_2d_kry_bbd_p idas_heat_2d_kry_p)
   sundials_add_example(
     ${example} ${example}.c
     MPI_NPROCS 4
