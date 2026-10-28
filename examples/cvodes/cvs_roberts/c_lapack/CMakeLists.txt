@@ -15,6 +15,6 @@
 sundials_add_example(cvs_roberts_dns_l cvs_roberts_dns_l.c
                      EXAMPLE_TYPE exclude-single)
 target_link_libraries(
-  cvs_roberts_dns_l PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                          sundials_sunlinsollapackband
-                          sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS})
+  cvs_roberts_dns_l
+  PRIVATE ${CVODES_C_LIBS} sundials_nvecserial sundials_sunlinsollapackband
+          sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS})
