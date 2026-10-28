@@ -102,7 +102,7 @@ MRIStep initialization and deallocation functions
       * ``examples/arkode/ark_mri_step/c/ark_onewaycouple_mri.c``
       * ``examples/arkode/ark_mri_step/c/ark_reaction_diffusion_mri.c``
       * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
-      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp_mpi/ark_diffusion_reaction_p.cpp``
       * ``examples/arkode/ark_kpr/cpp/ark_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
 

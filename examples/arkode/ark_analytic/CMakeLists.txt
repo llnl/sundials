@@ -15,7 +15,7 @@
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
-    add_subdirectory(c-openmp-device)
+    add_subdirectory(c_openmp_device)
   endif()
 endif()
 if(SUNDIALS_ENABLE_CXX_EXAMPLES)

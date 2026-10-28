@@ -4452,7 +4452,7 @@ wrap an ARKStep memory block as an :c:type:`MRIStepInnerStepper`.
          outer_arkode_mem = MRIStepCreate(fse, fsi, t0, y0, stepper, sunctx);
 
    **Example codes:**
-      * ``examples/arkode/ark_diffusion_reaction/cpp-mpi/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_diffusion_reaction/cpp_mpi/ark_diffusion_reaction_p.cpp``
 
    .. deprecated:: 7.2.0 (ARKODE 6.2.0)
 

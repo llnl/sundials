@@ -13,5 +13,5 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_CXX_EXAMPLES AND SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
-  add_subdirectory(cpp-manyvector)
+  add_subdirectory(cpp_manyvector)
 endif()

@@ -2706,7 +2706,7 @@ fixed point nonlinear solver.
 An interface between ARKStep and the XBraid multigrid reduction in time (MGRIT)
 library :cite:p:`xbraid` has been added to enable parallel-in-time integration. See the
 :ref:`ARKODE.Usage.ARKStep.XBraid` section for more information and the example
-codes in ``examples/arkode/ark_heat_2d/cpp-mpi-xbraid``. This interface required the addition of
+codes in ``examples/arkode/ark_heat_2d/cpp_mpi_xbraid``. This interface required the addition of
 three new N_Vector operations to exchange vector data between computational
 nodes, see :c:func:`N_VBufSize`, :c:func:`N_VBufPack`, and
 :c:func:`N_VBufUnpack`. These N_Vector operations are only used within the
