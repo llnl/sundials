@@ -15,6 +15,6 @@
 if(SUNDIALS_ENABLE_CXX_EXAMPLES)
   add_subdirectory(cpp)
   if(SUNDIALS_ENABLE_GINKGO AND SUNDIALS_GINKGO_BACKENDS MATCHES "REF|OMP")
-    add_subdirectory(cpp-ginkgo)
+    add_subdirectory(cpp_ginkgo)
   endif()
 endif()

@@ -84,7 +84,7 @@ API:
 
    examples/arkode/CXX_serial/ark_analytic_sys.cpp
    examples/cvode/cv_adv_diff/c/cv_adv_diff_bnd.c
-   examples/cvode/cv_adv_diff/c-mpi/cv_adv_diff_diag_p.c
+   examples/cvode/cv_adv_diff/c_mpi/cv_adv_diff_diag_p.c
    examples/kinsol/CXX_parallel/kin_em_p.cpp
    examples/kinsol/CUDA_mpi/kin_em_mpicuda.cpp
 
