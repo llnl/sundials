@@ -13,10 +13,10 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_bratu2D_hypre_pfmg kin_bratu2D_hypre_pfmg.cpp
-  TEST_NAME kin_bratu2D_hypre_pfmg_--np_2_2
+  kin_bratu_2d_hypre_pfmg kin_bratu_2d_hypre_pfmg.cpp
+  TEST_NAME kin_bratu_2d_hypre_pfmg_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
-  INSTALL_FILES kin_bratu2D_hypre_pfmg.hpp
+  INSTALL_FILES kin_bratu_2d_hypre_pfmg.hpp
   LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${KINSOL_C_LIBS} sundials_nvecparallel
                  SUNDIALS::HYPRE ${EXE_EXTRA_LINK_LIBS})

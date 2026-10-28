@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example kinLaplace_bnd_f2003 kinLaplace_picard_kry_f2003)
+foreach(example kin_laplace_bnd_f2003 kin_laplace_picard_kry_f2003)
   sundials_add_example(
     ${example} ${example}.f90
     LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_fkinsol_mod

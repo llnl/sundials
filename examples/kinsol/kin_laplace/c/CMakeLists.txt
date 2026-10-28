@@ -12,8 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example kinLaplace_bnd kinLaplace_picard_bnd
-                kinLaplace_picard_kry)
+foreach(example kin_laplace_bnd kin_laplace_picard_bnd
+                kin_laplace_picard_kry)
   sundials_add_example(${example} ${example}.c EXAMPLE_TYPE exclude-single)
   target_link_libraries(${example} PRIVATE ${KINSOL_C_LIBS}
                                            sundials_nvecserial

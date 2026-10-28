@@ -1,7 +1,5 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Carol S. Woodward @ LLNL.
- * -----------------------------------------------------------------
- * Based on kinRoboKin_dns.c by Radu Serban @ LLNL
+ * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -23,7 +21,7 @@
  *             Kluwer Academic Publishers, 1999.
  * Test problem 6 from Section 14.1, Chapter 14
  *
- * The nonlinear system is solved by KINSOL using the SUPERLU_MT linear
+ * The nonlinear system is solved by KINSOL using the DENSE linear
  * solver.
  *
  * Constraints are imposed to make all components of the solution
@@ -31,15 +29,15 @@
  * -----------------------------------------------------------------
  */
 
-#include <kinsol/kinsol.h> /* access to KINSOL func., consts.   */
+#include <kinsol/kinsol.h> /* access to KINSOL func., consts. */
 #include <math.h>
-#include <nvector/nvector_serial.h> /* access to serial N_Vector         */
+#include <nvector/nvector_serial.h> /* access to serial N_Vector       */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sundials/sundials_math.h>  /* access to SUNRsqrt                */
-#include <sundials/sundials_types.h> /* defs. of sunrealtype, sunindextype   */
-#include <sunlinsol/sunlinsol_superlumt.h> /* access to SuperLUMT linear solver */
-#include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix        */
+#include <sundials/sundials_math.h>    /* access to SUNRsqrt              */
+#include <sundials/sundials_types.h>   /* defs. of sunrealtype, sunindextype */
+#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver */
+#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix       */
 
 /* Problem Constants */
 
@@ -53,13 +51,13 @@
 #define ONE  SUN_RCONST(1.0)
 #define TWO  SUN_RCONST(2.0)
 
-#define Ith(v, i) NV_Ith_S(v, i - 1)
+#define Ith(v, i)     NV_Ith_S(v, i - 1)
+#define IJth(A, i, j) SM_ELEMENT_D(A, i - 1, j - 1)
 
 static int func(N_Vector y, N_Vector f, void* user_data);
 static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
                N_Vector tmp1, N_Vector tmp2);
 static void PrintOutput(N_Vector y);
-static void PrintFinalStats(void* kmem);
 static int check_retval(void* retvalvalue, const char* funcname, int opt);
 
 /*
@@ -77,8 +75,7 @@ int main(void)
   void* kmem;
   SUNMatrix J;
   SUNLinearSolver LS;
-
-  int nnz, num_threads;
+  FILE* FID;
 
   y = scale = constraints = NULL;
   kmem                    = NULL;
@@ -128,17 +125,15 @@ int main(void)
   retval    = KINSetScaledStepTol(kmem, scsteptol);
   if (check_retval(&retval, "KINSetScaledStepTol", 1)) { return (1); }
 
-  /* Create sparse SUNMatrix */
-  nnz = 56; /* number of nonzeros in the Jacobian */
-  J   = SUNSparseMatrix(NEQ, NEQ, nnz, SUN_CSC_MAT, sunctx);
-  if (check_retval((void*)J, "SUNSparseMatrix", 0)) { return (1); }
+  /* Create dense SUNMatrix */
+  J = SUNDenseMatrix(NEQ, NEQ, sunctx);
+  if (check_retval((void*)J, "SUNDenseMatrix", 0)) { return (1); }
 
-  /* Create SuperLUMT solver object */
-  num_threads = 2; /* number of threads to use */
-  LS          = SUNLinSol_SuperLUMT(y, J, num_threads, sunctx);
-  if (check_retval((void*)LS, "SUNLinSol_SuperLUMT", 0)) { return (1); }
+  /* Create dense SUNLinearSolver object */
+  LS = SUNLinSol_Dense(y, J, sunctx);
+  if (check_retval((void*)LS, "SUNLinSol_Dense", 0)) { return (1); }
 
-  /* Attach the SuperLU_MT linear solver */
+  /* Attach the matrix and linear solver to KINSOL */
   retval = KINSetLinearSolver(kmem, LS, J);
   if (check_retval(&retval, "KINSetLinearSolver", 1)) { return (1); }
 
@@ -173,10 +168,16 @@ int main(void)
   printf("\nComputed solution:\n");
   PrintOutput(y);
 
-  /* Print final statistics and free memory */
+  /* Print final statistics to screen and file */
 
-  PrintFinalStats(kmem);
+  printf("\nFinal statsistics:\n");
+  retval = KINPrintAllStats(kmem, stdout, SUN_OUTPUTFORMAT_TABLE);
 
+  FID    = fopen("kin_robo_kin_dns_stats.csv", "w");
+  retval = KINPrintAllStats(kmem, FID, SUN_OUTPUTFORMAT_CSV);
+  fclose(FID);
+
+  /* free memory */
   N_VDestroy(y);
   N_VDestroy(scale);
   N_VDestroy(constraints);
@@ -302,11 +303,9 @@ static int func(N_Vector y, N_Vector f, void* user_data)
 static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
                N_Vector tmp1, N_Vector tmp2)
 {
+  int i;
   sunrealtype* yd;
   sunrealtype x1, x2, x3, x4, x5, x6, x7, x8;
-  sunindextype* colptrs = SUNSparseMatrix_IndexPointers(J);
-  sunindextype* rowvals = SUNSparseMatrix_IndexValues(J);
-  sunrealtype* data     = SUNSparseMatrix_Data(J);
 
   yd = N_VGetArrayPointer(y);
 
@@ -319,255 +318,87 @@ static int jac(N_Vector y, N_Vector f, SUNMatrix J, void* user_data,
   x7 = yd[6];
   x8 = yd[7];
 
-  SUNMatZero(J);
-
-  colptrs[0]  = 0;
-  colptrs[1]  = 7;
-  colptrs[2]  = 14;
-  colptrs[3]  = 19;
-  colptrs[4]  = 24;
-  colptrs[5]  = 27;
-  colptrs[6]  = 31;
-  colptrs[7]  = 36;
-  colptrs[8]  = 40;
-  colptrs[9]  = 41;
-  colptrs[10] = 42;
-  colptrs[11] = 43;
-  colptrs[12] = 44;
-  colptrs[13] = 45;
-  colptrs[14] = 46;
-  colptrs[15] = 47;
-  colptrs[16] = 48;
-  colptrs[17] = 49;
-  colptrs[18] = 50;
-  colptrs[19] = 51;
-  colptrs[20] = 52;
-  colptrs[21] = 53;
-  colptrs[22] = 54;
-  colptrs[23] = 55;
-  colptrs[24] = 56;
-
   /* Nonlinear equations */
 
   /*
      - 0.1238*x1 + x7 - 0.001637*x2
      - 0.9338*x4 + 0.004731*x1*x3 - 0.3578*x2*x3 - 0.3571
   */
-  /*
-  IJth(J,1,1) = - 0.1238 + 0.004731*x3;
-  IJth(J,1,2) = - 0.001637 - 0.3578*x3;
-  IJth(J,1,3) = 0.004731*x1 - 0.3578*x2;
-  IJth(J,1,4) = - 0.9338;
-  IJth(J,1,7) = 1.0;
-  */
-
-  data[0]     = -0.1238 + 0.004731 * x3;
-  rowvals[0]  = 0;
-  data[7]     = -0.001637 - 0.3578 * x3;
-  rowvals[7]  = 0;
-  data[14]    = 0.004731 * x1 - 0.3578 * x2;
-  rowvals[14] = 0;
-  data[19]    = -0.9338;
-  rowvals[19] = 0;
-  data[31]    = 1.0;
-  rowvals[31] = 0;
+  IJth(J, 1, 1) = -0.1238 + 0.004731 * x3;
+  IJth(J, 1, 2) = -0.001637 - 0.3578 * x3;
+  IJth(J, 1, 3) = 0.004731 * x1 - 0.3578 * x2;
+  IJth(J, 1, 4) = -0.9338;
+  IJth(J, 1, 7) = 1.0;
 
   /*
     0.2638*x1 - x7 - 0.07745*x2
     - 0.6734*x4 + 0.2238*x1*x3 + 0.7623*x2*x3 - 0.6022
   */
-  /*
-  IJth(J,2,1) = 0.2638 + 0.2238*x3;
-  IJth(J,2,2) = - 0.07745 + 0.7623*x3;
-  IJth(J,2,3) = 0.2238*x1 + 0.7623*x2;
-  IJth(J,2,4) = - 0.6734;
-  IJth(J,2,7) = -1.0;
-  */
-
-  data[1]     = 0.2638 + 0.2238 * x3;
-  rowvals[1]  = 1;
-  data[8]     = -0.07745 + 0.7623 * x3;
-  rowvals[8]  = 1;
-  data[15]    = 0.2238 * x1 + 0.7623 * x2;
-  rowvals[15] = 1;
-  data[20]    = -0.6734;
-  rowvals[20] = 1;
-  data[32]    = -1.0;
-  rowvals[32] = 1;
+  IJth(J, 2, 1) = 0.2638 + 0.2238 * x3;
+  IJth(J, 2, 2) = -0.07745 + 0.7623 * x3;
+  IJth(J, 2, 3) = 0.2238 * x1 + 0.7623 * x2;
+  IJth(J, 2, 4) = -0.6734;
+  IJth(J, 2, 7) = -1.0;
 
   /*
     0.3578*x1 + 0.004731*x2 + x6*x8
   */
-  /*
-  IJth(J,3,1) = 0.3578;
-  IJth(J,3,2) = 0.004731;
-  IJth(J,3,6) = x8;
-  IJth(J,3,8) = x6;
-  */
-
-  data[2]     = 0.3578;
-  rowvals[2]  = 2;
-  data[9]     = 0.004731;
-  rowvals[9]  = 2;
-  data[27]    = x8;
-  rowvals[27] = 2;
-  data[36]    = x6;
-  rowvals[36] = 2;
+  IJth(J, 3, 1) = 0.3578;
+  IJth(J, 3, 2) = 0.004731;
+  IJth(J, 3, 6) = x8;
+  IJth(J, 3, 8) = x6;
 
   /*
     - 0.7623*x1 + 0.2238*x2 + 0.3461
   */
-  /*
-  IJth(J,4,1) = - 0.7623;
-  IJth(J,4,2) = 0.2238;
-  */
-
-  data[3]     = -0.7623;
-  rowvals[3]  = 3;
-  data[10]    = 0.2238;
-  rowvals[10] = 3;
+  IJth(J, 4, 1) = -0.7623;
+  IJth(J, 4, 2) = 0.2238;
 
   /*
     x1*x1 + x2*x2 - 1
   */
-  /*
-  IJth(J,5,1) = 2.0*x1;
-  IJth(J,5,2) = 2.0*x2;
-  */
-
-  data[4]     = 2.0 * x1;
-  rowvals[4]  = 4;
-  data[11]    = 2.0 * x2;
-  rowvals[11] = 4;
+  IJth(J, 5, 1) = 2.0 * x1;
+  IJth(J, 5, 2) = 2.0 * x2;
 
   /*
     x3*x3 + x4*x4 - 1
   */
-  /*
-  IJth(J,6,3) = 2.0*x3;
-  IJth(J,6,4) = 2.0*x4;
-  */
-
-  data[16]    = 2.0 * x3;
-  rowvals[16] = 5;
-  data[21]    = 2.0 * x4;
-  rowvals[21] = 5;
+  IJth(J, 6, 3) = 2.0 * x3;
+  IJth(J, 6, 4) = 2.0 * x4;
 
   /*
     x5*x5 + x6*x6 - 1
   */
-  /*
-  IJth(J,7,5) = 2.0*x5;
-  IJth(J,7,6) = 2.0*x6;
-  */
-
-  data[24]    = 2.0 * x5;
-  rowvals[24] = 6;
-  data[28]    = 2.0 * x6;
-  rowvals[28] = 6;
+  IJth(J, 7, 5) = 2.0 * x5;
+  IJth(J, 7, 6) = 2.0 * x6;
 
   /*
     x7*x7 + x8*x8 - 1
   */
-  /*
-  IJth(J,8,7) = 2.0*x7;
-  IJth(J,8,8) = 2.0*x8;
-  */
-  data[33]    = 2.0 * x7;
-  rowvals[33] = 7;
-  data[37]    = 2.0 * x8;
-  rowvals[37] = 7;
+  IJth(J, 8, 7) = 2.0 * x7;
+  IJth(J, 8, 8) = 2.0 * x8;
 
   /*
     Lower bounds ( l_i = 1 + x_i >= 0)
     l_i - 1.0 - x_i
    */
 
-  /*
-  for(i=1;i<=8;i++) {
-    IJth(J,8+i,i)   = -1.0;
-    IJth(J,8+i,8+i) =  1.0;
+  for (i = 1; i <= 8; i++)
+  {
+    IJth(J, 8 + i, i)     = -1.0;
+    IJth(J, 8 + i, 8 + i) = 1.0;
   }
-  */
-
-  data[5]     = -1.0;
-  rowvals[5]  = 8;
-  data[12]    = -1.0;
-  rowvals[12] = 9;
-  data[17]    = -1.0;
-  rowvals[17] = 10;
-  data[22]    = -1.0;
-  rowvals[22] = 11;
-  data[25]    = -1.0;
-  rowvals[25] = 12;
-  data[29]    = -1.0;
-  rowvals[29] = 13;
-  data[34]    = -1.0;
-  rowvals[34] = 14;
-  data[38]    = -1.0;
-  rowvals[38] = 15;
-
-  data[40]    = 1.0;
-  rowvals[40] = 8;
-  data[41]    = 1.0;
-  rowvals[41] = 9;
-  data[42]    = 1.0;
-  rowvals[42] = 10;
-  data[43]    = 1.0;
-  rowvals[43] = 11;
-  data[44]    = 1.0;
-  rowvals[44] = 12;
-  data[45]    = 1.0;
-  rowvals[45] = 13;
-  data[46]    = 1.0;
-  rowvals[46] = 14;
-  data[47]    = 1.0;
-  rowvals[47] = 15;
 
   /*
     Upper bounds ( u_i = 1 - x_i >= 0)
     u_i - 1.0 + x_i
    */
-  /*
-  for(i=1;i<=8;i++) {
-    IJth(J,16+i,i)    = 1.0;
-    IJth(J,16+i,16+i) = 1.0;
+
+  for (i = 1; i <= 8; i++)
+  {
+    IJth(J, 16 + i, i)      = 1.0;
+    IJth(J, 16 + i, 16 + i) = 1.0;
   }
-  */
-
-  data[6]     = 1.0;
-  rowvals[6]  = 16;
-  data[13]    = 1.0;
-  rowvals[13] = 17;
-  data[18]    = 1.0;
-  rowvals[18] = 18;
-  data[23]    = 1.0;
-  rowvals[23] = 19;
-  data[26]    = 1.0;
-  rowvals[26] = 20;
-  data[30]    = 1.0;
-  rowvals[30] = 21;
-  data[35]    = 1.0;
-  rowvals[35] = 22;
-  data[39]    = 1.0;
-  rowvals[39] = 23;
-
-  data[48]    = 1.0;
-  rowvals[48] = 16;
-  data[49]    = 1.0;
-  rowvals[49] = 17;
-  data[50]    = 1.0;
-  rowvals[50] = 18;
-  data[51]    = 1.0;
-  rowvals[51] = 19;
-  data[52]    = 1.0;
-  rowvals[52] = 20;
-  data[53]    = 1.0;
-  rowvals[53] = 21;
-  data[54]    = 1.0;
-  rowvals[54] = 22;
-  data[55]    = 1.0;
-  rowvals[55] = 23;
 
   return (0);
 }
@@ -596,28 +427,6 @@ static void PrintOutput(N_Vector y)
            Ith(y, i + 2 * NVAR));
 #endif
   }
-}
-
-/*
- * Print final statistics
- */
-
-static void PrintFinalStats(void* kmem)
-{
-  long int nni, nfe, nje;
-  int retval;
-
-  retval = KINGetNumNonlinSolvIters(kmem, &nni);
-  check_retval(&retval, "KINGetNumNonlinSolvIters", 1);
-  retval = KINGetNumFuncEvals(kmem, &nfe);
-  check_retval(&retval, "KINGetNumFuncEvals", 1);
-
-  retval = KINGetNumJacEvals(kmem, &nje);
-  check_retval(&retval, "KINGetNumJacEvals", 1);
-
-  printf("\nFinal Statistics.. \n");
-  printf("nni    = %5ld    nfe   = %5ld \n", nni, nfe);
-  printf("nje    = %5ld \n", nje);
 }
 
 /*

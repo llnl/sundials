@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------
  * Programmer(s): David J. Gardner @ LLNL
  * -----------------------------------------------------------------
- * Based on kinLaplace_picard_bnd.c by Carol S. Woodward @ LLNL
+ * Based on kin_laplace_picard_bnd.c by Carol S. Woodward @ LLNL
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,

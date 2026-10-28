@@ -13,18 +13,18 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 set(_kin_analytic_outputs
-    kinAnalytic_fp_--damping_fn.out
-    kinAnalytic_fp_--damping_fp_0.5.out
-    kinAnalytic_fp_--m_aa_2.out
-    kinAnalytic_fp_--m_aa_2_--damping_aa_0.5.out
-    kinAnalytic_fp_--m_aa_2_--damping_fn.out
-    kinAnalytic_fp_--m_aa_2_--delay_aa_2.out
-    kinAnalytic_fp_--m_aa_2_--orth_aa_1.out
-    kinAnalytic_fp_--m_aa_2_--orth_aa_2.out
-    kinAnalytic_fp_--m_aa_2_--orth_aa_3.out
-    kinAnalytic_fp_--m_aa_3_--depth_fn.out)
+    kin_analytic_fp_--damping_fn.out
+    kin_analytic_fp_--damping_fp_0.5.out
+    kin_analytic_fp_--m_aa_2.out
+    kin_analytic_fp_--m_aa_2_--damping_aa_0.5.out
+    kin_analytic_fp_--m_aa_2_--damping_fn.out
+    kin_analytic_fp_--m_aa_2_--delay_aa_2.out
+    kin_analytic_fp_--m_aa_2_--orth_aa_1.out
+    kin_analytic_fp_--m_aa_2_--orth_aa_2.out
+    kin_analytic_fp_--m_aa_2_--orth_aa_3.out
+    kin_analytic_fp_--m_aa_3_--depth_fn.out)
 sundials_add_example(
-  kinAnalytic_fp kinAnalytic_fp.c
+  kin_analytic_fp kin_analytic_fp.c
   INSTALL_FILES ${_kin_analytic_outputs}
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
@@ -43,9 +43,9 @@ set(_kin_analytic_tests
 foreach(test_args ${_kin_analytic_tests})
   string(REPLACE " " "_" test_suffix "${test_args}")
   sundials_add_test(
-    kinAnalytic_fp_${test_suffix} kinAnalytic_fp
+    kin_analytic_fp_${test_suffix} kin_analytic_fp
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE kinAnalytic_fp_${test_suffix}.out
+    ANSWER_FILE kin_analytic_fp_${test_suffix}.out
     EXAMPLE_TYPE develop)
 endforeach()

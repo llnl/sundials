@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------------
  * Programmer(s): Shelby Lockhart @ LLNL
+ *                David Gardner @ LLNL
  * -----------------------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -16,37 +17,35 @@
  * -----------------------------------------------------------------------------
  * Example problem:
  *
- * The following test simulates a 2D Bratu problem
+ * The following test simulates a steady-state anisotropic 2D heat equation
+ * with an additional nonlinear term,
  *
- *   u_xx + u_yy + C e^u = 0,
+ *   b = kx u_xx + ky u_yy + c(u),
  *
  * for (x,y) in [0, 1]^2, with boundary conditions
  *
  *   u = 0,
  *
- * There is no exact analytical solution known for the 2D Bratu problem,
- * but it appears in various applications, such as thermal combustion,
- * thermal reaction, etc...
+ * and the forcing term
  *
- * Source: "Diffusion and Heat Exchange in Chemical Kinetics",
- *             D.A. Frank-Kamenetskii and N. Thon.
- *             Princeton University Press, 1955.
- * Chapter 7: Temperature Distribution, problem discussed throughout chapter
+ *   b(x,y) = kx 2 pi^2 (cos^2(pi x) - sin^2(pi x)) sin^2(pi y)
+ *            ky 2 pi^2 (cos^2(pi y) - sin^2(pi y)) sin^2(pi x)
+ *            + c(u_exact).
  *
- * The starting guess is taken to be
+ * Under this setup, the problem has the analytical solution
  *
- *   u(x,y) = sin^2(pi x) sin^2(pi y).
+ *    u(x,y) = u_exact = sin^2(pi x) sin^2(pi y).
  *
  * The spatial derivatives are computed using second-order centered differences,
  * with the data distributed over nx * ny points on a uniform spatial grid. The
  * discretized nonlinear system is given by
  *
- *   A u + C e^u = 0
+ *   b = A u + c(u)
  *
  * where A is the discretized Laplacian operator. Solving for u results in the
  * fixed point function
  *
- *   G(u) = -A^{-1} (C e^u).
+ *   G(u) = A^{-1} (b - c(u)).
  *
  * This problem is solved via a fixed point iteration with Anderson
  * acceleration. The linear solve in each fixed-point iteration is performed the
@@ -55,8 +54,9 @@
  * Use the flag --help for more information.
  * ---------------------------------------------------------------------------*/
 
-// Header file containing UserData struct and function declarations
-#include "kin_bratu2D_hypre_pfmg.hpp"
+// Header file containing UserData struct, function declarations, and various
+// nonlinear c(u) definitions
+#include "kin_heat_2d_nonlin_hypre_pfmg.hpp"
 
 // -----------------------------------------------------------------------------
 // Main Program
@@ -131,19 +131,31 @@ int main(int argc, char* argv[])
                                  sunctx);
     if (check_retval((void*)u, "N_VNew_Parallel", 0)) { return 1; }
 
-    // Create vector for error
-    udata->e = N_VClone(u);
-    if (check_retval((void*)(udata->e), "N_VClone", 0)) { return 1; }
-
     // Create vector for scaling initial value
     N_Vector scale = N_VClone(u);
     if (check_retval((void*)scale, "N_VClone", 0)) { return 1; }
     N_VConst(ONE, scale);
 
     // Set initial condition
-    retval = InitialGuess(u, udata);
-    if (check_retval(&retval, "InitialGuess", 1)) { return 1; }
-    //N_VConst(ZERO, u);
+    N_VConst(ONE, u);
+
+    // Create vector for error
+    udata->e = N_VClone(u);
+    if (check_retval((void*)(udata->e), "N_VClone", 0)) { return 1; }
+
+    // Create vector for b
+    udata->b = N_VClone(u);
+    if (check_retval((void*)(udata->b), "N_VClone", 0)) { return 1; }
+
+    // Create temp vector for FPFunction evaluation
+    udata->vtemp = N_VClone(u);
+    if (check_retval((void*)(udata->vtemp), "N_VClone", 0)) { return 1; }
+
+    // ----------------------
+    // Create rhs = b - c(u)
+    // ----------------------
+    retval = SetupRHS(udata);
+    if (check_retval(&retval, "SetupRHS", 1)) { return 1; }
 
     // ---------------------
     // Create hypre objects
@@ -204,8 +216,8 @@ int main(int argc, char* argv[])
 
     if (udata->output > 1)
     {
-      retval = OpenResOutput(udata);
-      if (check_retval(&retval, "OpenResOutput", 1)) { return 1; }
+      retval = OpenOutput(udata);
+      if (check_retval(&retval, "OpenOutput", 1)) { return 1; }
     }
 
     // Start timer
@@ -236,11 +248,28 @@ int main(int argc, char* argv[])
     }
     if (udata->output > 1)
     {
-      retval = CloseResOutput(udata);
-      if (check_retval(&retval, "CloseResOutput", 1)) { return 1; }
+      retval = CloseOutput(udata);
+      if (check_retval(&retval, "CloseOutput", 1)) { return 1; }
 
       retval = WriteSolution(u, udata);
       if (check_retval(&retval, "WriteSolution", 1)) { return 1; }
+    }
+
+    // -------------------------
+    // Calculate solution error
+    // -------------------------
+
+    // Output final error
+    retval = SolutionError(u, udata->e, udata);
+    if (check_retval(&retval, "SolutionError", 1)) { return 1; }
+
+    sunrealtype maxerr = N_VMaxNorm(udata->e);
+
+    if (outproc)
+    {
+      cout << scientific;
+      cout << setprecision(numeric_limits<sunrealtype>::digits10);
+      cout << "  Max error = " << maxerr << endl;
     }
 
     // ------------
@@ -283,6 +312,14 @@ int main(int argc, char* argv[])
 static int SetupDecomp(MPI_Comm comm_w, UserData* udata)
 {
   int retval;
+
+  // Check that this has not been called before
+  if (udata->Erecv != NULL || udata->Wrecv != NULL || udata->Srecv != NULL ||
+      udata->Nrecv != NULL)
+  {
+    cerr << "SetupDecomp error: parallel decomposition already set up" << endl;
+    return -1;
+  }
 
   // Get the number of processes
   retval = MPI_Comm_size(comm_w, &(udata->nprocs_w));
@@ -376,6 +413,28 @@ static int SetupDecomp(MPI_Comm comm_w, UserData* udata)
   udata->HaveNbrS = (udata->js != 0);
   udata->HaveNbrN = (udata->je != udata->ny - 1);
 
+  // Allocate exchange buffers if necessary
+  if (udata->HaveNbrW)
+  {
+    udata->Wrecv = new sunrealtype[udata->ny_loc];
+    udata->Wsend = new sunrealtype[udata->ny_loc];
+  }
+  if (udata->HaveNbrE)
+  {
+    udata->Erecv = new sunrealtype[udata->ny_loc];
+    udata->Esend = new sunrealtype[udata->ny_loc];
+  }
+  if (udata->HaveNbrS)
+  {
+    udata->Srecv = new sunrealtype[udata->nx_loc];
+    udata->Ssend = new sunrealtype[udata->nx_loc];
+  }
+  if (udata->HaveNbrN)
+  {
+    udata->Nrecv = new sunrealtype[udata->nx_loc];
+    udata->Nsend = new sunrealtype[udata->nx_loc];
+  }
+
   // MPI neighborhood information
   int nbcoords[2];
 
@@ -447,38 +506,22 @@ static int FPFunction(N_Vector u, N_Vector f, void* user_data)
   // Access problem data
   UserData* udata = (UserData*)user_data;
 
-  // Get array pointers
-  sunrealtype* uarray = N_VGetArrayPointer(u);
-  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
-
-  sunrealtype* farray = N_VGetArrayPointer(f);
-  if (check_retval((void*)farray, "N_VGetArrayPointer", 0)) { return 1; }
-
   // Start timer
   double t1 = MPI_Wtime();
 
   // ---------------------------
-  // Calculate f = C e^u
+  // Calculate f = b - c(u)
   // ---------------------------
 
-  // Iterate over domain interior
-  sunindextype istart = (udata->HaveNbrW) ? 0 : 1;
-  sunindextype iend   = (udata->HaveNbrE) ? udata->nx_loc : udata->nx_loc - 1;
+  // Calculate c(u)
+  retval = c(u, udata->vtemp, user_data);
+  if (check_retval(&retval, "c(u)", 1)) { return 1; }
 
-  sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
-  sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
-
-  for (sunindextype j = jstart; j < jend; j++)
-  {
-    for (sunindextype i = istart; i < iend; i++)
-    {
-      farray[IDX(i, j, udata->nx_loc)] = -ONE * udata->C *
-                                         exp(uarray[IDX(i, j, udata->nx_loc)]);
-    }
-  }
+  // f = b -  c(u)
+  N_VLinearSum(ONE, udata->b, -ONE, udata->vtemp, f);
 
   // ---------------------------
-  // Solve Au = C e^u
+  // Solve Au = b - c(u)
   // ---------------------------
 
   // Solve system Au = f, store solution in f
@@ -491,13 +534,162 @@ static int FPFunction(N_Vector u, N_Vector f, void* user_data)
   // Update timer
   udata->fevaltime += t2 - t1;
 
-  // Calculate and output residual history
-  // r = \|G(u) - u\|_2
+  // Calculate and output residual and error history
   if (udata->output > 1)
   {
-    N_VLinearSum(ONE, f, -ONE, u, udata->e);
-    retval = WriteResOutput(udata);
-    if (check_retval(&retval, "OpenResOutput", 1)) { return 1; }
+    retval = WriteOutput(u, f, udata);
+    if (check_retval(&retval, "WriteOutput", 1)) { return 1; }
+  }
+
+  // Return success
+  return 0;
+}
+
+// Set nonlinear function c(u)
+static int SetC(UserData* udata)
+{
+  if (0 < udata->c_int && udata->c_int < 18)
+  {
+    if (udata->c_int == 1) { udata->c = c1; }
+    else if (udata->c_int == 2) { udata->c = c2; }
+    else if (udata->c_int == 3) { udata->c = c3; }
+    else if (udata->c_int == 4) { udata->c = c4; }
+    else if (udata->c_int == 5) { udata->c = c5; }
+    else if (udata->c_int == 6) { udata->c = c6; }
+    else if (udata->c_int == 7) { udata->c = c7; }
+    else if (udata->c_int == 8) { udata->c = c8; }
+    else if (udata->c_int == 9) { udata->c = c9; }
+    else if (udata->c_int == 10) { udata->c = c10; }
+    else if (udata->c_int == 11) { udata->c = c11; }
+    else if (udata->c_int == 12) { udata->c = c12; }
+    else if (udata->c_int == 13) { udata->c = c13; }
+    else if (udata->c_int == 14) { udata->c = c14; }
+    else if (udata->c_int == 15) { udata->c = c15; }
+    else if (udata->c_int == 16) { udata->c = c16; }
+    else if (udata->c_int == 17) { udata->c = c17; }
+  }
+  else { return 1; }
+
+  // Return success
+  return 0;
+}
+
+// Create RHS = b - c(u)
+static int SetupRHS(void* user_data)
+{
+  int retval;
+  sunindextype i, j;
+
+  // Access problem data
+  UserData* udata = (UserData*)user_data;
+
+  // Shortcuts to local number of nodes
+  sunindextype nx_loc = udata->nx_loc;
+  sunindextype ny_loc = udata->ny_loc;
+
+  // Determine iteration range excluding the overall domain boundary
+  sunindextype istart = (udata->HaveNbrW) ? 0 : 1;
+  sunindextype iend   = (udata->HaveNbrE) ? nx_loc : nx_loc - 1;
+  sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
+  sunindextype jend   = (udata->HaveNbrN) ? ny_loc : ny_loc - 1;
+
+  // -------------------------------------------------------
+  // Setup function c(u) for FPFunction based on user input
+  // -------------------------------------------------------
+
+  retval = SetC(udata);
+  if (check_retval(&retval, "SetC", 1)) { return 1; }
+
+  // ----------------------
+  // Setup b for FPFunction
+  // ----------------------
+
+  // Access data array
+  sunrealtype* barray = N_VGetArrayPointer(udata->b);
+  if (check_retval((void*)barray, "N_VGetArrayPointer", 0)) { return 1; }
+
+  // Initialize rhs vector to zero (handles boundary conditions)
+  N_VConst(ZERO, udata->b);
+
+  // Iterate over subdomain and compute forcing term (b)
+  sunrealtype x, y;
+  sunrealtype sin_sqr_x, sin_sqr_y;
+  sunrealtype cos_sqr_x, cos_sqr_y;
+
+  sunrealtype bx = (udata->kx) * TWO * PI * PI;
+  sunrealtype by = (udata->ky) * TWO * PI * PI;
+
+  for (j = jstart; j < jend; j++)
+  {
+    for (i = istart; i < iend; i++)
+    {
+      x = (udata->is + i) * udata->dx;
+      y = (udata->js + j) * udata->dy;
+
+      sin_sqr_x = sin(PI * x) * sin(PI * x);
+      sin_sqr_y = sin(PI * y) * sin(PI * y);
+
+      cos_sqr_x = cos(PI * x) * cos(PI * x);
+      cos_sqr_y = cos(PI * y) * cos(PI * y);
+
+      barray[IDX(i, j, nx_loc)] = bx * (cos_sqr_x - sin_sqr_x) * sin_sqr_y +
+                                  by * (cos_sqr_y - sin_sqr_y) * sin_sqr_x;
+    }
+  }
+
+  // Calculate c(u_exact) and add to forcing term (b)
+  retval = Solution(udata->e, udata);
+  if (check_retval(&retval, "rhs", 1)) { return 1; }
+
+  retval = c(udata->e, udata->vtemp, user_data);
+  if (check_retval(&retval, "c(u)", 1)) { return 1; }
+
+  // b = Au_exact + c(u_xact)
+  N_VLinearSum(ONE, udata->vtemp, ONE, udata->b, udata->b);
+
+  // Return success
+  return 0;
+}
+
+// c(u)
+static int c(N_Vector u, N_Vector z, void* user_data)
+{
+  sunindextype i, j;
+
+  // Access problem data
+  UserData* udata = (UserData*)user_data;
+
+  // Shortcuts to local number of nodes
+  sunindextype nx_loc = udata->nx_loc;
+  sunindextype ny_loc = udata->ny_loc;
+
+  // Determine iteration range excluding the overall domain boundary
+  sunindextype istart = (udata->HaveNbrW) ? 0 : 1;
+  sunindextype iend   = (udata->HaveNbrE) ? nx_loc : nx_loc - 1;
+  sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
+  sunindextype jend   = (udata->HaveNbrN) ? ny_loc : ny_loc - 1;
+
+  // Access data arrays
+  sunrealtype* uarray = N_VGetArrayPointer(u);
+  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
+
+  sunrealtype* zarray = N_VGetArrayPointer(z);
+  if (check_retval((void*)zarray, "N_VGetArrayPointer", 0)) { return 1; }
+
+  // Initialize rhs vector to zero (handles boundary conditions)
+  N_VConst(ZERO, z);
+
+  // Iterate over subdomain and compute z = c(u)
+  sunrealtype u_val;
+
+  for (j = jstart; j < jend; j++)
+  {
+    for (i = istart; i < iend; i++)
+    {
+      u_val = uarray[IDX(i, j, nx_loc)];
+
+      zarray[IDX(i, j, nx_loc)] = udata->c(u_val);
+    }
   }
 
   // Return success
@@ -995,8 +1187,8 @@ static int Jac(UserData* udata)
   if ((ilower[0] <= iupper[0]) && (ilower[1] <= iupper[1]))
   {
     // Jacobian values
-    sunrealtype cx = ONE / (udata->dx * udata->dx);
-    sunrealtype cy = ONE / (udata->dy * udata->dy);
+    sunrealtype cx = udata->kx / (udata->dx * udata->dx);
+    sunrealtype cy = udata->ky / (udata->dy * udata->dy);
     sunrealtype cc = -TWO * (cx + cy);
 
     // --------------------------------
@@ -1246,42 +1438,6 @@ static int Jac(UserData* udata)
   return 0;
 }
 
-// Compute the starting guess
-static int InitialGuess(N_Vector u, UserData* udata)
-{
-  sunrealtype x, y;
-  sunrealtype sin_sqr_x, sin_sqr_y;
-
-  // Initialize u to zero (handles boundary conditions)
-  N_VConst(ZERO, u);
-
-  // Iterative over domain interior
-  sunindextype istart = (udata->HaveNbrW) ? 0 : 1;
-  sunindextype iend   = (udata->HaveNbrE) ? udata->nx_loc : udata->nx_loc - 1;
-
-  sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
-  sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
-
-  sunrealtype* uarray = N_VGetArrayPointer(u);
-  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
-
-  for (sunindextype j = jstart; j < jend; j++)
-  {
-    for (sunindextype i = istart; i < iend; i++)
-    {
-      x = (udata->is + i) * udata->dx;
-      y = (udata->js + j) * udata->dy;
-
-      sin_sqr_x = sin(PI * x) * sin(PI * x);
-      sin_sqr_y = sin(PI * y) * sin(PI * y);
-
-      uarray[IDX(i, j, udata->nx_loc)] = sin_sqr_x * sin_sqr_y;
-    }
-  }
-
-  return 0;
-}
-
 // -----------------------------------------------------------------------------
 // UserData and input functions
 // -----------------------------------------------------------------------------
@@ -1289,16 +1445,17 @@ static int InitialGuess(N_Vector u, UserData* udata)
 // Initialize memory allocated within Userdata
 static int InitUserData(UserData* udata)
 {
-  // Exponential term coefficient
-  udata->C = SIX;
+  // Diffusion coefficient
+  udata->kx = ONE;
+  udata->ky = ONE;
 
   // Upper bounds in x and y directions
   udata->xu = ONE;
   udata->yu = ONE;
 
   // Global number of nodes in the x and y directions
-  udata->nx    = 256;
-  udata->ny    = 256;
+  udata->nx    = 64;
+  udata->ny    = 64;
   udata->nodes = udata->nx * udata->ny;
 
   // Mesh spacing in the x and y directions
@@ -1331,6 +1488,18 @@ static int InitUserData(UserData* udata)
   udata->HaveNbrS = true;
   udata->HaveNbrN = true;
 
+  // Exchange receive buffers (allocated in SetupDecomp)
+  udata->Erecv = NULL;
+  udata->Wrecv = NULL;
+  udata->Nrecv = NULL;
+  udata->Srecv = NULL;
+
+  // Exchange send buffers (allocated in SetupDecomp)
+  udata->Esend = NULL;
+  udata->Wsend = NULL;
+  udata->Nsend = NULL;
+  udata->Ssend = NULL;
+
   // Neighbors IDs (set in SetupDecomp)
   udata->ipW = -1;
   udata->ipE = -1;
@@ -1339,17 +1508,25 @@ static int InitUserData(UserData* udata)
 
   // Fixed Point Solver settings
   udata->rtol    = SUN_RCONST(1.e-8); // relative tolerance
-  udata->maa     = 1;                 // 1 Anderson Acceleration vector
+  udata->maa     = 0;                 // no Anderson Acceleration
   udata->damping = ONE;               // no damping for Anderson Acceleration
   udata->orthaa  = 0;                 // use MGS for Anderson Acceleration
-  udata->maxits  = 200;               // max number of fixed point iterations
+  udata->maxits  = 100;               // max number of fixed point iterations
 
   // Linear solver and preconditioner options
   udata->liniters = 20;                // max linear iterations
-  udata->epslin   = SUN_RCONST(1.e-8); // relative stopping tolerance
+  udata->epslin   = SUN_RCONST(1.e-8); // use default (0.05)
 
   // Linear solver object
   udata->LS = NULL;
+
+  // c function
+  udata->c     = NULL;
+  udata->c_int = 1;
+
+  // Vectors
+  udata->b     = NULL;
+  udata->vtemp = NULL;
 
   // hypre objects
   udata->grid    = NULL;
@@ -1381,6 +1558,7 @@ static int InitUserData(UserData* udata)
 
   // Output variables
   udata->output = 1; // 0 = no output, 1 = stats output, 2 = output to disk
+  udata->e      = NULL;
 
   // Timing variables
   udata->timing      = false;
@@ -1398,8 +1576,32 @@ static int InitUserData(UserData* udata)
 // Free memory allocated within Userdata
 static int FreeUserData(UserData* udata)
 {
+  // Free exchange buffers
+  if (udata->Wrecv != NULL) { delete[] udata->Wrecv; }
+  if (udata->Wsend != NULL) { delete[] udata->Wsend; }
+  if (udata->Erecv != NULL) { delete[] udata->Erecv; }
+  if (udata->Esend != NULL) { delete[] udata->Esend; }
+  if (udata->Srecv != NULL) { delete[] udata->Srecv; }
+  if (udata->Ssend != NULL) { delete[] udata->Ssend; }
+  if (udata->Nrecv != NULL) { delete[] udata->Nrecv; }
+  if (udata->Nsend != NULL) { delete[] udata->Nsend; }
+
   // Free Linear solver
   if (udata->LS != NULL) { SUNLinSolFree_PCG(udata->LS); }
+
+  // Free b vector
+  if (udata->b)
+  {
+    N_VDestroy(udata->b);
+    udata->b = NULL;
+  }
+
+  // Free temporary vector
+  if (udata->vtemp)
+  {
+    N_VDestroy(udata->vtemp);
+    udata->vtemp = NULL;
+  }
 
   // Free hypre preconditioner data
   if (udata->grid != NULL) { HYPRE_StructGridDestroy(udata->grid); }
@@ -1414,6 +1616,13 @@ static int FreeUserData(UserData* udata)
 
   // Free MPI Cartesian communicator
   if (udata->comm_c != MPI_COMM_NULL) { MPI_Comm_free(&(udata->comm_c)); }
+
+  // Free error vector
+  if (udata->e)
+  {
+    N_VDestroy(udata->e);
+    udata->e = NULL;
+  }
 
   // Return success
   return 0;
@@ -1447,13 +1656,20 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata, bool outproc)
       udata->xu = stoi((*argv)[arg_idx++]);
       udata->yu = stoi((*argv)[arg_idx++]);
     }
-    else if (arg == "--C") { udata->C = stod((*argv)[arg_idx++]); }
+    // Diffusion parameters
+    else if (arg == "--k")
+    {
+      udata->kx = stod((*argv)[arg_idx++]);
+      udata->ky = stod((*argv)[arg_idx++]);
+    }
     // Solver settings
     else if (arg == "--rtol") { udata->rtol = stod((*argv)[arg_idx++]); }
     else if (arg == "--maa") { udata->maa = stoi((*argv)[arg_idx++]); }
     else if (arg == "--damping") { udata->damping = stod((*argv)[arg_idx++]); }
     else if (arg == "--orthaa") { udata->orthaa = stoi((*argv)[arg_idx++]); }
     else if (arg == "--maxits") { udata->maxits = stoi((*argv)[arg_idx++]); }
+    // RHS settings
+    else if (arg == "--c") { udata->c_int = stoi((*argv)[arg_idx++]); }
     // Linear solver settings
     else if (arg == "--liniters")
     {
@@ -1505,6 +1721,56 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata, bool outproc)
 // Output and utility functions
 // -----------------------------------------------------------------------------
 
+// Compute the exact solution
+static int Solution(N_Vector u, UserData* udata)
+{
+  sunrealtype x, y;
+  sunrealtype sin_sqr_x, sin_sqr_y;
+
+  // Initialize u to zero (handles boundary conditions)
+  N_VConst(ZERO, u);
+
+  // Iterative over domain interior
+  sunindextype istart = (udata->HaveNbrW) ? 0 : 1;
+  sunindextype iend   = (udata->HaveNbrE) ? udata->nx_loc : udata->nx_loc - 1;
+
+  sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
+  sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
+
+  sunrealtype* uarray = N_VGetArrayPointer(u);
+  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
+
+  for (sunindextype j = jstart; j < jend; j++)
+  {
+    for (sunindextype i = istart; i < iend; i++)
+    {
+      x = (udata->is + i) * udata->dx;
+      y = (udata->js + j) * udata->dy;
+
+      sin_sqr_x = sin(PI * x) * sin(PI * x);
+      sin_sqr_y = sin(PI * y) * sin(PI * y);
+
+      uarray[IDX(i, j, udata->nx_loc)] = sin_sqr_x * sin_sqr_y;
+    }
+  }
+
+  return 0;
+}
+
+// Compute the solution error
+static int SolutionError(N_Vector u, N_Vector e, UserData* udata)
+{
+  // Compute true solution
+  int retval = Solution(e, udata);
+  if (retval != 0) { return -1; }
+
+  // Compute absolute error
+  N_VLinearSum(ONE, u, -ONE, e, e);
+  N_VAbs(e, e);
+
+  return 0;
+}
+
 // Print command line options
 static void InputHelp()
 {
@@ -1518,6 +1784,7 @@ static void InputHelp()
   cout
     << "  --domain <xu> <yu>      : domain upper bound in the x and y direction"
     << endl;
+  cout << "  --k <kx> <ky>           : diffusion coefficients" << endl;
   cout << "  --rtol <rtol>           : relative tolerance" << endl;
   cout << "  --maa <maa>             : number of previous residuals for "
           "Anderson Acceleration"
@@ -1527,7 +1794,7 @@ static void InputHelp()
   cout << "  --orthaa <orthaa>       : orthogonalization routine used in "
           "Anderson Acceleration "
        << endl;
-  cout << "  --C                     : scalar value on exponential term " << endl;
+  cout << "  --c <c_int>             : nonlinear function parameter" << endl;
   cout << "  --liniters <iters>      : max number of iterations" << endl;
   cout << "  --epslin <factor>       : linear tolerance factor" << endl;
   cout << "  --pfmg_relax <types>    : relaxtion type in PFMG" << endl;
@@ -1543,12 +1810,14 @@ static void InputHelp()
 static int PrintUserData(UserData* udata)
 {
   cout << endl;
-  cout << "2D Bratu test problem:" << endl;
+  cout << "2D Stationary Heat PDE + Nonlinear term test problem:" << endl;
   cout << " --------------------------------- " << endl;
   cout << "  nprocs         = " << udata->nprocs_w << endl;
   cout << "  npx            = " << udata->npx << endl;
   cout << "  npy            = " << udata->npy << endl;
   cout << " --------------------------------- " << endl;
+  cout << "  kx             = " << udata->kx << endl;
+  cout << "  ky             = " << udata->ky << endl;
   cout << "  xu             = " << udata->xu << endl;
   cout << "  yu             = " << udata->yu << endl;
   cout << "  nx             = " << udata->nx << endl;
@@ -1564,7 +1833,7 @@ static int PrintUserData(UserData* udata)
   cout << "  orthaa         = " << udata->orthaa << endl;
   cout << "  maxits         = " << udata->maxits << endl;
   cout << " --------------------------------- " << endl;
-  cout << "  C              = " << udata->C << endl;
+  cout << "  c              = " << udata->c_int << endl;
   cout << " --------------------------------- " << endl;
   cout << "  linear solver  = PCG" << endl;
   cout << "  lin iters      = " << udata->liniters << endl;
@@ -1650,7 +1919,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   // Output problem information and open output streams
   // Each processor outputs subdomain information
   stringstream fname;
-  fname << "bratu2d_info." << setfill('0') << setw(5) << udata->myid_c << ".txt";
+  fname << "heat2d_info." << setfill('0') << setw(5) << udata->myid_c << ".txt";
 
   ofstream dout;
   dout.open(fname.str());
@@ -1671,7 +1940,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   // Open output streams for solution
   fname.str("");
   fname.clear();
-  fname << "bratu2d_solution." << setfill('0') << setw(5) << udata->myid_c
+  fname << "heat2d_solution." << setfill('0') << setw(5) << udata->myid_c
         << ".txt";
   udata->uout.open(fname.str());
 
@@ -1694,7 +1963,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   return 0;
 }
 
-static int OpenResOutput(UserData* udata)
+static int OpenOutput(UserData* udata)
 {
   bool outproc = (udata->myid_c == 0);
 
@@ -1702,42 +1971,64 @@ static int OpenResOutput(UserData* udata)
   {
     stringstream fname;
 
-    // Open output streams for solution
+    // Open output stream for residual
     fname.str("");
     fname.clear();
-    fname << "bratu2d_res_m" << udata->maa << "_orth" << udata->orthaa << ".txt";
+    fname << "heat2d_res_m" << udata->maa << "_orth" << udata->orthaa << ".txt";
     udata->rout.open(fname.str());
 
     udata->rout << scientific;
     udata->rout << setprecision(numeric_limits<sunrealtype>::digits10);
+
+    // Open output stream for error
+    fname.str("");
+    fname.clear();
+    fname << "heat2d_err_m" << udata->maa << "_orth" << udata->orthaa << ".txt";
+    udata->eout.open(fname.str());
+
+    udata->eout << scientific;
+    udata->eout << setprecision(numeric_limits<sunrealtype>::digits10);
   }
 
   return 0;
 }
 
-static int WriteResOutput(UserData* udata)
+static int WriteOutput(N_Vector u, N_Vector f, UserData* udata)
 {
+  int retval;
   bool outproc = (udata->myid_c == 0);
 
+  // r = \|G(u) - u\|_2
+  N_VLinearSum(ONE, f, -ONE, u, udata->e);
   sunrealtype res = N_VDotProd(udata->e, udata->e);
+
+  // e = \|u_exact - u\|_2
+  retval = SolutionError(u, udata->e, udata);
+  if (check_retval(&retval, "SolutionError", 1)) { return 1; }
+  sunrealtype err = N_VDotProd(udata->e, udata->e);
 
   if (outproc)
   {
     // Output residual
     udata->rout << sqrt(res);
     udata->rout << endl;
+
+    // Output error
+    udata->eout << sqrt(err);
+    udata->eout << endl;
   }
   return 0;
 }
 
-static int CloseResOutput(UserData* udata)
+static int CloseOutput(UserData* udata)
 {
   bool outproc = (udata->myid_c == 0);
 
   if (outproc)
   {
-    // Close output stream
+    // Close output streams
     udata->rout.close();
+    udata->eout.close();
   }
 
   return 0;

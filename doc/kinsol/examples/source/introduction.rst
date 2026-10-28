@@ -60,38 +60,38 @@ Supplied in the ``c`` variant directories under ``examples/kinsol`` are the
 following serial examples (using the :ref:`serial vector
 <NVectors.NVSerial>`):
 
-- ``kinRoberts_fp`` solves the backward Euler time step for a three-species
+- ``kin_roberts_fp`` solves the backward Euler time step for a three-species
   chemical kinetics system, using the fixed point strategy.
 
-- ``kinFerTron_dns`` solves the Ferraris-Tronconi problem.
+- ``kin_fer_tron_dns`` solves the Ferraris-Tronconi problem.
 
   This program solves the problem with the :ref:`dense linear solver
   <SUNLinSol_Dense>` and uses different combinations of globalization and
   Jacobian update strategies with different initial guesses.
 
-- ``kinFerTron_klu`` solves the same problem as in ``kinFerTron_dns``, but uses
+- ``kin_fer_tron_klu`` solves the same problem as in ``kin_fer_tron_dns``, but uses
   the :ref:`KLU sparse direct linear solver <SUNLinSol.KLU>`.
 
-- ``kinRoboKin_dns`` solves a nonlinear system from robot kinematics.
+- ``kin_robo_kin_dns`` solves a nonlinear system from robot kinematics.
 
   This program solves the problem with the :ref:`dense linear solver
   <SUNLinSol_Dense>` and a user-supplied Jacobian routine.
 
-- ``kinRoboKin_slu`` is the same as ``kinRoboKin_dns`` but uses the
+- ``kin_robo_kin_slu`` is the same as ``kin_robo_kin_dns`` but uses the
   :ref:`SuperLU_MT sparse direct linear solver <SUNLinSol.SuperLUMT>`.
 
-- ``kinLaplace_bnd`` solves a simple 2D elliptic PDE on a unit square.
+- ``kin_laplace_bnd`` solves a simple 2D elliptic PDE on a unit square.
 
   This program solves the problem with the :ref:`banded direct linear solver
   <SUNLinSol_Band>`.
 
-- ``kinLaplace_picard_bnd`` is the same as ``kinLaplace_bnd`` but uses the
+- ``kin_laplace_picard_bnd`` is the same as ``kin_laplace_bnd`` but uses the
   Picard strategy.
 
-- ``kinLaplace_picard_kry`` is the same as ``kinLaplace_picard_bnd`` but uses
+- ``kin_laplace_picard_kry`` is the same as ``kin_laplace_picard_bnd`` but uses
   the :ref:`GMRES iterative linear solver <SUNLinSol.SPGMR>`.
 
-- ``kinFoodWeb_kry`` solves a food web model.
+- ``kin_food_web_kry`` solves a food web model.
 
   This is a nonlinear system that arises from a system of partial differential
   equations describing a six-species food web population model, with
@@ -101,11 +101,11 @@ following serial examples (using the :ref:`serial vector
   preconditioner is a block-diagonal matrix based on the partial derivatives of
   the interaction terms only.
 
-- ``kinKrylovDemo_ls`` solves the same problem as ``kinFoodWeb_kry``, but with
+- ``kin_krylov_demo_ls`` solves the same problem as ``kin_food_web_kry``, but with
   three Krylov linear solvers: :ref:`GMRES <SUNLinSol.SPGMR>`, :ref:`BiCGSTAB
   <SUNLinSol.SPBCGS>`, and :ref:`TFQMR <SUNLinSol.SPTFQMR>`.
 
-- ``kinAnalytic_fp.c`` solves a small nonlinear system with known solution using
+- ``kin_analytic_fp.c`` solves a small nonlinear system with known solution using
   the fixed-point iteration.
 
 MPI examples
@@ -115,9 +115,9 @@ Supplied in the ``examples/kinsol/kin_food_web/c-mpi`` directory are the
 following parallel examples (using the :ref:`MPI parallel vector
 <NVectors.NVParallel>`):
 
-- ``kinFoodWeb_kry_p`` is a parallel implementation of ``kinFoodWeb_kry``.
+- ``kin_food_web_kry_p`` is a parallel implementation of ``kin_food_web_kry``.
 
-- ``kinFoodWeb_kry_bbd_p`` solves the same problem as ``kinFoodWeb_kry_p``, with
+- ``kin_food_web_kry_bbd_p`` solves the same problem as ``kin_food_web_kry_p``, with
   the :ref:`KINBBDPRE <KINSOL.Usage.CC.kin_bbdpre>` band-block-diagonal
   preconditioner.
 
@@ -140,14 +140,14 @@ C++ examples
 ------------
 
 - The ``cpp-mpi`` variant directories contain two examples.
-  ``kin_heat2D_nonlin_p`` solves a steady state 2D heat equation with
+  ``kin_heat_2d_nonlin_p`` solves a steady state 2D heat equation with
   an additional nonlinear term. This example is solved with fixed point
   iteration and illustrates the use of various orthogonalization methods with
   Anderson acceleration. ``kin_em_p`` solves the same problem as
   ``kin_em_mpicuda`` listed above.
 
 - The ``cpp-mpi-hypre`` variant directories contain two examples,
-  ``kin_heat2D_nonlin_hypre_pfmg`` and ``kin_bratu2D_hyper_pfmg``. These use the
+  ``kin_heat_2d_nonlin_hypre_pfmg`` and ``kin_bratu2D_hyper_pfmg``. These use the
   *hypre* PFMG preconditioner, fixed point iteration, and Anderson acceleration.
 
 Fortran examples
@@ -157,12 +157,12 @@ The following are examples in Fortran, using the SUNDIALS Fortran interface
 modules, and are based on examples listed earlier:
 
 - The ``fortran`` variant directories contain four examples:
-  ``kinDiagon_kry_f2003`` solves a simple diagonal test
-  problem. ``kinLaplace_bnd_f2003`` solves the same problem as
-  ``kinLaplace_bnd``. ``kinLaplace_picard_kry_f2003`` solves the same problem as
-  ``kinLaplace_picard_kry``. ``kinRoboKin_dns_f2003`` solves the same problem as
-  ``kinRoboKin_dns``.
+  ``kin_diagonal_kry_f2003`` solves a simple diagonal test
+  problem. ``kin_laplace_bnd_f2003`` solves the same problem as
+  ``kin_laplace_bnd``. ``kin_laplace_picard_kry_f2003`` solves the same problem as
+  ``kin_laplace_picard_kry``. ``kin_robo_kin_dns_f2003`` solves the same problem as
+  ``kin_robo_kin_dns``.
 
 - The ``examples/kinsol/kin_diagonal/fortran-mpi`` directory contains one example,
-  ``kin_diagon_kry_f2003``, which solves the same problem as
-  ``kinDiagon_kry_f2003``, but using MPI.
+  ``kin_diagonal_kry_p_f2003``, which solves the same problem as
+  ``kin_diagonal_kry_f2003``, but using MPI.

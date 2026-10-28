@@ -25,7 +25,7 @@
  * The nonlinear system is solved by KINSOL using the Picard
  * iteration and the SUNBAND linear solver.
  *
- * This file is strongly based on the kinLaplace_bnd.c file
+ * This file is strongly based on the kin_laplace_bnd.c file
  * developed by Radu Serban.
  * -----------------------------------------------------------------
  */

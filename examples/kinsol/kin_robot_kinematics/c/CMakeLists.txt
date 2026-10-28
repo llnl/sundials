@@ -13,8 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kinRoboKin_dns kinRoboKin_dns.c
+  kin_robo_kin_dns kin_robo_kin_dns.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES kinRoboKin_dns_stats.csv
+  INSTALL_FILES kin_robo_kin_dns_stats.csv
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

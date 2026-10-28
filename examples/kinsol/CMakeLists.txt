@@ -59,7 +59,7 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
     if(_example_rel_dir STREQUAL "kin_analytic/c")
       sundials_add_test_install(kinsol ${_example_rel_dir}
-                                EXECUTABLE kinAnalytic_fp)
+                                EXECUTABLE kin_analytic_fp)
     else()
       sundials_add_test_install(kinsol ${_example_rel_dir})
     endif()

@@ -13,8 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kinFoodWeb_kry_omp kinFoodWeb_kry_omp.c
+  kin_food_web_kry_omp kin_food_web_kry_omp.c
   NO_TEST
-  INSTALL_FILES kinFoodWeb_kry_omp.out
+  INSTALL_FILES kin_food_web_kry_omp.out
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecopenmp
                  ${EXE_EXTRA_LINK_LIBS})

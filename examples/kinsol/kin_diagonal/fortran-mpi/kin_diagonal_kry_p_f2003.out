@@ -1,4 +1,4 @@
-Example program kinDiagon_kry_f2003:
+Example program kin_diagonal_kry_p_f2003:
 
 This example demonstrates using the KINSOL Fortran interface to
 solve a diagonal algebraic system using a Newton-Krylov method

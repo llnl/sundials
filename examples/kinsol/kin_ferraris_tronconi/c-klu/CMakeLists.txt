@@ -13,6 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kinFerTron_klu kinFerTron_klu.c
+  kin_fer_tron_klu kin_fer_tron_klu.c
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

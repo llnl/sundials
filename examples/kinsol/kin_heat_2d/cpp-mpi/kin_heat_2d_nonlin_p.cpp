@@ -28,35 +28,35 @@
  *
  * and the forcing term
  *
- *   b(x,y) = kx 2 pi^2 (cos^2(pi x) - sin^2(pi x)) sin^2(pi y)
- *            ky 2 pi^2 (cos^2(pi y) - sin^2(pi y)) sin^2(pi x)
+ *   b(x,y) = kx 2 pi^2 * (cos^2(pi x) - sin^2(pi x)) sin^2(pi y)
+ *            ky 2 pi^2 * (cos^2(pi y) - sin^2(pi y)) sin^2(pi x)
  *            + c(u_exact).
  *
  * Under this setup, the problem has the analytical solution
  *
- *    u(x,y) = u_exact = sin^2(pi x) sin^2(pi y).
+ *   u(x,y) = u_exact = sin^2(pi x ) sin^2(pi y).
  *
  * The spatial derivatives are computed using second-order centered differences,
- * with the data distributed over nx * ny points on a uniform spatial grid. The
- * discretized nonlinear system is given by
+ * with the data distributed over nx * ny points on a uniform spatial grid.
+ * The problem is solved via Fixed Point Iteration by adding u to both
+ * sides of the equation to setup the fixed point function.
+ * This matrix-free setup has the following form
  *
- *   b = A u + c(u)
+ *   u = c3 * u_{ij} + c1*(u_{i-1,j} + u_{i+1,j}) + c2*(u_{i,j-1} + u_{i,j+1})
+ + c(u)_{ij} - b_{ij} + u_{ij}
  *
- * where A is the discretized Laplacian operator. Solving for u results in the
- * fixed point function
+ * where the constants c1, c2, and c3 are defined as follows
  *
- *   G(u) = A^{-1} (b - c(u)).
+ *   c1 = kx/hx^2
+ *   c2 = ky/hy^2
+ *   c3  = -2 * (c1 + c2)
  *
- * This problem is solved via a fixed point iteration with Anderson
- * acceleration. The linear solve in each fixed-point iteration is performed the
- * PCG linear solver using hypre's PFMG preconditioner. Several command line
- * options are available to change the problem parameters and KINSOL settings.
- * Use the flag --help for more information.
+ * Several command line options are available to change the problem parameters
+ * and KINSOL settings. Use the flag --help for more information.
  * ---------------------------------------------------------------------------*/
 
-// Header file containing UserData struct, function declarations, and various
-// nonlinear c(u) definitions
-#include "kin_heat2D_nonlin_hypre_pfmg.hpp"
+// Header file containing UserData and function declarations
+#include "kin_heat_2d_nonlin_p.hpp"
 
 // -----------------------------------------------------------------------------
 // Main Program
@@ -89,13 +89,6 @@ int main(int argc, char* argv[])
 
     // SUNDIALS context
     sundials::Context sunctx(comm_w);
-
-    // Initialize hypre if v2.20.0 or newer
-#if HYPRE_RELEASE_NUMBER >= 22000 || SUN_HYPRE_VERSION_MAJOR > 2 || \
-  (SUN_HYPRE_VERSION_MAJOR == 2 && SUN_HYPRE_VERSION_MINOR >= 20)
-    retval = HYPRE_Init();
-    if (check_retval(&retval, "HYPRE_Init", 1)) { return 1; }
-#endif
 
     // ------------------------------------------
     // Setup UserData and parallel decomposition
@@ -151,25 +144,11 @@ int main(int argc, char* argv[])
     udata->vtemp = N_VClone(u);
     if (check_retval((void*)(udata->vtemp), "N_VClone", 0)) { return 1; }
 
-    // ----------------------
-    // Create rhs = b - c(u)
-    // ----------------------
+    // -----------------------------------------------
+    // Set b and c(u) for RHS evaluation in FPFunction
+    // -----------------------------------------------
     retval = SetupRHS(udata);
     if (check_retval(&retval, "SetupRHS", 1)) { return 1; }
-
-    // ---------------------
-    // Create hypre objects
-    // ---------------------
-
-    retval = SetupHypre(udata);
-    if (check_retval(&retval, "SetupHypre", 1)) { return 1; }
-
-    // ---------------------
-    // Create linear solver
-    // ---------------------
-
-    retval = SetupLS(u, udata, sunctx);
-    if (check_retval(&retval, "SetupLS", 1)) { return 1; }
 
     // --------------
     // Setup KINSOL
@@ -185,11 +164,11 @@ int main(int argc, char* argv[])
 
     // Set number of prior residuals used in Anderson Acceleration
     retval = KINSetMAA(kin_mem, udata->maa);
-    if (check_retval(&retval, "KINSetMAA", 1)) { return 1; }
+    if (check_retval(&retval, "KINSetMAA", 0)) { return 1; }
 
-    // Set orthogonalization routine used in Anderson Acceleration
+    // Set orthogonlization routine used in Anderson Acceleration
     retval = KINSetOrthAA(kin_mem, udata->orthaa);
-    if (check_retval(&retval, "KINSetOrthAA", 1)) { return 1; }
+    if (check_retval(&retval, "KINSetOrthAA", 0)) { return 1; }
 
     // Specify tolerances
     retval = KINSetFuncNormTol(kin_mem, udata->rtol);
@@ -228,8 +207,8 @@ int main(int argc, char* argv[])
                     u,       // initial guess on input; solution vector
                     KIN_FP,  // global strategy choice
                     scale,   // scaling vector, for the variable u
-                    scale);  // scaling vector, for the function values fval
-    if (check_retval(&retval, "KINSol", 1)) { return 1; }
+                    scale);  // scaling vector for function values fval
+    if (check_retval(&retval, "KINSol", 1)) { return (1); }
 
     // Stop timer
     t2 = MPI_Wtime();
@@ -237,9 +216,9 @@ int main(int argc, char* argv[])
     // Update timer
     udata->totaltime = t2 - t1;
 
-    // ----------------------
+    // -----------------------
     // Get solver statistics
-    // ----------------------
+    // -----------------------
     if (udata->output > 0 && outproc)
     {
       cout << "Final statistics:" << endl;
@@ -255,9 +234,9 @@ int main(int argc, char* argv[])
       if (check_retval(&retval, "WriteSolution", 1)) { return 1; }
     }
 
-    // -------------------------
+    // ------------------------
     // Calculate solution error
-    // -------------------------
+    // ------------------------
 
     // Output final error
     retval = SolutionError(u, udata->e, udata);
@@ -270,27 +249,21 @@ int main(int argc, char* argv[])
       cout << scientific;
       cout << setprecision(numeric_limits<sunrealtype>::digits10);
       cout << "  Max error = " << maxerr << endl;
+      cout << endl;
     }
 
-    // ------------
+    // ------------------------------
     // Print timing
-    // ------------
+    // ------------------------------
     if (udata->timing)
     {
       retval = OutputTiming(udata);
       if (check_retval(&retval, "OutputTiming", 1)) { return 1; }
     }
 
-    // --------------------
+    // ------------------------------
     // Free memory
-    // --------------------
-
-    // Finalize hypre if v2.20.0 or newer
-#if HYPRE_RELEASE_NUMBER >= 22000 || SUN_HYPRE_VERSION_MAJOR > 2 || \
-  (SUN_HYPRE_VERSION_MAJOR == 2 && SUN_HYPRE_VERSION_MINOR >= 20)
-    retval = HYPRE_Finalize();
-    if (check_retval(&retval, "HYPRE_Finalize", 1)) { return 1; }
-#endif
+    // ------------------------------
 
     KINFree(&kin_mem); // Free solver memory
     N_VDestroy(u);     // Free vectors
@@ -498,35 +471,165 @@ static int SetupDecomp(MPI_Comm comm_w, UserData* udata)
 // Functions called by the solver
 // -----------------------------------------------------------------------------
 
-// Fixed point function to compute G(u) =  A^{-1} (b - c(u))
+// Fixed point function to compute G(u)
 static int FPFunction(N_Vector u, N_Vector f, void* user_data)
 {
   int retval;
-
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
+  sunindextype i, j;
 
   // Start timer
   double t1 = MPI_Wtime();
 
-  // ---------------------------
-  // Calculate f = b - c(u)
-  // ---------------------------
+  // Access problem data
+  UserData* udata = (UserData*)user_data;
 
-  // Calculate c(u)
+  // Open exchange receives
+  retval = PostRecv(udata);
+  if (check_retval(&retval, "PostRecv", 1)) { return -1; }
+
+  // Send exchange data
+  retval = SendData(u, udata);
+  if (check_retval(&retval, "SendData", 1)) { return -1; }
+
+  // Shortcuts to local number of nodes
+  sunindextype nx_loc = udata->nx_loc;
+  sunindextype ny_loc = udata->ny_loc;
+
+  // Constants for computing diffusion term
+  sunrealtype cx = udata->kx / (udata->dx * udata->dx);
+  sunrealtype cy = udata->ky / (udata->dy * udata->dy);
+  sunrealtype cc = -TWO * (cx + cy);
+
+  // Access data arrays
+  sunrealtype* uarray = N_VGetArrayPointer(u);
+  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
+
+  sunrealtype* farray = N_VGetArrayPointer(f);
+  if (check_retval((void*)farray, "N_VGetArrayPointer", 0)) { return -1; }
+
+  // Initialize rhs vector to zero (handles boundary conditions)
+  N_VConst(ZERO, f);
+
+  // Iterate over subdomain interior and add rhs diffusion term
+  for (j = 1; j < ny_loc - 1; j++)
+  {
+    for (i = 1; i < nx_loc - 1; i++)
+    {
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+  }
+
+  // Wait for exchange receives
+  retval = WaitRecv(udata);
+  if (check_retval(&retval, "WaitRecv", 1)) { return -1; }
+
+  // Iterate over subdomain boundaries and add rhs diffusion term
+  sunrealtype* Warray = udata->Wrecv;
+  sunrealtype* Earray = udata->Erecv;
+  sunrealtype* Sarray = udata->Srecv;
+  sunrealtype* Narray = udata->Nrecv;
+
+  // West face (updates south-west and north-west corners if necessary)
+  if (udata->HaveNbrW)
+  {
+    i = 0;
+    if (udata->HaveNbrS) // South-West corner
+    {
+      j = 0;
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (Warray[j] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (Sarray[i] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+
+    for (j = 1; j < ny_loc - 1; j++)
+    {
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (Warray[j] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+
+    if (udata->HaveNbrN) // North-West corner
+    {
+      j = ny_loc - 1;
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (Warray[j] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + Narray[i]);
+    }
+  }
+
+  // East face (updates south-east and north-east corners if necessary)
+  if (udata->HaveNbrE)
+  {
+    i = nx_loc - 1;
+    if (udata->HaveNbrS) // South-East corner
+    {
+      j = 0;
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + Earray[j]) +
+        cy * (Sarray[i] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+
+    for (j = 1; j < ny_loc - 1; j++)
+    {
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + Earray[j]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+
+    if (udata->HaveNbrN) // North-East corner
+    {
+      j = ny_loc - 1;
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + Earray[j]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + Narray[i]);
+    }
+  }
+
+  // South face (excludes corners)
+  if (udata->HaveNbrS)
+  {
+    j = 0;
+    for (i = 1; i < nx_loc - 1; i++)
+    {
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (Sarray[i] + uarray[IDX(i, j + 1, nx_loc)]);
+    }
+  }
+
+  // North face (excludes corners)
+  if (udata->HaveNbrN)
+  {
+    j = udata->ny_loc - 1;
+    for (i = 1; i < nx_loc - 1; i++)
+    {
+      farray[IDX(i, j, nx_loc)] +=
+        cc * uarray[IDX(i, j, nx_loc)] +
+        cx * (uarray[IDX(i - 1, j, nx_loc)] + uarray[IDX(i + 1, j, nx_loc)]) +
+        cy * (uarray[IDX(i, j - 1, nx_loc)] + Narray[i]);
+    }
+  }
+
+  // Add c(u)
   retval = c(u, udata->vtemp, user_data);
   if (check_retval(&retval, "c(u)", 1)) { return 1; }
+  N_VLinearSum(ONE, udata->vtemp, ONE, f, f);
 
-  // f = b -  c(u)
-  N_VLinearSum(ONE, udata->b, -ONE, udata->vtemp, f);
+  // Add u
+  N_VLinearSum(ONE, u, ONE, f, f);
 
-  // ---------------------------
-  // Solve Au = b - c(u)
-  // ---------------------------
-
-  // Solve system Au = f, store solution in f
-  retval = SUNLinSolSolve(udata->LS, NULL, f, f, udata->epslin);
-  if (check_retval(&retval, "SUNLinSolSolve", 1)) { return -1; }
+  // Subtract b
+  N_VLinearSum(-ONE, udata->b, ONE, f, f);
 
   // Stop timer
   double t2 = MPI_Wtime();
@@ -544,6 +647,10 @@ static int FPFunction(N_Vector u, N_Vector f, void* user_data)
   // Return success
   return 0;
 }
+
+// -----------------------------------------------------------------------------
+// RHS helper functions
+// -----------------------------------------------------------------------------
 
 // Set nonlinear function c(u)
 static int SetC(UserData* udata)
@@ -574,7 +681,7 @@ static int SetC(UserData* udata)
   return 0;
 }
 
-// Create RHS = b - c(u)
+// Set nonlinear function c(u)
 static int SetupRHS(void* user_data)
 {
   int retval;
@@ -593,25 +700,21 @@ static int SetupRHS(void* user_data)
   sunindextype jstart = (udata->HaveNbrS) ? 0 : 1;
   sunindextype jend   = (udata->HaveNbrN) ? ny_loc : ny_loc - 1;
 
-  // -------------------------------------------------------
+  // ------------------------------------------------------
   // Setup function c(u) for FPFunction based on user input
-  // -------------------------------------------------------
-
+  // ------------------------------------------------------
   retval = SetC(udata);
   if (check_retval(&retval, "SetC", 1)) { return 1; }
 
-  // ----------------------
+  // ------------------------------------------------------
   // Setup b for FPFunction
-  // ----------------------
+  // ------------------------------------------------------
 
   // Access data array
   sunrealtype* barray = N_VGetArrayPointer(udata->b);
   if (check_retval((void*)barray, "N_VGetArrayPointer", 0)) { return 1; }
 
   // Initialize rhs vector to zero (handles boundary conditions)
-  N_VConst(ZERO, udata->b);
-
-  // Iterate over subdomain and compute forcing term (b)
   sunrealtype x, y;
   sunrealtype sin_sqr_x, sin_sqr_y;
   sunrealtype cos_sqr_x, cos_sqr_y;
@@ -619,6 +722,7 @@ static int SetupRHS(void* user_data)
   sunrealtype bx = (udata->kx) * TWO * PI * PI;
   sunrealtype by = (udata->ky) * TWO * PI * PI;
 
+  // Iterate over subdomain and compute forcing term (b)
   for (j = jstart; j < jend; j++)
   {
     for (i = istart; i < iend; i++)
@@ -644,7 +748,7 @@ static int SetupRHS(void* user_data)
   retval = c(udata->e, udata->vtemp, user_data);
   if (check_retval(&retval, "c(u)", 1)) { return 1; }
 
-  // b = Au_exact + c(u_xact)
+  // b = kx u_xx (u_exact) + ky u_yy (u_exact) + c(u_exact)
   N_VLinearSum(ONE, udata->vtemp, ONE, udata->b, udata->b);
 
   // Return success
@@ -696,743 +800,228 @@ static int c(N_Vector u, N_Vector z, void* user_data)
   return 0;
 }
 
-// Create PCG Linear solver
-static int SetupLS(N_Vector u, void* user_data, SUNContext sunctx)
-{
-  int retval;
-
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
-
-  int prectype = SUN_PREC_RIGHT;
-
-  // Create linear solver
-  udata->LS = SUNLinSol_PCG(u, prectype, udata->liniters, sunctx);
-  if (check_retval((void*)udata->LS, "SUNLinSol_PCG", 0)) { return 1; }
-
-  // Set ATimes
-  retval = SUNLinSolSetATimes(udata->LS, user_data, JTimes);
-  if (check_retval(&retval, "SUNLinSolSetATimes", 1)) { return 1; }
-
-  // Attach preconditioner
-  retval = SUNLinSolSetPreconditioner(udata->LS, user_data, PSetup, PSolve);
-  if (check_retval(&retval, "SUNLinSolSetPreconditioner", 1)) { return 1; }
-
-  // Initialize solver
-  retval = SUNLinSolInitialize(udata->LS);
-  if (check_retval(&retval, "SUNLinSolInitialize", 1)) { return 1; }
-
-  // Setup solver and preconditioner
-  retval = SUNLinSolSetup(udata->LS, NULL);
-  if (check_retval(&retval, "SUNLinSolSetup", 1)) { return 1; }
-
-  // Return success
-  return 0;
-}
-
-// Jacobian-vector product function
-static int JTimes(void* user_data, N_Vector v, N_Vector Jv)
+// Post exchange receives
+static int PostRecv(UserData* udata)
 {
   int retval;
 
   // Start timer
   double t1 = MPI_Wtime();
 
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
-
-  // Insert input N_Vector entries into HYPRE vector and assemble
-  retval = HYPRE_StructVectorSetBoxValues(udata->vvec, udata->ilower,
-                                          udata->iupper, N_VGetArrayPointer(v));
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->vvec);
-  if (retval != 0) { return -1; }
-
-  // Initialize output HYPRE vector and assemble
-  retval = HYPRE_StructVectorSetConstantValues(udata->Jvvec, ZERO);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->Jvvec);
-  if (retval != 0) { return -1; }
-
-  // Compute the matrix-vector product
-  retval = HYPRE_StructMatrixMatvec(ONE, udata->Jmatrix, udata->vvec, ZERO,
-                                    udata->Jvvec);
-  if (retval != 0) { return -1; }
-
-  // Extract matrix-vector product values
-  retval = HYPRE_StructVectorGetBoxValues(udata->Jvvec, udata->ilower,
-                                          udata->iupper, N_VGetArrayPointer(Jv));
-  if (retval != 0) { return -1; }
-
-  // Stop timer
-  double t2 = MPI_Wtime();
-
-  // Update timer
-  udata->jvtime += t2 - t1;
-
-  // Return success
-  return 0;
-}
-
-// Preconditioner setup routine
-static int PSetup(void* user_data)
-{
-  int retval;
-
-  // Start timer
-  double t1 = MPI_Wtime();
-
-  // Access problem data
-  UserData* udata = (UserData*)user_data;
-
-  // Assemble matrix
-  retval = HYPRE_StructMatrixAssemble(udata->Jmatrix);
-  if (retval != 0) { return -1; }
-
-  // -----------
-  // Setup PFMG
-  // -----------
-
-  // Set rhs/solution vectors as all zero for now
-  retval = HYPRE_StructVectorSetConstantValues(udata->bvec, ZERO);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->bvec);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorSetConstantValues(udata->xvec, ZERO);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->xvec);
-  if (retval != 0) { return -1; }
-
-  // Free the existing preconditioner if necessary
-  if (udata->precond) { HYPRE_StructPFMGDestroy(udata->precond); }
-
-  // Create the new preconditioner
-  retval = HYPRE_StructPFMGCreate(udata->comm_c, &(udata->precond));
-  if (retval != 0) { return -1; }
-
-  // Signal that the initial guess is zero
-  retval = HYPRE_StructPFMGSetZeroGuess(udata->precond);
-  if (retval != 0) { return -1; }
-
-  // tol <= 0.0 means do the max number of iterations
-  retval = HYPRE_StructPFMGSetTol(udata->precond, ZERO);
-  if (retval != 0) { return -1; }
-
-  // Use one v-cycle
-  retval = HYPRE_StructPFMGSetMaxIter(udata->precond, 1);
-  if (retval != 0) { return -1; }
-
-  // Use non-Galerkin corase grid operator
-  retval = HYPRE_StructPFMGSetRAPType(udata->precond, 1);
-  if (retval != 0) { return -1; }
-
-  // Set the relaxation type
-  retval = HYPRE_StructPFMGSetRelaxType(udata->precond, udata->pfmg_relax);
-  if (retval != 0) { return -1; }
-
-  // Set the number of pre and post relaxation sweeps
-  retval = HYPRE_StructPFMGSetNumPreRelax(udata->precond, udata->pfmg_nrelax);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructPFMGSetNumPostRelax(udata->precond, udata->pfmg_nrelax);
-  if (retval != 0) { return -1; }
-
-  // Set up the solver
-  retval = HYPRE_StructPFMGSetup(udata->precond, udata->Jmatrix, udata->bvec,
-                                 udata->xvec);
-  if (retval != 0) { return -1; }
-
-  // Stop timer
-  double t2 = MPI_Wtime();
-
-  // Update timer
-  udata->psetuptime += t2 - t1;
-
-  // Return success
-  return 0;
-}
-
-// Preconditioner solve routine for Pz = r
-static int PSolve(void* user_data, N_Vector r, N_Vector z, sunrealtype tol, int lr)
-{
-  int retval;
-
-  // Start timer
-  double t1 = MPI_Wtime();
-
-  // Access user_data structure
-  UserData* udata = (UserData*)user_data;
-
-  // Insert rhs N_Vector entries into HYPRE vector b and assemble
-  retval = HYPRE_StructVectorSetBoxValues(udata->bvec, udata->ilower,
-                                          udata->iupper, N_VGetArrayPointer(r));
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->bvec);
-  if (retval != 0) { return -1; }
-
-  // Set the initial guess into HYPRE vector x and assemble
-  retval = HYPRE_StructVectorSetConstantValues(udata->xvec, ZERO);
-  if (retval != 0) { return -1; }
-
-  retval = HYPRE_StructVectorAssemble(udata->xvec);
-  if (retval != 0) { return -1; }
-
-  // Solve the linear system
-  retval = HYPRE_StructPFMGSolve(udata->precond, udata->Jmatrix, udata->bvec,
-                                 udata->xvec);
-
-  // If a convergence error occurred, clear the error and continue. For any
-  // other error return with a recoverable error.
-  if (retval == HYPRE_ERROR_CONV) { HYPRE_ClearError(HYPRE_ERROR_CONV); }
-  else if (retval != 0) { return 1; }
-
-  // Update precond statistics
-  HYPRE_Int itmp;
-  retval = HYPRE_StructPFMGGetNumIterations(udata->precond, &itmp);
-  if (retval != 0) { return -1; }
-
-  udata->pfmg_its += itmp;
-
-  // Extract solution values
-  retval = HYPRE_StructVectorGetBoxValues(udata->xvec, udata->ilower,
-                                          udata->iupper, N_VGetArrayPointer(z));
-  if (retval != 0) { return -1; }
-
-  // Stop timer
-  double t2 = MPI_Wtime();
-
-  // Update timer
-  udata->psolvetime += t2 - t1;
-
-  // Return success
-  return 0;
-}
-
-// -----------------------------------------------------------------------------
-// Preconditioner helper functions
-// -----------------------------------------------------------------------------
-
-// Create hypre objects
-static int SetupHypre(UserData* udata)
-{
-  int retval, result;
-
-  // Check input
-  if (udata == NULL) { return -1; }
-
-  // Check if the grid or stencil have been created
-  if ((udata->grid != NULL || udata->stencil != NULL))
+  // Open Irecv buffers
+  if (udata->HaveNbrW)
   {
-    cerr << "SetupHypre error: grid or stencil already exists" << endl;
-    return -1;
-  }
-
-  // Check for valid 2D Cartesian MPI communicator
-  retval = MPI_Topo_test(udata->comm_c, &result);
-  if ((retval != MPI_SUCCESS) || (result != MPI_CART))
-  {
-    cerr << "SetupHypre error: communicator is not Cartesian" << endl;
-    return -1;
-  }
-
-  retval = MPI_Cartdim_get(udata->comm_c, &result);
-  if ((retval != MPI_SUCCESS) || (result != 2))
-  {
-    cerr << "SetupHypre error: communicator is not 2D" << endl;
-    return -1;
-  }
-
-  // -----
-  // Grid
-  // -----
-
-  // Create 2D grid object
-  retval = HYPRE_StructGridCreate(udata->comm_c, 2, &(udata->grid));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // Set grid extents (lower left and upper right corners)
-  udata->ilower[0] = udata->is;
-  udata->ilower[1] = udata->js;
-
-  udata->iupper[0] = udata->ie;
-  udata->iupper[1] = udata->je;
-
-  retval = HYPRE_StructGridSetExtents(udata->grid, udata->ilower, udata->iupper);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // Assemble the grid
-  retval = HYPRE_StructGridAssemble(udata->grid);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // --------
-  // Stencil
-  // --------
-
-  // Create the 2D 5 point stencil object
-  retval = HYPRE_StructStencilCreate(2, 5, &(udata->stencil));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // Set the stencil entries (center, left, right, bottom, top)
-  HYPRE_Int offsets[5][2] = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-  for (int entry = 0; entry < 5; entry++)
-  {
-    retval = HYPRE_StructStencilSetElement(udata->stencil, entry, offsets[entry]);
-    if (retval != 0)
+    retval = MPI_Irecv(udata->Wrecv, (int)udata->ny_loc, MPI_SUNREALTYPE,
+                       udata->ipW, MPI_ANY_TAG, udata->comm_c, &(udata->reqRW));
+    if (retval != MPI_SUCCESS)
     {
-      FreeUserData(udata);
+      cerr << "Error in MPI_Irecv = " << retval << endl;
       return -1;
     }
   }
 
-  // -----------
-  // Work array
-  // -----------
-
-  udata->nwork = 5 * udata->nodes_loc;
-  udata->work  = NULL;
-  udata->work  = new HYPRE_Real[udata->nwork];
-  if (udata->work == NULL)
+  if (udata->HaveNbrE)
   {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // ---------
-  // x vector
-  // ---------
-
-  retval = HYPRE_StructVectorCreate(udata->comm_c, udata->grid, &(udata->xvec));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructVectorInitialize(udata->xvec);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // ---------
-  // b vector
-  // ---------
-
-  retval = HYPRE_StructVectorCreate(udata->comm_c, udata->grid, &(udata->bvec));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructVectorInitialize(udata->bvec);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // ---------
-  // v vector
-  // ---------
-
-  retval = HYPRE_StructVectorCreate(udata->comm_c, udata->grid, &(udata->vvec));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructVectorInitialize(udata->vvec);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // ----------
-  // Jv vector
-  // ----------
-
-  retval = HYPRE_StructVectorCreate(udata->comm_c, udata->grid, &(udata->Jvvec));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructVectorInitialize(udata->Jvvec);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // ---------
-  // J matrix
-  // ---------
-
-  retval = HYPRE_StructMatrixCreate(udata->comm_c, udata->grid, udata->stencil,
-                                    &(udata->Jmatrix));
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructMatrixInitialize(udata->Jmatrix);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  // --------------------
-  // PFMG preconditioner
-  // --------------------
-
-  // Note a new PFMG preconditioner must be created and attached each time the
-  // linear system is updated. As such it is constructed in the preconditioner
-  // setup function (if enabled).
-  udata->precond = NULL;
-
-  // --------------
-  // Fill Jacobian
-  // --------------
-
-  retval = Jac(udata);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  retval = HYPRE_StructMatrixAssemble(udata->Jmatrix);
-  if (retval != 0)
-  {
-    FreeUserData(udata);
-    return -1;
-  }
-
-  return 0;
-}
-
-// Jac function to compute the ODE RHS function Jacobian, (df/dy)(t,y).
-static int Jac(UserData* udata)
-{
-  // Shortcuts to hypre matrix and grid extents, work array, etc.
-  HYPRE_StructMatrix Jmatrix = udata->Jmatrix;
-
-  HYPRE_Int ilower[2];
-  HYPRE_Int iupper[2];
-
-  ilower[0] = udata->ilower[0];
-  ilower[1] = udata->ilower[1];
-
-  iupper[0] = udata->iupper[0];
-  iupper[1] = udata->iupper[1];
-
-  HYPRE_Int nwork  = udata->nwork;
-  HYPRE_Real* work = udata->work;
-
-  sunindextype nx_loc = udata->nx_loc;
-  sunindextype ny_loc = udata->ny_loc;
-
-  // Matrix stencil: center, left, right, bottom, top
-  HYPRE_Int entries[5] = {0, 1, 2, 3, 4};
-  HYPRE_Int entry[1];
-
-  // Grid extents for setting boundary entries
-  HYPRE_Int bc_ilower[2];
-  HYPRE_Int bc_iupper[2];
-
-  // Loop counters
-  HYPRE_Int idx, ix, iy;
-
-  // hypre return retval
-  int retval;
-
-  // ----------
-  // Compute J
-  // ----------
-
-  // Start timer
-  double t1 = MPI_Wtime();
-
-  // Only do work if the box is non-zero in size
-  if ((ilower[0] <= iupper[0]) && (ilower[1] <= iupper[1]))
-  {
-    // Jacobian values
-    sunrealtype cx = udata->kx / (udata->dx * udata->dx);
-    sunrealtype cy = udata->ky / (udata->dy * udata->dy);
-    sunrealtype cc = -TWO * (cx + cy);
-
-    // --------------------------------
-    // Set matrix values for all nodes
-    // --------------------------------
-
-    // Set the matrix interior entries (center, left, right, bottom, top)
-    idx = 0;
-    for (iy = 0; iy < ny_loc; iy++)
+    retval = MPI_Irecv(udata->Erecv, (int)udata->ny_loc, MPI_SUNREALTYPE,
+                       udata->ipE, MPI_ANY_TAG, udata->comm_c, &(udata->reqRE));
+    if (retval != MPI_SUCCESS)
     {
-      for (ix = 0; ix < nx_loc; ix++)
-      {
-        work[idx]     = cc;
-        work[idx + 1] = cx;
-        work[idx + 2] = cx;
-        work[idx + 3] = cy;
-        work[idx + 4] = cy;
-        idx += 5;
-      }
-    }
-
-    // Modify the matrix
-    retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, ilower, iupper, 5, entries,
-                                            work);
-    if (retval != 0) { return -1; }
-
-    // ----------------------------------------
-    // Correct matrix values at boundary nodes
-    // ----------------------------------------
-
-    // Set the matrix boundary entries (center, left, right, bottom, top)
-    if (ilower[1] == 0 || iupper[1] == (udata->ny - 1) || ilower[0] == 0 ||
-        iupper[0] == (udata->nx - 1))
-    {
-      idx = 0;
-      for (iy = 0; iy < ny_loc; iy++)
-      {
-        for (ix = 0; ix < nx_loc; ix++)
-        {
-          work[idx]     = ONE;
-          work[idx + 1] = ZERO;
-          work[idx + 2] = ZERO;
-          work[idx + 3] = ZERO;
-          work[idx + 4] = ZERO;
-          idx += 5;
-        }
-      }
-    }
-
-    // Set cells on western boundary
-    if (ilower[0] == 0)
-    {
-      // Grid cell on south-west corner
-      bc_ilower[0] = ilower[0];
-      bc_ilower[1] = ilower[1];
-
-      // Grid cell on north-west corner
-      bc_iupper[0] = ilower[0];
-      bc_iupper[1] = iupper[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                5, entries, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Set cells on eastern boundary
-    if (iupper[0] == (udata->nx - 1))
-    {
-      // Grid cell on south-east corner
-      bc_ilower[0] = iupper[0];
-      bc_ilower[1] = ilower[1];
-
-      // Grid cell on north-east corner
-      bc_iupper[0] = iupper[0];
-      bc_iupper[1] = iupper[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                5, entries, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Correct cells on southern boundary
-    if (ilower[1] == 0)
-    {
-      // Grid cell on south-west corner
-      bc_ilower[0] = ilower[0];
-      bc_ilower[1] = ilower[1];
-
-      // Grid cell on south-east corner
-      bc_iupper[0] = iupper[0];
-      bc_iupper[1] = ilower[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                5, entries, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Set cells on northern boundary
-    if (iupper[1] == (udata->ny - 1))
-    {
-      // Grid cell on north-west corner
-      bc_ilower[0] = ilower[0];
-      bc_ilower[1] = iupper[1];
-
-      // Grid cell on north-east corner
-      bc_iupper[0] = iupper[0];
-      bc_iupper[1] = iupper[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                5, entries, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // -----------------------------------------------------------
-    // Remove connections between the interior and boundary nodes
-    // -----------------------------------------------------------
-
-    // Zero out work array
-    for (ix = 0; ix < nwork; ix++) { work[ix] = ZERO; }
-
-    // Second column of nodes (depends on western boundary)
-    if ((ilower[0] <= 1) && (iupper[0] >= 1))
-    {
-      // Remove western dependency
-      entry[0] = 1;
-
-      // Grid cell on south-west corner
-      bc_ilower[0] = 1;
-      bc_ilower[1] = ilower[1];
-
-      // Grid cell on north-west corner
-      bc_iupper[0] = 1;
-      bc_iupper[1] = iupper[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                1, entry, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Next to last column (depends on eastern boundary)
-    if ((ilower[0] <= (udata->nx - 2)) && (iupper[0] >= (udata->nx - 2)))
-    {
-      // Remove eastern dependency
-      entry[0] = 2;
-
-      // Grid cell on south-east corner
-      bc_ilower[0] = udata->nx - 2;
-      bc_ilower[1] = ilower[1];
-
-      // Grid cell on north-east corner
-      bc_iupper[0] = udata->nx - 2;
-      bc_iupper[1] = iupper[1];
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                1, entry, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Second row of nodes (depends on southern boundary)
-    if ((ilower[1] <= 1) && (iupper[1] >= 1))
-    {
-      // Remove southern dependency
-      entry[0] = 3;
-
-      // Grid cell on south-west corner
-      bc_ilower[0] = ilower[0];
-      bc_ilower[1] = 1;
-
-      // Grid cell on south-east corner
-      bc_iupper[0] = iupper[0];
-      bc_iupper[1] = 1;
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                1, entry, work);
-        if (retval != 0) { return -1; }
-      }
-    }
-
-    // Next to last row of nodes (depends on northern boundary)
-    if ((ilower[1] <= (udata->ny - 2)) && (iupper[1] >= (udata->ny - 2)))
-    {
-      // Remove northern dependency
-      entry[0] = 4;
-
-      // Grid cell on north-west corner
-      bc_ilower[0] = ilower[0];
-      bc_ilower[1] = udata->ny - 2;
-
-      // Grid cell on north-east corner
-      bc_iupper[0] = iupper[0];
-      bc_iupper[1] = udata->ny - 2;
-
-      // Only do work if the box is non-zero in size
-      if ((bc_ilower[0] <= bc_iupper[0]) && (bc_ilower[1] <= bc_iupper[1]))
-      {
-        // Modify the matrix
-        retval = HYPRE_StructMatrixSetBoxValues(Jmatrix, bc_ilower, bc_iupper,
-                                                1, entry, work);
-        if (retval != 0) { return -1; }
-      }
+      cerr << "Error in MPI_Irecv = " << retval << endl;
+      return -1;
     }
   }
 
-  // The matrix is assembled in hypre setup
+  if (udata->HaveNbrS)
+  {
+    retval = MPI_Irecv(udata->Srecv, (int)udata->nx_loc, MPI_SUNREALTYPE,
+                       udata->ipS, MPI_ANY_TAG, udata->comm_c, &(udata->reqRS));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Irecv = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrN)
+  {
+    retval = MPI_Irecv(udata->Nrecv, (int)udata->nx_loc, MPI_SUNREALTYPE,
+                       udata->ipN, MPI_ANY_TAG, udata->comm_c, &(udata->reqRN));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Irecv = " << retval << endl;
+      return -1;
+    }
+  }
 
   // Stop timer
   double t2 = MPI_Wtime();
 
   // Update timer
-  udata->matfilltime += t2 - t1;
+  udata->exchangetime += t2 - t1;
+
+  // Return success
+  return 0;
+}
+
+// Send exchange data
+static int SendData(N_Vector y, UserData* udata)
+{
+  int retval, i;
+  sunindextype ny_loc = udata->ny_loc;
+  sunindextype nx_loc = udata->nx_loc;
+
+  // Start timer
+  double t1 = MPI_Wtime();
+
+  // Access data array
+  sunrealtype* Y = N_VGetArrayPointer(y);
+  if (check_retval((void*)Y, "N_VGetArrayPointer", 0)) { return -1; }
+
+  // Send data
+  if (udata->HaveNbrW)
+  {
+    for (i = 0; i < ny_loc; i++) { udata->Wsend[i] = Y[IDX(0, i, nx_loc)]; }
+    retval = MPI_Isend(udata->Wsend, (int)udata->ny_loc, MPI_SUNREALTYPE,
+                       udata->ipW, 0, udata->comm_c, &(udata->reqSW));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Isend = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrE)
+  {
+    for (i = 0; i < ny_loc; i++)
+    {
+      udata->Esend[i] = Y[IDX(nx_loc - 1, i, nx_loc)];
+    }
+    retval = MPI_Isend(udata->Esend, (int)udata->ny_loc, MPI_SUNREALTYPE,
+                       udata->ipE, 1, udata->comm_c, &(udata->reqSE));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Isend = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrS)
+  {
+    for (i = 0; i < nx_loc; i++) { udata->Ssend[i] = Y[IDX(i, 0, nx_loc)]; }
+    retval = MPI_Isend(udata->Ssend, (int)udata->nx_loc, MPI_SUNREALTYPE,
+                       udata->ipS, 2, udata->comm_c, &(udata->reqSS));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Isend = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrN)
+  {
+    for (i = 0; i < nx_loc; i++)
+    {
+      udata->Nsend[i] = Y[IDX(i, ny_loc - 1, nx_loc)];
+    }
+    retval = MPI_Isend(udata->Nsend, (int)udata->nx_loc, MPI_SUNREALTYPE,
+                       udata->ipN, 3, udata->comm_c, &(udata->reqSN));
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Isend = " << retval << endl;
+      return -1;
+    }
+  }
+
+  // Stop timer
+  double t2 = MPI_Wtime();
+
+  // Update timer
+  udata->exchangetime += t2 - t1;
+
+  // Return success
+  return 0;
+}
+
+// Wait for exchange data
+static int WaitRecv(UserData* udata)
+{
+  // Local variables
+  int retval;
+  MPI_Status stat;
+
+  // Start timer
+  double t1 = MPI_Wtime();
+
+  // Wait for messages to finish
+  if (udata->HaveNbrW)
+  {
+    retval = MPI_Wait(&(udata->reqRW), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+    retval = MPI_Wait(&(udata->reqSW), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrE)
+  {
+    retval = MPI_Wait(&(udata->reqRE), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+    retval = MPI_Wait(&(udata->reqSE), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrS)
+  {
+    retval = MPI_Wait(&(udata->reqRS), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+    retval = MPI_Wait(&(udata->reqSS), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+  }
+
+  if (udata->HaveNbrN)
+  {
+    retval = MPI_Wait(&(udata->reqRN), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+    retval = MPI_Wait(&(udata->reqSN), &stat);
+    if (retval != MPI_SUCCESS)
+    {
+      cerr << "Error in MPI_Wait = " << retval << endl;
+      return -1;
+    }
+  }
+
+  // Stop timer
+  double t2 = MPI_Wtime();
+
+  // Update timer
+  udata->exchangetime += t2 - t1;
 
   // Return success
   return 0;
@@ -1454,8 +1043,8 @@ static int InitUserData(UserData* udata)
   udata->yu = ONE;
 
   // Global number of nodes in the x and y directions
-  udata->nx    = 64;
-  udata->ny    = 64;
+  udata->nx    = 35;
+  udata->ny    = 35;
   udata->nodes = udata->nx * udata->ny;
 
   // Mesh spacing in the x and y directions
@@ -1506,19 +1095,12 @@ static int InitUserData(UserData* udata)
   udata->ipS = -1;
   udata->ipN = -1;
 
-  // Fixed Point Solver settings
+  // Integrator settings
   udata->rtol    = SUN_RCONST(1.e-8); // relative tolerance
-  udata->maa     = 0;                 // no Anderson Acceleration
-  udata->damping = ONE;               // no damping for Anderson Acceleration
-  udata->orthaa  = 0;                 // use MGS for Anderson Acceleration
-  udata->maxits  = 100;               // max number of fixed point iterations
-
-  // Linear solver and preconditioner options
-  udata->liniters = 20;                // max linear iterations
-  udata->epslin   = SUN_RCONST(1.e-8); // use default (0.05)
-
-  // Linear solver object
-  udata->LS = NULL;
+  udata->maa     = 60;  // 60 vectors in Anderson Acceleration space
+  udata->damping = ONE; // no damping for Anderson Acceleration
+  udata->orthaa  = 0;   // use MGS for Anderson Acceleration
+  udata->maxits  = 200; // max number of fixed point iterations
 
   // c function
   udata->c     = NULL;
@@ -1528,46 +1110,15 @@ static int InitUserData(UserData* udata)
   udata->b     = NULL;
   udata->vtemp = NULL;
 
-  // hypre objects
-  udata->grid    = NULL;
-  udata->stencil = NULL;
-  udata->Jmatrix = NULL;
-  udata->bvec    = NULL;
-  udata->xvec    = NULL;
-  udata->vvec    = NULL;
-  udata->Jvvec   = NULL;
-  udata->precond = NULL;
-
-  // hypre grid extents
-  udata->ilower[0] = 0;
-  udata->ilower[1] = 0;
-
-  udata->iupper[0] = 0;
-  udata->iupper[1] = 0;
-
-  // hypre workspace
-  udata->nwork = 0;
-  udata->work  = NULL;
-
-  // hypre counters
-  udata->pfmg_its = 0;
-
-  // hypre PFMG settings
-  udata->pfmg_relax  = 2;
-  udata->pfmg_nrelax = 2;
-
   // Output variables
   udata->output = 1; // 0 = no output, 1 = stats output, 2 = output to disk
   udata->e      = NULL;
 
   // Timing variables
-  udata->timing      = false;
-  udata->totaltime   = 0.0;
-  udata->fevaltime   = 0.0;
-  udata->matfilltime = 0.0;
-  udata->jvtime      = 0.0;
-  udata->psetuptime  = 0.0;
-  udata->psolvetime  = 0.0;
+  udata->timing       = false;
+  udata->totaltime    = 0.0;
+  udata->fevaltime    = 0.0;
+  udata->exchangetime = 0.0;
 
   // Return success
   return 0;
@@ -1586,8 +1137,8 @@ static int FreeUserData(UserData* udata)
   if (udata->Nrecv != NULL) { delete[] udata->Nrecv; }
   if (udata->Nsend != NULL) { delete[] udata->Nsend; }
 
-  // Free Linear solver
-  if (udata->LS != NULL) { SUNLinSolFree_PCG(udata->LS); }
+  // Free MPI Cartesian communicator
+  if (udata->comm_c != MPI_COMM_NULL) { MPI_Comm_free(&(udata->comm_c)); }
 
   // Free b vector
   if (udata->b)
@@ -1602,20 +1153,6 @@ static int FreeUserData(UserData* udata)
     N_VDestroy(udata->vtemp);
     udata->vtemp = NULL;
   }
-
-  // Free hypre preconditioner data
-  if (udata->grid != NULL) { HYPRE_StructGridDestroy(udata->grid); }
-  if (udata->stencil != NULL) { HYPRE_StructStencilDestroy(udata->stencil); }
-  if (udata->Jmatrix != NULL) { HYPRE_StructMatrixDestroy(udata->Jmatrix); }
-  if (udata->bvec != NULL) { HYPRE_StructVectorDestroy(udata->bvec); }
-  if (udata->xvec != NULL) { HYPRE_StructVectorDestroy(udata->xvec); }
-  if (udata->vvec != NULL) { HYPRE_StructVectorDestroy(udata->vvec); }
-  if (udata->Jvvec != NULL) { HYPRE_StructVectorDestroy(udata->Jvvec); }
-  if (udata->precond != NULL) { HYPRE_StructPFMGDestroy(udata->precond); }
-  if (udata->work != NULL) { delete[] udata->work; }
-
-  // Free MPI Cartesian communicator
-  if (udata->comm_c != MPI_COMM_NULL) { MPI_Comm_free(&(udata->comm_c)); }
 
   // Free error vector
   if (udata->e)
@@ -1662,7 +1199,7 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata, bool outproc)
       udata->kx = stod((*argv)[arg_idx++]);
       udata->ky = stod((*argv)[arg_idx++]);
     }
-    // Solver settings
+    // Fixed Point settings
     else if (arg == "--rtol") { udata->rtol = stod((*argv)[arg_idx++]); }
     else if (arg == "--maa") { udata->maa = stoi((*argv)[arg_idx++]); }
     else if (arg == "--damping") { udata->damping = stod((*argv)[arg_idx++]); }
@@ -1670,21 +1207,6 @@ static int ReadInputs(int* argc, char*** argv, UserData* udata, bool outproc)
     else if (arg == "--maxits") { udata->maxits = stoi((*argv)[arg_idx++]); }
     // RHS settings
     else if (arg == "--c") { udata->c_int = stoi((*argv)[arg_idx++]); }
-    // Linear solver settings
-    else if (arg == "--liniters")
-    {
-      udata->liniters = stoi((*argv)[arg_idx++]);
-    }
-    else if (arg == "--epslin") { udata->epslin = stod((*argv)[arg_idx++]); }
-    // PFMG settings
-    else if (arg == "--pfmg_relax")
-    {
-      udata->pfmg_relax = stoi((*argv)[arg_idx++]);
-    }
-    else if (arg == "--pfmg_nrelax")
-    {
-      udata->pfmg_nrelax = stoi((*argv)[arg_idx++]);
-    }
     // Output settings
     else if (arg == "--output") { udata->output = stoi((*argv)[arg_idx++]); }
     else if (arg == "--timing") { udata->timing = true; }
@@ -1738,7 +1260,7 @@ static int Solution(N_Vector u, UserData* udata)
   sunindextype jend   = (udata->HaveNbrN) ? udata->ny_loc : udata->ny_loc - 1;
 
   sunrealtype* uarray = N_VGetArrayPointer(u);
-  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return 1; }
+  if (check_retval((void*)uarray, "N_VGetArrayPointer", 0)) { return -1; }
 
   for (sunindextype j = jstart; j < jend; j++)
   {
@@ -1760,7 +1282,7 @@ static int Solution(N_Vector u, UserData* udata)
 // Compute the solution error
 static int SolutionError(N_Vector u, N_Vector e, UserData* udata)
 {
-  // Compute true solution
+  // Check absolute error between output u and G(u)
   int retval = Solution(e, udata);
   if (retval != 0) { return -1; }
 
@@ -1786,22 +1308,16 @@ static void InputHelp()
     << endl;
   cout << "  --k <kx> <ky>           : diffusion coefficients" << endl;
   cout << "  --rtol <rtol>           : relative tolerance" << endl;
-  cout << "  --maa <maa>             : number of previous residuals for "
+  cout << "  --maa                   : size of Anderson Acceleration subspace"
+       << endl;
+  cout << "  --damping               : damping for Anderson Acceleration" << endl;
+  cout << "  --orthaa                : orthogonalization routined used in "
           "Anderson Acceleration"
        << endl;
-  cout << "  --damping <damping>     : damping for Anderson Acceleration "
-       << endl;
-  cout << "  --orthaa <orthaa>       : orthogonalization routine used in "
-          "Anderson Acceleration "
-       << endl;
-  cout << "  --c <c_int>             : nonlinear function parameter" << endl;
-  cout << "  --liniters <iters>      : max number of iterations" << endl;
-  cout << "  --epslin <factor>       : linear tolerance factor" << endl;
-  cout << "  --pfmg_relax <types>    : relaxtion type in PFMG" << endl;
-  cout << "  --pfmg_nrelax <iters>   : pre/post relaxtion sweeps in PFMG" << endl;
+  cout << "  --maxits <iterations>   : max fixed point iterations" << endl;
+  cout << "  --c <c_int>             : nonlinear function choice" << endl;
   cout << "  --output                : output nonlinear solver statistics"
        << endl;
-  cout << "  --maxits <maxits>       : max fixed point iterations" << endl;
   cout << "  --timing                : print timing data" << endl;
   cout << "  --help                  : print this message and exit" << endl;
 }
@@ -1810,7 +1326,7 @@ static void InputHelp()
 static int PrintUserData(UserData* udata)
 {
   cout << endl;
-  cout << "2D Stationary Heat PDE + Nonlinear term test problem:" << endl;
+  cout << "Stationary 2D Heat PDE with Nonlinear Terms:" << endl;
   cout << " --------------------------------- " << endl;
   cout << "  nprocs         = " << udata->nprocs_w << endl;
   cout << "  npx            = " << udata->npx << endl;
@@ -1835,12 +1351,6 @@ static int PrintUserData(UserData* udata)
   cout << " --------------------------------- " << endl;
   cout << "  c              = " << udata->c_int << endl;
   cout << " --------------------------------- " << endl;
-  cout << "  linear solver  = PCG" << endl;
-  cout << "  lin iters      = " << udata->liniters << endl;
-  cout << "  eps lin        = " << udata->epslin << endl;
-  cout << "  pfmg_relax     = " << udata->pfmg_relax << endl;
-  cout << "  pfmg_nrelax    = " << udata->pfmg_nrelax << endl;
-  cout << " --------------------------------- " << endl;
   cout << "  output         = " << udata->output << endl;
   cout << " --------------------------------- " << endl;
   cout << endl;
@@ -1856,11 +1366,10 @@ static int OutputStats(void* kinsol_mem, UserData* udata)
   // Get solver stats
   long int nfe, nni;
   retval = KINGetNumNonlinSolvIters(kinsol_mem, &nni);
-  if (check_retval(&retval, "KinGetNumNonLinSolvIters", 1)) { return 1; }
+  if (check_retval(&retval, "KINGetNumNonlinSolvIters", 1)) { return (1); }
   retval = KINGetNumFuncEvals(kinsol_mem, &nfe);
-  if (check_retval(&retval, "KinGetNumFuncEvals", 1)) { return 1; }
+  if (check_retval(&retval, "KINGetNumFuncEvals", 1)) { return (1); }
 
-  cout << fixed;
   cout << setprecision(6);
 
   cout << "  Func evals       = " << nfe << endl;
@@ -1884,36 +1393,30 @@ static int OutputTiming(UserData* udata)
 
   MPI_Reduce(&(udata->totaltime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
              udata->comm_c);
-  if (outproc) { cout << "  Total time    = " << maxtime << " sec" << endl; }
+  if (outproc)
+  {
+    cout << "  Total time                = " << maxtime << " sec" << endl;
+  }
 
   MPI_Reduce(&(udata->fevaltime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
              udata->comm_c);
-  if (outproc) { cout << "  G(u) eval time = " << maxtime << " sec" << endl; }
+  if (outproc)
+  {
+    cout << "  Function evaluation time  = " << maxtime << " sec" << endl;
+  }
 
-  MPI_Reduce(&(udata->jvtime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
-             udata->comm_c);
-  if (outproc) { cout << "  Jv time       = " << maxtime << " sec" << endl; }
-
-  MPI_Reduce(&(udata->matfilltime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
-             udata->comm_c);
-  if (outproc) { cout << "  MatFill time  = " << maxtime << " sec" << endl; }
-
-  MPI_Reduce(&(udata->psetuptime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
-             udata->comm_c);
-  if (outproc) { cout << "  PSetup time   = " << maxtime << " sec" << endl; }
-
-  MPI_Reduce(&(udata->psolvetime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
+  MPI_Reduce(&(udata->exchangetime), &maxtime, 1, MPI_DOUBLE, MPI_MAX, 0,
              udata->comm_c);
   if (outproc)
   {
-    cout << "  PSolve time   = " << maxtime << " sec" << endl;
+    cout << "  Boundary exchange time    = " << maxtime << " sec" << endl;
     cout << endl;
   }
 
   return 0;
 }
 
-//Write solution to file to be plotted
+// Write solution to a file
 static int WriteSolution(N_Vector u, UserData* udata)
 {
   // Output problem information and open output streams
@@ -1963,6 +1466,7 @@ static int WriteSolution(N_Vector u, UserData* udata)
   return 0;
 }
 
+// Open residual and error output
 static int OpenOutput(UserData* udata)
 {
   bool outproc = (udata->myid_c == 0);
@@ -1993,6 +1497,7 @@ static int OpenOutput(UserData* udata)
   return 0;
 }
 
+// Write residual and error out to file
 static int WriteOutput(N_Vector u, N_Vector f, UserData* udata)
 {
   int retval;
@@ -2017,9 +1522,11 @@ static int WriteOutput(N_Vector u, N_Vector f, UserData* udata)
     udata->eout << sqrt(err);
     udata->eout << endl;
   }
+
   return 0;
 }
 
+// Close residual and error output files
 static int CloseOutput(UserData* udata)
 {
   bool outproc = (udata->myid_c == 0);

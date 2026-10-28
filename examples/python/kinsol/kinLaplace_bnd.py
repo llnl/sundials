@@ -16,7 +16,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # This is a direct port of the C example,
-#   examples/kinsol/kin_laplace/c/kinLaplace_bnd.c
+#   examples/kinsol/kin_laplace/c/kin_laplace_bnd.c
 #
 # This example solves a 2D elliptic PDE
 #

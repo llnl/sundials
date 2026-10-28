@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
  * Programmer(s): Ting Yan @ UMBC
- *      Based on kinFoodWeb_kry.c and parallelized with OpenMP
+ *      Based on kin_food_web_kry.c and parallelized with OpenMP
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
@@ -79,9 +79,9 @@
  *
  * If the user wants to use the default value or the number of
  * threads set by the environment variable use
- *      % ./kinFoodWeb_kry_omp
+ *      % ./kin_food_web_kry_omp
  * If the user wants to specify the number of threads to use
- *      % ./kinFoodWeb_kry_omp num_threads
+ *      % ./kin_food_web_kry_omp num_threads
  * where num_threads is the number of threads the user wants to use
  *
  * -----------------------------------------------------------------

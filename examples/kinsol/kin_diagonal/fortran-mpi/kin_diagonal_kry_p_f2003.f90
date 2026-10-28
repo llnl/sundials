@@ -301,7 +301,7 @@ program main
   ! Print problem description
 
   if (outproc) then
-    print '(a)', "Example program kinDiagon_kry_f2003:"
+    print '(a)', "Example program kin_diagonal_kry_p_f2003:"
     print '(a)', ""
     print '(a)', "This example demonstrates using the KINSOL Fortran interface to"
     print '(a)', "solve a diagonal algebraic system using a Newton-Krylov method"

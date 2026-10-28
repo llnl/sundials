@@ -13,13 +13,13 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kinRoberts_fp kinRoberts_fp.c
-  INSTALL_FILES kinRoberts_fp_kinsol.m_aa_1.out
+  kin_roberts_fp kin_roberts_fp.c
+  INSTALL_FILES kin_roberts_fp_kinsol.m_aa_1.out
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  kinRoberts_fp_kinsol.m_aa_1 kinRoberts_fp
+  kin_roberts_fp_kinsol.m_aa_1 kin_roberts_fp
   TEST_ARGS kinsol.m_aa 1
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE kinRoberts_fp_kinsol.m_aa_1.out
+  ANSWER_FILE kin_roberts_fp_kinsol.m_aa_1.out
   EXAMPLE_TYPE develop)

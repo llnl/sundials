@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example kinFoodWeb_kry_bbd_p kinFoodWeb_kry_p)
+foreach(example kin_food_web_kry_bbd_p kin_food_web_kry_p)
   sundials_add_example(
     ${example} ${example}.c
     MPI_NPROCS 4

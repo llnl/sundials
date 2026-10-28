@@ -13,12 +13,12 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_heat2D_nonlin_p kin_heat2D_nonlin_p.cpp
-  TEST_NAME kin_heat2D_nonlin_p_--np_2_2
+  kin_heat_2d_nonlin_p kin_heat_2d_nonlin_p.cpp
+  TEST_NAME kin_heat_2d_nonlin_p_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES kin_heat2D_nonlin_p.hpp
+  INSTALL_FILES kin_heat_2d_nonlin_p.hpp
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecparallel
                  sundials_nvecmpiplusx sundials_nvecserial MPI::MPI_CXX
                  ${EXE_EXTRA_LINK_LIBS})
