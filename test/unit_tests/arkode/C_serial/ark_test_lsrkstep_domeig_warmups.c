@@ -15,9 +15,10 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------
  * Unit test for the number of preprocessing iterations (warmups) LSRKStep
- * applies to an attached SUNDomEigEstimator: the initial count is used only for
- * the first estimate, even if LSRKStepSetNumDomEigEstPreprocessIters is called
- * before it, and the setter takes effect when called during the integration.
+ * applies to an attached SUNDomEigEstimator: the initial count should be used
+ * only for the first estimate, whereas the value sent to
+ * LSRKStepSetNumDomEigEstPreprocessIters should be used for all subsequent
+ * estimates.
  * ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -117,15 +118,40 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  /* The complex-eigenvalue path may add an ATimes call, so request a real one */
-  if (LSRKStepSetDomEigEstimator(arkode_mem, DEE) ||
-      SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE) ||
-      LSRKStepSetNumDomEigEstInitPreprocessIters(arkode_mem, INIT_WARMUPS) ||
-      LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem, STEADY_WARMUPS) ||
-      LSRKStepSetDomEigFrequency(arkode_mem, 1) ||
-      ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01)))
+  if (LSRKStepSetDomEigEstimator(arkode_mem, DEE))
   {
-    fprintf(stderr, "Setting LSRKStep options failed\n");
+    fprintf(stderr, "LSRKStepSetDomEigEstimator failed\n");
+    return 1;
+  }
+
+  /* The complex-eigenvalue path may add an ATimes call, so request a real one */
+  if (SUNDomEigEstimator_SetIsReal_Power(DEE, SUNTRUE))
+  {
+    fprintf(stderr, "SUNDomEigEstimator_SetIsReal_Power failed\n");
+    return 1;
+  }
+
+  if (LSRKStepSetNumDomEigEstInitPreprocessIters(arkode_mem, INIT_WARMUPS))
+  {
+    fprintf(stderr, "LSRKStepSetNumDomEigEstInitPreprocessIters failed\n");
+    return 1;
+  }
+
+  if (LSRKStepSetNumDomEigEstPreprocessIters(arkode_mem, STEADY_WARMUPS))
+  {
+    fprintf(stderr, "LSRKStepSetNumDomEigEstPreprocessIters failed\n");
+    return 1;
+  }
+
+  if (LSRKStepSetDomEigFrequency(arkode_mem, 1))
+  {
+    fprintf(stderr, "LSRKStepSetDomEigFrequency failed\n");
+    return 1;
+  }
+
+  if (ARKodeSetFixedStep(arkode_mem, SUN_RCONST(0.01)))
+  {
+    fprintf(stderr, "ARKodeSetFixedStep failed\n");
     return 1;
   }
 

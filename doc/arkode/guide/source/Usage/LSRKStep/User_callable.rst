@@ -401,14 +401,6 @@ Allowable Method Families
 
    .. versionadded:: 7.5.0 (ARKODE 6.5.0)
 
-   .. versionchanged:: 8.0.0 (ARKODE 7.0.0)
-
-      Calling this function after the first dominant eigenvalue estimate now
-      applies the requested number of iterations to the attached
-      ``SUNDomEigEstimator`` for the following estimates. Previously, the
-      number of iterations set with
-      :c:func:`LSRKStepSetNumDomEigEstInitPreprocessIters` was applied instead.
-
    .. note::
 
       If LSRKStepSetNumDomEigEstPreprocessIters routine is not called, then the
