@@ -15,7 +15,7 @@
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c-mpi)
+    add_subdirectory(c_mpi)
   endif()
 endif()
 
