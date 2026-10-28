@@ -107,6 +107,9 @@
 /* Enable error checking within SUNDIALS */
 #cmakedefine SUNDIALS_ENABLE_ERROR_CHECKS
 
+/* BUILD SUNDIALS with Thrust based N_Vector reductions */
+#cmakedefine SUNDIALS_ENABLE_THRUST_REDUCTIONS
+
 /* BUILD SUNDIALS with logging functionalities */
 #define SUNDIALS_LOGGING_LEVEL @SUNDIALS_LOGGING_LEVEL@
 

@@ -9,6 +9,12 @@
 Added the utility function, `SUNFileFlush` for flushing file pointers. This is
 useful when using the Fortran 2003 interfaces.
 
+Added optional Thrust based reduction implementations to the HIP `N_Vector`.
+These are enabled by setting the new CMake option
+`SUNDIALS_ENABLE_THRUST_REDUCTIONS` to `ON`, which requires building with C++17
+or later, and are used by selecting the new `SUNHipThrustExecPolicy` reduction
+execution policy.
+
 Updated `ARKodeGetReturnFlagName`, `CVodeGetReturnFlagName`,
 `CVDiagGetReturnFlagName`, `IDAGetReturnFlagName`, and `KINGetReturnFlagName` to
 return `const char*` rather than `char*`. The returned string should no
