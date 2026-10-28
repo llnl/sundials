@@ -196,11 +196,17 @@ instead of supplying a dummy routine.
    matrix-vector products, as well as a ``void*`` pointer to a data structure
    used by this routine, to the dominant eigenvalue estimator.
 
+   For the SUNDIALS-provided estimators, passing ``NULL`` for ``ATimes`` reverts
+   to the internal difference quotient approximation of the Jacobian-vector
+   product, which requires a right-hand side function to be supplied through
+   :c:func:`SUNDomEigEstimator_SetRhs`.
+
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
       * *A_data* -- pointer to structure for ``ATimes``.
-      * *ATimes* -- function pointer to perform :math:`Av` product.
+      * *ATimes* -- function pointer to perform :math:`Av` product, or ``NULL``
+        to use the internal difference quotient approximation.
 
    **Return value:**
 
@@ -220,6 +226,12 @@ instead of supplying a dummy routine.
 
    The linearization point :math:`(t,y)` should be separately supplied by calling :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`.
 
+   If a :c:type:`SUNATimesFn` has already been supplied through :c:func:`SUNDomEigEstimator_SetATimes`,
+   the SUNDIALS-provided estimators retain that function and only store ``RHSfn``; otherwise, this
+   routine installs the internal difference quotient approximation as the estimator's ``ATimes`` routine.
+   This allows a user-supplied ``ATimes`` to be preserved when a SUNDIALS package calls this routine
+   (e.g., before each estimate in LSRKStep).
+
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
@@ -231,20 +243,50 @@ instead of supplying a dummy routine.
       A :c:type:`SUNErrCode`.
 
 
-.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y)
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetPreRhsFn(SUNDomEigEstimator DEE, void* prerhs_fn_data, SUNPreRhsFn prerhs_fn)
+
+   This *optional* function provides a :c:type:`SUNPreRhsFn` function for performing
+   preprocessing of the right-hand side function, as well as a ``void*`` pointer to a data structure
+   used by this routine, to the dominant eigenvalue estimator.  This *advanced* feature is similar to
+   the ARKODE routine :c:func:`ARKodeSetPreRhsFn` -- we recommend that users read the warnings for
+   that function before using this optional routine.
+
+   **Arguments:**
+
+      * *DEE* -- a SUNDomEigEstimator object.
+      * *prerhs_fn_data* -- pointer to the data structure to be passed back to ``prerhs_fn``.
+      * *prerhs_fn* -- function pointer to perform preprocessing of the right-hand side evaluations.
+
+   **Return value:**
+
+      A :c:type:`SUNErrCode`.
+
+   .. versionadded:: x.y.z
+
+
+.. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y, N_Vector Fy)
 
    This *optional* function sets the linearization point for the right-hand side function when using
-   :c:func:`SUNDomEigEstimator_SetRhs`.
+   :c:func:`SUNDomEigEstimator_SetRhs`.  Optionally, the value of the right-hand side function at the
+   linearization point, :math:`f_{RHS}(t,y)`, may be supplied as well.  When this is supplied, the *DEE*
+   module will use the provided vector instead of re-evaluating the right-hand side function at the
+   linearization point.
 
    **Arguments:**
 
       * *DEE* -- a SUNDomEigEstimator object.
       * *t* -- the time at which the linearization point is specified.
       * *y* -- the linearization point for the right-hand side function.
+      * *Fy* -- the value of the right-hand side function at the linearization point.  If this is
+        ``NULL``, the right-hand side function will be evaluated internally at the linearization point.
 
    **Return value:**
 
       A :c:type:`SUNErrCode`.
+
+   .. versionchanged:: x.y.z
+
+      Added the *Fy* argument.
 
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters(SUNDomEigEstimator DEE, int num_iters)
@@ -475,6 +517,16 @@ provide either a :c:type:`SUNATimesFn` or a :c:type:`SUNRhsFn`, as described bel
    to do its job. The time parameter :math:`t` and the vector :math:`y` should be left
    unchanged.
 
+.. c:type:: int (*SUNPreRhsFn)(sunrealtype t, N_Vector y, void* prerhs_fn_data)
+
+   Used to perform any preprocessing of the right-hand side function before
+   performing a Jacobian-vector product using difference quotient approximations.
+   The parameter *prerhs_fn_data* is a pointer to any problem-defining information
+   that this function needs in order to do its job. Both the time parameter
+   :math:`t` and the vector :math:`y` inputs should be left unchanged.
+
+   .. versionadded:: x.y.z
+
 
 .. _SUNDomEigEst.Generic:
 
@@ -520,7 +572,11 @@ The virtual table structure is defined as
 
       The function implementing :c:func:`SUNDomEigEstimator_SetRhs`
 
-   .. c:member:: SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype, N_Vector)
+   .. c:member:: SUNErrCode (*setprerhs)(SUNDomEigEstimator, void*, SUNPreRhsFn)
+
+      The function implementing :c:func:`SUNDomEigEstimator_SetPreRhsFn`
+
+   .. c:member:: SUNErrCode (*setrhslinearizationpoint)(SUNDomEigEstimator, sunrealtype, N_Vector, N_Vector)
 
       The function implementing :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`
 
@@ -636,6 +692,8 @@ implementation detail for the interested reader.
    +-----------------------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_SetRhs`                             |          @          |          @          |
    +-----------------------------------------------------------------+---------------------+---------------------+
+   | :c:func:`SUNDomEigEstimator_SetPreRhsFn`                        |          O          |          O          |
+   +-----------------------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint`\ :sup:`1` |          O          |          O          |
    +-----------------------------------------------------------------+---------------------+---------------------+
    | :c:func:`SUNDomEigEstimator_SetOptions`                         |          O          |          O          |
@@ -667,8 +725,11 @@ implementation detail for the interested reader.
 
 Notes:
 
-1. :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint` is required if 
-   :c:func:`SUNDomEigEstimator_SetRhs` is used.
+1. :c:func:`SUNDomEigEstimator_SetRhsLinearizationPoint` is required if
+   :c:func:`SUNDomEigEstimator_SetRhs` is used.  Supplying the value of the
+   right-hand side function at the linearization point through its ``Fy``
+   argument is optional; if it is ``NULL`` the right-hand side function is
+   evaluated internally at the linearization point.
 
 2. :c:func:`SUNDomEigEstimator_SetMaxIters` and
    :c:func:`SUNDomEigEstimator_SetRelTol` might or might not be required

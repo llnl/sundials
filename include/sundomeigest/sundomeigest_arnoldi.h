@@ -49,6 +49,7 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   int num_warmups;              /* Number of preprocessing iterations */
   long int num_iters;           /* Number of iterations in last Estimate call */
   sunbooleantype warmup_to_tol; /* Whether to use warmup iterations */
+  sunbooleantype Fy_is_current; /* Flag to track if Fy is current */
   sunrealtype tol_warmup;       /* Tolerance for warmup iterations */
   sunrealtype rhs_linT;         /* Time value for linearization point */
 
@@ -57,6 +58,9 @@ struct SUNDomEigEstimatorContent_Arnoldi_
   SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */
+
+  SUNPreRhsFn prerhs_fn; /* User provided Preprocess RHS function */
+  void* prerhs_fn_data;  /* Data to be passed back to prerhs_fn */
 
   sunrealtype* LAPACK_A; /* The vector which holds rows of the Hessenberg matrix in the given order */
   sunrealtype* LAPACK_wr;    /* Real parts of eigenvalues */
@@ -87,8 +91,13 @@ SUNErrCode SUNDomEigEstimator_SetRhs_Arnoldi(SUNDomEigEstimator DEE,
                                              void* rhs_data, SUNRhsFn RHSfn);
 
 SUNDIALS_EXPORT
+SUNErrCode SUNDomEigEstimator_SetPreRhsFn_Arnoldi(SUNDomEigEstimator DEE,
+                                                  void* prerhs_fn_data,
+                                                  SUNPreRhsFn prerhs_fn);
+
+SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint_Arnoldi(
-  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v);
+  SUNDomEigEstimator DEE, sunrealtype t, N_Vector v, N_Vector Fv);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNDomEigEstimator_SetNumPreprocessIters_Arnoldi(SUNDomEigEstimator DEE,
