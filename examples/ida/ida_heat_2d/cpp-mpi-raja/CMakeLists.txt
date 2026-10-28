@@ -20,10 +20,10 @@ endif()
 if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
   set(_other_libs OpenMP::OpenMP_CXX)
 endif()
-set_source_files_properties(idaHeat2D_kry_p_mpiraja.cpp PROPERTIES LANGUAGE
+set_source_files_properties(ida_heat_2d_kry_p_mpiraja.cpp PROPERTIES LANGUAGE
                                                                     ${_lang})
 sundials_add_example(
-  idaHeat2D_kry_p_mpiraja idaHeat2D_kry_p_mpiraja.cpp
+  ida_heat_2d_kry_p_mpiraja ida_heat_2d_kry_p_mpiraja.cpp
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
   INCLUDE_DIRECTORIES PRIVATE ${MPI_CXX_INCLUDE_DIRS}

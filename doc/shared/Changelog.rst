@@ -4009,7 +4009,7 @@ Changed each the return type of ``*FreeB`` functions to ``int`` and added
 
 Corrections were made to three Fortran interface functions.
 
-Corrected the output from the ``idaFoodWeb_bnd.c`` example, the wrong component
+Corrected the output from the ``ida_food_web_bnd.c`` example, the wrong component
 was printed in ``PrintOutput``.
 
 *IDAS*

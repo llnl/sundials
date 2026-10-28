@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idaAnalytic_mels idaAnalytic_mels.c
+  ida_analytic_mels ida_analytic_mels.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES idaAnalytic_mels_ida.scalar_tolerances_1e-3_1e-8.out
+  INSTALL_FILES ida_analytic_mels_ida.scalar_tolerances_1e-3_1e-8.out
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
-  idaAnalytic_mels_ida.scalar_tolerances_1e-3_1e-8 idaAnalytic_mels
+  ida_analytic_mels_ida.scalar_tolerances_1e-3_1e-8 ida_analytic_mels
   TEST_ARGS ida.scalar_tolerances 1e-3 1e-8
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE idaAnalytic_mels_ida.scalar_tolerances_1e-3_1e-8.out
+  ANSWER_FILE ida_analytic_mels_ida.scalar_tolerances_1e-3_1e-8.out
   EXAMPLE_TYPE exclude-single)

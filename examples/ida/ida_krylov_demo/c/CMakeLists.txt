@@ -13,16 +13,16 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idaKrylovDemo_ls idaKrylovDemo_ls.c
+  ida_krylov_demo_ls ida_krylov_demo_ls.c
   EXAMPLE_TYPE develop
-  INSTALL_FILES idaKrylovDemo_ls_1.out idaKrylovDemo_ls_2.out
+  INSTALL_FILES ida_krylov_demo_ls_1.out ida_krylov_demo_ls_2.out
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 foreach(test_arg 1 2)
   sundials_add_test(
-    idaKrylovDemo_ls_${test_arg} idaKrylovDemo_ls
+    ida_krylov_demo_ls_${test_arg} ida_krylov_demo_ls
     TEST_ARGS ${test_arg}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE idaKrylovDemo_ls_${test_arg}.out
+    ANSWER_FILE ida_krylov_demo_ls_${test_arg}.out
     EXAMPLE_TYPE develop)
 endforeach()

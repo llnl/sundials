@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idaHeat2D_bnd idaHeat2D_kry)
+foreach(example ida_heat_2d_bnd ida_heat_2d_kry)
   sundials_add_example(
     ${example} ${example}.c
     EXAMPLE_TYPE develop

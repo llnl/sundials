@@ -9,10 +9,10 @@ make sure that the {\F} data types for real and integer variables
 appropriately match the {\CC} types.  See \S\ref{ss:fcdata} in the
 {\ida} User Document for details.
 
-\subsection{A serial example: fidaRoberts\_dns}\label{ss:fidaRoberts}
+\subsection{A serial example: fida\_roberts\_dns}\label{ss:fidaRoberts}
 
-The \id{fidaRoberts\_dns} example is a {\F} equivalent of the
-\id{idaRoberts\_dns} example.
+The \id{fida\_roberts\_dns} example is a {\F} equivalent of the
+\id{ida\_roberts\_dns} example.
 
 The main program begins with declarations and initializations.  
 It calls the routines \id{FNVINITS}, \id{FIDAMALLOC}, \id{FIDAROOTINIT}, 
@@ -29,32 +29,32 @@ information from \id{FIDAROOTINFO}.  At the end, it prints a number of
 performance counters, and frees memory with calls to \id{FIDAROOTFREE}
 and \id{FIDAFREE}.
 
-In \id{fidaRoberts\_dns.f}, the \id{FIDARESFUN} routine is a straghtforward
+In \id{fida\_roberts\_dns.f}, the \id{FIDARESFUN} routine is a straghtforward
 implementation of Eqns. (\ref{e:idaRoberts_DAE}).  In \id{FIDADJAC}, the 
 $3 \times 3$ system Jacobian is supplied.  The \id{FIDAROOTFN} routine
 defines the two root functions, which are set to determine the points at which
 $y_1 = 10^{-4}$ or $y_3 = .01$.  The final two routines are for
 printing a header and the final run statistics.
 
-The following is sample output from \id{fidaRoberts\_dns}.
+The following is sample output from \id{fida\_roberts\_dns}.
 The performance of {\fida} here is similar to that of {\ida} on
-the \id{idaRoberts\_dns} problem, with somewhat lower cost counters owing to
+the \id{ida\_roberts\_dns} problem, with somewhat lower cost counters owing to
 the larger absolute error tolerances.
 
 %%
-\includeOutput{fidaRoberts\_dns}{../../examples/ida/fcmix_serial/fidaRoberts_dns.out}
+\includeOutput{fida\_roberts\_dns}{../../examples/ida/fcmix_serial/fida_roberts_dns.out}
 %%
 
 %-----------------------------------------------------------------------------------
 
-\subsection{A parallel example: fidaHeat2D\_kry\_bbd\_p}\label{ss:fidaHeat2D_bbd_p}
+\subsection{A parallel example: fida\_heat\_2d\_kry\_bbd\_p}\label{ss:fidaHeat2D_bbd_p}
 
-This example, \id{fidaHeat2D\_kry\_bbd\_p}, is the {\F} equivalent of
-\id{idaHeat2D\_kry\_bbd\_p}.  The heat equation problem is described
-under the \id{idaHeat2D\_kry} example above, but here it is solved in
+This example, \id{fida\_heat\_2d\_kry\_bbd\_p}, is the {\F} equivalent of
+\id{ida\_heat\_2d\_kry\_bbd\_p}.  The heat equation problem is described
+under the \id{ida\_heat\_2d\_kry} example above, but here it is solved in
 parallel, using the {\idabbdpre} (band-block-diagonal) preconditioner
 module.  The decomposition of the problem onto a processor array is
-identical to that in the \id{idaHeat2D\_kry\_p} example above.
+identical to that in the \id{ida\_heat\_2d\_kry\_p} example above.
 
 The problem is solved twice --- once with half-bandwidths of 5 in the
 difference-quotient banded preconditioner blocks, and once with
@@ -89,13 +89,13 @@ to communicate needed boundary data from \id{U} to an extension of it called
 \id{UEXT}; and \id{FIDAGLOCFN}, to compute the residuals in terms of
 \id{UEXT} and \id{UP}.
 
-The following is a sample output from \id{fidaHeat2D\_kry\_bbd\_p}, with a $10 \times 10$
+The following is a sample output from \id{fida\_heat\_2d\_kry\_bbd\_p}, with a $10 \times 10$
 mesh and \id{NPES} = 4 processors.  The performance is similar for the two
 solutions.  The second case requires more linear iterations, as expected, 
 but their cost is offset by the much cheaper preconditioner evaluations.
 
 %%
-\includeOutput{fidaHeat2D\_kry\_bbd\_p}{../../examples/ida/fcmix_parallel/fidaHeat2D_kry_bbd_p.out}
+\includeOutput{fida\_heat\_2d\_kry\_bbd\_p}{../../examples/ida/fcmix_parallel/fida_heat_2d_kry_bbd_p.out}
 %%
 
 %-----------------------------------------------------------------------------------

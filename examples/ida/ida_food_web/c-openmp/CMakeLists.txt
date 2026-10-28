@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idaFoodWeb_bnd_omp idaFoodWeb_bnd_omp.c
+  ida_food_web_bnd_omp ida_food_web_bnd_omp.c
   TEST_ARGS 4
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecopenmp
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  idaFoodWeb_kry_omp idaFoodWeb_kry_omp.c
+  ida_food_web_kry_omp ida_food_web_kry_omp.c
   NO_TEST
-  INSTALL_FILES idaFoodWeb_kry_omp.out
+  INSTALL_FILES ida_food_web_kry_omp.out
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecopenmp
                  ${EXE_EXTRA_LINK_LIBS})

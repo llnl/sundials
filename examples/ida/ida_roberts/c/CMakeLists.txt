@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idaRoberts_dns idaRoberts_dns.c
-  INSTALL_FILES idaRoberts_dns_stats.csv
+  ida_roberts_dns ida_roberts_dns.c
+  INSTALL_FILES ida_roberts_dns_stats.csv
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

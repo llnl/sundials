@@ -13,38 +13,38 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idaHeat2D_petsc_spgmr idaHeat2D_petsc_spgmr.c
+  ida_heat_2d_petsc_spgmr ida_heat_2d_petsc_spgmr.c
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  idaHeat2D_petsc_snes idaHeat2D_petsc_snes.c
+  ida_heat_2d_petsc_snes ida_heat_2d_petsc_snes.c
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
-  INSTALL_FILES idaHeat2D_petsc_snes_-pre.out
-                idaHeat2D_petsc_snes_-jac.out
-                idaHeat2D_petsc_snes_-jac_-pre.out
+  INSTALL_FILES ida_heat_2d_petsc_snes_-pre.out
+                ida_heat_2d_petsc_snes_-jac.out
+                ida_heat_2d_petsc_snes_-jac_-pre.out
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_test(
-  idaHeat2D_petsc_snes_-pre idaHeat2D_petsc_snes
+  ida_heat_2d_petsc_snes_-pre ida_heat_2d_petsc_snes
   TEST_ARGS -pre
   MPI_NPROCS 4
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE idaHeat2D_petsc_snes_-pre.out
+  ANSWER_FILE ida_heat_2d_petsc_snes_-pre.out
   EXAMPLE_TYPE develop)
 if(SUNDIALS_INDEX_SIZE STREQUAL "32")
   foreach(test_args "-jac" "-jac -pre")
     string(REPLACE " " "_" test_suffix "${test_args}")
     sundials_add_test(
-      idaHeat2D_petsc_snes_${test_suffix} idaHeat2D_petsc_snes
+      ida_heat_2d_petsc_snes_${test_suffix} ida_heat_2d_petsc_snes
       TEST_ARGS ${test_args}
       MPI_NPROCS 4
       ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-      ANSWER_FILE idaHeat2D_petsc_snes_${test_suffix}.out
+      ANSWER_FILE ida_heat_2d_petsc_snes_${test_suffix}.out
       EXAMPLE_TYPE develop)
   endforeach()
 endif()

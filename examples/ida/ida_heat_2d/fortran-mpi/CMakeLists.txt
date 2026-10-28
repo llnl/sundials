@@ -14,14 +14,14 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
-    ida_heat2D_kry_bbd_f2003 ida_heat2D_kry_bbd_f2003.f90
+    ida_heat_2d_kry_bbd_f2003 ida_heat_2d_kry_bbd_f2003.f90
     MPI_NPROCS 4
     EXAMPLE_TYPE develop
     FLOAT_PRECISION 2
-    INSTALL_FILES ida_heat2D_kry_bbd_f2003_4.out
+    INSTALL_FILES ida_heat_2d_kry_bbd_f2003_4.out
     LINK_LIBRARIES PRIVATE MPI::MPI_Fortran ${IDA_C_LIBS}
                    sundials_fida_mod sundials_nvecparallel
                    sundials_fnvecparallel_mod ${EXE_EXTRA_LINK_LIBS}
     PROPERTIES Fortran_MODULE_DIRECTORY
-               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ida_heat2D_kry_bbd_f2003.dir)
+               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ida_heat_2d_kry_bbd_f2003.dir)
 endif()

@@ -14,12 +14,12 @@
 # -----------------------------------------------------------------
 set(example_options)
 if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
-  list(APPEND example_options NO_TEST INSTALL_FILES idaRoberts_sps.out)
+  list(APPEND example_options NO_TEST INSTALL_FILES ida_roberts_sps.out)
 else()
   list(APPEND example_options EXAMPLE_TYPE develop)
 endif()
 sundials_add_example(
-  idaRoberts_sps idaRoberts_sps.c
+  ida_roberts_sps ida_roberts_sps.c
   ${example_options}
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolsuperlumt ${SUPERLUMT_LIBRARIES}

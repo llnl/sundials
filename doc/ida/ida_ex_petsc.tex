@@ -2,7 +2,7 @@
 \section{{\petsc} example problems}\label{s:ex_petsc}
 %===============================================================================
 
-\subsection{A nonstiff example: idaHeat2D\_kry\_petsc}\label{ss:idaHeat2D_kry_petsc}
+\subsection{A nonstiff example: ida\_heat\_2d\_kry\_petsc}\label{ss:ida_heat_2d_kry_petsc}
 
 This example is the same as the one in \ref{ss:idaHeat2D_p}, except 
 it uses {\petsc} vector instead of {\sundials} native parallel vector 
@@ -65,7 +65,7 @@ Instead, we provide a brief description of functions used in this example.
   \par Allocates a local vector \id{localU} with space for ghost values, based 
   on partitioning in distributed array \id{da}. Vector \id{localU} is an object 
   equivalent to array \id{uext} in function \id{reslocal} in example
-  in Section \ref{ss:idaHeat2D_kry_petsc}.
+  in Section \ref{ss:ida_heat_2d_kry_petsc}.
   
 \item \ID{DMDAGetInfo(da,...,\&Mx, \&My,...)}
   \par Function to get information about data array \id{da}. In this example
@@ -111,7 +111,7 @@ allows one to use global indices when implementing the model and thus
 separate the model from the parallelization scheme. Also, note that {\petsc} 
 functions used here replace private functions \id{rescomm}, \id{reslocal}, 
 \id{BSend}, \id{BRecvPost}, \id{BRecvWait} and \id{InitUserData} from the 
-\id{idaHeat2D\_kry\_p} example in Section \ref{ss:idaHeat2D_p}, and 
+\id{ida\_heat\_2d\_kry\_p} example in Section \ref{ss:idaHeat2D_p}, and 
 therefore simplify the implementation.
 
 

@@ -14,10 +14,10 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
-    idaHeat2D_kry_f2003 idaHeat2D_kry_f2003.f90
+    ida_heat_2d_kry_f2003 ida_heat_2d_kry_f2003.f90
     EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod
                    ${EXE_EXTRA_LINK_LIBS}
     PROPERTIES Fortran_MODULE_DIRECTORY
-               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/idaHeat2D_kry_f2003.dir)
+               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ida_heat_2d_kry_f2003.dir)
 endif()

@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idaFoodWeb_bnd idaFoodWeb_kry)
+foreach(example ida_food_web_bnd ida_food_web_kry)
   sundials_add_example(
     ${example} ${example}.c
     EXAMPLE_TYPE develop
