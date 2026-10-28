@@ -111,7 +111,7 @@ following serial examples (using the :ref:`serial vector
 MPI examples
 ------------
 
-Supplied in the ``examples/kinsol/kin_food_web/c-mpi`` directory are the
+Supplied in the ``examples/kinsol/kin_food_web/c_mpi`` directory are the
 following parallel examples (using the :ref:`MPI parallel vector
 <NVectors.NVParallel>`):
 
@@ -124,14 +124,14 @@ following parallel examples (using the :ref:`MPI parallel vector
 OpenMP example
 --------------
 
-Supplied in the ``examples/kinsol/kin_food_web/c-openmp`` directory is an example
+Supplied in the ``examples/kinsol/kin_food_web/c_openmp`` directory is an example
 ``kinFoodweb_kry_omp``, which solves the same problem as ``kinFoodweb_kry``, but
 using the :ref:`OpenMP vector <NVectors.OpenMP>`.
 
 MPI + CUDA example
 ------------------
 
-Supplied in the ``examples/kinsol/kin_em/cuda-mpi`` directory is an example
+Supplied in the ``examples/kinsol/kin_em/cuda_mpi`` directory is an example
 ``kin_em_mpicuda``, which solves an expectation-maximization problem for mixture
 densities, using the :ref:`MPI+X <NVectors.MPIPlusX>` and :ref:`CUDA
 <NVectors.CUDA>` vectors.
@@ -163,6 +163,6 @@ modules, and are based on examples listed earlier:
   ``kin_laplace_picard_kry``. ``kin_robo_kin_dns_f2003`` solves the same problem as
   ``kin_robo_kin_dns``.
 
-- The ``examples/kinsol/kin_diagonal/fortran-mpi`` directory contains one example,
+- The ``examples/kinsol/kin_diagonal/fortran_mpi`` directory contains one example,
   ``kin_diagonal_kry_p_f2003``, which solves the same problem as
   ``kin_diagonal_kry_f2003``, but using MPI.

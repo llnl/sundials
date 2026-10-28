@@ -13,8 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_CXX_EXAMPLES AND SUNDIALS_ENABLE_MPI)
-  add_subdirectory(cpp-mpi)
+  add_subdirectory(cpp_mpi)
   if(SUNDIALS_ENABLE_HYPRE)
-    add_subdirectory(cpp-mpi-hypre)
+    add_subdirectory(cpp_mpi_hypre)
   endif()
 endif()

@@ -15,5 +15,5 @@
 if(SUNDIALS_ENABLE_CXX_EXAMPLES
    AND SUNDIALS_ENABLE_MPI
    AND SUNDIALS_ENABLE_HYPRE)
-  add_subdirectory(cpp-mpi-hypre)
+  add_subdirectory(cpp_mpi_hypre)
 endif()

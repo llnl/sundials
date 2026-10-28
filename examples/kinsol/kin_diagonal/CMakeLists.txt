@@ -15,6 +15,6 @@
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
   add_subdirectory(fortran)
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(fortran-mpi)
+    add_subdirectory(fortran_mpi)
   endif()
 endif()

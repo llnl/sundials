@@ -15,6 +15,6 @@
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
-    add_subdirectory(c-klu)
+    add_subdirectory(c_klu)
   endif()
 endif()

@@ -129,5 +129,5 @@ identical to those in ``kin_diagonal_kry_f2003``.
 
 The following is sample output from ``kin_diagonal_kry_p_f2003`` using 4 MPI ranks.
 
-.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran-mpi/kin_diagonal_kry_p_f2003.out
+.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran_mpi/kin_diagonal_kry_p_f2003.out
    :language: none

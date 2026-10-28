@@ -15,7 +15,7 @@
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
-    add_subdirectory(c-superlumt)
+    add_subdirectory(c_superlumt)
   endif()
 endif()
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
