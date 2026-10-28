@@ -15,13 +15,14 @@
 foreach(example idas_roberts_asai_klu idas_roberts_klu)
   sundials_add_example(${example} ${example}.c)
   target_link_libraries(
-    ${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                       sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+    ${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolklu
+                       ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 
-sundials_add_example(idas_roberts_fsa_klu idas_roberts_fsa_klu.c
-                     TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
-                     TEST_ARGS -sensi stg t)
+sundials_add_example(
+  idas_roberts_fsa_klu idas_roberts_fsa_klu.c
+  TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
+  TEST_ARGS -sensi stg t)
 target_link_libraries(
   idas_roberts_fsa_klu PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                              sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+                               sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

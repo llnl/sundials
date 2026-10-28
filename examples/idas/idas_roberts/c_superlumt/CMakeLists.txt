@@ -16,9 +16,15 @@ foreach(example idas_roberts_asai_sps idas_roberts_fsa_sps idas_roberts_sps)
   set(example_options EXAMPLE_TYPE exclude-single)
   if(example STREQUAL "idas_roberts_fsa_sps")
     set(answer_file idas_roberts_fsa_sps_-sensi_stg_t.out)
-    list(APPEND example_options
-         TEST_NAME idas_roberts_fsa_sps_-sensi_stg_t
-         TEST_ARGS -sensi stg t)
+    list(
+      APPEND
+      example_options
+      TEST_NAME
+      idas_roberts_fsa_sps_-sensi_stg_t
+      TEST_ARGS
+      -sensi
+      stg
+      t)
   else()
     set(answer_file ${example}.out)
   endif()
@@ -27,7 +33,7 @@ foreach(example idas_roberts_asai_sps idas_roberts_fsa_sps idas_roberts_sps)
   endif()
   sundials_add_example(${example} ${example}.c ${example_options})
   target_link_libraries(
-    ${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                       sundials_sunlinsolsuperlumt ${SUPERLUMT_LIBRARIES}
-                       ${EXE_EXTRA_LINK_LIBS})
+    ${example}
+    PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
+            ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
 endforeach()
