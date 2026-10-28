@@ -395,10 +395,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             "sunmatrix/sparse/Makefile",
         ]
 
-        cxx_files = [
-            "nvector/cuda/Makefile",
-            "nvector/raja/Makefile",
-        ]
+        cxx_files = ["nvector/cuda/Makefile", "nvector/raja/Makefile"]
 
         f77_files = [
             "cvode/fcmix_parallel/Makefile",

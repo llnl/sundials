@@ -29,7 +29,8 @@ foreach(_args "--monitor --explicit --tf 3" "--monitor --global-nls")
   string(REPLACE " " "_" _suffix "${_args}")
   set(_type develop)
   sundials_add_test(
-    ark_brusselator_1d_task_local_nls_${_suffix} ark_brusselator_1d_task_local_nls
+    ark_brusselator_1d_task_local_nls_${_suffix}
+    ark_brusselator_1d_task_local_nls
     TEST_ARGS ${_args}
     MPI_NPROCS 4
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
