@@ -318,7 +318,8 @@ int ressc(sunrealtype tres, N_Vector yy, N_Vector yp, N_Vector rr, void* user_da
 
 static void PrintHeader(sunrealtype rtol, sunrealtype atol, N_Vector y)
 {
-  printf("\nida_sl_crank_dns: Slider-Crank DAE serial example problem for IDA\n");
+  printf(
+    "\nida_sl_crank_dns: Slider-Crank DAE serial example problem for IDA\n");
   printf("Linear solver: DENSE, Jacobian is computed by IDA.\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  rtol = %Lg   atol = %Lg\n", rtol, atol);

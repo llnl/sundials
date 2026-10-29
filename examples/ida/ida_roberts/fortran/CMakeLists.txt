@@ -15,7 +15,6 @@
 sundials_add_example(
   ida_roberts_dns_f2003 ida_roberts_dns_f2003.f90
   EXAMPLE_TYPE develop
-  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod
-                 ${EXE_EXTRA_LINK_LIBS}
+  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY
              ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ida_roberts_dns_f2003.dir)
