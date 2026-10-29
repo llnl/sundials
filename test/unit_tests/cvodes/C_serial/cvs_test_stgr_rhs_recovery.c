@@ -17,18 +17,20 @@
  * Unit test for a recoverable RHS failure at the converged state in the
  * staggered sensitivity corrector.
  *
- * With CV_STAGGERED, cvStep evaluates f at the converged state before solving
- * for the sensitivities. A recoverable failure of that call must be handled
- * like any other recoverable failure: the prediction is restored and the step
- * is retried with a smaller step size. Retrying from the advanced time instead
- * moves tn by two steps, and the first of them is never corrected.
+ * With CV_STAGGERED or CV_STAGGERED1, cvStep evaluates f at the converged
+ * state before solving for the sensitivities. A recoverable failure of that
+ * call must be handled like any other recoverable failure: the prediction is
+ * restored, the step is retried with a smaller step size, and the failure is
+ * counted as a step solve failure (CVodeGetNumStepSolveFails). Retrying from the advanced
+ * time instead moves tn by two steps, and the first of them is never corrected.
  *
- * The test solves y' = -p y with one sensitivity in two passes. The first pass
- * records which f calls are made at a converged state; that is the last f call
- * before the sensitivity RHS is called. The second pass fails one of those
- * calls once with a recoverable error. Every step must then start where the
- * previous one ended, and the solution and sensitivity must still match the
- * exact solution.
+ * The test solves y' = -p y with one sensitivity in two passes, for each of
+ * the two staggered methods. The first pass records which f calls are made at
+ * a converged state; that is the last f call before the sensitivity RHS is
+ * called. The second pass fails one of those calls once with a recoverable
+ * error. Every step must then start where the previous one ended, the solution
+ * and sensitivity must still match the exact solution, and the second pass
+ * must count exactly one more step solve failure than the first.
  * ---------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -112,9 +114,11 @@ static int fS(int Ns, sunrealtype t, N_Vector y, N_Vector ydot, int iS,
   return 0;
 }
 
-/* Integrate to tout one step at a time. Returns 0 if every step started where
-   the previous one ended and the final state and sensitivity are accurate. */
-static int integrate(UserData udata, SUNContext sunctx)
+/* Integrate to tout one step at a time with the sensitivity method ism, and
+   return the number of step solve failures in ncfn. Returns 0 if every step
+   started where the previous one ended and the final state and sensitivity are
+   accurate. */
+static int integrate(UserData udata, SUNContext sunctx, int ism, long int* ncfn)
 {
   const sunrealtype rtol = SUN_RCONST(1.0e-6);
   const sunrealtype atol = SUN_RCONST(1.0e-10);
@@ -162,7 +166,7 @@ static int integrate(UserData udata, SUNContext sunctx)
   if (CVodeSetLinearSolver(cvode_mem, LS, A)) { goto cleanup; }
   if (CVodeSetJacFn(cvode_mem, jac)) { goto cleanup; }
 
-  if (CVodeSensInit1(cvode_mem, 1, CV_STAGGERED, fS, yS)) { goto cleanup; }
+  if (CVodeSensInit1(cvode_mem, 1, ism, fS, yS)) { goto cleanup; }
   if (CVodeSensEEtolerances(cvode_mem)) { goto cleanup; }
   if (CVodeSetSensErrCon(cvode_mem, SUNTRUE)) { goto cleanup; }
 
@@ -196,6 +200,7 @@ static int integrate(UserData udata, SUNContext sunctx)
   }
 
   if (CVodeGetSens(cvode_mem, &tret, yS)) { goto cleanup; }
+  if (CVodeGetNumStepSolveFails(cvode_mem, ncfn)) { goto cleanup; }
 
   y_exact = SUNRexp(-udata->p * tret);
   s_exact = -tret * y_exact;
@@ -222,9 +227,15 @@ cleanup:
 
 int main(int argc, char* argv[])
 {
+  const int methods[2]        = {CV_STAGGERED, CV_STAGGERED1};
+  const char* method_names[2] = {"CV_STAGGERED", "CV_STAGGERED1"};
+
   SUNContext sunctx = NULL;
   UserData udata    = NULL;
   int status        = 1;
+  int m             = 0;
+  long int ncfn1    = 0;
+  long int ncfn2    = 0;
 
   if (SUNContext_Create(SUN_COMM_NULL, &sunctx))
   {
@@ -234,35 +245,52 @@ int main(int argc, char* argv[])
 
   udata = (UserData)calloc(1, sizeof(*udata));
   if (!udata) { goto cleanup; }
-  udata->p = ONE;
 
-  /* First pass: record the converged-state f calls */
-  udata->fail_at = -1;
-  udata->record  = 1;
-  if (integrate(udata, sunctx))
+  for (m = 0; m < 2; m++)
   {
-    printf("ERROR: the first pass, with no failure, did not pass\n");
-    goto cleanup;
-  }
-  if (udata->nrecorded <= FAIL_NTH)
-  {
-    printf("ERROR: only %i converged-state f calls recorded\n", udata->nrecorded);
-    goto cleanup;
-  }
+    printf("%s\n", method_names[m]);
 
-  /* Second pass: the same run, failing one converged-state f call once */
-  udata->fail_at   = udata->recorded[FAIL_NTH];
-  udata->record    = 0;
-  udata->nf        = 0;
-  udata->last_f    = 0;
-  udata->failed    = 0;
-  udata->nrecorded = 0;
-  if (integrate(udata, sunctx)) { goto cleanup; }
-  if (!udata->failed)
-  {
-    printf("ERROR: f call %li was never made, so nothing was tested\n",
-           udata->fail_at);
-    goto cleanup;
+    /* First pass: record the converged-state f calls */
+    udata->p         = ONE;
+    udata->nf        = 0;
+    udata->last_f    = 0;
+    udata->fail_at   = -1;
+    udata->failed    = 0;
+    udata->record    = 1;
+    udata->nrecorded = 0;
+    if (integrate(udata, sunctx, methods[m], &ncfn1))
+    {
+      printf("ERROR: the first pass, with no failure, did not pass\n");
+      goto cleanup;
+    }
+    if (udata->nrecorded <= FAIL_NTH)
+    {
+      printf("ERROR: only %i converged-state f calls recorded\n",
+             udata->nrecorded);
+      goto cleanup;
+    }
+
+    /* Second pass: the same run, failing one converged-state f call once */
+    udata->fail_at   = udata->recorded[FAIL_NTH];
+    udata->record    = 0;
+    udata->nf        = 0;
+    udata->last_f    = 0;
+    udata->failed    = 0;
+    udata->nrecorded = 0;
+    if (integrate(udata, sunctx, methods[m], &ncfn2)) { goto cleanup; }
+    if (!udata->failed)
+    {
+      printf("ERROR: f call %li was never made, so nothing was tested\n",
+             udata->fail_at);
+      goto cleanup;
+    }
+    if (ncfn2 != ncfn1 + 1)
+    {
+      printf("ERROR: %li step solve failures with the failed call, %li "
+             "without; expected one more\n",
+             ncfn2, ncfn1);
+      goto cleanup;
+    }
   }
 
   printf("SUCCESS\n");

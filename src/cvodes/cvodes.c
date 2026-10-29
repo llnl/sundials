@@ -6049,9 +6049,10 @@ static int cvStep(CVodeMem cv_mem)
 
       /* Evaluate f at converged y, needed for future evaluations of sens. RHS
        * If f() fails recoverably, treat it as a convergence failure: restore
-       * the prediction, reduce the step, and attempt the step again. The
-       * failure is counted with the sensitivity corrector failures, since ncf
-       * is reset above on every attempt and would never reach maxncf. */
+       * the prediction, reduce the step, and attempt the step again. As f is
+       * the state RHS, the failure is counted in ncfn. The step's limit is
+       * checked against ncfS, since ncf is reset above on every attempt and
+       * would never reach maxncf. */
 
       retval = cv_mem->cv_f(cv_mem->cv_tn, cv_mem->cv_y, cv_mem->cv_ftemp,
                             cv_mem->cv_user_data);
@@ -6064,8 +6065,7 @@ static int cvStep(CVodeMem cv_mem)
       if (retval > 0)
       {
         nflag = RHSFUNC_RECVR;
-        kflag = cvHandleNFlag(cv_mem, &nflag, saved_t, &ncfS,
-                              &(cv_mem->cv_ncfnS));
+        kflag = cvHandleNFlag(cv_mem, &nflag, saved_t, &ncfS, &(cv_mem->cv_ncfn));
         if (kflag == PREDICT_AGAIN) { continue; }
         return (kflag);
       }
