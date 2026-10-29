@@ -3904,18 +3904,18 @@ void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
   Checks whether the adaptive set routine is compatible with the current
   time-stepping configuration and returns an appropriate error code if it is not.
   ---------------------------------------------------------------*/
-int ark_adaptive_set_error_handler(sunbooleantype fixedstep, sunbooleantype step_supports_adaptive)
+int ark_adaptive_set_error_handler(ARKodeMem ark_mem)
 {
-  if (fixedstep)
+  if (ark_mem->fixedstep)
   {
-    arkProcessError(NULL, ARK_ILL_INPUT, __LINE__, __func__,
-                    __FILE__, "time-stepping module uses a fixed step size");
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "time-stepping module uses a fixed step size");
     return (ARK_ILL_INPUT);
   }
 
-  if (!step_supports_adaptive)
+  if (!ark_mem->step_supports_adaptive)
   {
-    arkProcessError(NULL, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
                     __FILE__, "time-stepping module does not support temporal adaptivity");
     return (ARK_STEPPER_UNSUPPORTED);
   }

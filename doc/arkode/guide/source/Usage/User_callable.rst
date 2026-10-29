@@ -1207,7 +1207,6 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       :c:func:`ARKodeSetSmallNumEFails`,
       :c:func:`ARKodeSetStabilityFn`,
       :c:func:`ARKodeSetMaxHnilWarns`,
-      :c:func:`ARKodeResetAccumulatedError`,
       :c:func:`ARKodeSetAdaptController`, and
       :c:func:`ARKodeSetAdaptControllerByName`
       will return an error, since temporal adaptivity is disabled. To turn
@@ -1233,6 +1232,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
+   .. versionchanged:: x.y.z Adaptivity-related functions returns an error when a fixed step is set instead of being ignored.
 
 .. c:function:: int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir)
 

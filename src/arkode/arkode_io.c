@@ -902,8 +902,7 @@ int ARKodeSetAdaptController(void* arkode_mem, SUNAdaptController C)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* If the stepper has provided a custom function, then call it and return */
@@ -935,8 +934,7 @@ int ARKodeSetAdaptControllerByName(void* arkode_mem, const char* cname)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Create new controller based on the name */
@@ -1049,8 +1047,7 @@ int ARKodeSetMaxHnilWarns(void* arkode_mem, int mxhnil)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Passing mxhnil=0 sets the default, otherwise use input. */
@@ -1077,13 +1074,9 @@ int ARKodeSetInitStep(void* arkode_mem, sunrealtype hin)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* Guard against hin==0 for non-adaptive time stepper modules */
-  if ((!ark_mem->step_supports_adaptive) && (hin == ZERO))
-  {
-    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
-                    __FILE__, "time-stepping module does not support temporal adaptivity");
-    return (ARK_STEPPER_UNSUPPORTED);
-  }
+  /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
+  int err = ark_adaptive_set_error_handler(ark_mem);
+  if (err != ARK_SUCCESS) { return err; }
 
   /* Passing hin=0 sets the default, otherwise use input. */
   if (hin == ZERO) { ark_mem->hin = ZERO; }
@@ -1119,8 +1112,7 @@ int ARKodeSetMinStep(void* arkode_mem, sunrealtype hmin)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Passing a value <= 0 sets hmin = 0 */
@@ -1162,8 +1154,7 @@ int ARKodeSetMaxStep(void* arkode_mem, sunrealtype hmax)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Passing a value <= 0 sets hmax = infinity */
@@ -1628,8 +1619,8 @@ int ARKodeSetConstraints(void* arkode_mem, N_Vector constraints)
 
   if (ark_mem->fixedstep)
   {
-    arkProcessError(NULL, ARK_ILL_INPUT, __LINE__, __func__,
-                    __FILE__, "time-stepping module uses a fixed step size");
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "time-stepping module uses a fixed step size");
     return (ARK_ILL_INPUT);
   }
 
@@ -1698,8 +1689,7 @@ int ARKodeSetMaxNumConstrFails(void* arkode_mem, int maxfails)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Passing maxfails = 0 sets the default, otherwise set to input */
@@ -1726,8 +1716,7 @@ int ARKodeSetCFLFraction(void* arkode_mem, sunrealtype cfl_frac)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* set positive-valued parameters, otherwise set default */
@@ -1755,8 +1744,7 @@ int ARKodeSetAdaptivityAdjustment(void* arkode_mem, int adjust)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* store requested adjustment */
@@ -1781,8 +1769,7 @@ int ARKodeSetSafetyFactor(void* arkode_mem, sunrealtype safety)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* check for allowable parameters */
@@ -1816,8 +1803,7 @@ int ARKodeSetErrorBias(void* arkode_mem, sunrealtype bias)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* Return an error if there is not a current SUNAdaptController */
@@ -1863,8 +1849,7 @@ int ARKodeSetMaxGrowth(void* arkode_mem, sunrealtype mx_growth)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* set allowed value, otherwise set default */
@@ -1891,8 +1876,7 @@ int ARKodeSetMinReduction(void* arkode_mem, sunrealtype eta_min)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* set allowed value, otherwise set default */
@@ -1918,8 +1902,7 @@ int ARKodeSetFixedStepBounds(void* arkode_mem, sunrealtype lb, sunrealtype ub)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* set allowable interval, otherwise set defaults */
@@ -1953,8 +1936,7 @@ int ARKodeSetMaxFirstGrowth(void* arkode_mem, sunrealtype etamx1)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* if argument legal set it, otherwise set default */
@@ -1980,8 +1962,7 @@ int ARKodeSetMaxEFailGrowth(void* arkode_mem, sunrealtype etamxf)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* if argument legal set it, otherwise set default */
@@ -2007,8 +1988,7 @@ int ARKodeSetSmallNumEFails(void* arkode_mem, int small_nef)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* if argument legal set it, otherwise set default */
@@ -2034,8 +2014,7 @@ int ARKodeSetMaxCFailGrowth(void* arkode_mem, sunrealtype etacf)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* if argument legal set it, otherwise set default */
@@ -2061,8 +2040,7 @@ int ARKodeSetStabilityFn(void* arkode_mem, ARKExpStabFn EStab, void* estab_data)
   if (retval != ARK_SUCCESS) { return (retval); }
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* NULL argument sets default, otherwise set inputs */
@@ -2091,8 +2069,7 @@ int ARKodeSetMaxErrTestFails(void* arkode_mem, int maxnef)
   ark_mem = (ARKodeMem)arkode_mem;
 
   /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
+  int err = ark_adaptive_set_error_handler(ark_mem);
   if (err != ARK_SUCCESS) { return err; }
 
   /* argument <= 0 sets default, otherwise set input */
@@ -2163,10 +2140,13 @@ int ARKodeResetAccumulatedError(void* arkode_mem)
   }
   ark_mem = (ARKodeMem)arkode_mem;
 
-  /* Check if the adaptive set routine is compatible with the current time-stepping configuration */
-  int err = ark_adaptive_set_error_handler(ark_mem->fixedstep,
-                                           ark_mem->step_supports_adaptive);
-  if (err != ARK_SUCCESS) { return err; }
+  /* Guard against use for non-adaptive time stepper modules */
+  if (!ark_mem->step_supports_adaptive)
+  {
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__, "time-stepping module does not support temporal adaptivity");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
 
   /* Reset value and counter, and return */
   ark_mem->AccumErrorStart = ark_mem->tn;

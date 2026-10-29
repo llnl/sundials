@@ -470,7 +470,6 @@ Optional inputs for ERKStep
       :c:func:`ERKStepSetSmallNumEFails()`,
       :c:func:`ERKStepSetStabilityFn()`,
       :c:func:`ERKStepSetMaxHnilWarns()`,
-      :c:func:`ERKStepResetAccumulatedError()`,
       :c:func:`ERKStepSetAdaptController()`, and
       :c:func:`ERKStepSetAdaptControllerByName()`
       will return an error, since temporal adaptivity is disabled. To turn
