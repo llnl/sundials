@@ -3899,6 +3899,31 @@ void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
 }
 
 /*---------------------------------------------------------------
+  ark_check_adaptive_error:
+
+  Checks whether the adaptive set routine is compatible with the current
+  time-stepping configuration and returns an appropriate error code if it is not.
+  ---------------------------------------------------------------*/
+int ark_adaptive_set_error_handler(ARKodeMem ark_mem)
+{
+  if (ark_mem->fixedstep)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "time-stepping module uses a fixed step size");
+    return (ARK_ILL_INPUT);
+  }
+
+  if (!ark_mem->step_supports_adaptive)
+  {
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__, "time-stepping module does not support temporal adaptivity");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   Utility routines for ARKODE to serve as an MRIStepInnerStepper
   ---------------------------------------------------------------*/
 
