@@ -15,9 +15,9 @@
 sundials_add_example(
   cvs_roberts_asai_dns cvs_roberts_asai_dns.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvs_roberts_asai_dns_bkw1_stats.csv
-                cvs_roberts_asai_dns_bkw2_stats.csv
-                cvs_roberts_asai_dns_fwd_stats.csv
+  INSTALL_FILES
+    cvs_roberts_asai_dns_bkw1_stats.csv cvs_roberts_asai_dns_bkw2_stats.csv
+    cvs_roberts_asai_dns_fwd_stats.csv
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
@@ -30,9 +30,10 @@ sundials_add_example(
   TEST_NAME cvs_roberts_fsa_dns_-sensi_sim_t
   TEST_ARGS -sensi sim t
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvs_roberts_fsa_dns_-sensi_stg1_t.out
-                cvs_roberts_fsa_dns_stats_-sensi_sim_t.csv
-                cvs_roberts_fsa_dns_stats_-sensi_stg1_t.csv
+  INSTALL_FILES
+    cvs_roberts_fsa_dns_-sensi_stg1_t.out
+    cvs_roberts_fsa_dns_stats_-sensi_sim_t.csv
+    cvs_roberts_fsa_dns_stats_-sensi_stg1_t.csv
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
@@ -44,9 +45,9 @@ sundials_add_test(
 
 sundials_add_example(cvs_roberts_fsa_dns_switch cvs_roberts_fsa_dns_switch.c
                      EXAMPLE_TYPE exclude-single)
-target_link_libraries(cvs_roberts_fsa_dns_switch PRIVATE ${CVODES_C_LIBS}
-                                                       sundials_nvecserial
-                                                       ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cvs_roberts_fsa_dns_switch PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                                     ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
   cvs_roberts_fsa_dns_constraints cvs_roberts_fsa_dns_constraints.c
   TEST_NAME cvs_roberts_fsa_dns_constraints_-sensi_stg1_t
@@ -62,7 +63,6 @@ sundials_add_example(
                  ${EXE_EXTRA_LINK_LIBS})
 foreach(example cvs_roberts_dns_constraints cvs_roberts_dns_uw)
   sundials_add_example(${example} ${example}.c)
-  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS}
-                                           sundials_nvecserial
+  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()

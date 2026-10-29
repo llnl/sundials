@@ -14,8 +14,7 @@
 # -----------------------------------------------------------------
 foreach(example cvs_adv_diff_asai_bnd cvs_adv_diff_bnd)
   sundials_add_example(${example} ${example}.c)
-  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS}
-                                           sundials_nvecserial
+  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 

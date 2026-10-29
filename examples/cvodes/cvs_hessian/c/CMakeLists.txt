@@ -14,6 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(cvs_hessian_asa_fsa cvs_hessian_asa_fsa.c
                      EXAMPLE_TYPE exclude-single)
-target_link_libraries(cvs_hessian_asa_fsa PRIVATE ${CVODES_C_LIBS}
-                                                 sundials_nvecserial
-                                                 ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cvs_hessian_asa_fsa PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                              ${EXE_EXTRA_LINK_LIBS})

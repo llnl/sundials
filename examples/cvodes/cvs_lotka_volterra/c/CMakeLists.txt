@@ -13,6 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(cvs_lotka_volterra_asa cvs_lotka_volterra_asa.c)
-target_link_libraries(cvs_lotka_volterra_asa PRIVATE ${CVODES_C_LIBS}
-                                                  sundials_nvecserial
-                                                  ${EXE_EXTRA_LINK_LIBS})
+target_link_libraries(
+  cvs_lotka_volterra_asa PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                                 ${EXE_EXTRA_LINK_LIBS})
