@@ -1234,7 +1234,7 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
 
    .. versionchanged:: x.y.z
 
-      Adaptivity-related functions returns an error when a fixed step is set instead of being ignored.
+      Adaptivity-related functions now return an error when a fixed step is set instead of being ignored.
 
 .. c:function:: int ARKodeSetStepDirection(void* arkode_mem, sunrealtype stepdir)
 
