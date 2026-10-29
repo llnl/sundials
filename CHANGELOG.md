@@ -1710,7 +1710,7 @@ to a value `>= 3`.
 ### New Features
 
 Added new Fortran example program,
-`examples/arkode/ark_kpr/fortran/ark_kpr_mri_f2003.f90` demonstrating MRI
+`examples/arkode/F2003_serial/ark_kpr_mri_f2003.f90` demonstrating MRI
 capabilities.
 
 ### Bug Fixes
