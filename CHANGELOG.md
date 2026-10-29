@@ -3723,14 +3723,14 @@ In `CVodeQuadSensInit`, the line `cv_mem->cv_fQS_data = ...` was corrected
 
 In the CVODES User Guide, a paragraph was added in Section 6.2.1 on
 `CVodeAdjReInit`, and a paragraph was added in Section 6.2.9 on
-`CVodeGetAdjY`. In the example `cvs_roberts_asai_dns`, the output was revised
+`CVodeGetAdjY`. In the example `cvsRoberts_ASAi_dns`, the output was revised
 to include the use of `CVodeGetAdjY`.
 
 For the Adjoint Sensitivity Analysis case in which the backward problem depends
 on the forward sensitivities, options have been added to allow for user-supplied
 `pset`, `psolve`, and `jtimes` functions.
 
-In the example `cvs_hessian_asa_fsa`, an error was corrected in the function
+In the example `cvsHessian_ASA_FSA`, an error was corrected in the function
 `fB2`, `y2` in place of `y3` in the third term of `Ith(yBdot,6)`.
 
 #### IDA and IDAS

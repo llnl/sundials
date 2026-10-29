@@ -57,8 +57,8 @@ sundials_add_example(
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cvs_roberts_dns cvs_roberts_dns.c
-  INSTALL_FILES cvs_roberts_dns_stats.csv
+  cvs_roberts_dns cvs_roberts_dns.c NO_TEST
+  INSTALL_FILES cvs_roberts_dns.out cvs_roberts_dns_stats.csv
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 foreach(example cvs_roberts_dns_constraints cvs_roberts_dns_uw)
@@ -66,3 +66,7 @@ foreach(example cvs_roberts_dns_constraints cvs_roberts_dns_uw)
   target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()
+sundials_add_test(
+  cvs_roberts_dns cvs_roberts_dns
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cvs_roberts_dns.out)
