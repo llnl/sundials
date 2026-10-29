@@ -370,8 +370,9 @@ static void PrintHeader(sunrealtype rtol, N_Vector avtol, N_Vector y)
   atval = N_VGetArrayPointer(avtol);
   yval  = N_VGetArrayPointer(y);
 
-  printf("\nidas_roberts_klu: Robertson kinetics DAE serial example problem for "
-         "IDA.\n");
+  printf(
+    "\nidas_roberts_klu: Robertson kinetics DAE serial example problem for "
+    "IDA.\n");
   printf("               Three equation chemical kinetics problem.\n\n");
   printf("Linear solver: KLU, with user-supplied Jacobian.\n");
 #if defined(SUNDIALS_EXTENDED_PRECISION)

@@ -791,8 +791,8 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
 
 static void PrintHeader(sunindextype Neq, sunrealtype rtol, sunrealtype atol)
 {
-  printf(
-    "idas_heat_2d_kry_bbd_p: Heat equation, parallel example problem for IDA\n");
+  printf("idas_heat_2d_kry_bbd_p: Heat equation, parallel example problem for "
+         "IDA\n");
   printf("                  Discretized heat equation on 2D unit square.\n");
   printf("                  Zero boundary conditions,");
   printf(" polynomial initial conditions.\n");

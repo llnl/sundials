@@ -636,8 +636,9 @@ static void SetInitialProfiles(N_Vector cc, N_Vector cp, N_Vector id,
 static void PrintHeader(sunindextype SystemSize, int maxl, sunrealtype rtol,
                         sunrealtype atol)
 {
-  printf("\nidas_food_web_kry_p: Predator-prey DAE parallel example problem for "
-         "IDA \n\n");
+  printf(
+    "\nidas_food_web_kry_p: Predator-prey DAE parallel example problem for "
+    "IDA \n\n");
   printf("Number of species ns: %d", NUM_SPECIES);
   printf("     Mesh dimensions: %d x %d", MX, MY);
   printf("     Total system size: %ld\n", (long int)SystemSize);

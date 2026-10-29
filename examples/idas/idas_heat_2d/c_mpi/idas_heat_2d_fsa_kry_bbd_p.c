@@ -870,8 +870,9 @@ static void PrintHeader(sunindextype Neq, sunrealtype rtol, sunrealtype atol,
                         sunindextype mudq, sunindextype mukeep,
                         sunbooleantype sensi, int sensi_meth, int err_con)
 {
-  printf("\nidas_heat_2d_fsa_kry_bbd_p: Heat equation, parallel example problem "
-         "for IDA\n");
+  printf(
+    "\nidas_heat_2d_fsa_kry_bbd_p: Heat equation, parallel example problem "
+    "for IDA\n");
   printf("                     Discretized heat equation on 2D unit square.\n");
   printf("                     Zero boundary conditions, polynomial initial "
          "conditions.\n");
