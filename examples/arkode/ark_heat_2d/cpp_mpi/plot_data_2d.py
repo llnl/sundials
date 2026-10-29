@@ -103,13 +103,9 @@ def main():
         help="""Set the plot type""",
     )
 
-    group.add_argument(
-        "--plotvars", type=int, nargs="+", help="""Variable indices to plot"""
-    )
+    group.add_argument("--plotvars", type=int, nargs="+", help="""Variable indices to plot""")
 
-    group.add_argument(
-        "--plottimes", type=int, nargs="+", help="""Time indices to plot"""
-    )
+    group.add_argument("--plottimes", type=int, nargs="+", help="""Time indices to plot""")
 
     # Slice plot options
 
@@ -151,14 +147,10 @@ def main():
 
     group.add_argument("--save", action="store_true", help="""Save figure to file""")
 
-    group.add_argument(
-        "--prefix", type=str, help="""File name prefix for saving the figure"""
-    )
+    group.add_argument("--prefix", type=str, help="""File name prefix for saving the figure""")
 
     group.add_argument(
-        "--merge",
-        action="store_true",
-        help="""Merge PDF output files into a single file""",
+        "--merge", action="store_true", help="""Merge PDF output files into a single file"""
     )
 
     # Figure options
@@ -169,9 +161,7 @@ def main():
                                       properties""",
     )
 
-    group.add_argument(
-        "--labels", type=str, nargs="+", help="""Data labels for the plot legend"""
-    )
+    group.add_argument("--labels", type=str, nargs="+", help="""Data labels for the plot legend""")
 
     group.add_argument("--title", type=str, help="""Plot title""")
 
@@ -245,9 +235,7 @@ def main():
     if args.plottype == "point":
         # point data
         pdata = zdata[:, args.point[1], args.point[0], :]
-        suffix = " at x = {:.4f}, y = {:.4f}".format(
-            xvals[args.point[0]], yvals[args.point[1]]
-        )
+        suffix = " at x = {:.4f}, y = {:.4f}".format(xvals[args.point[0]], yvals[args.point[1]])
 
         plot_point(args, info, time, pdata, suffix)
 
@@ -276,19 +264,7 @@ def read_header(args):
     import numpy as np
 
     # initialize dictionary of header info variables to None
-    keys = [
-        "title",
-        "varnames",
-        "nprocs",
-        "nvar",
-        "nt",
-        "nx",
-        "xl",
-        "xu",
-        "ny",
-        "yl",
-        "yu",
-    ]
+    keys = ["title", "varnames", "nprocs", "nvar", "nt", "nx", "xl", "xu", "ny", "yl", "yu"]
 
     info = dict()
     for k in keys:
@@ -931,12 +907,7 @@ def plot_contour_ani(args, info, time, xvals, yvals, zdata):
 
     def update_plot(frame_number, zarray, v, plot):
         plot[0] = ax.contourf(
-            X,
-            Y,
-            zdata[frame_number, :, :, v],
-            levels=levels,
-            cmap="coolwarm",
-            extend="both",
+            X, Y, zdata[frame_number, :, :, v], levels=levels, cmap="coolwarm", extend="both"
         )
 
         tstr = str(time[frame_number])
@@ -962,9 +933,7 @@ def plot_contour_ani(args, info, time, xvals, yvals, zdata):
         fig, ax = plt.subplots()
 
         plot = [
-            ax.contourf(
-                X, Y, zdata[0, :, :, v], levels=levels, cmap="coolwarm", extend="both"
-            )
+            ax.contourf(X, Y, zdata[0, :, :, v], levels=levels, cmap="coolwarm", extend="both")
         ]
         fig.colorbar(plot[0], ax=ax, fraction=0.046, pad=0.04, ticks=ticks)
 
