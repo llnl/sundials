@@ -16,10 +16,15 @@ set(_arkode_libs sundials_arkode sundials_nvecserial sundials_sundomeigestpower
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  ark_analytic ark_analytic.c
+  ark_analytic ark_analytic.c NO_TEST
   INSTALL_FILES
+    ark_analytic.out
     ark_analytic_arkode.scalar_tolerances_1e-6_1e-8_arkode.table_names_ARKODE_ESDIRK547L2SA_7_4_5_ARKODE_ERK_NONE.out
   LINK_LIBRARIES PRIVATE ${_arkode_libs})
+sundials_add_test(
+  ark_analytic ark_analytic
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE ark_analytic.out)
 sundials_add_test(
   ark_analytic_arkode.scalar_tolerances_1e-6_1e-8_arkode.table_names_ARKODE_ESDIRK547L2SA_7_4_5_ARKODE_ERK_NONE
   ark_analytic
@@ -28,7 +33,7 @@ sundials_add_test(
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   ANSWER_FILE
     ark_analytic_arkode.scalar_tolerances_1e-6_1e-8_arkode.table_names_ARKODE_ESDIRK547L2SA_7_4_5_ARKODE_ERK_NONE.out
-  EXAMPLE_TYPE develop)
+)
 
 foreach(_example
         ark_analytic_lsrk ark_analytic_lsrk_varjac ark_analytic_lsrk_domeigest

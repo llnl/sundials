@@ -29,7 +29,7 @@ file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mt_*.out")
 if(NOT TARGET ark_kpr_mt)
   sundials_add_example(
     ark_kpr_mt ark_kpr_mt.cpp NO_TEST
-    INSTALL_FILES ${_answer_files}
+    INSTALL_FILES ${_answer_files} plot_sol.py
     INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})

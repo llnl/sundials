@@ -26,7 +26,7 @@ foreach(
   ark_brusselator_lsrk_externaldomeigest
   ark_brusselator_mri)
   set(_type develop)
-  if(_example MATCHES "1D$|imexmri|fp$")
+  if(_example MATCHES "1d$|imexmri|fp$")
     set(_type exclude-single)
   endif()
   if(_example STREQUAL "ark_brusselator_fp")
@@ -70,6 +70,7 @@ foreach(
     sundials_add_example(
       ${_example} ${_example}.c
       EXAMPLE_TYPE ${_type}
+      INSTALL_FILES plot_brusselator_1d.py
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
   endif()
 endforeach()
