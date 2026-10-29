@@ -32,9 +32,7 @@ def check(root, packages):
             for variant in variants:
                 variant_dir = problem_dir / variant
                 variant_cmake = variant_dir / "CMakeLists.txt"
-                if not re.fullmatch(
-                    r"(?:c|cpp|fortran|cuda|hip|sycl)(?:_[a-z0-9]+)*", variant
-                ):
+                if not re.fullmatch(r"(?:c|cpp|fortran|cuda|hip|sycl)(?:_[a-z0-9]+)*", variant):
                     errors.append(f"{variant_dir}: invalid language/TPL variant name")
                 if not variant_cmake.is_file():
                     errors.append(f"{variant_cmake}: missing variant CMakeLists.txt")
@@ -48,32 +46,23 @@ def check(root, packages):
                 if len(relative.parts) != 3:
                     errors.append(f"{file}: expected <problem>/<variant>/<source>")
                 if not re.fullmatch(r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*", file.stem):
-                    errors.append(
-                        f"{file}: expected lowercase underscore-separated name"
-                    )
+                    errors.append(f"{file}: expected lowercase underscore-separated name")
                 if len(relative.parts) == 3:
                     problem, variant, _ = relative.parts
                     if problem not in problems:
-                        errors.append(
-                            f"{file}: problem not registered in package CMake"
-                        )
+                        errors.append(f"{file}: problem not registered in package CMake")
                     problem_cmake = directory / problem / "CMakeLists.txt"
                     if (
                         problem_cmake.is_file()
-                        and f"add_subdirectory({variant})"
-                        not in problem_cmake.read_text()
+                        and f"add_subdirectory({variant})" not in problem_cmake.read_text()
                     ):
-                        errors.append(
-                            f"{file}: variant not registered in problem CMake"
-                        )
+                        errors.append(f"{file}: variant not registered in problem CMake")
             if file.name.startswith("Makefile"):
                 errors.append(f"{file}: obsolete example Makefile")
         for document in (root / "doc" / package).rglob("*.rst"):
             if not document.is_file():
                 continue
-            for include in re.findall(
-                r"literalinclude::\s+(\S+)", document.read_text()
-            ):
+            for include in re.findall(r"literalinclude::\s+(\S+)", document.read_text()):
                 if "examples/" in include and not (document.parent / include).is_file():
                     errors.append(f"{document}: missing example include {include}")
     return errors
@@ -90,13 +79,9 @@ def check_generated(build):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--root", type=Path, default=Path(__file__).resolve().parents[1]
-    )
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--packages", nargs="+", choices=PACKAGES, default=PACKAGES)
-    parser.add_argument(
-        "--build", type=Path, help="Also check generated standalone projects"
-    )
+    parser.add_argument("--build", type=Path, help="Also check generated standalone projects")
     args = parser.parse_args()
     errors = check(args.root, args.packages)
     if args.build:
