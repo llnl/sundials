@@ -15,6 +15,8 @@
 sundials_add_example(
   ark_kpr_nestedmri_f2003 ark_kpr_nestedmri_f2003.f90
   EXAMPLE_TYPE develop
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_kpr_nestedmri_f2003.dir
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                  ${EXE_EXTRA_LINK_LIBS})
 
@@ -25,6 +27,8 @@ if(SUNDIALS_INDEX_SIZE MATCHES "64")
     sundials_add_example(
       ark_kpr_mri_f2003 ark_kpr_mri_f2003.f90 NO_TEST
       INSTALL_FILES ${_answer_files}
+      PROPERTIES Fortran_MODULE_DIRECTORY
+                 ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_kpr_mri_f2003.dir
       LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                      ${EXE_EXTRA_LINK_LIBS})
   endif()
