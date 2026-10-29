@@ -17,6 +17,7 @@ sundials_add_example(
   TEST_NAME ark_brusselator_1d_task_local_nls_--monitor
   TEST_ARGS --monitor
   MPI_NPROCS 4
+  FLOAT_PRECISION 2
   ANSWER_FILE ark_brusselator_1d_task_local_nls_--monitor.out
   EXAMPLE_TYPE develop
   INSTALL_FILES
@@ -33,6 +34,7 @@ foreach(_args "--monitor --explicit --tf 3" "--monitor --global-nls")
     ark_brusselator_1d_task_local_nls
     TEST_ARGS ${_args}
     MPI_NPROCS 4
+    FLOAT_PRECISION 2
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ark_brusselator_1d_task_local_nls_${_suffix}.out
     EXAMPLE_TYPE ${_type})
