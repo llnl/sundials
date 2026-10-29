@@ -1079,8 +1079,7 @@ int ARKodeSetInitStep(void* arkode_mem, sunrealtype hin)
   if (err != ARK_SUCCESS) { return err; }
 
   /* Passing hin=0 sets the default, otherwise use input. */
-  if (hin == ZERO) { ark_mem->hin = ZERO; }
-  else { ark_mem->hin = hin; }
+  ark_mem->hin = hin;
 
   /* Clear previous initial step */
   ark_mem->h0u = ZERO;
@@ -1312,8 +1311,17 @@ int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed)
   }
   else { ark_mem->fixedstep = SUNFALSE; }
 
-  /* Notify ARKODE to use hfixed as the initial step size, and return */
-  return ARKodeSetInitStep(arkode_mem, hfixed);
+  /* Clear previous initial step */
+  ark_mem->h0u = ZERO;
+
+  /* Reset error controller (e.g., error and step size history) */
+  if (ark_mem->hadapt_mem->hcontroller != NULL)
+  {
+    retval = SUNAdaptController_Reset(ark_mem->hadapt_mem->hcontroller);
+    if (retval != SUN_SUCCESS) { return (ARK_CONTROLLER_ERR); }
+  }
+
+  return ARK_SUCCESS;
 }
 
 /*---------------------------------------------------------------
