@@ -132,9 +132,7 @@ for pt in plottype:
         # extract data
         for i in range(nt):
             time[i] = data[i, 0]
-            result[i, jstart : jend + 1, istart : iend + 1] = np.reshape(
-                data[i, 1:], (nyl, nxl)
-            )
+            result[i, jstart : jend + 1, istart : iend + 1] = np.reshape(data[i, 1:], (nyl, nxl))
 
     # determine extents of plots
     maxtemp = 1.1 * result.max()
