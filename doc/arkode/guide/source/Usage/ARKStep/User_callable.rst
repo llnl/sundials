@@ -671,14 +671,10 @@ Optional inputs for ARKStep
       When using :c:func:`ARKStepSetFixedStep()`, any values provided to
       the functions
       :c:func:`ARKStepSetInitStep()`,
-      :c:func:`ARKStepSetMinStep()`,
-      :c:func:`ARKStepSetMaxStep()`,
-      :c:func:`ARKStepSetConstraints()`,
-      :c:func:`ARKStepSetMaxNumConstrFails()`,
+      :c:func:`ARKStepSetAdaptivityFn()`,
       :c:func:`ARKStepSetMaxErrTestFails()`,
       :c:func:`ARKStepSetAdaptivityMethod()`,
       :c:func:`ARKStepSetCFLFraction()`,
-      :c:func:`ARKStepSetAdaptivityAdjustment()`,
       :c:func:`ARKStepSetErrorBias()`,
       :c:func:`ARKStepSetFixedStepBounds()`,
       :c:func:`ARKStepSetMaxCFailGrowth()`,
@@ -688,13 +684,9 @@ Optional inputs for ARKStep
       :c:func:`ARKStepSetMinReduction()`,
       :c:func:`ARKStepSetSafetyFactor()`,
       :c:func:`ARKStepSetSmallNumEFails()`,
-      :c:func:`ARKStepSetStabilityFn()`,
-      :c:func:`ARKStepSetMaxHnilWarns()`,
-      :c:func:`ARKStepSetAdaptController()`, and
-      :c:func:`ARKStepSetAdaptControllerByName()`
-      will return an error, since temporal adaptivity is disabled. To turn
-      temporal adaptivity back on, call :c:func:`ARKStepSetFixedStep()` with
-      a value of 0.0.
+      :c:func:`ARKStepSetStabilityFn()`, and
+      :c:func:`ARKStepSetAdaptController()`
+      will be ignored, since temporal adaptivity is disabled.
 
       If both :c:func:`ARKStepSetFixedStep()` and
       :c:func:`ARKStepSetStopTime()` are used, then the fixed step size
