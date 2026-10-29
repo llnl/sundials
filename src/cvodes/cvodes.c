@@ -6048,8 +6048,10 @@ static int cvStep(CVodeMem cv_mem)
       if (cv_mem->cv_quadr) { nefQ = 0; /* reset counter for quadratures */ }
 
       /* Evaluate f at converged y, needed for future evaluations of sens. RHS
-       * If f() fails recoverably, treat it as a convergence failure and
-       * attempt the step again */
+       * If f() fails recoverably, treat it as a convergence failure: restore
+       * the prediction, reduce the step, and attempt the step again. The
+       * failure is counted with the sensitivity corrector failures, since ncf
+       * is reset above on every attempt and would never reach maxncf. */
 
       retval = cv_mem->cv_f(cv_mem->cv_tn, cv_mem->cv_y, cv_mem->cv_ftemp,
                             cv_mem->cv_user_data);
@@ -6061,8 +6063,11 @@ static int cvStep(CVodeMem cv_mem)
       if (retval < 0) { return (CV_RHSFUNC_FAIL); }
       if (retval > 0)
       {
-        nflag = PREV_CONV_FAIL;
-        continue;
+        nflag = RHSFUNC_RECVR;
+        kflag = cvHandleNFlag(cv_mem, &nflag, saved_t, &ncfS,
+                              &(cv_mem->cv_ncfnS));
+        if (kflag == PREDICT_AGAIN) { continue; }
+        return (kflag);
       }
 
       if (do_sensi_stg)
