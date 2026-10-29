@@ -3083,10 +3083,8 @@ and RAJA vector implementations respectively. Accordingly, the
 and ``libsundials_nvecmpicudaraja.lib`` files have been removed. Users should
 use the MPI+X vector in conjunction with the CUDA and RAJA vectors to replace
 the functionality. The necessary changes are minimal and should require few code
-modifications. See the example programs in
-``examples/ida/ida_heat_2d/cuda_mpi`` and
-``examples/ida/ida_heat_2d/cpp_mpi_raja`` for examples of how to use the MPI+X
-vector with the
+modifications. See the example programs in ``examples/ida/mpicuda`` and
+``examples/ida/mpiraja`` for examples of how to use the MPI+X vector with the
 CUDA and RAJA vectors, respectively.
 
 Made performance improvements to the CUDA vector. Users who utilize a
@@ -4009,7 +4007,7 @@ Changed each the return type of ``*FreeB`` functions to ``int`` and added
 
 Corrections were made to three Fortran interface functions.
 
-Corrected the output from the ``ida_food_web_bnd.c`` example, the wrong component
+Corrected the output from the ``idaFoodWeb_bnd.c`` example, the wrong component
 was printed in ``PrintOutput``.
 
 *IDAS*
