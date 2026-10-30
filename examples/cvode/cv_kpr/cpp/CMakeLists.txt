@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 # CVODE serial C++ KPR example
 sundials_add_example(
-  cv_kpr cv_kpr.cpp
+  cv_kpr SOURCES cv_kpr.cpp
   INSTALL_FILES cv_kpr.hpp cv_kpr_cvode.init_step_0.01.out
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities

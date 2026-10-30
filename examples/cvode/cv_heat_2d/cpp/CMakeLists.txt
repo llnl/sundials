@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 # CVODE serial C++ heat equation example
 sundials_add_example(
-  cv_heat_2d cv_heat_2d.cpp
+  cv_heat_2d SOURCES cv_heat_2d.cpp
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES cv_heat_2d.hpp plot_heat_2d.py
                 "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"

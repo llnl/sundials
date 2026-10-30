@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------
 # Add an example executable, its primary test, and its install files.
 #
-# sundials_add_example(<name> <sources>...
+# sundials_add_example(<name> SOURCES <sources>...
 #                      [NO_TEST] [NO_INSTALL] [NO_DIFF]
 #                      [LINK_LIBRARIES libraries...]
 #                      [INCLUDE_DIRECTORIES directories...]
@@ -28,7 +28,7 @@
 #                      [ANSWER_DIR directory] [EXAMPLE_TYPE type]
 #                      [INSTALL_FILES files...])
 #
-# The positional sources and the SCALAR_TYPE, LINK_LIBRARIES,
+# The SOURCES, SCALAR_TYPE, LINK_LIBRARIES,
 # INCLUDE_DIRECTORIES, COMPILE_DEFINITIONS, PROPERTIES, and SOURCE_PROPERTIES
 # arguments are passed to sundials_add_executable.
 #
@@ -65,11 +65,19 @@ function(sundials_add_example name)
       TEST_ARGS
       EXTRA_ARGS
       LABELS
-      INSTALL_FILES)
+      INSTALL_FILES
+      SOURCES)
   cmake_parse_arguments(arg "${options}" "${one_value_args}"
                         "${multi_value_args}" ${ARGN})
 
-  set(_executable_args ${arg_UNPARSED_ARGUMENTS})
+  if(arg_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unexpected arguments: ${arg_UNPARSED_ARGUMENTS}")
+  endif()
+  if(NOT arg_SOURCES)
+    message(FATAL_ERROR "sundials_add_example(${name}) requires SOURCES")
+  endif()
+
+  set(_executable_args ${arg_SOURCES})
   foreach(_keyword LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
                    SOURCE_PROPERTIES)
     list(APPEND _executable_args ${_keyword} ${arg_${_keyword}})
@@ -123,9 +131,7 @@ function(sundials_add_example name)
   if(SUNDIALS_ENABLE_EXAMPLES_INSTALL AND NOT arg_NO_INSTALL)
     file(RELATIVE_PATH _install_subdir "${PROJECT_SOURCE_DIR}/examples"
          "${CMAKE_CURRENT_SOURCE_DIR}")
-    # Positional arguments are the example sources and must be installed with
-    # the additional supporting files.
-    set(_install_files ${arg_UNPARSED_ARGUMENTS} ${arg_INSTALL_FILES})
+    set(_install_files ${arg_SOURCES} ${arg_INSTALL_FILES})
     if(NOT arg_NO_TEST AND NOT arg_NO_DIFF)
       list(APPEND _install_files ${_answer_file})
     endif()
