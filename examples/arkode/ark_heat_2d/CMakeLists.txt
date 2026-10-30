@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-  add_subdirectory(cpp)
+  add_subdirectory(cpp_heat_2d)
+  add_subdirectory(cpp_heat_2d_lsrk)
   if(SUNDIALS_ENABLE_LAPACK)
     add_subdirectory(cpp_lapack)
   endif()

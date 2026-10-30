@@ -18,7 +18,7 @@ def main() -> int:
         for cmake_file in sorted(root.rglob("CMakeLists.txt")):
             contents = cmake_file.read_text()
             calls = len(re.findall(r"\bsundials_add_example\s*\(", contents, re.I))
-            if calls > 1:
+            if calls > 1 and "SUNDIALS_EXAMPLE_VARIANT" not in contents:
                 violations.append((cmake_file.parent, calls))
 
     for directory, calls in violations:

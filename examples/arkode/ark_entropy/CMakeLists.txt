@@ -13,5 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_conserved_exp_entropy_ark)
+  add_subdirectory(c_conserved_exp_entropy_erk)
+  add_subdirectory(c_dissipated_exp_entropy)
 endif()

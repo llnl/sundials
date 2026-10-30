@@ -46,6 +46,11 @@
 # ---------------------------------------------------------------
 
 function(sundials_add_example name)
+  if(DEFINED SUNDIALS_EXAMPLE_VARIANT
+     AND NOT name STREQUAL SUNDIALS_EXAMPLE_VARIANT)
+    return()
+  endif()
+
   set(options NO_INSTALL NO_TEST NO_DIFF)
   set(one_value_args
       SCALAR_TYPE
