@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_adr_1d_extsts ark_adr_1d_extsts.cpp
+  ark_adr_1d_extsts SOURCES ark_adr_1d_extsts.cpp
   EXAMPLE_TYPE develop
   INSTALL_FILES ark_adr_1d_extsts.hpp
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
@@ -22,7 +22,7 @@ sundials_add_example(
 
 if(SUNDIALS_ENABLE_CVODE)
   sundials_add_example(
-    ark_advection_diffusion_reaction ark_advection_diffusion_reaction.cpp
+    ark_advection_diffusion_reaction SOURCES ark_advection_diffusion_reaction.cpp
     EXAMPLE_TYPE develop
     INSTALL_FILES ark_advection_diffusion_reaction.hpp
     INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities

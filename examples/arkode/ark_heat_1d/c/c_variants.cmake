@@ -13,13 +13,13 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat_1d ark_heat_1d.c
+  ark_heat_1d SOURCES ark_heat_1d.c
   EXAMPLE_TYPE develop
   INSTALL_FILES plot_heat_1d.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  ark_heat_1d_adapt ark_heat_1d_adapt.c
+  ark_heat_1d_adapt SOURCES ark_heat_1d_adapt.c
   EXAMPLE_TYPE develop
   INSTALL_FILES plot_heat_1d_adapt.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial

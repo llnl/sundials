@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator_1d_fem_sludist ark_brusselator_1d_fem_sludist.cpp
+  ark_brusselator_1d_fem_sludist SOURCES ark_brusselator_1d_fem_sludist.cpp
   MPI_NPROCS 1
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE MPI::MPI_CXX sundials_arkode

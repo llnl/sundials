@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_bruss_1d_fem_klu_f2003 ark_bruss_1d_fem_klu_f2003.f90
+  ark_bruss_1d_fem_klu_f2003 SOURCES ark_bruss_1d_fem_klu_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES
     PRIVATE sundials_farkode_mod sundials_arkode sundials_sunlinsolklu

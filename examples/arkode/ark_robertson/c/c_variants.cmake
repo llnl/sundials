@@ -19,7 +19,7 @@ foreach(_example ark_robertson ark_robertson_constraints ark_robertson_root)
     set(_files ark_robertson_stats.csv)
   endif()
   sundials_add_example(
-    ${_example} ${_example}.c
+    ${_example} SOURCES ${_example}.c
     EXAMPLE_TYPE ${_type}
     INSTALL_FILES ${_files}
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial

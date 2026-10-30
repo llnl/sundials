@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat_1d_omp ark_heat_1d_omp.c
+  ark_heat_1d_omp SOURCES ark_heat_1d_omp.c
   TEST_ARGS 4
   INTEGER_PRECISION 10
   EXAMPLE_TYPE develop

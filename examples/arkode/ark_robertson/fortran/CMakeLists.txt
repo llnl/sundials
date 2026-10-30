@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 foreach(_example ark_roberts_dns_f2003)
   sundials_add_example(
-    ${_example} ${_example}.f90
+    ${_example} SOURCES ${_example}.f90
     EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                    ${EXE_EXTRA_LINK_LIBS})

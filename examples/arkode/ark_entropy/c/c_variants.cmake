@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_conserved_exp_entropy_ark ark_conserved_exp_entropy_ark.c
+  ark_conserved_exp_entropy_ark SOURCES ark_conserved_exp_entropy_ark.c
   TEST_NAME ark_conserved_exp_entropy_ark_1_0
   TEST_ARGS 1 0
   ANSWER_FILE ark_conserved_exp_entropy_ark_1_0.out
@@ -29,7 +29,7 @@ sundials_add_test(
   EXAMPLE_TYPE develop)
 
 sundials_add_example(
-  ark_conserved_exp_entropy_erk ark_conserved_exp_entropy_erk.c
+  ark_conserved_exp_entropy_erk SOURCES ark_conserved_exp_entropy_erk.c
   TEST_NAME ark_conserved_exp_entropy_erk_1
   TEST_ARGS 1
   ANSWER_FILE ark_conserved_exp_entropy_erk_1.out
@@ -38,7 +38,7 @@ sundials_add_example(
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  ark_dissipated_exp_entropy ark_dissipated_exp_entropy.c
+  ark_dissipated_exp_entropy SOURCES ark_dissipated_exp_entropy.c
   TEST_NAME ark_dissipated_exp_entropy_1_0
   TEST_ARGS 1 0
   ANSWER_FILE ark_dissipated_exp_entropy_1_0.out
