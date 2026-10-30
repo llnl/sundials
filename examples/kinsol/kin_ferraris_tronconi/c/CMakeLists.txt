@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(kin_fer_tron_dns kin_fer_tron_dns.c)
+sundials_add_example(kin_fer_tron_dns SOURCES kin_fer_tron_dns.c)
 target_link_libraries(
   kin_fer_tron_dns PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                            ${EXE_EXTRA_LINK_LIBS})

@@ -24,7 +24,7 @@ set(_kin_analytic_outputs
     kin_analytic_fp_--m_aa_2_--orth_aa_3.out
     kin_analytic_fp_--m_aa_3_--depth_fn.out)
 sundials_add_example(
-  kin_analytic_fp kin_analytic_fp.c NO_TEST
+  kin_analytic_fp SOURCES kin_analytic_fp.c NO_TEST
   INSTALL_FILES kin_analytic_fp.out ${_kin_analytic_outputs}
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

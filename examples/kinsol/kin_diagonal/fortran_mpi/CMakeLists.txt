@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_diagonal_kry_p_f2003 kin_diagonal_kry_p_f2003.f90
+  kin_diagonal_kry_p_f2003 SOURCES kin_diagonal_kry_p_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
   LINK_LIBRARIES

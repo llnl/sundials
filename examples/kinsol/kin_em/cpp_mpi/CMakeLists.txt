@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_em_p kin_em_p.cpp
+  kin_em_p SOURCES kin_em_p.cpp
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES kin_em_p.hpp

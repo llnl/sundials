@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 foreach(example kin_laplace_bnd_f2003 kin_laplace_picard_kry_f2003)
   sundials_add_example(
-    ${example} ${example}.f90
+    ${example} SOURCES ${example}.f90
     LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_fkinsol_mod
                    ${EXE_EXTRA_LINK_LIBS}
     PROPERTIES Fortran_MODULE_DIRECTORY

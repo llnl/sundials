@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_roberts_fp kin_roberts_fp.c
+  kin_roberts_fp SOURCES kin_roberts_fp.c
   INSTALL_FILES kin_roberts_fp_kinsol.m_aa_1.out
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

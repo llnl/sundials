@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 foreach(example kin_food_web_kry_bbd_p kin_food_web_kry_p)
   sundials_add_example(
-    ${example} ${example}.c
+    ${example} SOURCES ${example}.c
     MPI_NPROCS 4
     EXAMPLE_TYPE exclude-single
     LINK_LIBRARIES PRIVATE MPI::MPI_C ${KINSOL_C_LIBS} sundials_nvecparallel
