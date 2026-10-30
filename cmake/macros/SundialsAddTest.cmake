@@ -99,13 +99,6 @@ function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
 
   set(_add_test TRUE)
 
-  # exclude development tests
-  # TODO(DJG): When examples and development tests are separated this check can
-  # be removed
-  if(NOT SUNDIALS_TEST_ENABLE_DEV_TESTS AND arg_EXAMPLE_TYPE STREQUAL "develop")
-    set(_add_test FALSE)
-  endif()
-
   # always excluded
   if("${arg_EXAMPLE_TYPE}" STREQUAL "exclude")
     set(_add_test FALSE)
