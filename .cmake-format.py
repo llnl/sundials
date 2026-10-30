@@ -40,6 +40,7 @@ with section("parse"):
                 "PROPERTIES": "+",
                 "SCALAR_TYPE": 1,
                 "SOURCE_PROPERTIES": "+",
+                "SOURCES": "+",
                 "TEST_ARGS": "+",
                 "TEST_NAME": 1,
             },

@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_diurnal_kry_p cv_diurnal_kry_p.c
+  cv_diurnal_kry_p SOURCES cv_diurnal_kry_p.c
   MPI_NPROCS 4
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel

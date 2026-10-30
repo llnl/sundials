@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_diag_hip cv_adv_diff_diag_hip.cpp NO_TEST
+  cv_adv_diff_diag_hip SOURCES cv_adv_diff_diag_hip.cpp NO_TEST
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
                 cv_adv_diff_diag_hip_1_1.out
   LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
