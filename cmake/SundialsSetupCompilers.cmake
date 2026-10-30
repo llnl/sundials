@@ -149,7 +149,7 @@ if(SUNDIALS_ENABLE_ALL_WARNINGS)
   # run-time error with this check
   #
   # Exclude checks for subroutines and functions not marked as recursive
-  # (no-recursion) e.g., ark_brusselator1D_task_local_nls_f2003 calls
+  # (no-recursion) e.g., ark_brusselator_1d_task_local_nls_f2003 calls
   # SUNNonlinsolFree from within a custom nonlinear solver implementation of
   # SUNNonlinsolFree which causes a run-time error with this check
   set(CMAKE_Fortran_FLAGS

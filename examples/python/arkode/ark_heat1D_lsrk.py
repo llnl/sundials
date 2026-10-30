@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-# This example is based on examples/python/arkode/ark_heat1D.py,
+# This example is based on examples/python/arkode/ark_heat_1d.py,
 # but it uses ARKODE's LSRKStep module with a super-time-stepping
 # (STS) method for time evolution.
 #
