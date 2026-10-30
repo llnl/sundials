@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_krylov_demo_prec SOURCES ark_krylov_demo_prec.c
+  ark_krylov_demo_prec
+  SOURCES ark_krylov_demo_prec.c
   ANSWER_FILE ark_krylov_demo_prec.out
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES ark_krylov_demo_prec_1.out ark_krylov_demo_prec_2.out

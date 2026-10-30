@@ -31,7 +31,8 @@ foreach(
   endif()
   if(_example STREQUAL "ark_brusselator_fp")
     sundials_add_example(
-      ${_example} SOURCES ${_example}.c
+      ${_example}
+      SOURCES ${_example}.c
       EXAMPLE_TYPE ${_type}
       INSTALL_FILES ark_brusselator_fp_1.out
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
@@ -45,7 +46,8 @@ foreach(
     endif()
   elseif(_example STREQUAL "ark_brusselator_1d_imexmri")
     sundials_add_example(
-      ${_example} SOURCES ${_example}.c
+      ${_example}
+      SOURCES ${_example}.c
       TEST_NAME ${_example}_0_0.001
       TEST_ARGS 0 0.001
       ANSWER_FILE ${_example}_0_0.001.out
@@ -68,7 +70,8 @@ foreach(
     endforeach()
   else()
     sundials_add_example(
-      ${_example} SOURCES ${_example}.c
+      ${_example}
+      SOURCES ${_example}.c
       EXAMPLE_TYPE ${_type}
       INSTALL_FILES plot_brusselator_1d.py
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
