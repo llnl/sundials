@@ -23,7 +23,8 @@ endif()
 set_source_files_properties(ida_heat_2d_kry_raja.cpp PROPERTIES LANGUAGE
                                                                 ${_lang})
 sundials_add_example(
-  ida_heat_2d_kry_raja SOURCES ida_heat_2d_kry_raja.cpp
+  ida_heat_2d_kry_raja
+  SOURCES ida_heat_2d_kry_raja.cpp
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecraja ${EXE_EXTRA_LINK_LIBS}
                  ${_other_libs})

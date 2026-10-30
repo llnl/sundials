@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator_1d_manyvec SOURCES ark_brusselator_1d_manyvec.c
+  ark_brusselator_1d_manyvec
+  SOURCES ark_brusselator_1d_manyvec.c
   EXAMPLE_TYPE develop
   INSTALL_FILES plot_brusselator_1d.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecmanyvector

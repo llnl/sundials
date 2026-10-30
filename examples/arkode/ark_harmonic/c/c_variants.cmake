@@ -14,7 +14,8 @@
 # -----------------------------------------------------------------
 foreach(_example ark_damped_harmonic_symplectic ark_harmonic_symplectic)
   sundials_add_example(
-    ${_example} SOURCES ${_example}.c
+    ${_example}
+    SOURCES ${_example}.c
     EXAMPLE_TYPE exclude-single
     INSTALL_FILES ${_example}.h
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial

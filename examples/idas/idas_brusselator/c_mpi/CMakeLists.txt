@@ -15,7 +15,8 @@
 foreach(example idas_bruss_asap_kry_bbd_p idas_bruss_fsa_kry_bbd_p
                 idas_bruss_kry_bbd_p)
   sundials_add_example(
-    ${example} SOURCES ${example}.c
+    ${example}
+    SOURCES ${example}.c
     MPI_NPROCS 4
     EXAMPLE_TYPE exclude-single
     LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDAS_C_LIBS} sundials_nvecparallel

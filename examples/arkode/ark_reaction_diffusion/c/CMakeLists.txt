@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_reaction_diffusion_mri SOURCES ark_reaction_diffusion_mri.c
+  ark_reaction_diffusion_mri
+  SOURCES ark_reaction_diffusion_mri.c
   EXAMPLE_TYPE develop
   INSTALL_FILES
     plot_sol.py plot_sol_log.py ark_reaction_diffusion_mri_fast_stats.csv

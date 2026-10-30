@@ -38,9 +38,8 @@ function(sundials_add_executable NAME)
     target_include_directories(${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     if(arg_SOURCE_PROPERTIES)
-      set_source_files_properties(
-        ${arg_UNPARSED_ARGUMENTS} TARGET_DIRECTORY ${NAME}
-        PROPERTIES ${arg_SOURCE_PROPERTIES})
+      set_source_files_properties(${arg_UNPARSED_ARGUMENTS} TARGET_DIRECTORY
+                                  ${NAME} PROPERTIES ${arg_SOURCE_PROPERTIES})
     endif()
 
     if(arg_LINK_LIBRARIES)

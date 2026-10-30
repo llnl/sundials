@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_krylov_demo_ls SOURCES cvs_krylov_demo_ls.c
+  cvs_krylov_demo_ls
+  SOURCES cvs_krylov_demo_ls.c
   INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
                 cvs_krylov_demo_ls_2.out)
 target_link_libraries(
@@ -37,5 +38,7 @@ if(SUNDIALS_ENABLE_MONITORING)
 endif()
 
 sundials_add_example(
-  cvs_krylov_demo_prec SOURCES cvs_krylov_demo_prec.c
-  LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+  cvs_krylov_demo_prec
+  SOURCES cvs_krylov_demo_prec.c
+  LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})

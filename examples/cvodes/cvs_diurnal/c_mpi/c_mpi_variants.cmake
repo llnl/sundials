@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_diurnal_fsa_kry_p SOURCES cvs_diurnal_fsa_kry_p.c
+  cvs_diurnal_fsa_kry_p
+  SOURCES cvs_diurnal_fsa_kry_p.c
   TEST_NAME cvs_diurnal_fsa_kry_p_-sensi_stg_t
   TEST_ARGS -sensi stg t
   MPI_NPROCS 4
@@ -31,7 +32,8 @@ sundials_add_test(
 
 foreach(example cvs_diurnal_kry_bbd_p cvs_diurnal_kry_p)
   sundials_add_example(
-    ${example} SOURCES ${example}.c
+    ${example}
+    SOURCES ${example}.c
     MPI_NPROCS 4
     EXAMPLE_TYPE exclude-single
     LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel

@@ -14,12 +14,15 @@
 # -----------------------------------------------------------------
 foreach(example idas_roberts_asai_klu idas_roberts_klu)
   sundials_add_example(
-    ${example} SOURCES ${example}.c ${example_options}
-    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+    ${example}
+    SOURCES ${example}.c ${example_options}
+    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
+                   sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 
 sundials_add_example(
-  idas_roberts_fsa_klu SOURCES idas_roberts_fsa_klu.c
+  idas_roberts_fsa_klu
+  SOURCES idas_roberts_fsa_klu.c
   TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
   TEST_ARGS -sensi stg t
   LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial

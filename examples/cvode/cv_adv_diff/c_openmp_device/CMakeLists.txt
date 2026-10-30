@@ -12,7 +12,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_adv_diff_kry_ompdev SOURCES cv_adv_diff_kry_ompdev.c
-                     TEST_ARGS 4
+sundials_add_example(
+  cv_adv_diff_kry_ompdev
+  SOURCES cv_adv_diff_kry_ompdev.c
+  TEST_ARGS 4
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecopenmpdev
-                                 ${EXE_EXTRA_LINK_LIBS})
+                 ${EXE_EXTRA_LINK_LIBS})

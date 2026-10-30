@@ -37,7 +37,9 @@ foreach(_example ${_xbraid_examples})
     list(APPEND _libs SUNDIALS::HYPRE SUNDIALS::XBRAID)
   endif()
   sundials_add_example(
-    ${_example} SOURCES ${_example}.cpp NO_TEST
+    ${_example}
+    SOURCES ${_example}.cpp
+    NO_TEST
     INSTALL_FILES plot_heat_2d.py ${_example}_${_suffix}.out
     LINK_LIBRARIES PRIVATE ${_libs})
   sundials_add_test(
