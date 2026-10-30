@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_roberts_dns_l_f2003 SOURCES ark_roberts_dns_l_f2003.f90
+  ark_roberts_dns_l_f2003
+  SOURCES ark_roberts_dns_l_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES
     PRIVATE sundials_farkode_mod sundials_arkode sundials_sunlinsollapackdense

@@ -43,10 +43,7 @@ add_subdirectory(ark_robertson)
 add_subdirectory(ark_sod)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
-  # Install each language/TPL variant as an independent CMake project, as is
-  # done for the CVODE examples.
+  # Register each installed variant as an independent test project.
   get_property(
     _arkode_problem_directories
     DIRECTORY
@@ -63,9 +60,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_arkode_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      arkode "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/arkode/${_example_rel_dir}")
     sundials_add_test_install(arkode ${_example_rel_dir})
   endforeach()
 endif()

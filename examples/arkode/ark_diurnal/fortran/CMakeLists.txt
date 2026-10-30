@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_diurnal_kry_bp_f2003 SOURCES ark_diurnal_kry_bp_f2003.f90
+  ark_diurnal_kry_bp_f2003
+  SOURCES ark_diurnal_kry_bp_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_farkode_mod
                  ${EXE_EXTRA_LINK_LIBS})
