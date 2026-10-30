@@ -13,6 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_diurnal_kry_bp SOURCES cv_diurnal_kry_bp.c
+  cv_diurnal_kry_bp
+  SOURCES cv_diurnal_kry_bp.c
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

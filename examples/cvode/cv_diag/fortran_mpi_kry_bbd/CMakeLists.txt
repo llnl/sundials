@@ -13,9 +13,10 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_diag_kry_bbd_f2003 SOURCES cv_diag_kry_bbd_f2003.f90
+  cv_diag_kry_bbd_f2003
+  SOURCES cv_diag_kry_bbd_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
-  LINK_LIBRARIES MPI::MPI_Fortran sundials_cvode sundials_fcvode_mod
-                 sundials_nvecparallel sundials_fnvecparallel_mod
-                 ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES
+    MPI::MPI_Fortran sundials_cvode sundials_fcvode_mod sundials_nvecparallel
+    sundials_fnvecparallel_mod ${EXE_EXTRA_LINK_LIBS})

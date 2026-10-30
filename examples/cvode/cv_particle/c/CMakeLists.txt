@@ -12,6 +12,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_particle_dns SOURCES cv_particle_dns.c
-                     INSTALL_FILES plot_cv_particle.py
-                     LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cv_particle_dns
+  SOURCES cv_particle_dns.c
+  INSTALL_FILES plot_cv_particle.py
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})
