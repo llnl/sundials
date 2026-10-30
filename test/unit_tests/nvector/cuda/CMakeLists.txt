@@ -84,6 +84,6 @@ foreach(example_tuple ${nvector_cuda_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_cuda_examples})

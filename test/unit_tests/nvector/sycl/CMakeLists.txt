@@ -68,6 +68,6 @@ foreach(example_tuple ${nvector_sycl_examples})
     ${test_name} ${example_target}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach()

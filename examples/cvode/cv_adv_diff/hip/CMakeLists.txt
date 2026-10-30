@@ -17,10 +17,9 @@ sundials_add_example(
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
                 cv_adv_diff_diag_hip_1_1.out
   LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
                  ${EXE_EXTRA_LINK_LIBS})
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(cv_adv_diff_diag_hip PRIVATE sundials_cvode_fused_hip)
-endif()
+
 foreach(example_args "0 0" "0 1" "1 1")
   string(REGEX REPLACE " " "_" test_name cv_adv_diff_diag_hip_${example_args})
   sundials_add_test(
@@ -30,10 +29,9 @@ foreach(example_args "0 0" "0 1" "1 1")
     ANSWER_FILE ${test_name}.out
     EXAMPLE_TYPE develop)
 endforeach()
+
 sundials_add_example(
   cv_adv_diff_kry_hip cv_adv_diff_kry_hip.cpp
   LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
+                $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
                  ${EXE_EXTRA_LINK_LIBS})
-if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
-  target_link_libraries(cv_adv_diff_kry_hip PRIVATE sundials_cvode_fused_hip)
-endif()

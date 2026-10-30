@@ -15,15 +15,15 @@
 sundials_add_example(
   cv_adv_diff_diag_p cv_adv_diff_diag_p.c
   MPI_NPROCS 4
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  cv_adv_diff_diag_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES
+  PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                              ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
   cv_adv_diff_non_p cv_adv_diff_non_p.c
   MPI_NPROCS 2
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  cv_adv_diff_non_p PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES
+  PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                             ${EXE_EXTRA_LINK_LIBS})
