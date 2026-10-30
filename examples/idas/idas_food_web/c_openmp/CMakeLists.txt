@@ -1,0 +1,23 @@
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+foreach(example idas_food_web_bnd_omp idas_food_web_kry_omp)
+  set(example_options TEST_ARGS 4)
+  if(example STREQUAL "idas_food_web_kry_omp")
+    list(APPEND example_options NO_TEST INSTALL_FILES ${example}.out)
+  endif()
+  sundials_add_example(${example} SOURCES ${example}.c ${example_options})
+  target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecopenmp
+                                           ${EXE_EXTRA_LINK_LIBS})
+endforeach()
