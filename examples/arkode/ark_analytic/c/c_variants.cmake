@@ -16,7 +16,9 @@ set(_arkode_libs sundials_arkode sundials_nvecserial sundials_sundomeigestpower
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  ark_analytic SOURCES ark_analytic.c NO_TEST
+  ark_analytic
+  SOURCES ark_analytic.c
+  NO_TEST
   INSTALL_FILES
     ark_analytic.out
     ark_analytic_arkode.scalar_tolerances_1e-6_1e-8_arkode.table_names_ARKODE_ESDIRK547L2SA_7_4_5_ARKODE_ERK_NONE.out
@@ -40,14 +42,16 @@ foreach(_example
         ark_analytic_mels ark_analytic_nonlin ark_analytic_ssprk)
   if(_example STREQUAL "ark_analytic_lsrk_domeigest")
     sundials_add_example(
-      ${_example} SOURCES ${_example}.c
+      ${_example}
+      SOURCES ${_example}.c
       EXAMPLE_TYPE develop
       INSTALL_FILES
         ark_analytic_lsrk_domeigest_arkid.dom_eig_est_init_preprocess_iters_1_sundomeigestimator.max_iters_1.out
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
   else()
     sundials_add_example(
-      ${_example} SOURCES ${_example}.c
+      ${_example}
+      SOURCES ${_example}.c
       EXAMPLE_TYPE develop
       LINK_LIBRARIES PRIVATE ${_arkode_libs})
   endif()
@@ -64,7 +68,8 @@ sundials_add_test(
   EXAMPLE_TYPE develop)
 
 sundials_add_example(
-  ark_analytic_partitioned SOURCES ark_analytic_partitioned.c
+  ark_analytic_partitioned
+  SOURCES ark_analytic_partitioned.c
   TEST_NAME ark_analytic_partitioned_forcing
   TEST_ARGS forcing
   EXAMPLE_TYPE develop

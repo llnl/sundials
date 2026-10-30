@@ -35,8 +35,6 @@ add_subdirectory(cvs_pendulum)
 add_subdirectory(cvs_roberts)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
   get_property(
     _cvodes_problem_directories
     DIRECTORY
@@ -53,10 +51,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_cvodes_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      cvodes "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvodes/${_example_rel_dir}")
-
     if(_example_rel_dir STREQUAL "cvs_roberts/c")
       sundials_add_test_install(cvodes ${_example_rel_dir}
                                 EXECUTABLE cvs_roberts_dns)

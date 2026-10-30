@@ -14,7 +14,8 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
-    ida_heat_2d_kry_bbd_f2003 SOURCES ida_heat_2d_kry_bbd_f2003.f90
+    ida_heat_2d_kry_bbd_f2003
+    SOURCES ida_heat_2d_kry_bbd_f2003.f90
     MPI_NPROCS 4
     EXAMPLE_TYPE develop
     FLOAT_PRECISION 2

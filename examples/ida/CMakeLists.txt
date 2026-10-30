@@ -28,8 +28,6 @@ add_subdirectory(ida_roberts)
 add_subdirectory(ida_slider_crank)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
   get_property(
     _ida_problem_directories
     DIRECTORY
@@ -46,9 +44,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_ida_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      ida "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/ida/${_example_rel_dir}")
     sundials_add_test_install(ida ${_example_rel_dir})
   endforeach()
 endif()

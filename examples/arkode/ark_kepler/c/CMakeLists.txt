@@ -35,7 +35,9 @@ endforeach()
 
 if(NOT TARGET ark_kepler)
   sundials_add_example(
-    ark_kepler SOURCES ark_kepler.c NO_TEST
+    ark_kepler
+    SOURCES ark_kepler.c
+    NO_TEST
     INSTALL_FILES ark_kepler.h ark_kepler_plot.py ${_answer_files}
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})
