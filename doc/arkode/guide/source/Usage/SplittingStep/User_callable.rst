@@ -84,7 +84,7 @@ SplittingStep initialization functions
 
    **Example codes:**
       * ``examples/arkode/ark_advection_diffusion_reaction/c/ark_advection_diffusion_reaction_splitting.c``
-      * ``examples/arkode/ark_analytic/c/ark_analytic_partitioned.c``
+      * ``examples/arkode/ark_analytic/c_analytic_partitioned/ark_analytic_partitioned.c``
 
    .. versionadded:: 7.2.0 (ARKODE 6.2.0)
 

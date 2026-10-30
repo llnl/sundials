@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
-  add_subdirectory(fortran)
+  add_subdirectory(fortran_dns)
+  add_subdirectory(fortran_dns_jac)
   if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     add_subdirectory(fortran_klu)
   endif()

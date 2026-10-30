@@ -27,7 +27,7 @@ function(sundials_add_executable NAME)
   set(options)
   set(singleValueArgs SCALAR_TYPE)
   set(multiValueArgs LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
-                     PROPERTIES)
+                     PROPERTIES SOURCE_PROPERTIES)
 
   cmake_parse_arguments(arg "${options}" "${singleValueArgs}"
                         "${multiValueArgs}" ${ARGN})
@@ -36,6 +36,12 @@ function(sundials_add_executable NAME)
   if(NOT _scalarUpper OR _scalarUpper STREQUAL SUNDIALS_SCALAR_TYPE)
     add_executable(${NAME} ${arg_UNPARSED_ARGUMENTS})
     target_include_directories(${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+    if(arg_SOURCE_PROPERTIES)
+      set_source_files_properties(
+        ${arg_UNPARSED_ARGUMENTS} TARGET_DIRECTORY ${NAME}
+        PROPERTIES ${arg_SOURCE_PROPERTIES})
+    endif()
 
     if(arg_LINK_LIBRARIES)
       target_link_libraries(${NAME} ${arg_LINK_LIBRARIES})

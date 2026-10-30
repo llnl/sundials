@@ -13,5 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_damped_harmonic_symplectic)
+  add_subdirectory(c_harmonic_symplectic)
 endif()

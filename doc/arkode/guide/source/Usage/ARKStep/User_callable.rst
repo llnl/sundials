@@ -4397,7 +4397,7 @@ ARKStep system resize function
       further action is necessary.
 
    **Example codes:**
-      * ``examples/arkode/ark_heat_1d/c/ark_heat_1d_adapt.c``
+      * ``examples/arkode/ark_heat_1d/c_heat_1d_adapt/ark_heat_1d_adapt.c``
 
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 
