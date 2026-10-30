@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_analytic_mels ida_analytic_mels.c
+  ida_analytic_mels SOURCES ida_analytic_mels.c
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES ida_analytic_mels_ida.scalar_tolerances_1e-3_1e-8.out
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial

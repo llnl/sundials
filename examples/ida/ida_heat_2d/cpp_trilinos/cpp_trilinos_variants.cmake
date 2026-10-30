@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_heat_2d_kry_tpetra ida_heat_2d_kry_tpetra.cpp
+  ida_heat_2d_kry_tpetra SOURCES ida_heat_2d_kry_tpetra.cpp
   MPI_NPROCS 1
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvectrilinos
                  ${EXE_EXTRA_LINK_LIBS})
 if(MPI_CXX_FOUND)
   sundials_add_example(
-    ida_heat_2d_kry_p_tpetra ida_heat_2d_kry_p_tpetra.cpp
+    ida_heat_2d_kry_p_tpetra SOURCES ida_heat_2d_kry_p_tpetra.cpp
     MPI_NPROCS 4
     EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvectrilinos
