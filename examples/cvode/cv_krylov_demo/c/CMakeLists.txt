@@ -15,10 +15,9 @@
 sundials_add_example(
   cv_krylov_demo_ls cv_krylov_demo_ls.c
   INSTALL_FILES cv_krylov_demo_ls_0_1.out cv_krylov_demo_ls_1.out
-                cv_krylov_demo_ls_2.out)
-target_link_libraries(
-  cv_krylov_demo_ls PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                            ${EXE_EXTRA_LINK_LIBS})
+                cv_krylov_demo_ls_2.out
+  LINK_LIBRARIES
+  PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_test(
   cv_krylov_demo_ls_1 cv_krylov_demo_ls
@@ -40,7 +39,5 @@ if(SUNDIALS_ENABLE_MONITORING)
     ANSWER_FILE cv_krylov_demo_ls_0_1.out
     EXAMPLE_TYPE develop)
 endif()
-sundials_add_example(cv_krylov_demo_prec cv_krylov_demo_prec.c)
-target_link_libraries(
-  cv_krylov_demo_prec PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                              ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(cv_krylov_demo_prec cv_krylov_demo_prec.c
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

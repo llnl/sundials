@@ -18,8 +18,8 @@ foreach(example cv_diag_kry_bbd_f2003 cv_diag_kry_f2003 cv_diag_non_p_f2003)
   sundials_add_example(
     ${example} ${example}.f90
     MPI_NPROCS 4
-    FLOAT_PRECISION 2)
-  target_link_libraries(
+    FLOAT_PRECISION 2
+    LINK_LIBRARIES
     ${example}
     MPI::MPI_Fortran
     sundials_cvode
