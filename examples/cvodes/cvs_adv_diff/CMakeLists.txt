@@ -13,7 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_adv_diff_asai_bnd)
+  add_subdirectory(c_adv_diff_bnd)
+  add_subdirectory(c_adv_diff_fsa_non)
   if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
      AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     add_subdirectory(c_lapack)
@@ -22,7 +24,9 @@ if(SUNDIALS_ENABLE_C_EXAMPLES)
     add_subdirectory(c_openmp)
   endif()
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c_mpi)
+    add_subdirectory(c_mpi_cvs_adv_diff_asap_non_p)
+    add_subdirectory(c_mpi_cvs_adv_diff_fsa_non_p)
+    add_subdirectory(c_mpi_cvs_adv_diff_non_p)
   endif()
 endif()
 

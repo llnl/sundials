@@ -16,7 +16,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # Python version of the C++ example
-#   examples/arkode/ark_advection_diffusion_reaction/cpp/ark_adr_1d_extsts.cpp
+#   examples/arkode/ark_advection_diffusion_reaction/cpp_adr_1d_extsts/ark_adr_1d_extsts.cpp
 #
 # This example solves a one-dimensional advection-diffusion-reaction
 # system with three chemical species,
