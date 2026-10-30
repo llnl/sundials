@@ -12,7 +12,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl.cpp)
-target_link_libraries(
-  cv_adv_diff_kry_sycl PRIVATE sundials_cvode sundials_nvecsycl
-                               ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(cv_adv_diff_kry_sycl cv_adv_diff_kry_sycl.cpp
+  LINK_LIBRARIES sundials_cvode sundials_nvecsycl ${EXE_EXTRA_LINK_LIBS})

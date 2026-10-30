@@ -42,7 +42,7 @@ with section("parse"):
                 "TEST_ARGS": "+",
                 "TEST_NAME": 1,
             },
-            "pargs": {"flags": ["NO_INSTALL", "NO_TEST", "NODIFF"], "nargs": "1+"},
+            "pargs": {"flags": ["NO_DIFF", "NO_INSTALL", "NO_TEST"], "nargs": "1+"},
         },
         "sundials_add_f2003_library": {
             "kwargs": {
@@ -98,7 +98,7 @@ with section("parse"):
                 "MPI_NPROCS": 1,
                 "TEST_ARGS": "+",
             },
-            "pargs": {"flags": ["NODIFF"], "nargs": "2+"},
+            "pargs": {"flags": ["NO_DIFF"], "nargs": "2+"},
         },
         "sundials_add_test_install": {
             "kwargs": {"EXECUTABLE": 1},
