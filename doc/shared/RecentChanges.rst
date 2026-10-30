@@ -15,6 +15,9 @@ The returned string should no longer be freed by the user.
 
 **Bug Fixes**
 
+Fixed a bug in the band SUNMatrix ``SUNMatScaleAdd`` operation where entries
+outside the band of the second matrix were not scaled.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 
