@@ -143,5 +143,8 @@ function(sundials_add_example name)
     list(REMOVE_DUPLICATES _install_files)
     install(FILES ${_install_files}
             DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH}/${_install_subdir})
+
+    include(SundialsInstallExampleCMake)
+    sundials_install_example_cmake(${name})
   endif()
 endfunction()
