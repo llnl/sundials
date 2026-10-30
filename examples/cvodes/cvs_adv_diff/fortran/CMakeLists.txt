@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_adv_diff_fsa_non_f2003 SOURCES cvs_adv_diff_fsa_non_f2003.f90
+  cvs_adv_diff_fsa_non_f2003
+  SOURCES cvs_adv_diff_fsa_non_f2003.f90
   TEST_NAME cvs_adv_diff_fsa_non_f2003_-sensi_stg_t
   TEST_ARGS -sensi stg t
   INSTALL_FILES cvs_adv_diff_fsa_non_f2003_-sensi_sim_t.out

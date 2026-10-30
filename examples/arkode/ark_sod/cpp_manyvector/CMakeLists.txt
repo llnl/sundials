@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_sod_lsrk SOURCES ark_sod_lsrk.cpp
+  ark_sod_lsrk
+  SOURCES ark_sod_lsrk.cpp
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES ark_sod_lsrk.hpp plot_sod.py
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities

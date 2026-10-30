@@ -25,7 +25,9 @@ if(SUNDIALS_ENABLE_CVODE)
     set(_target ark_diffusion_reaction_p)
     if(NOT TARGET ${_target})
       sundials_add_example(
-        ${_target} SOURCES ark_diffusion_reaction_p.cpp NO_TEST
+        ${_target}
+        SOURCES ark_diffusion_reaction_p.cpp
+        NO_TEST
         INSTALL_FILES ${_answer_files}
         INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
         LINK_LIBRARIES

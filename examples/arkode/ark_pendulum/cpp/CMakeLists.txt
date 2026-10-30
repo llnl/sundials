@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_pendulum SOURCES ark_pendulum.cpp
+  ark_pendulum
+  SOURCES ark_pendulum.cpp
   EXAMPLE_TYPE develop
   INSTALL_FILES "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities

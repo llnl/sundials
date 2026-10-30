@@ -13,6 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_bnd SOURCES cv_adv_diff_bnd.c
+  cv_adv_diff_bnd
+  SOURCES cv_adv_diff_bnd.c
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

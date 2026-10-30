@@ -17,7 +17,8 @@ foreach(_example ark_heat_2d_hypre_ls ark_heat_2d_hypre_pfmg
   set(_args "--np 2 2")
   string(REPLACE " " "_" _suffix "${_args}")
   sundials_add_example(
-    ${_example} SOURCES ${_example}.cpp
+    ${_example}
+    SOURCES ${_example}.cpp
     TEST_ARGS ${_args}
     MPI_NPROCS 4
     ANSWER_FILE ${_example}_${_suffix}.out

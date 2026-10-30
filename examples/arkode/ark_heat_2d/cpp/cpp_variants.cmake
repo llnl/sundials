@@ -13,14 +13,16 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat_2d SOURCES ark_heat_2d.cpp
+  ark_heat_2d
+  SOURCES ark_heat_2d.cpp
   EXAMPLE_TYPE develop
   INSTALL_FILES plot_heat_2d.py
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  ark_heat_2d_lsrk SOURCES ark_heat_2d_lsrk.cpp
+  ark_heat_2d_lsrk
+  SOURCES ark_heat_2d_lsrk.cpp
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

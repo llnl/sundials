@@ -14,7 +14,8 @@
 # -----------------------------------------------------------------
 foreach(_example ark_heat_1d_ompdev ark_heat_1d_adapt_ompdev)
   sundials_add_example(
-    ${_example} SOURCES ${_example}.c
+    ${_example}
+    SOURCES ${_example}.c
     TEST_ARGS 4
     EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmpdev

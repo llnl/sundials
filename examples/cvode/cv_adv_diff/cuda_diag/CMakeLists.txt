@@ -13,12 +13,17 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_diag_cuda SOURCES cv_adv_diff_diag_cuda.cu NO_TEST
+  cv_adv_diff_diag_cuda
+  SOURCES cv_adv_diff_diag_cuda.cu
+  NO_TEST
   INSTALL_FILES cv_adv_diff_diag_cuda_0_0.out cv_adv_diff_diag_cuda_0_1.out
                 cv_adv_diff_diag_cuda_1_1.out
-  LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda
-                 $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
-                 ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES
+    PRIVATE
+    sundials_cvode
+    sundials_nveccuda
+    $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
+    ${EXE_EXTRA_LINK_LIBS})
 foreach(example_args "0 0" "0 1" "1 1")
   string(REGEX REPLACE " " "_" test_name cv_adv_diff_diag_cuda_${example_args})
   sundials_add_test(

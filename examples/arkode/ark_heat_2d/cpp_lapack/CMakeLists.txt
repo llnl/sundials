@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_heat_2d_lsrk_domeigest SOURCES ark_heat_2d_lsrk_domeigest.cpp
+  ark_heat_2d_lsrk_domeigest
+  SOURCES ark_heat_2d_lsrk_domeigest.cpp
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES
     PRIVATE sundials_arkode sundials_nvecserial sundials_sundomeigestpower

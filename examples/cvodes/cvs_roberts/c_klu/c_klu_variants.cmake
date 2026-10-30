@@ -19,7 +19,8 @@ foreach(example cvs_roberts_asai_klu cvs_roberts_klu)
                        sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_example(
-  cvs_roberts_fsa_klu SOURCES cvs_roberts_fsa_klu.c
+  cvs_roberts_fsa_klu
+  SOURCES cvs_roberts_fsa_klu.c
   TEST_NAME cvs_roberts_fsa_klu_-sensi_stg1_t
   TEST_ARGS -sensi stg1 t
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial

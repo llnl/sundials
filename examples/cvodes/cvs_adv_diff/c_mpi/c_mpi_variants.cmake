@@ -13,14 +13,16 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_adv_diff_asap_non_p SOURCES cvs_adv_diff_asap_non_p.c
+  cvs_adv_diff_asap_non_p
+  SOURCES cvs_adv_diff_asap_non_p.c
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cvs_adv_diff_fsa_non_p SOURCES cvs_adv_diff_fsa_non_p.c
+  cvs_adv_diff_fsa_non_p
+  SOURCES cvs_adv_diff_fsa_non_p.c
   TEST_NAME cvs_adv_diff_fsa_non_p_-sensi_stg_t
   TEST_ARGS -sensi stg t
   MPI_NPROCS 2
@@ -37,7 +39,8 @@ sundials_add_test(
   EXAMPLE_TYPE exclude-single)
 
 sundials_add_example(
-  cvs_adv_diff_non_p SOURCES cvs_adv_diff_non_p.c
+  cvs_adv_diff_non_p
+  SOURCES cvs_adv_diff_non_p.c
   MPI_NPROCS 2
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODES_C_LIBS} sundials_nvecparallel
