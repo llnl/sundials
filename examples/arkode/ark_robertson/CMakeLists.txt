@@ -13,7 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_robertson)
+  add_subdirectory(c_robertson_constraints)
+  add_subdirectory(c_robertson_root)
 endif()
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
   add_subdirectory(fortran)
