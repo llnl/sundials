@@ -13,7 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_kry_hip SOURCES cv_adv_diff_kry_hip.cpp
-  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
-                 $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
-                 ${EXE_EXTRA_LINK_LIBS})
+  cv_adv_diff_kry_hip
+  SOURCES cv_adv_diff_kry_hip.cpp
+  LINK_LIBRARIES
+    PRIVATE hip::device sundials_cvode sundials_nvechip
+    $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
+    ${EXE_EXTRA_LINK_LIBS})

@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_roberts_dns_negsol SOURCES cv_roberts_dns_negsol.c
+  cv_roberts_dns_negsol
+  SOURCES cv_roberts_dns_negsol.c
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

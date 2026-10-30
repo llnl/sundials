@@ -13,12 +13,15 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_diag_hip SOURCES cv_adv_diff_diag_hip.cpp NO_TEST
+  cv_adv_diff_diag_hip
+  SOURCES cv_adv_diff_diag_hip.cpp
+  NO_TEST
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
                 cv_adv_diff_diag_hip_1_1.out
-  LINK_LIBRARIES PRIVATE hip::device sundials_cvode sundials_nvechip
-                 $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
-                 ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES
+    PRIVATE hip::device sundials_cvode sundials_nvechip
+    $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
+    ${EXE_EXTRA_LINK_LIBS})
 foreach(example_args "0 0" "0 1" "1 1")
   string(REGEX REPLACE " " "_" test_name cv_adv_diff_diag_hip_${example_args})
   sundials_add_test(
