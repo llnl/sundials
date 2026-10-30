@@ -17,21 +17,16 @@
 # Generate a standalone CMakeLists.txt for an installed example directory.
 # ---------------------------------------------------------------
 
-function(sundials_install_example_cmake package source_dir destination)
-  get_property(
-    _targets
-    DIRECTORY "${source_dir}"
-    PROPERTY BUILDSYSTEM_TARGETS)
+function(sundials_install_example_cmake _target)
+  set(source_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+  file(RELATIVE_PATH _example_subdir "${PROJECT_SOURCE_DIR}/examples"
+       "${source_dir}")
+  string(REGEX MATCH "^[^/]+" package "${_example_subdir}")
+  set(destination "${SUNDIALS_EXAMPLES_INSTALL_PATH}/${_example_subdir}")
 
-  set(_languages)
+  get_property(_languages DIRECTORY PROPERTY SUNDIALS_EXAMPLE_LANGUAGES)
+  get_property(_target_commands DIRECTORY PROPERTY SUNDIALS_EXAMPLE_COMMANDS)
   set(_compiler_settings)
-  set(_target_commands)
-  foreach(_target IN LISTS _targets)
-    get_target_property(_type ${_target} TYPE)
-    if(NOT _type STREQUAL "EXECUTABLE")
-      continue()
-    endif()
-
     get_target_property(_sources ${_target} SOURCES)
     get_target_property(_target_source_dir ${_target} SOURCE_DIR)
     set(_installed_sources)
@@ -157,43 +152,34 @@ function(sundials_install_example_cmake package source_dir destination)
     endif()
     string(APPEND _target_commands
            "add_test(NAME ${_target} COMMAND ${_target})\n\n")
-  endforeach()
-
   list(REMOVE_DUPLICATES _languages)
+  set_property(DIRECTORY PROPERTY SUNDIALS_EXAMPLE_LANGUAGES "${_languages}")
+  set_property(DIRECTORY PROPERTY SUNDIALS_EXAMPLE_COMMANDS "${_target_commands}")
   foreach(_language IN LISTS _languages)
     set(_variable CMAKE_${_language}_COMPILER)
     if(DEFINED ${_variable} AND NOT "${${_variable}}" STREQUAL "")
-      set(_value "${${_variable}}")
-      string(REPLACE "\\" "\\\\" _value "${_value}")
-      string(REPLACE "\"" "\\\"" _value "${_value}")
       string(
         APPEND
         _compiler_settings
-        "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"${_language} compiler\")\n\n"
+        "set(${_variable}\n  [==[${${_variable}}]==]\n  CACHE FILEPATH \"${_language} compiler\")\n\n"
       )
     endif()
 
     set(_variable CMAKE_${_language}_FLAGS)
     if(DEFINED ${_variable})
-      set(_value "${${_variable}}")
-      string(REPLACE "\\" "\\\\" _value "${_value}")
-      string(REPLACE "\"" "\\\"" _value "${_value}")
       string(
         APPEND
         _compiler_settings
-        "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} compiler flags\")\n\n"
+        "set(${_variable}\n  [==[${${_variable}}]==]\n  CACHE STRING \"${_language} compiler flags\")\n\n"
       )
     endif()
 
     set(_variable CMAKE_${_language}_STANDARD)
     if(DEFINED ${_variable} AND NOT "${${_variable}}" STREQUAL "")
-      set(_value "${${_variable}}")
-      string(REPLACE "\\" "\\\\" _value "${_value}")
-      string(REPLACE "\"" "\\\"" _value "${_value}")
       string(
         APPEND
         _compiler_settings
-        "set(${_variable}\n  \"${_value}\"\n  CACHE STRING \"${_language} standard\")\n\n"
+        "set(${_variable}\n  [==[${${_variable}}]==]\n  CACHE STRING \"${_language} standard\")\n\n"
       )
     endif()
   endforeach()
@@ -201,13 +187,10 @@ function(sundials_install_example_cmake package source_dir destination)
   if(CUDA IN_LIST _languages
      AND DEFINED CMAKE_CUDA_HOST_COMPILER
      AND NOT "${CMAKE_CUDA_HOST_COMPILER}" STREQUAL "")
-    set(_value "${CMAKE_CUDA_HOST_COMPILER}")
-    string(REPLACE "\\" "\\\\" _value "${_value}")
-    string(REPLACE "\"" "\\\"" _value "${_value}")
     string(
       APPEND
       _compiler_settings
-      "set(CMAKE_CUDA_HOST_COMPILER\n  \"${_value}\"\n  CACHE FILEPATH \"CUDA host compiler\")\n\n"
+      "set(CMAKE_CUDA_HOST_COMPILER\n  [==[${CMAKE_CUDA_HOST_COMPILER}]==]\n  CACHE FILEPATH \"CUDA host compiler\")\n\n"
     )
   endif()
 
@@ -222,9 +205,7 @@ function(sundials_install_example_cmake package source_dir destination)
   endif()
   set(TARGET_COMMANDS "${_target_commands}")
 
-  file(RELATIVE_PATH _relative_dir "${CMAKE_CURRENT_SOURCE_DIR}"
-       "${source_dir}")
-  set(_output "${CMAKE_CURRENT_BINARY_DIR}/${_relative_dir}/CMakeLists.txt")
+  set(_output "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt")
   configure_file(
     "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/SundialsInstallExampleCMakeLists.txt.in"
     "${_output}" @ONLY)

@@ -45,9 +45,7 @@ add_subdirectory(cv_rocket)
 add_subdirectory(cv_vdp)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
-  # Install each variant as an independent CMake project.
+  # Register each installed variant as an independent test project.
   get_property(
     _cvode_problem_directories
     DIRECTORY
@@ -64,10 +62,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_cvode_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      cvode "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/cvode/${_example_rel_dir}")
-
     if(_example_rel_dir STREQUAL "cv_adv_diff/c")
       sundials_add_test_install(cvode ${_example_rel_dir}
                                 EXECUTABLE cv_adv_diff_bnd)
