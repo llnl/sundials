@@ -15,5 +15,7 @@
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES
    AND SUNDIALS_INDEX_SIZE MATCHES "64"
    AND SUNDIALS_ENABLE_MPI)
-  add_subdirectory(fortran_mpi)
+  add_subdirectory(fortran_mpi_kry_bbd)
+  add_subdirectory(fortran_mpi_kry)
+  add_subdirectory(fortran_mpi_non)
 endif()
