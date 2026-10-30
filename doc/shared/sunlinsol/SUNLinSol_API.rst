@@ -1096,5 +1096,5 @@ SUNDIALS package ``SetLinearSolver`` routine, the input :c:type:`SUNMatrix`
 ``A`` should be set to ``NULL``.
 
 For templates of such user-provided "matrix-embedded" SUNLinSol implementations,
-see the SUNDIALS examples ``ark_analytic_mels.c``, ``cvAnalytic_mels.c``,
+see the SUNDIALS examples ``ark_analytic_mels.c``, ``cv_analytic_mels.c``,
 ``cvsAnalytic_mels.c``, ``idaAnalytic_mels.c``, and ``idasAnalytic_mels.c``.

@@ -72,11 +72,11 @@ class ThreadDirectExecPolicy : public ExecPolicy
 {
 public:
   ThreadDirectExecPolicy(const size_t blockDim, cudaStream_t stream = 0)
-    : blockDim_(blockDim), ExecPolicy(stream)
+    : ExecPolicy(stream), blockDim_(blockDim)
   {}
 
   ThreadDirectExecPolicy(const ThreadDirectExecPolicy& ex)
-    : blockDim_(ex.blockDim_), ExecPolicy(ex.stream_)
+    : ExecPolicy(ex.stream_), blockDim_(ex.blockDim_)
   {}
 
   virtual size_t gridSize(size_t numWorkUnits = 0, size_t /*blockDim*/ = 0) const
@@ -110,11 +110,11 @@ class GridStrideExecPolicy : public ExecPolicy
 public:
   GridStrideExecPolicy(const size_t blockDim, const size_t gridDim,
                        cudaStream_t stream = 0)
-    : blockDim_(blockDim), gridDim_(gridDim), ExecPolicy(stream)
+    : ExecPolicy(stream), blockDim_(blockDim), gridDim_(gridDim)
   {}
 
   GridStrideExecPolicy(const GridStrideExecPolicy& ex)
-    : blockDim_(ex.blockDim_), gridDim_(ex.gridDim_), ExecPolicy(ex.stream_)
+    : ExecPolicy(ex.stream_), blockDim_(ex.blockDim_), gridDim_(ex.gridDim_)
   {}
 
   virtual size_t gridSize(size_t /*numWorkUnits*/ = 0, size_t /*blockDim*/ = 0) const
@@ -151,7 +151,7 @@ class BlockReduceAtomicExecPolicy : public ExecPolicy
 public:
   BlockReduceAtomicExecPolicy(const size_t blockDim, const size_t gridDim = 0,
                               cudaStream_t stream = 0)
-    : blockDim_(blockDim), gridDim_(gridDim), ExecPolicy(stream)
+    : ExecPolicy(stream), blockDim_(blockDim), gridDim_(gridDim)
   {
     if (blockDim < 1 || blockDim % WARP_SIZE)
     {
@@ -161,7 +161,7 @@ public:
   }
 
   BlockReduceAtomicExecPolicy(const BlockReduceAtomicExecPolicy& ex)
-    : blockDim_(ex.blockDim_), gridDim_(ex.gridDim_), ExecPolicy(ex.stream_)
+    : ExecPolicy(ex.stream_), blockDim_(ex.blockDim_), gridDim_(ex.gridDim_)
   {}
 
   virtual size_t gridSize(size_t numWorkUnits = 0, size_t /*blockDim*/ = 0) const
@@ -195,7 +195,7 @@ class BlockReduceExecPolicy : public ExecPolicy
 public:
   BlockReduceExecPolicy(const size_t blockDim, const size_t gridDim = 0,
                         cudaStream_t stream = 0)
-    : blockDim_(blockDim), gridDim_(gridDim), ExecPolicy(stream)
+    : ExecPolicy(stream), blockDim_(blockDim), gridDim_(gridDim)
   {
     if (blockDim < 1 || blockDim % WARP_SIZE)
     {
@@ -205,7 +205,7 @@ public:
   }
 
   BlockReduceExecPolicy(const BlockReduceExecPolicy& ex)
-    : blockDim_(ex.blockDim_), gridDim_(ex.gridDim_), ExecPolicy(ex.stream_)
+    : ExecPolicy(ex.stream_), blockDim_(ex.blockDim_), gridDim_(ex.gridDim_)
   {}
 
   virtual size_t gridSize(size_t numWorkUnits = 0, size_t /*blockDim*/ = 0) const

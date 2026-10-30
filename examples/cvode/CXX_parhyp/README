@@ -1,6 +1,0 @@
-List of parallel CVODE C++ examples using hypre
-
-  cv_heat2D_hypre_ls   : 2-D heat equation with a user-supplied hypre linear
-                         solver
-  cv_heat2D_hypre_pfmg : 2-D heat equation with a SUNDIALS linear solver and
-                         user-supplied hypre preconditioner
