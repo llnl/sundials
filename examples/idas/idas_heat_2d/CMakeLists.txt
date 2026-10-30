@@ -15,7 +15,9 @@
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c_mpi)
+    add_subdirectory(c_mpi_heat_2d_fsa_kry_bbd_p)
+    add_subdirectory(c_mpi_heat_2d_kry_bbd_p)
+    add_subdirectory(c_mpi_heat_2d_kry_p)
   endif()
 endif()
 
