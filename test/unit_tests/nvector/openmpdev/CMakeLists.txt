@@ -74,6 +74,6 @@ foreach(example_tuple ${nvector_openmpdev_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach()

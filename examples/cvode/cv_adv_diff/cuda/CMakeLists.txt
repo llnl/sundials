@@ -12,8 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set_source_files_properties(cv_adv_diff_diag_cuda.cu
-                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_example(
   cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu NO_TEST
   INSTALL_FILES cv_adv_diff_diag_cuda_0_0.out cv_adv_diff_diag_cuda_0_1.out
@@ -33,8 +31,6 @@ foreach(example_args "0 0" "0 1" "1 1")
     EXAMPLE_TYPE develop)
 endforeach()
 
-set_source_files_properties(cv_adv_diff_kry_cuda.cu
-                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_example(cv_adv_diff_kry_cuda cv_adv_diff_kry_cuda.cu
   LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda
                                $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>

@@ -14,7 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(cv_roberts_block_cusolversp_batchqr
   cv_roberts_block_cusolversp_batchqr.cu
-  SOURCE_PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ
   LINK_LIBRARIES
     sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda
     $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
