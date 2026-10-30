@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_analytic_mels SOURCES cvs_analytic_mels.c
+  cvs_analytic_mels
+  SOURCES cvs_analytic_mels.c
   INSTALL_FILES cvs_analytic_mels_cvodes.max_order_3.out
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
