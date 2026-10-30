@@ -2,11 +2,11 @@
 \section{Parallel example problems}\label{s:ex_parallel}
 %===================================================================================
 
-\subsection{A user preconditioner example: idaHeat2D\_kry\_p}\label{ss:idaHeat2D_p}
+\subsection{A user preconditioner example: ida\_heat\_2d\_kry\_p}\label{ss:idaHeat2D_p}
 
 As an example of using {\ida} with the parallel MPI {\nvecp} module and the Krylov 
 linear solver {\sunlinsolspgmr} with user-defined preconditioner, we provide the example
-\id{idaHeat2D\_kry\_p} which solves the same 2-D heat PDE problem as \id{idaHeat2D\_kry}. 
+\id{ida\_heat\_2d\_kry\_p} which solves the same 2-D heat PDE problem as \id{ida\_heat\_2d\_kry}. 
 
 In the parallel setting, we can think of the processors as being laid out
 in a grid of size \id{NPEX} $\times$ \id{NPEY}, with each processor computing
@@ -35,37 +35,37 @@ equations for the discrete boundary conditions.
 The preconditioner (implemented in \id{PsetupHeat} and \id{PsolveHeat}) uses the
 diagonal elements of the Jacobian only and therefore involves only local calculations.
 
-The \id{idaHeat2D\_kry\_p} main program begins with MPI calls to initialize MPI and to
+The \id{ida\_heat\_2d\_kry\_p} main program begins with MPI calls to initialize MPI and to
 set multi-processor environment parameters \id{npes} (number of processes) and
 \id{thispe} (local process index).  Then the local and global vector lengths are set,
 the user-data structure \id{Userdata} is created and initialized, and \id{N\_Vector}
 variables are created and initialized for the initial conditions (\id{uu} and
 \id{up}), for constraints, for the vector \id{id} specifying the differential 
 and algebraic components of the solution vector, and for the preconditioner
-(\id{pp}).  As in \id{idaHeat2D\_kry}, constraints are passed to {\ida} through the
+(\id{pp}).  As in \id{ida\_heat\_2d\_kry}, constraints are passed to {\ida} through the
 \id{N\_Vector} \id{constraints} and the function \id{IDASetConstraints}, with
 all components set to $1.0$ to impose non-negativity on each solution component.
 A temporary \id{N\_Vector} \id{res} is also created here, for use only in
 \id{SetInitialProfiles}.  In addition, for illustration purposes,
-\id{idaHeat2D\_kry\_p} also excludes the algebraic components of the solution
+\id{ida\_heat\_2d\_kry\_p} also excludes the algebraic components of the solution
 (specified through the \id{N\_Vector} \id{id}) from the error test by calling
 \id{IDASetSuppressAlg} with a flag \id{SUNTRUE}.
 
-Sample output from \id{idaHeat2D\_kry\_p} follows.
+Sample output from \id{ida\_heat\_2d\_kry\_p} follows.
 %%
-\includeOutput{idaHeat2D\_kry\_p}{../../examples/ida/parallel/idaHeat2D_kry_p.out}
+\includeOutput{ida\_heat\_2d\_kry\_p}{../../examples/ida/ida_heat_2d/c_mpi/ida_heat_2d_kry_p.out}
 %%
 
 %-----------------------------------------------------------------------------------
 
-\subsection{An IDABBDPRE preconditioner example: idaFoodWeb\_kry\_bbd\_p}\label{ss:idaFoodWeb_bbd_p}
+\subsection{An IDABBDPRE preconditioner example: ida\_food\_web\_kry\_bbd\_p}\label{ss:idaFoodWeb_bbd_p}
 
 In this example, we solve the same food web problem as with
-\id{idaFoodWeb\_bnd}, but in parallel and with the {\sunlinsolspgmr} linear solver and
+\id{ida\_food\_web\_bnd}, but in parallel and with the {\sunlinsolspgmr} linear solver and
 using the {\idabbdpre} module, which generates and uses a band-block-diagonal 
 preconditioner.
 
-As with \id{idaHeat2D\_kry\_p}, we use a \id{NPEX} $\times$ \id{NPEY} processor grid, with
+As with \id{ida\_heat\_2d\_kry\_p}, we use a \id{NPEX} $\times$ \id{NPEY} processor grid, with
 an \id{MXSUB} $\times$ \id{MYSUB} submesh on each processor.  Again, the residual
 evaluation begins with the communication of ghost data (in \id{rescomm}),
 followed by computation using an extended local array, \id{cext}, in the
@@ -90,7 +90,7 @@ as the \id{Gres} argument, while a \id{NULL} pointer is passed for the \id{Gcomm
 argument (since all required communication for the evaluation of \id{Gres} was
 already done for \id{resweb}).
 
-In the \id{idaFoodWeb\_kry\_bbd\_p} main program, following MPI initializations and
+In the \id{ida\_food\_web\_kry\_bbd\_p} main program, following MPI initializations and
 creation of user data block \id{webdata} and \id{N\_Vector} variables,
 the initial profiles are set, the {\ida} memory block is created, the
 {\sunlinsolspgmr} linear solver is created and attached to the {\ida}
@@ -104,8 +104,8 @@ corners of the computational domain) are collected on processor 0 and printed
 to \id{stdout}. The main program ends by printing final solver statistics,
 freeing memory, and finalizing MPI.
 
-Sample output from \id{idaFoodWeb\_kry\_bbd\_p} follows.
+Sample output from \id{ida\_food\_web\_kry\_bbd\_p} follows.
 %%
-\includeOutput{idaFoodWeb\_kry\_bbd\_p}{../../examples/ida/parallel/idaFoodWeb_kry_bbd_p.out}
+\includeOutput{ida\_food\_web\_kry\_bbd\_p}{../../examples/ida/ida_food_web/c_mpi/ida_food_web_kry_bbd_p.out}
 %%
 

@@ -1,7 +1,7 @@
 /*
  * -----------------------------------------------------------------
  * Programmer(s): Daniel R. Reynolds and Ting Yan @ UMBC
- *      Based on idaFoodWeb_bnd.c and parallelized with OpenMP
+ *      Based on ida_food_web_bnd.c and parallelized with OpenMP
  * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,

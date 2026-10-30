@@ -18,52 +18,32 @@
 # examples/ida level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# C examples
-if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(serial)
-  if(SUNDIALS_ENABLE_OPENMP)
-    add_subdirectory(C_openmp)
-  endif()
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(parallel)
-  endif()
-  if(SUNDIALS_ENABLE_PETSC)
-    add_subdirectory(petsc)
-  endif()
-endif()
+set(IDA_C_LIBS sundials_ida)
 
-# C++ examples
-if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-  if(SUNDIALS_ENABLE_RAJA)
-    add_subdirectory(raja)
-    if(SUNDIALS_ENABLE_MPI AND (SUNDIALS_RAJA_BACKENDS MATCHES "CUDA"))
-      add_subdirectory(mpiraja)
-    endif()
-  endif()
-  if(SUNDIALS_ENABLE_TRILINOS)
-    add_subdirectory(trilinos)
-  endif()
-endif()
+add_subdirectory(ida_analytic)
+add_subdirectory(ida_food_web)
+add_subdirectory(ida_heat_2d)
+add_subdirectory(ida_krylov_demo)
+add_subdirectory(ida_roberts)
+add_subdirectory(ida_slider_crank)
 
-# Fortran examples
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
-  add_subdirectory(F2003_serial)
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(F2003_parallel)
-  endif()
-  if(SUNDIALS_ENABLE_OPENMP)
-    add_subdirectory(F2003_openmp)
-  endif()
-endif()
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+  get_property(
+    _ida_problem_directories
+    DIRECTORY
+    PROPERTY SUBDIRECTORIES)
+  set(_ida_example_directories)
+  foreach(_problem_dir ${_ida_problem_directories})
+    get_property(
+      _variant_dirs
+      DIRECTORY ${_problem_dir}
+      PROPERTY SUBDIRECTORIES)
+    list(APPEND _ida_example_directories ${_variant_dirs})
+  endforeach()
 
-# cuda examples
-if(SUNDIALS_ENABLE_CUDA_EXAMPLES)
-
-  if(SUNDIALS_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
-    add_subdirectory(cuda)
-    if(SUNDIALS_ENABLE_MPI)
-      add_subdirectory(mpicuda)
-    endif()
-  endif()
-
+  foreach(_example_dir ${_ida_example_directories})
+    file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
+         ${_example_dir})
+    sundials_add_test_install(ida ${_example_rel_dir})
+  endforeach()
 endif()

@@ -452,7 +452,7 @@ For many users, the appropriate choices for tolerance values in ``reltol`` and
    after ``y[i]`` is below some noise level. Then ``abstol`` (if a scalar) or
    ``abstol[i]`` (if a vector) needs to be set to that noise level. If the
    different components have different noise levels, then ``abstol`` should be a
-   vector. See the example ``idaRoberts_dns`` in the IDAS package, and the
+   vector. See the example ``ida_roberts_dns`` in the IDAS package, and the
    discussion of it in the IDAS Examples document :cite:p:`ida_ex`. In that
    problem, the three components vary between 0 and 1, and have different noise
    levels; hence the ``abstol`` vector. It is impossible to give any general
