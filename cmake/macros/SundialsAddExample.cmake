@@ -46,8 +46,8 @@
 # ---------------------------------------------------------------
 
 function(sundials_add_example name)
-  if(DEFINED SUNDIALS_EXAMPLE_VARIANT
-     AND NOT name STREQUAL SUNDIALS_EXAMPLE_VARIANT)
+  if(DEFINED SUNDIALS_EXAMPLE_VARIANT AND NOT name STREQUAL
+                                          SUNDIALS_EXAMPLE_VARIANT)
     return()
   endif()
 
