@@ -23,41 +23,8 @@ function(sundials_install_example_cmake package source_dir destination)
     DIRECTORY "${source_dir}"
     PROPERTY BUILDSYSTEM_TARGETS)
 
-  set(_contents
-      [=[# -----------------------------------------------------------------
-# SUNDIALS Copyright Start
-# Copyright (c) 2025-2026, Lawrence Livermore National Security,
-# University of Maryland Baltimore County, and the SUNDIALS contributors.
-# Copyright (c) 2013-2025, Lawrence Livermore National Security
-# and Southern Methodist University.
-# Copyright (c) 2002-2013, Lawrence Livermore National Security.
-# All rights reserved.
-#
-# See the top-level LICENSE and NOTICE files for details.
-#
-# SPDX-License-Identifier: BSD-3-Clause
-# SUNDIALS Copyright End
-# -----------------------------------------------------------------
-
-cmake_minimum_required(VERSION 3.18)
-@COMPILER_SETTINGS@
-project(@PACKAGE@_example LANGUAGES @LANGUAGES@)
-
-include(CTest)
-
-@DEPENDENCY_SETTINGS@
-
-set(SUNDIALS_DIR "@SUNDIALS_CMAKE_DIR@"
-    CACHE PATH "Location of SUNDIALSConfig.cmake")
-find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
-
-]=])
-
   set(_languages)
   set(_compiler_settings)
-  set(_dependency_settings)
-  set(_requires_hip FALSE)
-  set(_requires_mpi FALSE)
   set(_target_commands)
   foreach(_target IN LISTS _targets)
     get_target_property(_type ${_target} TYPE)
@@ -90,12 +57,10 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         get_source_file_property(_language "${_absolute_source}"
                                  TARGET_DIRECTORY ${_target} LANGUAGE)
       endif()
-      if(_language AND NOT _language STREQUAL "NOTFOUND")
+      if(_language)
         list(APPEND _languages "${_language}")
         get_filename_component(_extension "${_source}" LAST_EXT)
-        if((_extension STREQUAL ".cpp" OR _extension STREQUAL ".c")
-           AND NOT _language STREQUAL "CXX"
-           AND NOT _language STREQUAL "C")
+        if(_extension STREQUAL ".cpp" AND NOT _language STREQUAL "CXX")
           string(
             APPEND
             _source_commands
@@ -112,20 +77,6 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
         list(APPEND _languages C)
       endif()
 
-      get_source_file_property(_cuda_format "${_source}" TARGET_DIRECTORY
-                               ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
-      if(_cuda_format STREQUAL "NOTFOUND" AND NOT IS_ABSOLUTE "${_source}")
-        get_source_file_property(
-          _cuda_format "${_absolute_source}" TARGET_DIRECTORY
-          ${_target} CUDA_SOURCE_PROPERTY_FORMAT)
-      endif()
-      if(_cuda_format AND NOT _cuda_format STREQUAL "NOTFOUND")
-        string(
-          APPEND
-          _source_commands
-          "set_source_files_properties(${_installed_source} PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT ${_cuda_format})\n"
-        )
-      endif()
     endforeach()
 
     string(APPEND _target_commands "${_source_commands}")
@@ -134,45 +85,19 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
            "add_executable(${_target} ${_source_list})\n")
 
     get_target_property(_include_dirs ${_target} INCLUDE_DIRECTORIES)
-    if(_include_dirs AND NOT _include_dirs STREQUAL "_include_dirs-NOTFOUND")
-      set(_installed_include_dirs)
+    if(_include_dirs)
       foreach(_include_dir IN LISTS _include_dirs)
         if(_include_dir MATCHES "/examples/utilities$")
-          list(APPEND _installed_include_dirs "\${CMAKE_CURRENT_SOURCE_DIR}")
-        elseif(NOT _include_dir STREQUAL "${source_dir}")
-          if(IS_ABSOLUTE "${_include_dir}")
-            file(RELATIVE_PATH _source_relative "${PROJECT_SOURCE_DIR}"
-                 "${_include_dir}")
-            file(RELATIVE_PATH _binary_relative "${PROJECT_BINARY_DIR}"
-                 "${_include_dir}")
-            if(NOT _source_relative MATCHES "^\\.\\." OR NOT _binary_relative
-                                                         MATCHES "^\\.\\.")
-              message(
-                WARNING
-                  "Skipping build-tree include directory '${_include_dir}' when generating the installed ${package} example at '${destination}'."
-              )
-              continue()
-            endif()
-          endif()
-          list(APPEND _installed_include_dirs "${_include_dir}")
+          string(
+            APPEND _target_commands
+            "target_include_directories(${_target} PRIVATE \${CMAKE_CURRENT_SOURCE_DIR})\n"
+          )
         endif()
       endforeach()
-      if(_installed_include_dirs)
-        set(_include_list)
-        foreach(_include_dir IN LISTS _installed_include_dirs)
-          string(REPLACE "\\" "\\\\" _escaped_include "${_include_dir}")
-          string(REPLACE "\"" "\\\"" _escaped_include "${_escaped_include}")
-          list(APPEND _include_list "\"${_escaped_include}\"")
-        endforeach()
-        string(JOIN " " _include_list ${_include_list})
-        string(
-          APPEND _target_commands
-          "target_include_directories(${_target} PRIVATE ${_include_list})\n")
-      endif()
     endif()
 
     get_target_property(_definitions ${_target} COMPILE_DEFINITIONS)
-    if(_definitions AND NOT _definitions STREQUAL "_definitions-NOTFOUND")
+    if(_definitions)
       set(_definition_list)
       foreach(_definition IN LISTS _definitions)
         string(REPLACE "\\" "\\\\" _escaped_definition "${_definition}")
@@ -186,17 +111,11 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
     endif()
 
     get_target_property(_link_libraries ${_target} LINK_LIBRARIES)
-    if(_link_libraries AND NOT _link_libraries STREQUAL
-                           "_link_libraries-NOTFOUND")
+    if(_link_libraries)
       set(_installed_link_libraries)
       foreach(_library IN LISTS _link_libraries)
-        if(_library MATCHES "^hip::")
-          set(_requires_hip TRUE)
-        elseif(_library MATCHES "^MPI::")
-          set(_requires_mpi TRUE)
-          if(_library MATCHES "^MPI::MPI_(C|CXX|Fortran)$")
-            list(APPEND _languages "${CMAKE_MATCH_1}")
-          endif()
+        if(_library MATCHES "^MPI::MPI_(C|CXX|Fortran)$")
+          list(APPEND _languages "${CMAKE_MATCH_1}")
         endif()
         if(_library MATCHES "^sundials_(.+)$")
           list(APPEND _installed_link_libraries "SUNDIALS::${CMAKE_MATCH_1}")
@@ -217,7 +136,7 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
 
     foreach(_property IN ITEMS CUDA_ARCHITECTURES CXX_STANDARD LINKER_LANGUAGE)
       get_target_property(_value ${_target} ${_property})
-      if(_value AND NOT _value STREQUAL "_value-NOTFOUND")
+      if(_value)
         if(_property STREQUAL "CXX_STANDARD")
           # Accelerator sources may consume C++ compile features from
           # dependencies. Ignore the globally initialized C++ standard for
@@ -296,45 +215,22 @@ find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
     )
   endif()
 
-  if(_requires_mpi)
-    string(APPEND _dependency_settings "find_package(MPI REQUIRED)\n\n")
-    foreach(_mpi_language C CXX Fortran)
-      set(_variable MPI_${_mpi_language}_COMPILER)
-      if(DEFINED ${_variable} AND NOT "${${_variable}}" STREQUAL "")
-        set(_value "${${_variable}}")
-        string(REPLACE "\\" "\\\\" _value "${_value}")
-        string(REPLACE "\"" "\\\"" _value "${_value}")
-        string(
-          APPEND
-          _compiler_settings
-          "set(${_variable}\n  \"${_value}\"\n  CACHE FILEPATH \"MPI ${_mpi_language} compiler\")\n\n"
-        )
-      endif()
-    endforeach()
-  endif()
-
-  if(_requires_hip)
-    string(APPEND _dependency_settings "find_package(HIP REQUIRED)\n\n")
-  endif()
-
   string(JOIN " " _language_list ${_languages})
-  string(REPLACE "@PACKAGE@" "${package}" _contents "${_contents}")
-  string(REPLACE "@COMPILER_SETTINGS@" "${_compiler_settings}" _contents
-                 "${_contents}")
-  string(REPLACE "@DEPENDENCY_SETTINGS@" "${_dependency_settings}" _contents
-                 "${_contents}")
-  string(REPLACE "@LANGUAGES@" "${_language_list}" _contents "${_contents}")
-  string(REPLACE "@SUNDIALS_CMAKE_DIR@"
-                 "${CMAKE_INSTALL_PREFIX}/${SUNDIALS_INSTALL_CMAKEDIR}"
-                 _contents "${_contents}")
+  set(PACKAGE "${package}")
+  set(COMPILER_SETTINGS "${_compiler_settings}")
+  set(LANGUAGES "${_language_list}")
+  set(SUNDIALS_CMAKE_DIR
+      "${CMAKE_INSTALL_PREFIX}/${SUNDIALS_INSTALL_CMAKEDIR}")
   if(Fortran IN_LIST _languages)
-    string(APPEND _contents "set(CMAKE_Fortran_PREPROCESS ON)\n\n")
+    string(PREPEND _target_commands "set(CMAKE_Fortran_PREPROCESS ON)\n\n")
   endif()
-  string(APPEND _contents "${_target_commands}")
+  set(TARGET_COMMANDS "${_target_commands}")
 
   file(RELATIVE_PATH _relative_dir "${CMAKE_CURRENT_SOURCE_DIR}"
        "${source_dir}")
   set(_output "${CMAKE_CURRENT_BINARY_DIR}/${_relative_dir}/CMakeLists.txt")
-  file(WRITE "${_output}" "${_contents}")
+  configure_file(
+    "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/SundialsInstallExampleCMakeLists.txt.in"
+    "${_output}" @ONLY)
   install(FILES "${_output}" DESTINATION "${destination}")
 endfunction()

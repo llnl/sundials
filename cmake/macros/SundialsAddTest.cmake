@@ -17,7 +17,7 @@
 
 # ~~~
 # sundials_add_test(<test name> <executable>
-#                   [NODIFF]
+#                   [NO_DIFF]
 #                   [MPI_NPROCS num_processes]
 #                   [FLOAT_PRECISION num_digits]
 #                   [INTEGER_PRECISION percent_difference]
@@ -31,7 +31,7 @@
 # CMake macro to add a SUNDIALS regression test. Keyword input arguments can be
 # added after <executable> to set regression test options.
 #
-# The option NODIFF disables comparison of the test output against the answer
+# The option NO_DIFF disables comparison of the test output against the answer
 # file
 #
 # The option MPI_NPROCS sets the number of mpi tasks to use in parallel tests
@@ -84,7 +84,7 @@
 
 function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
 
-  set(options "NODIFF")
+  set(options "NO_DIFF")
   set(oneValueArgs "MPI_NPROCS" "FLOAT_PRECISION" "INTEGER_PRECISION"
                    "ANSWER_DIR" "ANSWER_FILE" "EXAMPLE_TYPE")
   set(multiValueArgs "LABELS" "TEST_ARGS" "EXTRA_ARGS")
@@ -99,10 +99,10 @@ function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
 
   set(_add_test TRUE)
 
-  # exclude development tests (non-empty example type)
+  # exclude development tests
   # TODO(DJG): When examples and development tests are separated this check can
   # be removed
-  if(NOT SUNDIALS_TEST_ENABLE_DEV_TESTS AND arg_EXAMPLE_TYPE)
+  if(NOT SUNDIALS_TEST_ENABLE_DEV_TESTS AND arg_EXAMPLE_TYPE STREQUAL "develop")
     set(_add_test FALSE)
   endif()
 
@@ -206,7 +206,7 @@ function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
       endif()
 
       # set comparison precisions or do not diff the output and answer files
-      if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT arg_NODIFF)
+      if(SUNDIALS_TEST_ENABLE_DIFF_OUTPUT AND NOT arg_NO_DIFF)
 
         # set answer directory
         if(SUNDIALS_TEST_ANSWER_DIR)
