@@ -31,7 +31,7 @@ set(_args
 file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mri_*.out")
 if(NOT TARGET ark_kpr_mri)
   sundials_add_example(
-    ark_kpr_mri ark_kpr_mri.c NO_TEST
+    ark_kpr_mri SOURCES ark_kpr_mri.c NO_TEST
     INSTALL_FILES ${_answer_files}
     LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})

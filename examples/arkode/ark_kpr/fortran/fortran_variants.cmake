@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_kpr_nestedmri_f2003 ark_kpr_nestedmri_f2003.f90
+  ark_kpr_nestedmri_f2003 SOURCES ark_kpr_nestedmri_f2003.f90
   EXAMPLE_TYPE develop
   PROPERTIES Fortran_MODULE_DIRECTORY
              ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_kpr_nestedmri_f2003.dir
@@ -25,7 +25,7 @@ if(SUNDIALS_INDEX_SIZE MATCHES "64")
     file(GLOB _answer_files
          "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mri_f2003*.out")
     sundials_add_example(
-      ark_kpr_mri_f2003 ark_kpr_mri_f2003.f90 NO_TEST
+      ark_kpr_mri_f2003 SOURCES ark_kpr_mri_f2003.f90 NO_TEST
       INSTALL_FILES ${_answer_files}
       PROPERTIES Fortran_MODULE_DIRECTORY
                  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_kpr_mri_f2003.dir

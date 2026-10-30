@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_roberts_dns_l_f2003 cv_roberts_dns_l_f2003.f90
+  cv_roberts_dns_l_f2003 SOURCES cv_roberts_dns_l_f2003.f90
   LINK_LIBRARIES
     ${CVODE_C_LIBS} sundials_fcvode_mod sundials_sunlinsollapackdense
     sundials_fsunlinsollapackdense_mod ${EXE_EXTRA_LINK_LIBS}
