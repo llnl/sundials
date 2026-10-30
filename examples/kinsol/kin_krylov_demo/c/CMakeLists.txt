@@ -12,8 +12,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(kin_krylov_demo_ls SOURCES kin_krylov_demo_ls.c
-                     EXAMPLE_TYPE exclude-single)
+sundials_add_example(
+  kin_krylov_demo_ls
+  SOURCES kin_krylov_demo_ls.c
+  EXAMPLE_TYPE exclude-single)
 target_link_libraries(
   kin_krylov_demo_ls PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
                              ${EXE_EXTRA_LINK_LIBS})

@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_heat_2d_nonlin_p SOURCES kin_heat_2d_nonlin_p.cpp
+  kin_heat_2d_nonlin_p
+  SOURCES kin_heat_2d_nonlin_p.cpp
   TEST_NAME kin_heat_2d_nonlin_p_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4

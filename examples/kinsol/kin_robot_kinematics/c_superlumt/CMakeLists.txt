@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_robo_kin_slu SOURCES kin_robo_kin_slu.c
+  kin_robo_kin_slu
+  SOURCES kin_robo_kin_slu.c
   LINK_LIBRARIES
     PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
     ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})

@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  kin_em_mpicuda SOURCES kin_em_mpicuda.cu
+  kin_em_mpicuda
+  SOURCES kin_em_mpicuda.cu
   MPI_NPROCS 2
   INSTALL_FILES kin_em_mpicuda.hpp
   INCLUDE_DIRECTORIES PRIVATE ${MPI_CXX_INCLUDE_DIRS}

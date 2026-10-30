@@ -35,8 +35,6 @@ add_subdirectory(kin_roberts)
 add_subdirectory(kin_robot_kinematics)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
   get_property(
     _kinsol_problem_directories
     DIRECTORY
@@ -53,10 +51,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_kinsol_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      kinsol "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/kinsol/${_example_rel_dir}")
-
     if(_example_rel_dir STREQUAL "kin_analytic/c")
       sundials_add_test_install(kinsol ${_example_rel_dir}
                                 EXECUTABLE kin_analytic_fp)
