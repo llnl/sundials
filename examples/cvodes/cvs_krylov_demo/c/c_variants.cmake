@@ -36,7 +36,6 @@ if(SUNDIALS_ENABLE_MONITORING)
     EXAMPLE_TYPE develop)
 endif()
 
-sundials_add_example(cvs_krylov_demo_prec cvs_krylov_demo_prec.c)
-target_link_libraries(
-  cvs_krylov_demo_prec PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                               ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cvs_krylov_demo_prec cvs_krylov_demo_prec.c
+  LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

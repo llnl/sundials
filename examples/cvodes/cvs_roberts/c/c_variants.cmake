@@ -43,11 +43,10 @@ sundials_add_test(
   ANSWER_FILE cvs_roberts_fsa_dns_-sensi_stg1_t.out
   EXAMPLE_TYPE exclude-single)
 
-sundials_add_example(cvs_roberts_fsa_dns_switch cvs_roberts_fsa_dns_switch.c
-                     EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  cvs_roberts_fsa_dns_switch PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                                     ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cvs_roberts_fsa_dns_switch cvs_roberts_fsa_dns_switch.c
+                     EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
   cvs_roberts_fsa_dns_constraints cvs_roberts_fsa_dns_constraints.c
   TEST_NAME cvs_roberts_fsa_dns_constraints_-sensi_stg1_t
@@ -62,9 +61,10 @@ sundials_add_example(
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 foreach(example cvs_roberts_dns_constraints cvs_roberts_dns_uw)
-  sundials_add_example(${example} ${example}.c)
-  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+  sundials_add_example(
+    ${example} ${example}.c
+    LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                   ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_test(
   cvs_roberts_dns cvs_roberts_dns

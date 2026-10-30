@@ -28,7 +28,8 @@ sundials_add_test(
   EXAMPLE_TYPE exclude-single)
 
 foreach(example cvs_diurnal_kry cvs_diurnal_kry_bp)
-  sundials_add_example(${example} ${example}.c)
-  target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+  sundials_add_example(
+    ${example} ${example}.c
+    LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
+                   ${EXE_EXTRA_LINK_LIBS})
 endforeach()
