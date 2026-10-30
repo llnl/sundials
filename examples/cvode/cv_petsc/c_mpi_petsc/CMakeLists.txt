@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_petsc_ex7 cv_petsc_ex7.c
+  cv_petsc_ex7 SOURCES cv_petsc_ex7.c
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS}
   MPI_NPROCS 1)

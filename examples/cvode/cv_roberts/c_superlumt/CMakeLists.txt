@@ -18,7 +18,7 @@ else()
   set(_no_test NO_TEST)
 endif()
 
-sundials_add_example(cv_roberts_sps cv_roberts_sps.c
+sundials_add_example(cv_roberts_sps SOURCES cv_roberts_sps.c
   ${_no_test}
   LINK_LIBRARIES
   PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt

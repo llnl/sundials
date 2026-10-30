@@ -13,14 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_heat_2d_petsc_spgmr ida_heat_2d_petsc_spgmr.c
+  ida_heat_2d_petsc_spgmr SOURCES ida_heat_2d_petsc_spgmr.c
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  ida_heat_2d_petsc_snes ida_heat_2d_petsc_snes.c
+  ida_heat_2d_petsc_snes SOURCES ida_heat_2d_petsc_snes.c
   MPI_NPROCS 4
   EXAMPLE_TYPE develop
   INSTALL_FILES ida_heat_2d_petsc_snes_-pre.out ida_heat_2d_petsc_snes_-jac.out

@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cvs_direct_demo_ls cvs_direct_demo_ls.c)
+sundials_add_example(cvs_direct_demo_ls SOURCES cvs_direct_demo_ls.c)
 target_link_libraries(
   cvs_direct_demo_ls PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                              ${EXE_EXTRA_LINK_LIBS})

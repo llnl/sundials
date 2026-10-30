@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   ark_advection_diffusion_reaction_splitting
-  ark_advection_diffusion_reaction_splitting.c
+  SOURCES ark_advection_diffusion_reaction_splitting.c
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

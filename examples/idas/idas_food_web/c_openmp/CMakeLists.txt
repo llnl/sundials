@@ -17,7 +17,7 @@ foreach(example idas_food_web_bnd_omp idas_food_web_kry_omp)
   if(example STREQUAL "idas_food_web_kry_omp")
     list(APPEND example_options NO_TEST INSTALL_FILES ${example}.out)
   endif()
-  sundials_add_example(${example} ${example}.c ${example_options})
+  sundials_add_example(${example} SOURCES ${example}.c ${example_options})
   target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecopenmp
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()

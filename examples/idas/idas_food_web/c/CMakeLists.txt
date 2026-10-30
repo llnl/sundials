@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(idas_food_web_bnd idas_food_web_bnd.c)
+sundials_add_example(idas_food_web_bnd SOURCES idas_food_web_bnd.c)
 target_link_libraries(
   idas_food_web_bnd PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
                             ${EXE_EXTRA_LINK_LIBS})

@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idas_akzo_nob_asai_dns_f2003 idas_akzo_nob_asai_dns_f2003.f90
+  idas_akzo_nob_asai_dns_f2003 SOURCES idas_akzo_nob_asai_dns_f2003.f90
   LINK_LIBRARIES sundials_fidas_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
     Fortran_MODULE_DIRECTORY

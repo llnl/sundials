@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator_1d_fem_slu ark_brusselator_1d_fem_slu.c
+  ark_brusselator_1d_fem_slu SOURCES ark_brusselator_1d_fem_slu.c
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES plot_brusselator_1d_fem.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial

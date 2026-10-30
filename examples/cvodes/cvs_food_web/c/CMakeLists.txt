@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 foreach(example cvs_food_web_asai_kry cvs_food_web_asap_kry)
-  sundials_add_example(${example} ${example}.c)
+  sundials_add_example(${example} SOURCES ${example}.c)
   target_link_libraries(${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()

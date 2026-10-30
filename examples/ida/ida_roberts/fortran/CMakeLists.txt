@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_roberts_dns_f2003 ida_roberts_dns_f2003.f90
+  ida_roberts_dns_f2003 SOURCES ida_roberts_dns_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY

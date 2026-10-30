@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_analytic_nonlin_ompdev ark_analytic_nonlin_ompdev.c
+  ark_analytic_nonlin_ompdev SOURCES ark_analytic_nonlin_ompdev.c
   EXAMPLE_TYPE develop
   TEST_ARGS 4
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmpdev
