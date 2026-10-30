@@ -14,8 +14,7 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
-  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
-     AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
+  if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND)
     add_subdirectory(c_lapack)
   endif()
   if(SUNDIALS_ENABLE_OPENMP)

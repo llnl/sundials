@@ -12,8 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_adv_diff_petsc cv_adv_diff_petsc.c MPI_NPROCS 4)
-target_link_libraries(
-  cv_adv_diff_petsc
+sundials_add_example(cv_adv_diff_petsc cv_adv_diff_petsc.c MPI_NPROCS 4
+  LINK_LIBRARIES
   PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
           sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS})

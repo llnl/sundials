@@ -13,7 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(cv_adv_diff_kry_ompdev cv_adv_diff_kry_ompdev.c
-                     TEST_ARGS 4)
-target_link_libraries(
-  cv_adv_diff_kry_ompdev PRIVATE ${CVODE_C_LIBS} sundials_nvecopenmpdev
+                     TEST_ARGS 4
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecopenmpdev
                                  ${EXE_EXTRA_LINK_LIBS})

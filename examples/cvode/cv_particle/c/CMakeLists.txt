@@ -13,7 +13,5 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(cv_particle_dns cv_particle_dns.c
-                     INSTALL_FILES plot_cv_particle.py)
-target_link_libraries(
-  cv_particle_dns PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                          ${EXE_EXTRA_LINK_LIBS})
+                     INSTALL_FILES plot_cv_particle.py
+                     LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

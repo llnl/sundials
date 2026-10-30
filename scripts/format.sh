@@ -31,7 +31,7 @@ Formatters:
   --clang-format  Format C/C++/CUDA files with clang-format.
   --fprettify     Format Fortran files with fprettify.
   --cmake         Format CMake files with cmake-format.
-  --ruff           Format Python files with ruff.
+  --ruff          Format Python files with ruff.
 
 If no formatter is specified, all formatters are run. If a formatter is
 specified without any paths, the current directory is formatted.
@@ -70,10 +70,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ $# -lt 1 ]; then
-    if [[ "$formatter" == all ]]; then
-        echo "ERROR: At least one path to format required" >&2
-        exit 1
-    fi
     paths=(.)
 else
     paths=( "$@" )

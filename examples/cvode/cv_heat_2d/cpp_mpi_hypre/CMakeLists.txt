@@ -19,18 +19,17 @@ sundials_add_example(
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
   ANSWER_FILE cv_heat_2d_hypre_ls_--np_2_2.out
-  INSTALL_FILES plot_heat_2d_p.py plot_heat_2d_p_pfmg.py)
-target_link_libraries(
-  cv_heat_2d_hypre_ls
+  INSTALL_FILES plot_heat_2d_p.py plot_heat_2d_p_pfmg.py
+  LINK_LIBRARIES
   PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
           ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)
+
 sundials_add_example(
   cv_heat_2d_hypre_pfmg cv_heat_2d_hypre_pfmg.cpp
   TEST_NAME cv_heat_2d_hypre_pfmg_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
-  ANSWER_FILE cv_heat_2d_hypre_pfmg_--np_2_2.out)
-target_link_libraries(
-  cv_heat_2d_hypre_pfmg
+  ANSWER_FILE cv_heat_2d_hypre_pfmg_--np_2_2.out
+  LINK_LIBRARIES
   PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
           ${EXE_EXTRA_LINK_LIBS} SUNDIALS::HYPRE)

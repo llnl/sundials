@@ -13,9 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CVODE oneMKL C++ example
-sundials_add_example(cv_roberts_blockdiag_onemkl
-                     cv_roberts_blockdiag_onemkl.cpp)
-target_link_libraries(
-  cv_roberts_blockdiag_onemkl
-  PRIVATE sundials_cvode sundials_nvecsycl sundials_sunlinsolonemkldense
+sundials_add_example(cv_roberts_blockdiag_onemkl cv_roberts_blockdiag_onemkl.cpp
+  LINK_LIBRARIES PRIVATE sundials_cvode sundials_nvecsycl sundials_sunlinsolonemkldense
           MKL::MKL_DPCPP ${EXE_EXTRA_LINK_LIBS})
