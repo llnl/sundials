@@ -13,19 +13,29 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_krylov_demo_ls SOURCES cv_krylov_demo_ls.c
+  cv_krylov_demo_ls
+  SOURCES cv_krylov_demo_ls.c
   INSTALL_FILES cv_krylov_demo_ls_0_1.out cv_krylov_demo_ls_1.out
                 cv_krylov_demo_ls_2.out
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(cv_krylov_demo_ls_1 cv_krylov_demo_ls TEST_ARGS 1
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR} ANSWER_FILE cv_krylov_demo_ls_1.out
+sundials_add_test(
+  cv_krylov_demo_ls_1 cv_krylov_demo_ls
+  TEST_ARGS 1
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_krylov_demo_ls_1.out
   EXAMPLE_TYPE develop)
-sundials_add_test(cv_krylov_demo_ls_2 cv_krylov_demo_ls TEST_ARGS 2
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR} ANSWER_FILE cv_krylov_demo_ls_2.out
+sundials_add_test(
+  cv_krylov_demo_ls_2 cv_krylov_demo_ls
+  TEST_ARGS 2
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE cv_krylov_demo_ls_2.out
   EXAMPLE_TYPE develop)
 if(SUNDIALS_ENABLE_MONITORING)
-  sundials_add_test(cv_krylov_demo_ls_0_1 cv_krylov_demo_ls TEST_ARGS 0 1
+  sundials_add_test(
+    cv_krylov_demo_ls_0_1 cv_krylov_demo_ls
+    TEST_ARGS 0 1
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cv_krylov_demo_ls_0_1.out EXAMPLE_TYPE develop)
+    ANSWER_FILE cv_krylov_demo_ls_0_1.out
+    EXAMPLE_TYPE develop)
 endif()

@@ -520,7 +520,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+hip" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip", [], "Test CVODE with HIP", True)
+                    (
+                        "cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip",
+                        [],
+                        "Test CVODE with HIP",
+                        True,
+                    )
                 )
 
         if "+sycl" in self.spec:

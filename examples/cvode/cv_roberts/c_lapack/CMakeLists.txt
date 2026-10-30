@@ -12,6 +12,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_roberts_dns_l SOURCES cv_roberts_dns_l.c
-                     EXAMPLE_TYPE exclude-single
-                     LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsollapackband sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cv_roberts_dns_l
+  SOURCES cv_roberts_dns_l.c
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES
+    PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsollapackband
+    sundials_sunlinsollapackdense ${EXE_EXTRA_LINK_LIBS})
