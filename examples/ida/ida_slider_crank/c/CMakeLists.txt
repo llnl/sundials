@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_sl_crank_dns SOURCES ida_sl_crank_dns.c
+  ida_sl_crank_dns
+  SOURCES ida_sl_crank_dns.c
   EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
