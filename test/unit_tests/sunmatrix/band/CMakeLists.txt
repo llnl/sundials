@@ -71,7 +71,7 @@ foreach(example_tuple ${sunmatrix_band_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunmatrix_band_examples})
 
@@ -117,6 +117,6 @@ foreach(example_tuple ${sunmatrix_band_fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunmatrix_band_fortran_examples})

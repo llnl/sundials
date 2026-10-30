@@ -36,7 +36,7 @@ sundials_add_example(
 foreach(_test test_fnvector_complex_mod test_fnvector_fortran_mod
               test_fsunmatrix_fortran_mod test_fsunlinsol_fortran_mod)
   sundials_add_example(
-    ${_test} ${_test}.f90 ${_sources} NODIFF
+    ${_test} ${_test}.f90 ${_sources} NO_DIFF
     EXAMPLE_TYPE develop
     INSTALL_FILES ${_sources}
     PROPERTIES Fortran_MODULE_DIRECTORY
