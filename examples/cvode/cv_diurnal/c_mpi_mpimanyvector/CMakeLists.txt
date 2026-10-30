@@ -13,8 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(cv_diurnal_kry_mpimanyvec cv_diurnal_kry_mpimanyvec.c
-                     MPI_NPROCS 4)
-target_link_libraries(
-  cv_diurnal_kry_mpimanyvec
-  PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecmpimanyvector
-          sundials_nvecparallel ${EXE_EXTRA_LINK_LIBS})
+                     MPI_NPROCS 4
+                     LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecmpimanyvector
+                     sundials_nvecparallel ${EXE_EXTRA_LINK_LIBS})
