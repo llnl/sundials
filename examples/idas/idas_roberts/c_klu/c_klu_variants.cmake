@@ -13,10 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 foreach(example idas_roberts_asai_klu idas_roberts_klu)
-  sundials_add_example(${example} ${example}.c)
-  target_link_libraries(
-    ${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolklu
-                       ${EXE_EXTRA_LINK_LIBS})
+  sundials_add_example(
+    ${example} ${example}.c ${example_options}
+    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 
 sundials_add_example(

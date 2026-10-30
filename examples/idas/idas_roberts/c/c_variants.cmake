@@ -27,9 +27,9 @@ foreach(example idas_roberts_asai_dns idas_roberts_dns)
     list(APPEND example_options NO_TEST INSTALL_FILES idas_roberts_dns.out
          idas_roberts_dns_stats.csv)
   endif()
-  sundials_add_example(${example} ${example}.c ${example_options})
-  target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+  sundials_add_example(
+    ${example} ${example}.c ${example_options}
+    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_test(
   idas_roberts_dns idas_roberts_dns
