@@ -21,7 +21,8 @@ foreach(example cv_roberts_dns cv_roberts_dns_constraints cv_roberts_dns_negsol
   if(example STREQUAL "cv_roberts_dns")
     list(APPEND example_options INSTALL_FILES cv_roberts_dns_stats.csv)
   endif()
-  sundials_add_example(${example} ${example}.c ${example_options})
-  target_link_libraries(${example} PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+  sundials_add_example(
+    ${example} ${example}.c ${example_options}
+    LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                   ${EXE_EXTRA_LINK_LIBS})
 endforeach()

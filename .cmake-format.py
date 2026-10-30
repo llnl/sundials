@@ -39,6 +39,7 @@ with section("parse"):
                 "MPI_NPROCS": 1,
                 "PROPERTIES": "+",
                 "SCALAR_TYPE": 1,
+                "SOURCE_PROPERTIES": "+",
                 "TEST_ARGS": "+",
                 "TEST_NAME": 1,
             },
