@@ -13,9 +13,11 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_kry)
+  add_subdirectory(c_kry_bp)
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c_mpi)
+    add_subdirectory(c_mpi_kry_bbd)
+    add_subdirectory(c_mpi_kry)
     if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
       add_subdirectory(c_mpi_mpimanyvector)
     endif()
@@ -23,5 +25,6 @@ if(SUNDIALS_ENABLE_C_EXAMPLES)
 endif()
 
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
-  add_subdirectory(fortran)
+  add_subdirectory(fortran_kry)
+  add_subdirectory(fortran_kry_bp)
 endif()
