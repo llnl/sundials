@@ -33,7 +33,7 @@
 # The BACKENDS is a list of Ginkgo backends compatible with the examples in
 # EXAMPLES_VAR.
 #
-# When the UNIT_TEST option is provided sundials_add_test is called with NODIFF
+# When the UNIT_TEST option is provided sundials_add_test is called with NO_DIFF
 # so the example return value determines pass/fail. Otherwise, the ANSWER_DIR
 # and ANSWER_FILE are used to set an output file for comparison.
 # ------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
                       TEST_ARGS ${example_args})
         set(install_files ${arg_INSTALL_FILES})
         if(${arg_UNIT_TEST})
-          list(APPEND test_args NODIFF)
+          list(APPEND test_args NO_DIFF)
         elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test_name}.out")
           list(APPEND test_args FLOAT_PRECISION ${float_precision})
         else()
@@ -102,7 +102,7 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
             STATUS
               "No answer file for ${test_name}; running without output comparison"
           )
-          list(APPEND test_args NODIFF)
+          list(APPEND test_args NO_DIFF)
         endif()
         sundials_add_example(
           ${example_target} ${example_sources} ${test_args}
@@ -117,7 +117,7 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
           ${test_name} ${example_target}
           EXAMPLE_TYPE ${example_type}
           TEST_ARGS ${example_args}
-          NODIFF)
+          NO_DIFF)
       else()
         sundials_add_test(
           ${test_name} ${example_target}

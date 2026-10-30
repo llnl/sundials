@@ -12,8 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set_source_files_properties(cv_adv_diff_kry_cuda_managed.cu
-                            PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 sundials_add_example(cv_adv_diff_kry_cuda_managed
                      cv_adv_diff_kry_cuda_managed.cu
   LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda

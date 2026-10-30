@@ -99,7 +99,7 @@ foreach(example_tuple ${FARKODE_tests})
     ${example} ${example}
     TEST_ARGS ""
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
   # libraries to link against
   target_link_libraries(${example} ${SUNDIALS_LIBS})

@@ -83,7 +83,7 @@ foreach(example_tuple ${nvector_pthreads_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_pthreads_examples})
 
@@ -127,6 +127,6 @@ foreach(example_tuple ${nvector_pthreads_fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_pthreads_fortran_examples})
