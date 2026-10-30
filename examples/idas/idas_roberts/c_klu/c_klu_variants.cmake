@@ -21,7 +21,6 @@ endforeach()
 sundials_add_example(
   idas_roberts_fsa_klu idas_roberts_fsa_klu.c
   TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
-  TEST_ARGS -sensi stg t)
-target_link_libraries(
-  idas_roberts_fsa_klu PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                               sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+  TEST_ARGS -sensi stg t
+  LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
+                 sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

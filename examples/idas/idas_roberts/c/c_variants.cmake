@@ -41,7 +41,6 @@ sundials_add_example(
   TEST_NAME idas_roberts_fsa_dns_-sensi_stg_t
   TEST_ARGS -sensi stg t
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES idas_roberts_fsa_dns_stats_-sensi_stg_t.csv)
-target_link_libraries(
-  idas_roberts_fsa_dns PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                               ${EXE_EXTRA_LINK_LIBS})
+  INSTALL_FILES idas_roberts_fsa_dns_stats_-sensi_stg_t.csv
+  LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})
