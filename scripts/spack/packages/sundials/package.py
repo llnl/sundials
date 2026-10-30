@@ -497,7 +497,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             if "+CVODE" in self.spec:
                 smoke_tests.append(
                     (
-                        "cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda",
+                        "cvode/cv_adv_diff/cuda_kry/cv_adv_diff_kry_cuda",
                         [],
                         "Test CVODE with CUDA",
                         True,
@@ -507,7 +507,7 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+hip" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/cv_adv_diff/hip/cv_adv_diff_kry_hip", [], "Test CVODE with HIP", True)
+                    ("cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip", [], "Test CVODE with HIP", True)
                 )
 
         if "+sycl" in self.spec:
@@ -595,12 +595,12 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
         if "+cuda" in self.spec:
             self.run_test(
-                "examples/cvode/cv_adv_diff/cuda/cv_adv_diff_kry_cuda",
+                "examples/cvode/cv_adv_diff/cuda_kry/cv_adv_diff_kry_cuda",
                 work_dir=self._extra_tests_path,
             )
         if "+rocm" in self.spec:
             self.run_test(
-                "examples/cvode/cv_adv_diff/hip/cv_adv_diff_kry_hip",
+                "examples/cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip",
                 work_dir=self._extra_tests_path,
             )
         if "+sycl" in self.spec:

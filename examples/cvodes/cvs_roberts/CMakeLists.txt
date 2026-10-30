@@ -13,13 +13,20 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_cvs_roberts_asai_dns)
+  add_subdirectory(c_cvs_roberts_asai_dns_constraints)
+  add_subdirectory(c_cvs_roberts_dns)
+  add_subdirectory(c_cvs_roberts_fsa_dns)
+  add_subdirectory(c_cvs_roberts_fsa_dns_constraints)
+  add_subdirectory(c_cvs_roberts_fsa_dns_switch)
   if(SUNDIALS_ENABLE_SUNLINSOL_LAPACKBAND
      AND SUNDIALS_ENABLE_SUNLINSOL_LAPACKDENSE)
     add_subdirectory(c_lapack)
   endif()
   if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
-    add_subdirectory(c_klu)
+    add_subdirectory(c_klu_roberts_asai_klu)
+    add_subdirectory(c_klu_roberts_fsa_klu)
+    add_subdirectory(c_klu_roberts_klu)
   endif()
   if(SUNDIALS_ENABLE_SUNLINSOL_SUPERLUMT)
     add_subdirectory(c_superlumt)

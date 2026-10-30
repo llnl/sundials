@@ -103,7 +103,7 @@ MRIStep initialization and deallocation functions
       * ``examples/arkode/ark_reaction_diffusion/c/ark_reaction_diffusion_mri.c``
       * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
       * ``examples/arkode/ark_diffusion_reaction/cpp_mpi/ark_diffusion_reaction_p.cpp``
-      * ``examples/arkode/ark_kpr/cpp/ark_kpr_nestedmri.cpp``
+      * ``examples/arkode/ark_kpr/cpp_kpr_nestedmri/ark_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
 
 
@@ -162,7 +162,7 @@ MRIStep initialization and deallocation functions
          retval = LSRKStepSet*(sts_mem, ...);
 
    **Example codes:**
-      * ``examples/arkode/ark_advection_diffusion_reaction/cpp/ark_adr_1d_extsts.cpp``
+      * ``examples/arkode/ark_advection_diffusion_reaction/cpp_adr_1d_extsts/ark_adr_1d_extsts.cpp``
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)

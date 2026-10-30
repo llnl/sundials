@@ -21,9 +21,8 @@ endif()
 if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
   set(_other_libs OpenMP::OpenMP_CXX)
 endif()
-set_source_files_properties(cv_adv_diff_kry_raja.cpp PROPERTIES LANGUAGE
-                                                                ${_lang})
 sundials_add_example(
   cv_adv_diff_kry_raja cv_adv_diff_kry_raja.cpp
+  SOURCE_PROPERTIES LANGUAGE ${_lang}
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecraja
                  ${EXE_EXTRA_LINK_LIBS} ${_other_libs})

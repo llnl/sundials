@@ -22,14 +22,15 @@
 #                      [INCLUDE_DIRECTORIES directories...]
 #                      [COMPILE_DEFINITIONS definitions...]
 #                      [PROPERTIES properties...]
+#                      [SOURCE_PROPERTIES properties...]
 #                      [TEST_NAME name] [TEST_ARGS arguments...]
 #                      [MPI_NPROCS count] [ANSWER_FILE file]
 #                      [ANSWER_DIR directory] [EXAMPLE_TYPE type]
 #                      [INSTALL_FILES files...])
 #
 # The positional sources and the SCALAR_TYPE, LINK_LIBRARIES,
-# INCLUDE_DIRECTORIES, COMPILE_DEFINITIONS, and PROPERTIES arguments are passed
-# to sundials_add_executable.
+# INCLUDE_DIRECTORIES, COMPILE_DEFINITIONS, PROPERTIES, and SOURCE_PROPERTIES
+# arguments are passed to sundials_add_executable.
 #
 # A primary regression test is added unless NO_TEST is given. TEST_NAME defaults
 # to the executable name, ANSWER_DIR to CMAKE_CURRENT_SOURCE_DIR, ANSWER_FILE to
@@ -45,6 +46,11 @@
 # ---------------------------------------------------------------
 
 function(sundials_add_example name)
+  if(DEFINED SUNDIALS_EXAMPLE_VARIANT
+     AND NOT name STREQUAL SUNDIALS_EXAMPLE_VARIANT)
+    return()
+  endif()
+
   set(options NO_INSTALL NO_TEST NO_DIFF)
   set(one_value_args
       SCALAR_TYPE
@@ -60,6 +66,7 @@ function(sundials_add_example name)
       INCLUDE_DIRECTORIES
       COMPILE_DEFINITIONS
       PROPERTIES
+      SOURCE_PROPERTIES
       TEST_ARGS
       EXTRA_ARGS
       LABELS
@@ -68,7 +75,8 @@ function(sundials_add_example name)
                         "${multi_value_args}" ${ARGN})
 
   set(_executable_args ${arg_UNPARSED_ARGUMENTS})
-  foreach(_keyword LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS)
+  foreach(_keyword LINK_LIBRARIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS
+                   SOURCE_PROPERTIES)
     list(APPEND _executable_args ${_keyword} ${arg_${_keyword}})
   endforeach()
   list(APPEND _executable_args SCALAR_TYPE ${arg_SCALAR_TYPE})

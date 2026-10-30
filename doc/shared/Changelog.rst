@@ -1968,7 +1968,7 @@ Changes to SUNDIALS in release 6.1.1
 **New Feature**
 
 Added new Fortran example program,
-``examples/arkode/F2003_serial/ark_kpr_mri_f2003.f90`` demonstrating MRI
+``examples/arkode/ark_kpr/fortran_kpr_mri_f2003/ark_kpr_mri_f2003.f90`` demonstrating MRI
 capabilities.
 
 **Bug Fixes**

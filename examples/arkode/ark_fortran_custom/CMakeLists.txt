@@ -13,5 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
-  add_subdirectory(fortran)
+  add_subdirectory(fortran_analytic_complex_f2003)
+  add_subdirectory(fortran_brusselator_1d_f2003)
 endif()

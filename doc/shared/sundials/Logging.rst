@@ -56,7 +56,7 @@ to the file ``sun.log`` as follows
 
 .. code-block::
 
-   SUNLOGGER_INFO_FILENAME=sun.log ./examples/cvode/cv_roberts/c/cv_roberts_dns
+   SUNLOGGER_INFO_FILENAME=sun.log ./examples/cvode/cv_roberts/c_dns/cv_roberts_dns
 
 The different environment variables may all be set to the same file, or to
 distinct files, or some combination there of. To disable output for one of the
@@ -84,7 +84,7 @@ API:
 
    examples/arkode/ark_analytic/cpp/ark_analytic_sys.cpp
    examples/cvode/cv_adv_diff/c/cv_adv_diff_bnd.c
-   examples/cvode/cv_adv_diff/c_mpi/cv_adv_diff_diag_p.c
+   examples/cvode/cv_adv_diff/c_mpi_diag/cv_adv_diff_diag_p.c
    examples/kinsol/kin_em/cpp_mpi/kin_em_p.cpp
    examples/kinsol/kin_em/cuda_mpi/kin_em_mpicuda.cu
 

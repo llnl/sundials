@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_heat_1d)
+  add_subdirectory(c_heat_1d_adapt)
   if(SUNDIALS_ENABLE_OPENMP)
     add_subdirectory(c_openmp)
   endif()
