@@ -33,7 +33,7 @@
 #
 # A primary regression test is added unless NO_TEST is given. TEST_NAME defaults
 # to the executable name, ANSWER_DIR to CMAKE_CURRENT_SOURCE_DIR, ANSWER_FILE to
-# <test-name>.out, and EXAMPLE_TYPE to develop. TEST_ARGS, EXTRA_ARGS,
+# <test-name>.out, and EXAMPLE_TYPE to an empty value. TEST_ARGS, EXTRA_ARGS,
 # MPI_NPROCS, FLOAT_PRECISION, INTEGER_PRECISION, LABELS, and NO_DIFF are passed
 # to sundials_add_test.
 #
@@ -107,11 +107,7 @@ function(sundials_add_example name)
       list(APPEND _test_args ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
     list(APPEND _test_args ANSWER_FILE ${_answer_file})
-    if(arg_EXAMPLE_TYPE)
-      list(APPEND _test_args EXAMPLE_TYPE ${arg_EXAMPLE_TYPE})
-    else()
-      list(APPEND _test_args EXAMPLE_TYPE develop)
-    endif()
+    list(APPEND _test_args EXAMPLE_TYPE ${arg_EXAMPLE_TYPE})
     foreach(_keyword TEST_ARGS EXTRA_ARGS LABELS)
       list(APPEND _test_args ${_keyword} ${arg_${_keyword}})
     endforeach()

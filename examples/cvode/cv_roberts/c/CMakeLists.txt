@@ -12,25 +12,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cv_roberts_dns_constraints cv_roberts_dns_negsol
+foreach(example cv_roberts_dns cv_roberts_dns_constraints cv_roberts_dns_negsol
                 cv_roberts_dns_uw)
   set(example_options)
   if(example STREQUAL "cv_roberts_dns_negsol")
     list(APPEND example_options EXAMPLE_TYPE exclude-single)
   endif()
+  if(example STREQUAL "cv_roberts_dns")
+    list(APPEND example_options INSTALL_FILES cv_roberts_dns_stats.csv)
+  endif()
   sundials_add_example(${example} ${example}.c ${example_options})
   target_link_libraries(${example} PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                                            ${EXE_EXTRA_LINK_LIBS})
 endforeach()
-
-# Keep the CVODE smoke test in the release test set.
-sundials_add_example(
-  cv_roberts_dns cv_roberts_dns.c NO_TEST
-  INSTALL_FILES cv_roberts_dns.out cv_roberts_dns_stats.csv)
-target_link_libraries(cv_roberts_dns PRIVATE ${CVODE_C_LIBS}
-                                             sundials_nvecserial
-                                             ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cv_roberts_dns cv_roberts_dns
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cv_roberts_dns.out)
