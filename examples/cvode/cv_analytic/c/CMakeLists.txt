@@ -12,5 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_analytic_mels SOURCES cv_analytic_mels.c
-  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  cv_analytic_mels
+  SOURCES cv_analytic_mels.c
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})

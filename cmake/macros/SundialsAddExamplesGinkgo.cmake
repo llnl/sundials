@@ -105,7 +105,8 @@ macro(sundials_add_examples_ginkgo EXAMPLES_VAR)
           list(APPEND test_args NO_DIFF)
         endif()
         sundials_add_example(
-          ${example_target} SOURCES ${example_sources} ${test_args}
+          ${example_target}
+          SOURCES ${example_sources} ${test_args}
           INSTALL_FILES ${install_files}
           LINK_LIBRARIES PRIVATE ${arg_TARGETS} sundials_${vector}
                          Ginkgo::ginkgo ${EXTRA_LINK_LIBS}

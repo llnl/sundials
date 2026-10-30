@@ -12,9 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_roberts_block_cusolversp_batchqr
+sundials_add_example(
+  cv_roberts_block_cusolversp_batchqr
   SOURCES cv_roberts_block_cusolversp_batchqr.cu
   LINK_LIBRARIES
-    sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda
+    sundials_sunlinsolcusolversp
+    sundials_cvode
+    sundials_nveccuda
     $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
     ${EXE_EXTRA_LINK_LIBS})

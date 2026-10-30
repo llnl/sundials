@@ -22,7 +22,8 @@ else()
 endif()
 
 sundials_add_example(
-  cv_adv_diff_sludist SOURCES cv_adv_diff_sludist.cpp
+  cv_adv_diff_sludist
+  SOURCES cv_adv_diff_sludist.cpp
   TEST_ARGS 2 1
   MPI_NPROCS 2
   ANSWER_FILE cv_adv_diff_sludist_${SUNDIALS_INDEX_SIZE}.out

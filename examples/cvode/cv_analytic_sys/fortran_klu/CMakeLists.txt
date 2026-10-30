@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_analytic_sys_klu_f2003 SOURCES cv_analytic_sys_klu_f2003.f90
+  cv_analytic_sys_klu_f2003
+  SOURCES cv_analytic_sys_klu_f2003.f90
   LINK_LIBRARIES ${CVODE_C_LIBS} sundials_fcvode_mod sundials_fsunlinsolklu_mod
                  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES

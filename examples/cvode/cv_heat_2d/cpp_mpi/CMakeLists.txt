@@ -14,11 +14,11 @@
 # -----------------------------------------------------------------
 # CVODE parallel C++ heat equation example
 sundials_add_example(
-  cv_heat_2d_p SOURCES cv_heat_2d_p.cpp
+  cv_heat_2d_p
+  SOURCES cv_heat_2d_p.cpp
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
   ANSWER_FILE cv_heat_2d_p_--np_2_2.out
   INSTALL_FILES plot_heat_2d_p.py
-  LINK_LIBRARIES
-  PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
-                       ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${CVODE_C_LIBS} sundials_nvecparallel
+                 ${EXE_EXTRA_LINK_LIBS})
