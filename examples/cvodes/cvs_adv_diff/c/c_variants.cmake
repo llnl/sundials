@@ -14,13 +14,13 @@
 # -----------------------------------------------------------------
 foreach(example cvs_adv_diff_asai_bnd cvs_adv_diff_bnd)
   sundials_add_example(
-    ${example} ${example}.c
+    ${example} SOURCES ${example}.c
     LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 
 sundials_add_example(
-  cvs_adv_diff_fsa_non cvs_adv_diff_fsa_non.c
+  cvs_adv_diff_fsa_non SOURCES cvs_adv_diff_fsa_non.c
   TEST_NAME cvs_adv_diff_fsa_non_-sensi_sim_t
   TEST_ARGS -sensi sim t
   EXAMPLE_TYPE exclude-single

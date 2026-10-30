@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_krylov_demo_ls cv_krylov_demo_ls.c
+  cv_krylov_demo_ls SOURCES cv_krylov_demo_ls.c
   INSTALL_FILES cv_krylov_demo_ls_0_1.out cv_krylov_demo_ls_1.out
                 cv_krylov_demo_ls_2.out
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial

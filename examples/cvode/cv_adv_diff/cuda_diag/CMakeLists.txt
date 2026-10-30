@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_diag_cuda cv_adv_diff_diag_cuda.cu NO_TEST
+  cv_adv_diff_diag_cuda SOURCES cv_adv_diff_diag_cuda.cu NO_TEST
   INSTALL_FILES cv_adv_diff_diag_cuda_0_0.out cv_adv_diff_diag_cuda_0_1.out
                 cv_adv_diff_diag_cuda_1_1.out
   LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda

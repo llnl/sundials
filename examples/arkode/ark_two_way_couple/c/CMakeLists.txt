@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_two_way_couple_mri ark_two_way_couple_mri.c
+  ark_two_way_couple_mri SOURCES ark_two_way_couple_mri.c
   EXAMPLE_TYPE develop
   INSTALL_FILES plot_sol.py plot_sol_log.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial

@@ -12,7 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_diurnal_kry_mpimanyvec cv_diurnal_kry_mpimanyvec.c
+sundials_add_example(cv_diurnal_kry_mpimanyvec SOURCES cv_diurnal_kry_mpimanyvec.c
                      MPI_NPROCS 4
                      LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecmpimanyvector
                      sundials_nvecparallel ${EXE_EXTRA_LINK_LIBS})
