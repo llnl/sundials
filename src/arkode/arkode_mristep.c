@@ -245,6 +245,9 @@ void* MRIStepCreate(ARKRhsFn fse, ARKRhsFn fsi, sunrealtype t0, N_Vector y0,
   step_mem->inner_rtol_factor     = ONE;
   step_mem->inner_dsm             = ONE;
   step_mem->inner_rtol_factor_new = ONE;
+  step_mem->extsts_dsm            = ZERO;
+  step_mem->extsts_acc            = ZERO;
+  step_mem->extsts_dt_acc         = ZERO;
 
   /* Initialize pre and post inner evolve functions */
   step_mem->pre_inner_evolve  = NULL;
@@ -1876,6 +1879,15 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
   }
 
+  /* for ExtSTS methods with temporal error estimation enabled: estimate the
+     STS error in each fast solve */
+  if (step_mem->extsts_method)
+  {
+    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    if (retval != ARK_SUCCESS) { return retval; }
+    need_inner_dsm = do_embedding;
+  }
+
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
   if (!ark_mem->fixedstep)
   {
@@ -2336,6 +2348,12 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
 
   } /* loop over stages */
 
+  /* for ExtSTS methods: combine the MRI and STS error estimates */
+  if (do_embedding && step_mem->extsts_method)
+  {
+    extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
+  }
+
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
   return (ARK_SUCCESS);
@@ -2391,6 +2409,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunbooleantype impl_corr;           /* is slow correct. implicit? */
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
+  sunbooleantype do_embedding;
   sunbooleantype nested_mri;
   int nvec, max_stages;
   const sunrealtype tol = SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF;
@@ -2403,6 +2422,10 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      error estimate to zero */
   *nflagPtr = ARK_SUCCESS;
   *dsmPtr   = ZERO;
+
+  /* determine whether embedding stage is needed */
+  do_embedding = !ark_mem->fixedstep ||
+                 (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
@@ -2435,6 +2458,15 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                       "Unable to set the inner stepper tolerance");
       return (ARK_INNERSTEP_FAIL);
     }
+  }
+
+  /* for ExtSTS methods with temporal error estimation enabled: estimate the
+     STS error in each fast solve */
+  if (step_mem->extsts_method)
+  {
+    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    if (retval != ARK_SUCCESS) { return retval; }
+    need_inner_dsm = do_embedding;
   }
 
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
@@ -2527,10 +2559,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      is the [already-computed] slow RHS from the start of the step */
 
   /* Determine how many stages will be needed */
-  max_stages = (ark_mem->fixedstep &&
-                (ark_mem->AccumErrorType == ARK_ACCUMERROR_NONE))
-                 ? step_mem->stages
-                 : step_mem->stages + 1;
+  max_stages = (do_embedding) ? step_mem->stages + 1 : step_mem->stages;
 
   /* Loop over stages */
   for (stage = 1; stage < max_stages; stage++)
@@ -2843,11 +2872,17 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* if temporal error estimation is enabled: compute estimate via difference between
      step solution and embedding, store in ark_mem->tempv1, store norm in dsmPtr, and
      copy solution back to ycur */
-  if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
+  if (do_embedding)
   {
     N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
     N_VScale(ONE, ytilde, ark_mem->ycur);
+
+    /* for ExtSTS methods: combine with the STS error estimate */
+    if (step_mem->extsts_method)
+    {
+      extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
+    }
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
@@ -2907,6 +2942,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunbooleantype solution;            /*   or solution stages       */
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
+  sunbooleantype do_embedding;
   sunbooleantype nested_mri;
   int nvec;
 
@@ -2918,6 +2954,10 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
      error estimate to zero */
   *nflagPtr = ARK_SUCCESS;
   *dsmPtr   = ZERO;
+
+  /* determine whether embedding stage is needed */
+  do_embedding = !ark_mem->fixedstep ||
+                 (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
@@ -2953,6 +2993,15 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                       "Unable to set the inner stepper tolerance");
       return (ARK_INNERSTEP_FAIL);
     }
+  }
+
+  /* for ExtSTS methods with temporal error estimation enabled: estimate the
+     STS error in each fast solve */
+  if (step_mem->extsts_method)
+  {
+    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    if (retval != ARK_SUCCESS) { return retval; }
+    need_inner_dsm = do_embedding;
   }
 
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
@@ -3070,11 +3119,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
       /* Skip the embedding if we're using fixed time-stepping and
          temporal error estimation is disabled */
-      if (ark_mem->fixedstep && embedding &&
-          (ark_mem->AccumErrorType == ARK_ACCUMERROR_NONE))
-      {
-        break;
-      }
+      if (embedding && !do_embedding) { break; }
 
       /* Set current stage abscissa */
       cstage = (stage >= step_mem->stages) ? ONE : step_mem->MRIC->c[stage];
@@ -3241,10 +3286,16 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
 
   /* if temporal error estimation is enabled: compute estimate via difference between
      step solution and embedding, store in ark_mem->tempv1, and store norm in dsmPtr */
-  if (!ark_mem->fixedstep || (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE))
+  if (do_embedding)
   {
     N_VLinearSum(ONE, ytilde, -ONE, ark_mem->ycur, ark_mem->tempv1);
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+
+    /* for ExtSTS methods: combine with the STS error estimate */
+    if (step_mem->extsts_method)
+    {
+      extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
+    }
   }
 
   return (ARK_SUCCESS);
@@ -3761,6 +3812,13 @@ int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
       step_mem->inner_dsm /= ark_mem->reltol;
       SUNLogInfo(ARK_LOGGER, "accumulated-fast-error", "inner_dsm = %e",
                  step_mem->inner_dsm);
+    }
+
+    /* for ExtSTS methods, accumulate the STS error estimate */
+    if (step_mem->extsts_method)
+    {
+      retval = extSTS_AccumulateStageError(ark_mem, step_mem, t0, tf);
+      if (retval != ARK_SUCCESS) { return retval; }
     }
   }
 

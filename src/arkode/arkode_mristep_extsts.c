@@ -221,6 +221,84 @@ int MRIStepGetSTS(void* arkode_mem, void** sts_mem)
   return ARK_SUCCESS;
 }
 
+/* ExtSTS temporal error estimation routines.  The STS error committed in each
+   fast solve is estimated by the RKC/RKL embedding, measured in the MRIStep
+   error weights, and combined over the K fast solves of a step attempt as a
+   subinterval-weighted RMS,
+
+     extsts_dsm = sqrt( sum_k |dt_k| ||e_k||^2 / sum_k |dt_k| ),
+
+   which is then combined with the MRI embedding estimate dsm_S as the
+   root-sum-square sqrt(dsm_S^2 + extsts_dsm^2). */
+
+/* Enable/disable the STS error estimate and zero the accumulators at the start
+   of a step attempt */
+int extSTS_BeginStepError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                          sunbooleantype enable)
+{
+  ARKodeLSRKStepMem lsrkstep_mem = NULL;
+  int retval = lsrkStep_AccessStepMem((ARKodeMem)step_mem->stepper->content,
+                                      __func__, &lsrkstep_mem);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "Failed to access LSRKStep memory for ExtSTS method.");
+    return retval;
+  }
+
+  lsrkstep_mem->compute_err_est = enable;
+  step_mem->extsts_dsm          = ZERO;
+  step_mem->extsts_acc          = ZERO;
+  step_mem->extsts_dt_acc       = ZERO;
+
+  return ARK_SUCCESS;
+}
+
+/* Add the STS error estimate from one fast solve over [t0, tf].  The RKC/RKL
+   embedding leaves the error vector in the inner tempv1; this is measured
+   with the outer ewt so that the STS and MRI estimates share one norm. */
+int extSTS_AccumulateStageError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                                sunrealtype t0, sunrealtype tf)
+{
+  const sunrealtype dt = SUNRabs(tf - t0);
+  sunrealtype err;
+
+  /* zero-length solves do not take an STS step, so tempv1 is not current */
+  if (dt <= ZERO) { return ARK_SUCCESS; }
+
+  err = N_VWrmsNorm(((ARKodeMem)step_mem->stepper->content)->tempv1,
+                    ark_mem->ewt);
+  step_mem->extsts_acc += dt * err * err;
+  step_mem->extsts_dt_acc += dt;
+
+  SUNLogDebug(ARK_LOGGER, "extsts-stage-error",
+              "t0 = " SUN_FORMAT_G ", tf = " SUN_FORMAT_G
+              ", err = " SUN_FORMAT_G,
+              t0, tf, err);
+
+  return ARK_SUCCESS;
+}
+
+/* Form the STS error estimate for the step attempt and combine it with the MRI
+   embedding estimate stored in *dsm */
+void extSTS_FinalizeStepError(SUNDIALS_MAYBE_UNUSED ARKodeMem ark_mem,
+                              ARKodeMRIStepMem step_mem, sunrealtype* dsm)
+{
+  const sunrealtype dsm_slow = *dsm;
+
+  step_mem->extsts_dsm =
+    (step_mem->extsts_dt_acc > ZERO)
+      ? SUNRsqrt(step_mem->extsts_acc / step_mem->extsts_dt_acc)
+      : ZERO;
+  *dsm =
+    SUNRsqrt(dsm_slow * dsm_slow + step_mem->extsts_dsm * step_mem->extsts_dsm);
+
+  SUNLogInfo(ARK_LOGGER, "extsts-error-estimate",
+             "dsm_slow = " SUN_FORMAT_G ", dsm_sts = " SUN_FORMAT_G
+             ", dsm = " SUN_FORMAT_G,
+             dsm_slow, step_mem->extsts_dsm, *dsm);
+}
+
 /* Inner stepper utility routines */
 int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
                               sunrealtype tout, N_Vector y)

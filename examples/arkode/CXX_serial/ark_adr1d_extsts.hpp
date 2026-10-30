@@ -107,8 +107,8 @@ struct UserOptions
   int sts_method = 0;
 
   // MRI method name, or Butcher table name plus flag to build MRI table
-  // as an MIS method
-  string mri_method    = "ARKODE_IMEX_MRI_GARK_GKC21";
+  // as an MIS method (empty = GKC21, IMEX or explicit to match the problem)
+  string mri_method    = "";
   bool build_mri_table = false;
 
   // Relative and absolute tolerances
@@ -300,6 +300,13 @@ static int ReadInputs(vector<string>& args, UserData& udata, UserOptions& uopts,
   find_arg(args, "--output", uopts.output);
   find_arg(args, "--nout", uopts.nout);
 
+  // Default MRI method: an IMEX table requires the implicit reaction term
+  if (uopts.mri_method.empty())
+  {
+    uopts.mri_method = (udata.reaction) ? "ARKODE_IMEX_MRI_GARK_GKC21"
+                                        : "ARKODE_MRI_GARK_EXP_GKC21";
+  }
+
   // Recompute mesh spacing and total number of nodes
   udata.dx  = (udata.xu - udata.xl) / (udata.nx - 1);
   udata.neq = NSPECIES * udata.nx;
@@ -311,10 +318,10 @@ static int ReadInputs(vector<string>& args, UserData& udata, UserOptions& uopts,
     return -1;
   }
 
-  // Ensure that build_mri_table is only set for non-ImEx problem
-  if (uopts.build_mri_table && !udata.advection && !udata.reaction)
+  // Ensure that build_mri_table is not set for an ImEx problem
+  if (uopts.build_mri_table && udata.advection && udata.reaction)
   {
-    cerr << "ERROR: Cannot build MRI table for non-ImEx problem" << endl;
+    cerr << "ERROR: Cannot build MRI table for an ImEx problem" << endl;
     return -1;
   }
 

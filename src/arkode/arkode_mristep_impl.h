@@ -179,6 +179,11 @@ typedef struct ARKodeMRIStepMemRec
   /* flag indicating that MRIStep implements an ExtSTS method */
   sunbooleantype extsts_method;
 
+  /* ExtSTS temporal error estimation (see arkode_mristep_extsts.c) */
+  sunrealtype extsts_dsm; /* STS error estimate for the current step attempt */
+  sunrealtype extsts_acc; /* running sum of |dt_k| ||e_k||^2 over fast solves */
+  sunrealtype extsts_dt_acc; /* running sum of |dt_k| over fast solves */
+
 }* ARKodeMRIStepMem;
 
 /*===============================================================
@@ -366,6 +371,14 @@ int mriStep_ComputeInnerForcing(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
 /* Return effective RK coefficients (nofast stage) */
 int mriStep_RKCoeffs(MRIStepCoupling MRIC, int is, int* stage_map,
                      sunrealtype* Ae_row, sunrealtype* Ai_row);
+
+/* ExtSTS temporal error estimation (implemented in arkode_mristep_extsts.c) */
+int extSTS_BeginStepError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                          sunbooleantype enable);
+int extSTS_AccumulateStageError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                                sunrealtype t0, sunrealtype tf);
+void extSTS_FinalizeStepError(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
+                              sunrealtype* dsm);
 
 #if defined(SUNDIALS_ENABLE_PYTHON)
 void mristepinnerstepper_user_supplied_fn_table_destroy(void* ptr);
