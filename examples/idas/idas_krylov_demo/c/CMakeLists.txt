@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idas_krylov_demo_ls SOURCES idas_krylov_demo_ls.c
+  idas_krylov_demo_ls
+  SOURCES idas_krylov_demo_ls.c
   INSTALL_FILES idas_krylov_demo_ls_1.out idas_krylov_demo_ls_2.out)
 target_link_libraries(
   idas_krylov_demo_ls PRIVATE ${IDAS_C_LIBS} sundials_nvecserial

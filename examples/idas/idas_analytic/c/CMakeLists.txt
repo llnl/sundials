@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  idas_analytic_mels SOURCES idas_analytic_mels.c
+  idas_analytic_mels
+  SOURCES idas_analytic_mels.c
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES idas_analytic_mels_idas.init_step_1e-5.out)
 target_link_libraries(

@@ -28,8 +28,10 @@ foreach(example idas_roberts_asai_dns idas_roberts_dns)
          idas_roberts_dns_stats.csv)
   endif()
   sundials_add_example(
-    ${example} SOURCES ${example}.c ${example_options}
-    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+    ${example}
+    SOURCES ${example}.c ${example_options}
+    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
+                   ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_test(
   idas_roberts_dns idas_roberts_dns
@@ -37,7 +39,8 @@ sundials_add_test(
   ANSWER_FILE idas_roberts_dns.out)
 
 sundials_add_example(
-  idas_roberts_fsa_dns SOURCES idas_roberts_fsa_dns.c
+  idas_roberts_fsa_dns
+  SOURCES idas_roberts_fsa_dns.c
   TEST_NAME idas_roberts_fsa_dns_-sensi_stg_t
   TEST_ARGS -sensi stg t
   EXAMPLE_TYPE exclude-single

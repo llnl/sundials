@@ -32,8 +32,6 @@ add_subdirectory(idas_roberts)
 add_subdirectory(idas_slider_crank)
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
-  include(SundialsInstallExampleCMake)
-
   get_property(
     _idas_problem_directories
     DIRECTORY
@@ -50,10 +48,6 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_idas_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_install_example_cmake(
-      idas "${_example_dir}"
-      "${SUNDIALS_EXAMPLES_INSTALL_PATH}/idas/${_example_rel_dir}")
-
     if(_example_rel_dir STREQUAL "idas_roberts/c")
       sundials_add_test_install(idas ${_example_rel_dir}
                                 EXECUTABLE idas_roberts_dns)
