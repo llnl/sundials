@@ -22,7 +22,7 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
         STATUS
           "No answer file for ${example_target}; running without output comparison"
       )
-      list(APPEND example_options NODIFF)
+      list(APPEND example_options NO_DIFF)
     endif()
     sundials_add_example(
       ${example_target} cv_bruss_batched_kokkos.cpp ${example_options}
