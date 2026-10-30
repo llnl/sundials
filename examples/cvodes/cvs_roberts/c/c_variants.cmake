@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_roberts_asai_dns cvs_roberts_asai_dns.c
+  cvs_roberts_asai_dns SOURCES cvs_roberts_asai_dns.c
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES
     cvs_roberts_asai_dns_bkw1_stats.csv cvs_roberts_asai_dns_bkw2_stats.csv
@@ -21,12 +21,12 @@ sundials_add_example(
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  cvs_roberts_asai_dns_constraints cvs_roberts_asai_dns_constraints.c
+  cvs_roberts_asai_dns_constraints SOURCES cvs_roberts_asai_dns_constraints.c
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cvs_roberts_fsa_dns cvs_roberts_fsa_dns.c
+  cvs_roberts_fsa_dns SOURCES cvs_roberts_fsa_dns.c
   TEST_NAME cvs_roberts_fsa_dns_-sensi_sim_t
   TEST_ARGS -sensi sim t
   EXAMPLE_TYPE exclude-single
@@ -44,11 +44,11 @@ sundials_add_test(
   EXAMPLE_TYPE exclude-single)
 
 sundials_add_example(
-  cvs_roberts_fsa_dns_switch cvs_roberts_fsa_dns_switch.c
+  cvs_roberts_fsa_dns_switch SOURCES cvs_roberts_fsa_dns_switch.c
                      EXAMPLE_TYPE exclude-single
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  cvs_roberts_fsa_dns_constraints cvs_roberts_fsa_dns_constraints.c
+  cvs_roberts_fsa_dns_constraints SOURCES cvs_roberts_fsa_dns_constraints.c
   TEST_NAME cvs_roberts_fsa_dns_constraints_-sensi_stg1_t
   TEST_ARGS -sensi stg1 t
   EXAMPLE_TYPE exclude-single
@@ -56,13 +56,13 @@ sundials_add_example(
                  ${EXE_EXTRA_LINK_LIBS})
 
 sundials_add_example(
-  cvs_roberts_dns cvs_roberts_dns.c NO_TEST
+  cvs_roberts_dns SOURCES cvs_roberts_dns.c NO_TEST
   INSTALL_FILES cvs_roberts_dns.out cvs_roberts_dns_stats.csv
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
 foreach(example cvs_roberts_dns_constraints cvs_roberts_dns_uw)
   sundials_add_example(
-    ${example} ${example}.c
+    ${example} SOURCES ${example}.c
     LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})
 endforeach()

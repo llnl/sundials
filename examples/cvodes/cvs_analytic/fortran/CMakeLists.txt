@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_analytic_fp_f2003 cvs_analytic_fp_f2003.f90
+  cvs_analytic_fp_f2003 SOURCES cvs_analytic_fp_f2003.f90
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_fcvodes_mod
                  ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY

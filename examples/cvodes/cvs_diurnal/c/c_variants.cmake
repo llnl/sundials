@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_diurnal_fsa_kry cvs_diurnal_fsa_kry.c
+  cvs_diurnal_fsa_kry SOURCES cvs_diurnal_fsa_kry.c
   TEST_NAME cvs_diurnal_fsa_kry_-sensi_sim_t
   TEST_ARGS -sensi sim t
   EXAMPLE_TYPE exclude-single
@@ -29,7 +29,7 @@ sundials_add_test(
 
 foreach(example cvs_diurnal_kry cvs_diurnal_kry_bp)
   sundials_add_example(
-    ${example} ${example}.c
+    ${example} SOURCES ${example}.c
     LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})
 endforeach()

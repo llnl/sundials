@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ark_brusselator_1d_task_local_nls ark_brusselator_1d_task_local_nls.c
+  ark_brusselator_1d_task_local_nls SOURCES ark_brusselator_1d_task_local_nls.c
   TEST_NAME ark_brusselator_1d_task_local_nls_--monitor
   TEST_ARGS --monitor
   MPI_NPROCS 4

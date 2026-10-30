@@ -30,7 +30,7 @@ endif()
 # configurations.  The source is shared by all variants, so each backend gets a
 # distinct target name.
 sundials_add_example(
-  ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC ${_source}
+  ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC SOURCES ${_source}
   TEST_NAME ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC_--monitor
   TEST_ARGS --monitor
   MPI_NPROCS 4
@@ -61,7 +61,7 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
   set(_cuda_libs ${_common_libs} sundials_nveccuda)
 
   sundials_add_example(
-    ark_brusselator_1d_task_local_nls.USE_CUDA_NVEC ${_source}
+    ark_brusselator_1d_task_local_nls.USE_CUDA_NVEC SOURCES ${_source}
     TEST_NAME ark_brusselator_1d_task_local_nls.USE_CUDA_NVEC_--monitor
     TEST_ARGS --monitor
     MPI_NPROCS 4
@@ -87,7 +87,7 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
   # corresponding RAJA/NVECTOR support was enabled. They have no checked-in
   # answer file, so keep them as buildable, installed examples without tests.
   sundials_add_example(
-    ark_brusselator_1d_task_local_nls.USE_CUDAUVM_NVEC ${_source} NO_TEST
+    ark_brusselator_1d_task_local_nls.USE_CUDAUVM_NVEC SOURCES ${_source} NO_TEST
     INSTALL_FILES ${_common_files}
     COMPILE_DEFINITIONS PRIVATE USE_CUDAUVM_NVEC
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${_cuda_libs})
@@ -95,7 +95,7 @@ endif()
 
 if(SUNDIALS_ENABLE_NVECTOR_RAJA AND SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   sundials_add_example(
-    ark_brusselator_1d_task_local_nls.USE_RAJA_NVEC ${_source} NO_TEST
+    ark_brusselator_1d_task_local_nls.USE_RAJA_NVEC SOURCES ${_source} NO_TEST
     INSTALL_FILES ${_common_files}
     COMPILE_DEFINITIONS PRIVATE USE_RAJA_NVEC
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${_common_libs} sundials_nvecraja)
@@ -103,7 +103,7 @@ endif()
 
 if(SUNDIALS_ENABLE_NVECTOR_HIP AND RAJA_BACKENDS MATCHES "HIP")
   sundials_add_example(
-    ark_brusselator_1d_task_local_nls.USE_HIP_NVEC ${_source} NO_TEST
+    ark_brusselator_1d_task_local_nls.USE_HIP_NVEC SOURCES ${_source} NO_TEST
     INSTALL_FILES ${_common_files}
     COMPILE_DEFINITIONS PRIVATE USE_HIP_NVEC
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${_common_libs} sundials_nvechip)
@@ -111,7 +111,7 @@ endif()
 
 if(SUNDIALS_ENABLE_NVECTOR_OPENMPDEV AND RAJA_BACKENDS MATCHES "TARGET_OPENMP")
   sundials_add_example(
-    ark_brusselator_1d_task_local_nls.USE_OMPDEV_NVEC ${_source} NO_TEST
+    ark_brusselator_1d_task_local_nls.USE_OMPDEV_NVEC SOURCES ${_source} NO_TEST
     INSTALL_FILES ${_common_files}
     COMPILE_DEFINITIONS PRIVATE USE_OMPDEV_NVEC
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${_common_libs} sundials_nvecopenmpdev)

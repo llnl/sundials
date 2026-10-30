@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
-    ida_heat_2d_kry_f2003 ida_heat_2d_kry_f2003.f90
+    ida_heat_2d_kry_f2003 SOURCES ida_heat_2d_kry_f2003.f90
     EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod
                    ${EXE_EXTRA_LINK_LIBS}

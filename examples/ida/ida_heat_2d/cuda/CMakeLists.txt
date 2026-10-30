@@ -13,6 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  ida_heat_2d_kry_cuda ida_heat_2d_kry_cuda.cu
+  ida_heat_2d_kry_cuda SOURCES ida_heat_2d_kry_cuda.cu
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nveccuda ${EXE_EXTRA_LINK_LIBS})

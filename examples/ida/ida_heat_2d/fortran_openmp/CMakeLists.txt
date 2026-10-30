@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
-    ida_heat_2d_kry_omp_f2003 ida_heat_2d_kry_omp_f2003.f90 NO_TEST
+    ida_heat_2d_kry_omp_f2003 SOURCES ida_heat_2d_kry_omp_f2003.f90 NO_TEST
     INSTALL_FILES ida_heat_2d_kry_omp_f2003_4.out
                   ida_heat_2d_kry_omp_f2003_8.out
     LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_fida_mod sundials_nvecopenmp

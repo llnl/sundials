@@ -13,6 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_roberts_dns_constraints cv_roberts_dns_constraints.c
+  cv_roberts_dns_constraints SOURCES cv_roberts_dns_constraints.c
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

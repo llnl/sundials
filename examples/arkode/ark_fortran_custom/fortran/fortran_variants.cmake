@@ -16,7 +16,7 @@ set(_sources fnvector_complex_mod.f90 fnvector_fortran_mod.f90
              fsunmatrix_fortran_mod.f90 fsunlinsol_fortran_mod.f90)
 
 sundials_add_example(
-  ark_analytic_complex_f2003 ark_analytic_complex_f2003.f90 ${_sources}
+  ark_analytic_complex_f2003 SOURCES ark_analytic_complex_f2003.f90 ${_sources}
   EXAMPLE_TYPE develop
   INSTALL_FILES ${_sources}
   PROPERTIES
@@ -25,7 +25,7 @@ sundials_add_example(
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                  ${EXE_EXTRA_LINK_LIBS})
 sundials_add_example(
-  ark_brusselator_1d_f2003 ark_brusselator_1d_f2003.f90 ${_sources}
+  ark_brusselator_1d_f2003 SOURCES ark_brusselator_1d_f2003.f90 ${_sources}
   EXAMPLE_TYPE develop
   INSTALL_FILES ${_sources}
   PROPERTIES Fortran_MODULE_DIRECTORY
@@ -36,7 +36,7 @@ sundials_add_example(
 foreach(_test test_fnvector_complex_mod test_fnvector_fortran_mod
               test_fsunmatrix_fortran_mod test_fsunlinsol_fortran_mod)
   sundials_add_example(
-    ${_test} ${_test}.f90 ${_sources} NO_DIFF
+    ${_test} SOURCES ${_test}.f90 ${_sources} NO_DIFF
     EXAMPLE_TYPE develop
     INSTALL_FILES ${_sources}
     PROPERTIES Fortran_MODULE_DIRECTORY
