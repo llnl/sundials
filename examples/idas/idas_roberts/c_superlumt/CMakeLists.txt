@@ -31,7 +31,7 @@ foreach(example idas_roberts_asai_sps idas_roberts_fsa_sps idas_roberts_sps)
   if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
     list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
   endif()
-  sundials_add_example(${example} ${example}.c ${example_options})
+  sundials_add_example(${example} SOURCES ${example}.c ${example_options})
   target_link_libraries(
     ${example}
     PRIVATE ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
