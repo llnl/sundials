@@ -1,4 +1,0 @@
-List of parallel KINSOL C++ examples
-
-  kin_heat2D_nonlin_hypre_pfmg : steady-state 2-D heat equation with added nonlinear term
-  kin_bratu2D_hypre_pfmg       : 2-D Bratu problem
