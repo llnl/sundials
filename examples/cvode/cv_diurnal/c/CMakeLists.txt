@@ -12,12 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-sundials_add_example(cv_diurnal_kry cv_diurnal_kry.c)
-target_link_libraries(
-  cv_diurnal_kry PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                         ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(cv_diurnal_kry cv_diurnal_kry.c
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 
-sundials_add_example(cv_diurnal_kry_bp cv_diurnal_kry_bp.c)
-target_link_libraries(
-  cv_diurnal_kry_bp PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
-                            ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(cv_diurnal_kry_bp cv_diurnal_kry_bp.c
+  LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
