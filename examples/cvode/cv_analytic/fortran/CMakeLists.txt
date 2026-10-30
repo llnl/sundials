@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_analytic_fp_f2003 cv_analytic_fp_f2003.f90
+  cv_analytic_fp_f2003 SOURCES cv_analytic_fp_f2003.f90
   LINK_LIBRARIES ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY
              ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_analytic_fp_f2003.dir)

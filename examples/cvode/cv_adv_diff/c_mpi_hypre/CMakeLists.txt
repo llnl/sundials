@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_adv_diff_non_ph cv_adv_diff_non_ph.c
+  cv_adv_diff_non_ph SOURCES cv_adv_diff_non_ph.c
   MPI_NPROCS 2
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparhyp
                              ${EXE_EXTRA_LINK_LIBS})

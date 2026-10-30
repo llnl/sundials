@@ -25,7 +25,7 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
       list(APPEND example_options NO_DIFF)
     endif()
     sundials_add_example(
-      ${example_target} cv_bruss_batched_kokkos_2d.cpp ${example_options}
+      ${example_target} SOURCES cv_bruss_batched_kokkos_2d.cpp ${example_options}
       EXTRA_ARGS --kokkos-disable-warnings
       INSTALL_FILES
         "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"

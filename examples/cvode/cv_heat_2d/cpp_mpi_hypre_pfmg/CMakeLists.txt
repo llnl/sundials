@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cv_heat_2d_hypre_pfmg cv_heat_2d_hypre_pfmg.cpp
+  cv_heat_2d_hypre_pfmg SOURCES cv_heat_2d_hypre_pfmg.cpp
   TEST_NAME cv_heat_2d_hypre_pfmg_--np_2_2
   TEST_ARGS --np 2 2
   MPI_NPROCS 4

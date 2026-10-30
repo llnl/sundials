@@ -13,7 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(cv_adv_diff_kry_cuda_managed
-                     cv_adv_diff_kry_cuda_managed.cu
+                     SOURCES cv_adv_diff_kry_cuda_managed.cu
   LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda
                                        $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
                                        ${EXE_EXTRA_LINK_LIBS})
