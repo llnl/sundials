@@ -13,13 +13,13 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 foreach(example cvs_roberts_asai_klu cvs_roberts_klu)
-  sundials_add_example(${example} ${example}.c)
+  sundials_add_example(${example} SOURCES ${example}.c)
   target_link_libraries(
     ${example} PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                        sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
 endforeach()
 sundials_add_example(
-  cvs_roberts_fsa_klu cvs_roberts_fsa_klu.c
+  cvs_roberts_fsa_klu SOURCES cvs_roberts_fsa_klu.c
   TEST_NAME cvs_roberts_fsa_klu_-sensi_stg1_t
   TEST_ARGS -sensi stg1 t
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
