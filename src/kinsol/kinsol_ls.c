@@ -821,10 +821,10 @@ int kinLsDenseDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
 
     retval = kin_mem->kin_func(u, ftemp, kin_mem->kin_user_data);
     kinls_mem->nfeDQ++;
-    if (retval != 0) { break; }
 
-    /* reset u_j */
+    /* Reset u_j even when the system function fails. */
     u_data[j] = ujsaved;
+    if (retval != 0) { break; }
 
     /* Construct difference quotient in jthCol */
     inc_inv = ONE / inc;

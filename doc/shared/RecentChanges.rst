@@ -15,6 +15,10 @@ The returned string should no longer be freed by the user.
 
 **Bug Fixes**
 
+Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
+perturbation in the solution vector when the system function fails. The
+linear-solver setup failure behavior is unchanged.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 

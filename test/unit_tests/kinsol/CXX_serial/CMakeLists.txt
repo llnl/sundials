@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "kin_test_getjac.cpp\;")
+set(unit_tests "kin_test_getjac.cpp\;" "kin_test_dq_restore.cpp\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
