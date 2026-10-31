@@ -12,10 +12,14 @@ authors = [
 license = "BSD-3-Clause"
 license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent"
+]
+dependencies = [
+  "numpy >= 1.26.0",
+  "matplotlib >= 3.8.4"
 ]
 
 [project.optional-dependencies]

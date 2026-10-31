@@ -69,7 +69,7 @@ def describe(table: rk.ButcherTable) -> None:
 
     phi = table.embedded_stability_function
     if phi is not None:
-        print(f"\nEmbedding stability function phi_hat(z) = p_hat(z) / q(z):")
+        print("\nEmbedding stability function phi_hat(z) = p_hat(z) / q(z):")
         print()
         print("p_hat(z):")
         print(_poly_str(phi.p))

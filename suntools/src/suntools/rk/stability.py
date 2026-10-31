@@ -49,8 +49,9 @@ unstable.
 
 from __future__ import annotations
 
+import os
 import warnings
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import pairwise
 from typing import Literal, NamedTuple
 
@@ -73,6 +74,9 @@ class _Tolerances:
     # Near-duplicate crossings are merged within this tolerance.
     cluster_rtol: float = 1e-7
     cluster_atol: float = 1e-12
+    # Looser merge for an np.roots split of a double root (about sqrt(eps * condition) relative),
+    # used only when the whole gap is unresolved.
+    cluster_unresolved_rtol: float = 1e-5
 
 
 TOL = _Tolerances()
@@ -84,22 +88,51 @@ class StabilityWarning(UserWarning):
 
 # Extra points sampled inside a segment whose midpoint sign is unresolved.
 _SEGMENT_SAMPLES = 7
+# Multiples of the last crossing sampled beyond it: 1.125x to 9x.
+_FAR_SAMPLE_FACTORS = 1.0 + 2.0 ** np.arange(-3, 4)
+
+
+# Warnings skip frames from the suntools package (this file's parent's parent directory).
+_WARN_SKIP_PREFIXES = (os.path.dirname(os.path.dirname(__file__)) + os.sep,)
 
 
 def _warn(message: str) -> None:
-    # stacklevel points at the caller of the public function (axis_extent and friends).
-    warnings.warn(message, StabilityWarning, stacklevel=6)
+    # Warnings point at the first frame outside suntools.
+    warnings.warn(message, StabilityWarning, skip_file_prefixes=_WARN_SKIP_PREFIXES)
 
 
 @dataclass(frozen=True)
 class StabilityFunction:
-    """phi(z) = p(z) / q(z)"""
+    """phi(z) = p(z) / q(z)
+
+    p_error and q_error are optional per-coefficient round-off bounds on p and q. They are in
+    descending order, have the same length as p.c and q.c, and default to EPS*|c|. The boundary
+    polynomials are cached on first use, so the coefficients must not be mutated in place.
+    """
 
     p: np.poly1d
     q: np.poly1d
-    p_error: np.ndarray  # round-off bounds on p
-    q_error: np.ndarray  # round-off bounds on q
     order: int | None = None  # RK method order
+    # None (the default) means EPS*|c|; __post_init__ always stores an ndarray.
+    p_error: np.ndarray | None = field(default=None, kw_only=True, compare=False)
+    q_error: np.ndarray | None = field(default=None, kw_only=True, compare=False)
+    _boundaries: dict[str, _Boundary] = field(
+        default_factory=dict, init=False, repr=False, compare=False
+    )
+
+    def __post_init__(self) -> None:
+        for name, poly in (("p", self.p), ("q", self.q)):
+            value = getattr(self, f"{name}_error")
+            if value is None:
+                error = EPS * np.abs(poly.c)
+            else:
+                error = np.asarray(value, float)
+            if error.shape != poly.c.shape:
+                raise ValueError(
+                    f"{name}_error must have the same shape as {name}.c: got length "
+                    f"{error.size} for {len(poly.c)} coefficients"
+                )
+            object.__setattr__(self, f"{name}_error", error)
 
     @property
     def origin_multiplicity_y(self) -> int:
@@ -147,7 +180,7 @@ def _pad(values, size):
     return np.pad(np.asarray(values, float), (0, size - np.size(values)))
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _BoundedPoly:
     """A real polynomial that carries a bound on the round-off in each coefficient.
 
@@ -300,7 +333,7 @@ def _imag_mag_sq(bounded: _BoundedPoly) -> _BoundedPoly:
     return even * even + (odd * odd).shifted()
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _Boundary:
     """The sign of the boundary polynomial B on a half-axis, as a product of factors.
 
@@ -314,7 +347,7 @@ class _Boundary:
     """
 
     factors: tuple[_BoundedPoly, ...]
-    axis: Literal["real", "imag"]  # validated by _boundary, the only constructor
+    axis: Literal["real", "imag"]  # validated by _boundary before it calls _build_boundary
 
     def point(self, t):
         """The point z at half-axis parameter t; scalar or array.
@@ -387,15 +420,22 @@ def _check_origin_multiplicity(difference: _BoundedPoly, m: int, order: int | No
 
 
 def _boundary(phi: StabilityFunction, axis: Literal["real", "imag"]) -> _Boundary:
+    """Return the cached boundary for the negative real axis or the imaginary axis."""
+    if axis not in ("real", "imag"):
+        raise ValueError(f"axis must be 'real' or 'imag', not {axis!r}")
+
+    if axis not in phi._boundaries:
+        phi._boundaries[axis] = _build_boundary(phi, axis)
+    return phi._boundaries[axis]
+
+
+def _build_boundary(phi: StabilityFunction, axis: Literal["real", "imag"]) -> _Boundary:
     """Build the boundary for the negative real axis or the imaginary axis.
 
     The imaginary axis gives one polynomial B(y), with origin multiplicity m set by the method
     order. The real axis keeps B(t) = (p(-t) - q(-t)) (p(-t) + q(-t)) as two factors, which are
     better conditioned to root than their product.
     """
-    if axis not in ("real", "imag"):
-        raise ValueError(f"axis must be 'real' or 'imag', not {axis!r}")
-
     p = _BoundedPoly.from_poly(phi.p, phi.p_error)
     q = _BoundedPoly.from_poly(phi.q, phi.q_error)
 
@@ -415,13 +455,20 @@ def _boundary(phi: StabilityFunction, axis: Literal["real", "imag"]) -> _Boundar
 # ---------------------------------------------------------------------------
 
 
+def _interior_signs(boundary: _Boundary, left: float, right: float) -> np.ndarray:
+    """Signs of B at the interior sample points of (left, right); the 4th is the midpoint."""
+    return boundary.signs(np.linspace(left, right, _SEGMENT_SAMPLES + 2)[1:-1])
+
+
 def _crossings(boundary: _Boundary) -> list[float]:
     """Crossings on the half-axis in increasing t (the positive roots of B), as floats.
 
     Crossings come from np.roots and near-duplicate roots are merged, since np.roots splits a
     double root into two copies. Proximity alone cannot separate a split double root from a narrow
     island, so the sign of B at the midpoint decides: unresolved means a double root and is merged,
-    resolved means an island and is kept.
+    resolved means an island and is kept. A wider gap (up to ``TOL.cluster_unresolved_rtol``) is
+    also merged when B is unresolved throughout it, because a double root split by np.roots looks
+    like that. A gap with any resolved sample is never merged.
     """
     roots = boundary.roots()
     roots = np.sort(roots[roots > TOL.root_zero]).tolist()
@@ -430,9 +477,16 @@ def _crossings(boundary: _Boundary) -> list[float]:
         if merged:
             previous = merged[-1]
             middle = 0.5 * (previous + value)
-            close = value - previous <= TOL.cluster_atol + TOL.cluster_rtol * value
-            if close and boundary.sign(middle) == 0:
+            gap = value - previous
+            tight = gap <= TOL.cluster_atol + TOL.cluster_rtol * value
+            loose = gap <= TOL.cluster_unresolved_rtol * value
+            if (
+                (tight or loose)
+                and boundary.sign(middle) == 0
+                and (tight or not _interior_signs(boundary, previous, value).any())
+            ):
                 # The copies split symmetrically, so the midpoint cancels their O(sqrt(eps)) error.
+                # Chained merges of 3+ close roots bias the location toward the last root.
                 merged[-1] = middle
                 continue
         merged.append(value)
@@ -455,8 +509,7 @@ def _segment_stable(boundary: _Boundary, left: float, right: float) -> bool:
     mid_sign = boundary.sign(0.5 * (left + right))
     if mid_sign != 0:
         return mid_sign < 0
-    samples = np.linspace(left, right, _SEGMENT_SAMPLES + 2)[1:-1]
-    signs = boundary.signs(samples)
+    signs = _interior_signs(boundary, left, right)
     resolved_signs = signs[signs != 0]
     if resolved_signs.size == 0:
         _warn(
@@ -473,16 +526,47 @@ def _segment_stable(boundary: _Boundary, left: float, right: float) -> bool:
     return bool(resolved_signs[0] < 0)
 
 
+def _check_end_segment(signs: np.ndarray, stable: bool, message: str) -> None:
+    """Warn if a resolved sample sign contradicts the verdict for an end segment."""
+    bad = signs > 0 if stable else signs < 0
+    if bad.any():
+        _warn(message)
+
+
 def _classify_stable_intervals(boundary: _Boundary) -> _AxisIntervals:
     """Group the segments between crossings into maximal stable runs, in the parameter t.
 
     Every verdict is based on the sign of B. The first segment is judged at the origin
     (:attr:`_Boundary.origin_stable`), the last by :attr:`_Boundary.far_stable`, and the rest by
-    :func:`_segment_stable`.
+    :func:`_segment_stable`. The first and last segments are also sampled, and the no-crossing case
+    is checked, to warn about a missed crossing without changing the verdict.
     """
     crossings = _crossings(boundary)
     if not crossings:
+        if boundary.origin_stable != boundary.far_stable:
+            _warn(
+                f"no crossings were found on the {boundary.axis} axis, but the signs at the "
+                f"origin and far from it disagree, so a crossing was missed (or lies at or "
+                f"below the root-zero tolerance); the whole axis is "
+                f"classified from the sign at the origin"
+            )
         return _AxisIntervals([], boundary.origin_stable)  # uniformly stable or unstable
+
+    _check_end_segment(
+        _interior_signs(boundary, 0.0, crossings[0]),
+        boundary.origin_stable,
+        f"a resolved sample inside the first segment (0, {crossings[0]:.6g}) on the "
+        f"{boundary.axis} axis disagrees with the sign at the origin, so a crossing was missed "
+        f"(or lies at or below the root-zero tolerance); the verdict for this segment is still "
+        f"taken from the origin",
+    )
+    _check_end_segment(
+        boundary.signs(crossings[-1] * _FAR_SAMPLE_FACTORS),
+        boundary.far_stable,
+        f"a resolved sample beyond the last crossing ({crossings[-1]:.6g}) on the "
+        f"{boundary.axis} axis disagrees with the sign far from the origin, so a crossing was "
+        f"missed; the verdict for this segment is still taken from the leading coefficients",
+    )
 
     # edges[i] opens segment i, and the last segment is unbounded, so there is one verdict per
     # edge.
@@ -565,9 +649,9 @@ def max_axis_crossing(phi: StabilityFunction) -> float:
 
 
 __all__ = [
+    "TOL",
     "StabilityFunction",
     "StabilityWarning",
-    "TOL",
     "axis_extent",
     "imag_stable_intervals",
     "max_axis_crossing",

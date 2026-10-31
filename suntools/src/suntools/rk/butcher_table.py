@@ -63,7 +63,10 @@ def _det_poly(build_matrix, stages: int):
 
 
 def _trim_with_error(coefficients, error):
-    """Drop leading coefficients that are round-off compared to the error level."""
+    """Drop leading coefficients that are round-off compared to the error level.
+
+    Returns the trimmed coefficients and their matching error bounds, which have equal length.
+    """
     coefficients = np.asarray(coefficients, float)
     error = np.asarray(error, float)
     significant = np.nonzero(resolved(coefficients, error))[0]
@@ -171,20 +174,18 @@ class ButcherTable:
     @cached_property
     def stability_function(self) -> StabilityFunction:
         """The method's linear stability function."""
-        return StabilityFunction(
-            *_pq_from_weights(self.A, self.b, self.stages, self.is_explicit),
-            order=self.method_order,
-        )
+        p, q, p_error, q_error = _pq_from_weights(self.A, self.b, self.stages, self.is_explicit)
+        return StabilityFunction(p, q, self.method_order, p_error=p_error, q_error=q_error)
 
     @cached_property
     def embedded_stability_function(self) -> StabilityFunction | None:
         """The embedding's linear stability function, or None if no embedding."""
         if self.b_embedded is None:
             return None
-        return StabilityFunction(
-            *_pq_from_weights(self.A, self.b_embedded, self.stages, self.is_explicit),
-            order=self.embedding_order,
+        p, q, p_error, q_error = _pq_from_weights(
+            self.A, self.b_embedded, self.stages, self.is_explicit
         )
+        return StabilityFunction(p, q, self.embedding_order, p_error=p_error, q_error=q_error)
 
     def __str__(self) -> str:
         """Format the tableau for print(table)."""

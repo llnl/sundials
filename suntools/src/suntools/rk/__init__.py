@@ -20,13 +20,26 @@
 
 from .butcher_table import ButcherTable
 from .plotting import PlotOptions, plot_stability_region
-from .stability import StabilityFunction, stability_magnitude
+from .stability import (
+    TOL,
+    StabilityFunction,
+    StabilityWarning,
+    axis_extent,
+    imag_stable_intervals,
+    max_axis_crossing,
+    stability_magnitude,
+)
 from .table_parser import parse_butcher_tables
 
 __all__ = [
+    "TOL",
     "ButcherTable",
     "PlotOptions",
     "StabilityFunction",
+    "StabilityWarning",
+    "axis_extent",
+    "imag_stable_intervals",
+    "max_axis_crossing",
     "parse_butcher_tables",
     "plot_stability_region",
     "stability_magnitude",

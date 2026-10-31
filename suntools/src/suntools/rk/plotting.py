@@ -138,8 +138,9 @@ EMBEDDED_REGION_STYLE = RegionStyle(
 
 _SHADE_LEVELS = np.linspace(0.0, 1.0, 21)
 
-# An origin-attached imaginary axis interval shorter than this is drawn with a single +/- label
-_MIN_IMAG_EXTENT_LABEL = 1e-2
+# Values at or below this are printed in scientific notation on either axis; an origin-attached
+# imaginary axis interval that short also gets a single +/- label at the origin.
+_SMALL_EXTENT_LABEL = 1e-2
 
 # Annotation geometry, in points; all mirrored by RegionStyle.side.
 _REAL_LABEL_DY = -11
@@ -147,7 +148,7 @@ _IMAG_LABEL_DX = 7
 _SMALL_IMAG_LABEL_DY = 10
 _IMAG_RAIL_DX = 4.0
 _IMAG_RAIL_LW = 4.0
-_AXIS_LABEL_FONTSIZE = 8
+_AXIS_LABEL_FONTSIZE = 8  # size at the default PlotOptions.font_size; scales with it
 _AXIS_MARKER_SIZE = 5
 
 # Auto-framing: scan a coarse grid wide enough to hold every bounded feature, then crop.
@@ -158,6 +159,8 @@ _BOUNDS_CROSSING_PAD = 1.3
 _BOUNDS_MAX_SPAN = 80.0
 _BOUNDS_PAD_FRAC = 0.20
 _BOUNDS_PAD_MIN = 0.5
+# If no feature closes in the first window, retry once with the span scaled by this factor.
+_BOUNDS_RETRY_FACTOR = 2.0
 _BOUNDS_FALLBACK_MIN = 6.0
 _BOUNDS_FALLBACK_STAGE_PAD = 2.0
 
@@ -283,26 +286,14 @@ def _suppress_tiny_islands(R, X, Y, zeros, min_radius: float = _ISLAND_MIN_RADIU
 # ---------------------------------------------------------------------------
 
 
-def _auto_bounds(table: ButcherTable, include_embedding: bool = True):
-    """Choose a plotting box that frames the interesting bounded features."""
-    methods = [table.stability_function]
-    emb = table.embedded_stability_function if include_embedding else None
-    if emb is not None:
-        methods.append(emb)
-
-    crossings = [max_axis_crossing(phi) for phi in methods]
-    span = max(
-        [_BOUNDS_MIN_SPAN, table.stages + _BOUNDS_STAGE_PAD]
-        + [_BOUNDS_CROSSING_PAD * c for c in crossings if c > 0]
-    )
-    span = min(span, _BOUNDS_MAX_SPAN)
-
+def _closed_feature_box(methods, span: float):
+    """Padded box around the closed |phi| = 1 features on a +/-span grid, or None if none close."""
     axis = np.linspace(-span, span, _BOUNDS_SCAN_POINTS)
     X, Y = np.meshgrid(axis, axis)
     Z = X + 1j * Y
 
     def touches_edge(mask) -> bool:
-        """True if any flagged cell is on the outer row or column of the grid (not fully closed)."""
+        """True if any flagged cell is on the grid's outer row or column (not fully closed)."""
         return bool(mask[0, :].any() or mask[-1, :].any() or mask[:, 0].any() or mask[:, -1].any())
 
     def feature_mask(phi, Z):
@@ -318,17 +309,40 @@ def _auto_bounds(table: ButcherTable, include_embedding: bool = True):
     # Union of the method and embedding feature regions
     features = np.logical_or.reduce(masks) if masks else None
 
-    if features is not None and features.any():
-        # Tight box around the flagged cells, including the origin
-        xv, yv = X[features], Y[features]
-        xmin, xmax = min(xv.min(), 0.0), max(xv.max(), 0.0)
-        ymin, ymax = min(yv.min(), 0.0), max(yv.max(), 0.0)
-        # Padding proportional to the box, with a floor for very flat shapes.
-        padx = max(_BOUNDS_PAD_MIN, _BOUNDS_PAD_FRAC * (xmax - xmin))
-        pady = max(_BOUNDS_PAD_MIN, _BOUNDS_PAD_FRAC * (ymax - ymin))
-        return (xmin - padx, xmax + padx, ymin - pady, ymax + pady)
+    if features is None or not features.any():
+        return None
 
-    # Nothing closed inside the largest window, fall back to a plain square.
+    # Tight box around the flagged cells, including the origin
+    xv, yv = X[features], Y[features]
+    xmin, xmax = min(xv.min(), 0.0), max(xv.max(), 0.0)
+    ymin, ymax = min(yv.min(), 0.0), max(yv.max(), 0.0)
+    # Padding proportional to the box, with a floor for very flat shapes.
+    padx = max(_BOUNDS_PAD_MIN, _BOUNDS_PAD_FRAC * (xmax - xmin))
+    pady = max(_BOUNDS_PAD_MIN, _BOUNDS_PAD_FRAC * (ymax - ymin))
+    return (xmin - padx, xmax + padx, ymin - pady, ymax + pady)
+
+
+def _auto_bounds(table: ButcherTable, include_embedding: bool = True):
+    """Choose a plotting box that frames the interesting bounded features."""
+    methods = [table.stability_function]
+    emb = table.embedded_stability_function if include_embedding else None
+    if emb is not None:
+        methods.append(emb)
+
+    crossings = [max_axis_crossing(phi) for phi in methods]
+    span = max(
+        [_BOUNDS_MIN_SPAN, table.stages + _BOUNDS_STAGE_PAD]
+        + [_BOUNDS_CROSSING_PAD * c for c in crossings if c > 0]
+    )
+    span = min(span, _BOUNDS_MAX_SPAN)
+
+    # Retry once on a wider window if no method's feature closed; the cap is not re-applied.
+    for scan_span in (span, _BOUNDS_RETRY_FACTOR * span):
+        box = _closed_feature_box(methods, scan_span)
+        if box is not None:
+            return box
+
+    # Nothing closed even in the wider window, fall back to a plain square.
     w = max(_BOUNDS_FALLBACK_MIN, table.stages + _BOUNDS_FALLBACK_STAGE_PAD)
     return (-w, w, -w, w)
 
@@ -385,7 +399,7 @@ def _plot_axis_markers(ax, xs, ys, color):
     ax.plot(xs, ys, marker="D", color=color, ms=_AXIS_MARKER_SIZE, ls="none", zorder=6)
 
 
-def _annotate_axis_label(ax, text, xy, offset, *, ha, va, color):
+def _annotate_axis_label(ax, text, xy, offset, *, ha, va, color, fontsize):
     ax.annotate(
         text,
         xy=xy,
@@ -393,21 +407,27 @@ def _annotate_axis_label(ax, text, xy, offset, *, ha, va, color):
         textcoords="offset points",
         ha=ha,
         va=va,
-        fontsize=_AXIS_LABEL_FONTSIZE,
+        fontsize=fontsize,
         color=color,
         bbox=_AXIS_LABEL_BOX,
         zorder=6,
     )
 
 
+def _axis_value_label(value: float, sign: str = "", unit: str = "") -> str:
+    """Math-text label for an axis value; scientific notation at or below _SMALL_EXTENT_LABEL."""
+    if value <= _SMALL_EXTENT_LABEL:
+        mantissa, exponent = f"{value:.2e}".split("e")
+        return f"${sign}{mantissa} \\times 10^{{{int(exponent)}}}{unit}$"
+    return f"${sign}{value:.2f}{unit}$"
+
+
 def _imag_endpoint_label_specs(t: float):
     """(y, text, dy, va) for the +/- labels of an imaginary-axis endpoint at height t."""
-    return ((t, f"${t:.2f}\\,i$", 4, "bottom"), (-t, f"$-{t:.2f}\\,i$", -4, "top"))
-
-
-def _small_imag_extent_label(value: float, precision: int = 2) -> str:
-    mantissa, exponent = f"{value:.{precision}e}".split("e")
-    return f"$\\pm{mantissa} \\times 10^{{{int(exponent)}}}\\,i$"
+    return (
+        (t, _axis_value_label(t, unit=r"\,i"), 4, "bottom"),
+        (-t, _axis_value_label(t, sign="-", unit=r"\,i"), -4, "top"),
+    )
 
 
 def _highlight_imag_axis_intervals(ax, intervals, style: RegionStyle):
@@ -446,18 +466,21 @@ def _mark_axis_extents(ax, phi, style: RegionStyle, options: PlotOptions):
     if not options.label_detached_imag_axis_intervals:
         intervals = [iv for iv in intervals if iv[0] == 0.0]
 
+    label_size = _AXIS_LABEL_FONTSIZE * options.font_size / PlotOptions.font_size
+
     real_extent = axis_extent(phi, "real")
     if real_extent:
         real_dy = _REAL_LABEL_DY * side
         _plot_axis_markers(ax, [-real_extent], [0.0], color)
         _annotate_axis_label(
             ax,
-            f"$-{real_extent:.2f}$",
+            _axis_value_label(real_extent, sign="-"),
             (-real_extent, 0.0),
             (0, real_dy),
             ha="center",
             va="top" if real_dy < 0 else "bottom",
             color=color,
+            fontsize=label_size,
         )
 
     if options.highlight_imag_axis_intervals:
@@ -466,18 +489,19 @@ def _mark_axis_extents(ax, phi, style: RegionStyle, options: PlotOptions):
     for t_left, t_right in intervals:
         attached_to_origin = t_left == 0.0
 
-        if attached_to_origin and t_right <= _MIN_IMAG_EXTENT_LABEL:
+        if attached_to_origin and t_right <= _SMALL_EXTENT_LABEL:
             # Too short to label at its endpoints: one compact label at the origin.
             small_dy = _SMALL_IMAG_LABEL_DY * side
             _plot_axis_markers(ax, [0.0], [0.0], color)
             _annotate_axis_label(
                 ax,
-                _small_imag_extent_label(t_right),
+                _axis_value_label(t_right, sign=r"\pm", unit=r"\,i"),
                 (0.0, 0.0),
                 (imag_dx, small_dy),
                 ha=imag_ha,
                 va="bottom" if small_dy > 0 else "top",
                 color=color,
+                fontsize=label_size,
             )
             continue
 
@@ -488,7 +512,14 @@ def _mark_axis_extents(ax, phi, style: RegionStyle, options: PlotOptions):
         for t in endpoints:
             for y, text, dy, va in _imag_endpoint_label_specs(t):
                 _annotate_axis_label(
-                    ax, text, (0.0, y), (imag_dx, dy), ha=imag_ha, va=va, color=color
+                    ax,
+                    text,
+                    (0.0, y),
+                    (imag_dx, dy),
+                    ha=imag_ha,
+                    va=va,
+                    color=color,
+                    fontsize=label_size,
                 )
 
 

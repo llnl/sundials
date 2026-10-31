@@ -14,6 +14,15 @@ Updated `ARKodeGetReturnFlagName`, `CVodeGetReturnFlagName`,
 return `const char*` rather than `char*`. The returned string should no
 longer be freed by the user.
 
+Added the `suntools.rk` Python module for parsing ARKODE Butcher table `.def`
+files and plotting the linear stability regions of Runge-Kutta methods. The
+plots mark where the stability region boundary crosses the negative real and
+imaginary axes. The script `scripts/plot_rk_stability_regions.py` provides a
+command line interface to the module.
+
+The `suntools` Python package now requires Python 3.12 or newer and lists NumPy
+and Matplotlib as dependencies.
+
 ### Bug Fixes
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`

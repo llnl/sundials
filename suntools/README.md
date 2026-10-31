@@ -8,6 +8,8 @@ This directory contains the `suntools` Python package which provides utilities f
 
 ## Install
 
+suntools requires Python 3.12 or newer and installs NumPy and Matplotlib as dependencies.
+
 From this directory:
 
 ```bash
