@@ -6101,8 +6101,20 @@ static int IDAStep(IDAMem IDA_mem)
       SUNLogInfoIf(retval != 0, IDA_LOGGER, "end-step-attempt",
                    "status = failed res eval, retval = %i", retval);
 
-      if (retval < 0) { return (IDA_RES_FAIL); }
-      if (retval > 0) { continue; }
+      if (retval != 0)
+      {
+        /* Undo this attempt before the failure handler changes the step size. */
+        IDARestore(IDA_mem, saved_t);
+        if (retval < 0) { return (IDA_RES_FAIL); }
+
+        kflag = IDAHandleNFlag(IDA_mem, IDA_RES_RECVR, err_k, err_km1,
+                               &(IDA_mem->ida_ncfn), &ncf, &(IDA_mem->ida_netf),
+                               &nef);
+        if (kflag != PREDICT_AGAIN) { return (kflag); }
+
+        if (IDA_mem->ida_nst == 0) { IDAReset(IDA_mem); }
+        continue;
+      }
 
       /* Compute predicted values for yyS and ypS */
       IDASensPredict(IDA_mem, IDA_mem->ida_yySpredict, IDA_mem->ida_ypSpredict);
