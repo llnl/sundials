@@ -59,7 +59,8 @@ foreach(test_tuple ${unit_tests})
     string(REPLACE " " "_" test_name "${test_target}_${test_args}")
   endif()
 
-  # This test checks its results internally and reports failure via its exit code.
+  # This test checks its results internally and reports failure via its exit
+  # code.
   set(test_options)
   if(test_target STREQUAL "kin_test_dq_restore")
     list(APPEND test_options NODIFF)
