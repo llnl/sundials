@@ -221,7 +221,6 @@ int MRIStepGetSTS(void* arkode_mem, void** sts_mem)
   return ARK_SUCCESS;
 }
 
-
 /*** ExtSTS temporal error estimation routines, used when enabled with
    MRIStepSetUseExtSTSErrorEstimate.  The STS error committed in each fast
    solve (over a subinterval of length |dt_k|) is estimated by the RKC/RKL
