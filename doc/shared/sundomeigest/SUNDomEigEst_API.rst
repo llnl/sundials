@@ -263,6 +263,18 @@ instead of supplying a dummy routine.
 
    .. versionadded:: x.y.z
 
+   .. note::
+
+      This is a supplementary function for :c:func:`ARKodeSetPreRhsFn` and is intended for advanced
+      users who need to perform preprocessing on the right-hand side function before it is used by
+      the :c:type:`SUNDomEigEstimator` as well as the underlying time integration solver.
+
+      Since the ownership of the :c:type:`SUNDomEigEstimator` belongs to the user and they need to
+      attach the estimator to the integration solver, it is the user's responsibility to attach and
+      manage the lifecycle of the preprocessing function appropriately. In particular, they must
+      ensure that the preprocessing function provided with :c:func:`ARKodeSetPreRhsFn` and 
+      :c:func:`SUNDomEigEstimator_SetPreRhsFn` are consistent and synchronized.
+
 
 .. c:function:: SUNErrCode SUNDomEigEstimator_SetRhsLinearizationPoint(SUNDomEigEstimator DEE, sunrealtype t, N_Vector y, N_Vector Fy)
 

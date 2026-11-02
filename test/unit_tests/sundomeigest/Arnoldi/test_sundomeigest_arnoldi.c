@@ -146,9 +146,6 @@ int main(int argc, char* argv[])
   if (check_flag(DEE, "SUNDomEigEstimator_Arnoldi", 0)) { return 1; }
 
   fails += Test_SUNDomEigEstimator_SetATimes(DEE, &ProbData, ATimes, 0);
-  // SUNDomEigEstimator_SetMaxIters is not an option for Arnoldi iteration.
-  // It should return with SUN_SUCCESS
-  fails += Test_SUNDomEigEstimator_SetMaxIters(DEE, kry_dim, 0);
   fails += Test_SUNDomEigEstimator_SetNumPreprocessIters(DEE, num_warmups, 0);
   fails += Test_SUNDomEigEstimator_SetRelTol(DEE, rel_tol, 0);
   fails += Test_SUNDomEigEstimator_SetInitialGuess(DEE, q, 0);
