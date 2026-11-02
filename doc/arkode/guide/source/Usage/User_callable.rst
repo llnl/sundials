@@ -1211,7 +1211,9 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
       :c:func:`ARKodeSetAdaptControllerByName`
       will return an error, since temporal adaptivity is disabled. To turn
       temporal adaptivity back on, call :c:func:`ARKodeSetFixedStep` with
-      a value of 0.0.
+      a value of 0.0. This will re-enable temporal adaptivity with the initial
+      step size equal to the last fixed step size used. If desired, a user can
+      then adjust the step size or other adaptivity parameters as needed.
 
       If both :c:func:`ARKodeSetFixedStep` and
       :c:func:`ARKodeSetStopTime` are used, then the fixed step size
