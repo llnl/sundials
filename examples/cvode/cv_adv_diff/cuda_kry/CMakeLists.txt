@@ -12,12 +12,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
+  set(_fused_lib sundials_cvode_fused_cuda)
+endif()
+
 sundials_add_example(
   cv_adv_diff_kry_cuda
   SOURCES cv_adv_diff_kry_cuda.cu
-  LINK_LIBRARIES
-    PRIVATE
-    sundials_cvode
-    sundials_nveccuda
-    $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_cuda>
-    ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda ${_fused_lib}
+                 ${EXE_EXTRA_LINK_LIBS})
