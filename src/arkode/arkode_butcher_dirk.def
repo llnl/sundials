@@ -23,52 +23,60 @@
 /*
   When adding a new method, enter the coefficients below and add
   a new enum entry to include/arkode/arkode_butcher_dirk.h
+  The stability metrics tables in doc/arkode/guide/source/Butcher_metrics_*.rst.inc
+  are generated from this file with scripts/plot_rk_stability_regions.py
+  --metrics. Regenerate them after adding or changing a method.
 
   Method names and properties (those in an ARK pair are
   marked with a *).  All method names are of the form
   <name>_s_p_q.  The method 'type' is one of
     SDIRK -- singly-diagonally implicit Runge Kutta
     ESDIRK -- explicit [1st stage] singly-diagonally implicit Runge Kutta
-  The 'A-stable' and 'L-stable' columns are based on numerical estimates
-  of each property.
+  The 'method' and 'embedding' columns give the A-stability (A) and
+  L-stability (L) of the method and of its embedded method. They have
+  different stability functions, so the two are listed separately. A '-'
+  means the table has no embedding. The Y/N values are computed with the
+  suntools.rk Python module (scripts/plot_rk_stability_regions.py
+  --print-metrics) from the linear stability function of each method.
 
   The 'QP' column denotes whether the coefficients of the method are known
   precisely enough for use in quad precision (128-bit) calculations.
 
-     imeth                              type  A-stable  L-stable  QP
-    -----------------------------------------------------------------
-     ARKODE_BACKWARD_EULER_1_1         SDIRK     Y         Y       Y
-     ARKODE_IMPLICIT_MIDPOINT_1_2      SDIRK     Y         N       Y
-     ARKODE_IMPLICIT_TRAPEZOIDAL_2_2  ESDIRK     Y         N       Y
-     ARKODE_SDIRK_2_1_2                SDIRK     Y         N       Y
-     ARKODE_GKC21_ESDIRK_3_1_2*         ESDIRK     Y         Y       Y
-     ARKODE_ARS222_ESDIRK_3_1_2*        SDIRK     Y         Y       Y
-     ARKODE_SSP_DIRK_3_1_2*             DIRK     Y         N       Y
-     ARKODE_BILLINGTON_3_3_2           SDIRK     N         N       Y
-     ARKODE_TRBDF2_3_3_2              ESDIRK     N         N       Y
-     ARKODE_SSP_LSPUM_SDIRK_3_1_2*     SDIRK     Y         Y       Y
-     ARKODE_ESDIRK_4_2_3*             ESDIRK     Y         Y       Y
-     ARKODE_KVAERNO_4_2_3             ESDIRK     Y         Y       Y
-     ARKODE_ARK324L2SA_DIRK_4_2_3*    ESDIRK     Y         Y       Y
-     ARKODE_ESDIRK324L2SA_4_2_3       ESDIRK     Y         Y       Y
-     ARKODE_ESDIRK325L2SA_5_2_3       ESDIRK     Y         Y       Y
-     ARKODE_ESDIRK32I5L2SA_5_2_3      ESDIRK     Y         Y       Y
-     ARKODE_CASH_5_2_4                 SDIRK     Y         Y       Y
-     ARKODE_CASH_5_3_4                 SDIRK     Y         Y       Y
-     ARKODE_SDIRK_5_3_4                SDIRK     Y         Y       Y
-     ARKODE_KVAERNO_5_3_4             ESDIRK     Y         N       Y
-     ARKODE_ARK436L2SA_DIRK_6_3_4*    ESDIRK     Y         Y       N
-     ARKODE_ARK437L2SA_DIRK_7_3_4*    ESDIRK     Y         Y       N
-     ARKODE_ESDIRK436L2SA_6_3_4       ESDIRK     Y         Y       N
-     ARKODE_ESDIRK43I6L2SA_6_3_4      ESDIRK     Y         Y       N
-     ARKODE_QESDIRK436L2SA_6_3_4      ESDIRK     Y         Y       N
-     ARKODE_ESDIRK437L2SA_7_3_4       ESDIRK     Y         Y       N
-     ARKODE_KVAERNO_7_4_5             ESDIRK     Y         Y       Y
-     ARKODE_ARK548L2SA_DIRK_8_4_5*    ESDIRK     Y         Y       N
-     ARKODE_ARK548L2SAb_DIRK_8_4_5*   ESDIRK     Y         Y       N
-     ARKODE_ESDIRK547L2SA_7_4_5       ESDIRK     Y         Y       N
-     ARKODE_ESDIRK547L2SA2_7_4_5      ESDIRK     Y         Y       N
-     -----------------------------------------------------------------
+     imeth                               type    method    embedding      QP
+                                                  A    L     A    L
+    -----------------------------------------------------------------------
+     ARKODE_BACKWARD_EULER_1_1          SDIRK     Y    Y     -    -       Y
+     ARKODE_IMPLICIT_MIDPOINT_1_2       SDIRK     Y    N     -    -       Y
+     ARKODE_IMPLICIT_TRAPEZOIDAL_2_2   ESDIRK     Y    N     -    -       Y
+     ARKODE_SDIRK_2_1_2                 SDIRK     Y    N     Y    Y       Y
+     ARKODE_GKC21_ESDIRK_3_1_2*        ESDIRK     Y    Y     Y    N       Y
+     ARKODE_ARS222_ESDIRK_3_1_2*        SDIRK     Y    Y     Y    N       Y
+     ARKODE_SSP_DIRK_3_1_2*              DIRK     Y    Y     Y    N       Y
+     ARKODE_BILLINGTON_3_3_2            SDIRK     Y    Y     N    N       Y
+     ARKODE_TRBDF2_3_3_2               ESDIRK     Y    Y     N    N       Y
+     ARKODE_SSP_LSPUM_SDIRK_3_1_2*      SDIRK     Y    Y     Y    Y       Y
+     ARKODE_ESDIRK_4_2_3*              ESDIRK     Y    Y     Y    N       Y
+     ARKODE_KVAERNO_4_2_3              ESDIRK     Y    Y     Y    N       Y
+     ARKODE_ARK324L2SA_DIRK_4_2_3*     ESDIRK     Y    Y     Y    N       Y
+     ARKODE_ESDIRK324L2SA_4_2_3        ESDIRK     Y    Y     Y    N       Y
+     ARKODE_ESDIRK325L2SA_5_2_3        ESDIRK     Y    Y     Y    Y       Y
+     ARKODE_ESDIRK32I5L2SA_5_2_3       ESDIRK     Y    Y     Y    Y       Y
+     ARKODE_CASH_5_2_4                  SDIRK     Y    Y     Y    N       Y
+     ARKODE_CASH_5_3_4                  SDIRK     Y    Y     Y    N       Y
+     ARKODE_SDIRK_5_3_4                 SDIRK     Y    Y     N    N       Y
+     ARKODE_KVAERNO_5_3_4              ESDIRK     Y    N     Y    Y       Y
+     ARKODE_ARK436L2SA_DIRK_6_3_4*     ESDIRK     Y    Y     Y    N       N
+     ARKODE_ARK437L2SA_DIRK_7_3_4*     ESDIRK     Y    Y     Y    Y       N
+     ARKODE_ESDIRK436L2SA_6_3_4        ESDIRK     Y    Y     Y    Y       N
+     ARKODE_ESDIRK43I6L2SA_6_3_4       ESDIRK     Y    Y     Y    Y       N
+     ARKODE_QESDIRK436L2SA_6_3_4       ESDIRK     Y    Y     Y    Y       N
+     ARKODE_ESDIRK437L2SA_7_3_4        ESDIRK     Y    Y     Y    Y       N
+     ARKODE_KVAERNO_7_4_5              ESDIRK     Y    Y     Y    N       Y
+     ARKODE_ARK548L2SA_DIRK_8_4_5*     ESDIRK     Y    Y     Y    N       N
+     ARKODE_ARK548L2SAb_DIRK_8_4_5*    ESDIRK     Y    Y     Y    N       N
+     ARKODE_ESDIRK547L2SA_7_4_5        ESDIRK     Y    Y     Y    N       N
+     ARKODE_ESDIRK547L2SA2_7_4_5       ESDIRK     Y    Y     Y    N       N
+    -----------------------------------------------------------------------
 */
 
 ARK_BUTCHER_TABLE(ARKODE_DIRK_NONE, {
@@ -88,7 +96,7 @@ ARK_BUTCHER_TABLE(ARKODE_BACKWARD_EULER_1_1, { /* Backward Euler (L,B stable) */
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_SDIRK_2_1_2, { /* SDIRK-2-1 (A,B stable) */
+ARK_BUTCHER_TABLE(ARKODE_SDIRK_2_1_2, { /* SDIRK-2-1 (method A,B stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(2, SUNTRUE);
     B->q = 2;
     B->p = 1;
@@ -107,7 +115,7 @@ ARK_BUTCHER_TABLE(ARKODE_SDIRK_2_1_2, { /* SDIRK-2-1 (A,B stable) */
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_GKC21_ESDIRK_3_1_2, { /* GKC21 Implicit Table (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_GKC21_ESDIRK_3_1_2, { /* GKC21 Implicit Table (method A,L stable; embedding A stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(3, SUNTRUE);
 
     /* 1 - 1 / sqrt(2) */
@@ -805,7 +813,7 @@ ARK_BUTCHER_TABLE(ARKODE_ARK548L2SAb_DIRK_8_4_5, { /* ARK5(4)8L[2]SAb-ESDIRK */
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK324L2SA_4_2_3, { /* ESDIRK3(2)4L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK324L2SA_4_2_3, { /* ESDIRK3(2)4L[2]SA (method A,L stable; embedding A stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(4, SUNTRUE);
     B->q = 3;
     B->p = 2;
@@ -836,7 +844,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK324L2SA_4_2_3, { /* ESDIRK3(2)4L[2]SA (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK325L2SA_5_2_3, { /* ESDIRK3(2)5L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK325L2SA_5_2_3, { /* ESDIRK3(2)5L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(5, SUNTRUE);
     B->q = 3;
     B->p = 2;
@@ -875,7 +883,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK325L2SA_5_2_3, { /* ESDIRK3(2)5L[2]SA (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK32I5L2SA_5_2_3, { /* ESDIRK3(2I)5L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK32I5L2SA_5_2_3, { /* ESDIRK3(2I)5L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(5, SUNTRUE);
     B->q = 3;
     B->p = 2;
@@ -914,7 +922,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK32I5L2SA_5_2_3, { /* ESDIRK3(2I)5L[2]SA (A,L stab
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK436L2SA_6_3_4, { /* ESDIRK4(3)6L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK436L2SA_6_3_4, { /* ESDIRK4(3)6L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(6, SUNTRUE);
     B->q = 4;
     B->p = 3;
@@ -962,7 +970,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK436L2SA_6_3_4, { /* ESDIRK4(3)6L[2]SA (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK43I6L2SA_6_3_4, { /* ESDIRK4(3I)6L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK43I6L2SA_6_3_4, { /* ESDIRK4(3I)6L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(6, SUNTRUE);
     B->q = 4;
     B->p = 3;
@@ -1010,7 +1018,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK43I6L2SA_6_3_4, { /* ESDIRK4(3I)6L[2]SA (A,L stab
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_QESDIRK436L2SA_6_3_4, { /* QESDIRK4(3)6L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_QESDIRK436L2SA_6_3_4, { /* QESDIRK4(3)6L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(6, SUNTRUE);
     B->q = 4;
     B->p = 3;
@@ -1057,7 +1065,7 @@ ARK_BUTCHER_TABLE(ARKODE_QESDIRK436L2SA_6_3_4, { /* QESDIRK4(3)6L[2]SA (A,L stab
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK437L2SA_7_3_4, { /* ESDIRK4(3)7L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK437L2SA_7_3_4, { /* ESDIRK4(3)7L[2]SA (method A,L stable; embedding A,L stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(7, SUNTRUE);
     B->q = 4;
     B->p = 3;
@@ -1115,7 +1123,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK437L2SA_7_3_4, { /* ESDIRK4(3)7L[2]SA (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK547L2SA_7_4_5, { /* ESDIRK5(4)7L[2]SA (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK547L2SA_7_4_5, { /* ESDIRK5(4)7L[2]SA (method A,L stable; embedding A stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(7, SUNTRUE);
     B->q = 5;
     B->p = 4;
@@ -1173,7 +1181,7 @@ ARK_BUTCHER_TABLE(ARKODE_ESDIRK547L2SA_7_4_5, { /* ESDIRK5(4)7L[2]SA (A,L stable
     return B;
   })
 
-ARK_BUTCHER_TABLE(ARKODE_ESDIRK547L2SA2_7_4_5, { /* ESDIRK5(4)7L[2]SA2 (A,L stable) */
+ARK_BUTCHER_TABLE(ARKODE_ESDIRK547L2SA2_7_4_5, { /* ESDIRK5(4)7L[2]SA2 (method A,L stable; embedding A stable) */
     ARKodeButcherTable B = ARKodeButcherTable_Alloc(7, SUNTRUE);
     B->q = 5;
     B->p = 4;

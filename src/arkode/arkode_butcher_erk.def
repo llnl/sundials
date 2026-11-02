@@ -22,6 +22,9 @@
 /*
   When adding a new method, enter the coefficients below and add
   a new enum entry to include/arkode/arkode_butcher_erk.h
+  The stability metrics tables in doc/arkode/guide/source/Butcher_metrics_*.rst.inc
+  are generated from this file with scripts/plot_rk_stability_regions.py
+  --metrics. Regenerate them after adding or changing a method.
 
   Method names and properties are listed in the table
   below. Methods with an embedding have names are of the form

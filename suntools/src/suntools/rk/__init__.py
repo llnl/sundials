@@ -19,15 +19,28 @@
 """Runge-Kutta utilities for suntools."""
 
 from .butcher_table import ButcherTable
-from .plotting import PlotOptions, plot_stability_region
+from .metrics import (
+    StabilityMetrics,
+    format_metrics_csv,
+    format_metrics_rst,
+    ssp_coefficient,
+    stability_metrics,
+)
+from .plotting import PlotOptions, plot_order_star, plot_stability_region
 from .stability import (
     TOL,
     StabilityFunction,
     StabilityWarning,
+    a_alpha_angle,
     axis_extent,
     imag_stable_intervals,
+    is_a_stable,
+    is_l_stable,
     max_axis_crossing,
+    order_star_function,
+    r_infinity,
     stability_magnitude,
+    threshold_factor,
 )
 from .table_parser import parse_butcher_tables
 
@@ -36,11 +49,23 @@ __all__ = [
     "ButcherTable",
     "PlotOptions",
     "StabilityFunction",
+    "StabilityMetrics",
     "StabilityWarning",
+    "a_alpha_angle",
     "axis_extent",
+    "format_metrics_csv",
+    "format_metrics_rst",
     "imag_stable_intervals",
+    "is_a_stable",
+    "is_l_stable",
     "max_axis_crossing",
+    "order_star_function",
     "parse_butcher_tables",
+    "plot_order_star",
     "plot_stability_region",
+    "r_infinity",
+    "ssp_coefficient",
     "stability_magnitude",
+    "stability_metrics",
+    "threshold_factor",
 ]

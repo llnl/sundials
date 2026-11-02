@@ -28,6 +28,12 @@ Public API
 ``axis_extent(phi, axis)``       extent of the origin-attached stable interval.
 ``imag_stable_intervals(phi)``   all finite stable intervals on the imaginary axis.
 ``max_axis_crossing(phi)``       largest |z| where the boundary meets either axis.
+``r_infinity(phi)``              |phi(infinity)|.
+``is_a_stable(phi)``             A-stability, verified from the imaginary axis and the poles.
+``is_l_stable(phi)``             A-stable and |phi(infinity)| = 0.
+``a_alpha_angle(phi)``           the A(alpha) angle in degrees.
+``threshold_factor(phi)``        linear threshold factor (polynomial phi only).
+``order_star_function(phi, Z)``  log(|phi(Z)| / |exp(Z)|).
 ``TOL``                          tolerances and resolution floors.
 ``StabilityWarning``             issued when a result relies on an assumption not confirmed by
                                  the computed data.
@@ -45,10 +51,19 @@ left-hand side into a real polynomial B in a real parameter:
 
 The positive roots of B are the axis crossings. Between them, B < 0 means stable and B > 0 means
 unstable.
+
+Stiff properties
+----------------
+A-stability needs the imaginary axis in the region and no pole in the open left half-plane. A(alpha)
+applies the same machinery to the ray z = -r e^{-i theta}, giving a per-angle verdict, and bisects
+theta: a bounded unstable component contains a pole, so the stable angles form one interval [0,
+alpha] once the guard scan has excluded detached sectors at infinity. |phi(infinity)| follows from
+the degrees of the resolved coefficients.
 """
 
 from __future__ import annotations
 
+import math
 import os
 import warnings
 from dataclasses import dataclass, field
@@ -77,6 +92,12 @@ class _Tolerances:
     # Looser merge for an np.roots split of a double root (about sqrt(eps * condition) relative),
     # used only when the whole gap is unresolved.
     cluster_unresolved_rtol: float = 1e-5
+    # Resolution of the A(alpha) angle search, in degrees.
+    angle: float = 1e-9
+    # A pole with |Re| <= pole_rtol |pole| counts as on the imaginary axis.
+    pole_rtol: float = 1e-6
+    # Relative resolution of the radius searches (SSP coefficient, threshold factor).
+    radius_rtol: float = 1e-12
 
 
 TOL = _Tolerances()
@@ -90,6 +111,10 @@ class StabilityWarning(UserWarning):
 _SEGMENT_SAMPLES = 7
 # Multiples of the last crossing sampled beyond it: 1.125x to 9x.
 _FAR_SAMPLE_FACTORS = 1.0 + 2.0 ** np.arange(-3, 4)
+# Angular step, in degrees, of the guard scan that precedes the A(alpha) bisection.
+_A_ALPHA_SCAN_STEP_DEG = 1.0
+# Largest radius searched for the SSP coefficient before reporting it as unbounded.
+_RADIUS_SEARCH_MAX = 2**20
 
 
 # Warnings skip frames from the suntools package (this file's parent's parent directory).
@@ -347,7 +372,18 @@ class _Boundary:
     """
 
     factors: tuple[_BoundedPoly, ...]
-    axis: Literal["real", "imag"]  # validated by _boundary before it calls _build_boundary
+    # "real" and "imag" are validated by _boundary before it calls _build_boundary; "ray" is
+    # internal, for A(alpha).
+    axis: Literal["real", "imag", "ray"]
+    # Ray only: the angle, in radians, between the ray and the negative real axis (upper half).
+    angle: float = 0.0
+
+    @property
+    def label(self) -> str:
+        """The boundary's name in warning messages."""
+        if self.axis == "ray":
+            return f"ray at {math.degrees(self.angle):.6g} deg"
+        return f"{self.axis} axis"
 
     def point(self, t):
         """The point z at half-axis parameter t; scalar or array.
@@ -356,6 +392,8 @@ class _Boundary:
         real axis) is used by :func:`max_axis_crossing` and ignored by the interval classifier.
         """
         t = np.asarray(t, dtype=float)
+        if self.axis == "ray":
+            return -t * np.exp(-1j * self.angle)
         return 1j * t if self.axis == "imag" else -t
 
     def coordinate(self, t):
@@ -450,6 +488,40 @@ def _build_boundary(phi: StabilityFunction, axis: Literal["real", "imag"]) -> _B
     return _Boundary(factors, axis)
 
 
+def _ray_mag_sq(f: _BoundedPoly, theta: float) -> _BoundedPoly:
+    """|f(z)|^2 as a polynomial in r on the ray z = -r e^{-i theta}, where f is p or q.
+
+    With f(z) = sum_k f_k z^k, the real part has coefficients f_k (-1)^k cos(k theta) and the
+    imaginary part -f_k (-1)^k sin(k theta). The angle enters the bounds as an absolute error of
+    (k + 1) eps in each cosine and sine.
+    """
+    k = np.arange(f.coeffs.size)
+    base = f.coeffs * (-1.0) ** k
+    slack = (k + 2) * EPS * np.abs(f.coeffs)
+    cos, sin = np.cos(k * theta), np.sin(k * theta)
+    real = _BoundedPoly(base * cos, f.bounds * np.abs(cos) + slack)
+    imag = _BoundedPoly(-base * sin, f.bounds * np.abs(sin) + slack)
+    return real * real + imag * imag
+
+
+def _build_ray_boundary(phi: StabilityFunction, angle_deg: float) -> _Boundary:
+    """Boundary on the ray at *angle_deg* above the negative real axis, as one factor.
+
+    G(r) = |p(z)|^2 - |q(z)|^2 has the origin factor r divided out, as on the real axis. The result
+    is not cached because the angle varies.
+    """
+    theta = math.radians(angle_deg)
+    p = _BoundedPoly.from_poly(phi.p, phi.p_error)
+    q = _BoundedPoly.from_poly(phi.q, phi.q_error)
+    difference = _ray_mag_sq(p, theta) - _ray_mag_sq(q, theta)
+    return _Boundary((difference.trimmed(min_strip=1),), "ray", theta)
+
+
+def _ray_stable(phi: StabilityFunction, angle_deg: float) -> bool:
+    """True if the whole ray from the origin at *angle_deg* lies in the region."""
+    return _classify_stable_intervals(_build_ray_boundary(phi, angle_deg)).origin_unbounded
+
+
 # ---------------------------------------------------------------------------
 # Locating crossings
 # ---------------------------------------------------------------------------
@@ -514,13 +586,13 @@ def _segment_stable(boundary: _Boundary, left: float, right: float) -> bool:
     if resolved_signs.size == 0:
         _warn(
             f"sign of the boundary polynomial is unresolved throughout the segment "
-            f"({left:.6g}, {right:.6g}) on the {boundary.axis} axis; counting it as stable"
+            f"({left:.6g}, {right:.6g}) on the {boundary.label}; counting it as stable"
         )
         return True
     if np.any(resolved_signs != resolved_signs[0]):
         _warn(
             f"the boundary polynomial changes sign inside the segment ({left:.6g}, "
-            f"{right:.6g}) on the {boundary.axis} axis, so a crossing was missed; the "
+            f"{right:.6g}) on the {boundary.label}, so a crossing was missed; the "
             f"verdict for this segment is taken from its first resolved sample"
         )
     return bool(resolved_signs[0] < 0)
@@ -545,7 +617,7 @@ def _classify_stable_intervals(boundary: _Boundary) -> _AxisIntervals:
     if not crossings:
         if boundary.origin_stable != boundary.far_stable:
             _warn(
-                f"no crossings were found on the {boundary.axis} axis, but the signs at the "
+                f"no crossings were found on the {boundary.label}, but the signs at the "
                 f"origin and far from it disagree, so a crossing was missed (or lies at or "
                 f"below the root-zero tolerance); the whole axis is "
                 f"classified from the sign at the origin"
@@ -556,7 +628,7 @@ def _classify_stable_intervals(boundary: _Boundary) -> _AxisIntervals:
         _interior_signs(boundary, 0.0, crossings[0]),
         boundary.origin_stable,
         f"a resolved sample inside the first segment (0, {crossings[0]:.6g}) on the "
-        f"{boundary.axis} axis disagrees with the sign at the origin, so a crossing was missed "
+        f"{boundary.label} disagrees with the sign at the origin, so a crossing was missed "
         f"(or lies at or below the root-zero tolerance); the verdict for this segment is still "
         f"taken from the origin",
     )
@@ -564,7 +636,7 @@ def _classify_stable_intervals(boundary: _Boundary) -> _AxisIntervals:
         boundary.signs(crossings[-1] * _FAR_SAMPLE_FACTORS),
         boundary.far_stable,
         f"a resolved sample beyond the last crossing ({crossings[-1]:.6g}) on the "
-        f"{boundary.axis} axis disagrees with the sign far from the origin, so a crossing was "
+        f"{boundary.label} disagrees with the sign far from the origin, so a crossing was "
         f"missed; the verdict for this segment is still taken from the leading coefficients",
     )
 
@@ -648,12 +720,197 @@ def max_axis_crossing(phi: StabilityFunction) -> float:
     return largest
 
 
+# ---------------------------------------------------------------------------
+# Stiff properties
+# ---------------------------------------------------------------------------
+
+
+def _effective_degree(poly: np.poly1d, error: np.ndarray) -> int:
+    """Degree of *poly* counting only coefficients resolved against their round-off bounds."""
+    significant = np.flatnonzero(resolved(poly.c, error))
+    return len(poly.c) - 1 - int(significant[0]) if significant.size else -1
+
+
+def r_infinity(phi: StabilityFunction) -> float:
+    """|R(infinity)| = lim |p(z) / q(z)| as |z| -> infinity.
+
+    0.0 if deg p < deg q, |p_lead / q_lead| if the degrees are equal, and math.inf if deg p >
+    deg q (every explicit method). Degrees count only resolved coefficients, so a leading
+    coefficient that cancelled algebraically (TRBDF2, Billington) gives exactly 0.0.
+    """
+    p_deg = _effective_degree(phi.p, phi.p_error)
+    q_deg = _effective_degree(phi.q, phi.q_error)
+    if p_deg < q_deg:
+        return 0.0
+    if p_deg > q_deg:
+        return math.inf
+    return float(abs(phi.p.c[len(phi.p.c) - 1 - p_deg] / phi.q.c[len(phi.q.c) - 1 - q_deg]))
+
+
+def _poles(phi: StabilityFunction) -> np.ndarray:
+    """Non-removable poles of phi: roots of q at which p does not vanish (within round-off)."""
+    q_deg = _effective_degree(phi.q, phi.q_error)
+    if q_deg < 1:
+        return np.array([], dtype=complex)
+    poles = np.roots(phi.q.c[len(phi.q.c) - 1 - q_deg :])
+    # A pole cancelled by a zero of p is removable: |p| there is unresolved from zero.
+    bound = phi.p_error + phi.p.c.size * EPS * np.abs(phi.p.c)
+    keep = [z for z in poles if abs(np.polyval(phi.p.c, z)) > 8.0 * np.polyval(bound, abs(z))]
+    return np.array(keep, dtype=complex)
+
+
+def _left_half_plane_poles(poles: np.ndarray) -> np.ndarray:
+    """Poles with Re < -TOL.pole_rtol |pole|."""
+    return poles[poles.real < -TOL.pole_rtol * np.abs(poles)]
+
+
+def _a_stable(phi: StabilityFunction, imag_extent: float | None, poles: np.ndarray) -> bool:
+    """A-stability from a precomputed imaginary-axis extent and the poles."""
+    if imag_extent is not None:
+        return False
+    if _left_half_plane_poles(poles).size:
+        return False
+    if poles.size and np.any(np.abs(poles.real) <= TOL.pole_rtol * np.abs(poles)):
+        _warn(
+            "a pole of the stability function lies within the pole tolerance of the imaginary "
+            "axis; A-stability is decided by the imaginary-axis classification alone"
+        )
+    return True
+
+
+def is_a_stable(phi: StabilityFunction) -> bool:
+    """True if |phi(z)| <= 1 for every z with Re z <= 0.
+
+    Requires the imaginary axis to lie entirely in the region and no non-removable pole in the open
+    left half-plane; by the maximum modulus principle that is sufficient. Poles within
+    ``TOL.pole_rtol`` of the imaginary axis warn, and the imaginary-axis verdict decides.
+    """
+    return _a_stable(phi, axis_extent(phi, "imag"), _poles(phi))
+
+
+def is_l_stable(phi: StabilityFunction) -> bool:
+    """True if phi is A-stable and |phi(infinity)| = 0."""
+    return is_a_stable(phi) and r_infinity(phi) == 0.0
+
+
+def _a_alpha_angle(
+    phi: StabilityFunction, real_extent: float | None, a_stable: bool
+) -> float | None:
+    """A(alpha) from precomputed real-axis extent and A-stability; see :func:`a_alpha_angle`."""
+    if real_extent is not None:
+        return None
+    if a_stable:
+        return 90.0
+
+    # Upper bound: a pole in the open left half-plane stops the sector at its own angle.
+    poles = _poles(phi)
+    left = poles[poles.real < 0.0]
+    cap = 90.0
+    if left.size:
+        cap = min(cap, float(np.degrees(np.arctan2(np.abs(left.imag), -left.real)).min()))
+
+    # Guard scan at fixed steps below the cap; the first unstable angle ends the search window.
+    lo, hi = 0.0, cap
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", StabilityWarning)
+        step = _A_ALPHA_SCAN_STEP_DEG
+        for angle in np.arange(step, cap, step):
+            if _ray_stable(phi, float(angle)):
+                lo = float(angle)
+            else:
+                hi = float(angle)
+                break
+        while hi - lo > TOL.angle:
+            mid = 0.5 * (lo + hi)
+            if _ray_stable(phi, mid):
+                lo = mid
+            else:
+                hi = mid
+    return lo
+
+
+def a_alpha_angle(phi: StabilityFunction) -> float | None:
+    """The A(alpha) angle in degrees: the largest alpha with the sector |arg(-z)| <= alpha stable.
+
+    Returns None if the negative real axis is not entirely in the region (every explicit method,
+    and any |R(infinity)| > 1), 90.0 if and only if phi is A-stable, and 0.0 if the real axis is
+    stable but no sector around it is. The search is exact per ray (the same roots, tolerances and
+    closed-region convention as the axes) and then bisects the angle to ``TOL.angle``. It assumes a
+    consistent method, phi(z) = 1 + z + O(z^2); see the module notes for why the stable angles form
+    one interval.
+    """
+    real_extent = axis_extent(phi, "real")
+    if real_extent is not None:
+        return None
+    return _a_alpha_angle(phi, real_extent, is_a_stable(phi))
+
+
+def threshold_factor(phi: StabilityFunction) -> float | None:
+    """Linear threshold factor of a polynomial phi; None if phi is rational.
+
+    The largest r such that phi(z) = sum_k g_k (1 + z/r)^k with every g_k >= 0, equivalently every
+    Taylor coefficient of phi at z = -r is nonnegative. It is at least the SSP coefficient. It is
+    0.0 if some coefficient of p is not positive. Implicit methods return None (not computed).
+    """
+    if _effective_degree(phi.q, phi.q_error) > 0:
+        return None
+    degree = _effective_degree(phi.p, phi.p_error)
+    if degree < 1:
+        return None
+    coeffs = np.asarray(phi.p.c[len(phi.p.c) - 1 - degree :], float)[::-1]  # ascending
+    errors = np.asarray(phi.p_error[len(phi.p.c) - 1 - degree :], float)[::-1]
+    if not np.all(resolved(coeffs, errors) & (coeffs > 0.0)):
+        return 0.0
+
+    ks = np.arange(degree + 1)
+    binom = np.array([[math.comb(j, k) if j >= k else 0 for j in ks] for k in ks], float)
+
+    def feasible(r: float) -> bool:
+        # g_k(r) = sum_{j >= k} p_j C(j, k) (-r)^(j - k)
+        powers = np.where(
+            ks[None, :] >= ks[:, None], r ** np.maximum(ks[None, :] - ks[:, None], 0), 0.0
+        )
+        terms = binom * coeffs[None, :] * powers
+        signed = terms * (-1.0) ** np.maximum(ks[None, :] - ks[:, None], 0)
+        slack = 16.0 * EPS * terms.sum(axis=1)
+        return bool(np.all(signed.sum(axis=1) >= -slack))
+
+    # g_{n-1}(r) = p_{n-1} - n p_n r >= 0 bounds r above; the feasible set is [0, r*].
+    lo, hi = 0.0, float(coeffs[degree - 1] / (degree * coeffs[degree]))
+    if feasible(hi):
+        return hi
+    while hi - lo > 4.0 * EPS * hi:
+        mid = 0.5 * (lo + hi)
+        if feasible(mid):
+            lo = mid
+        else:
+            hi = mid
+    return lo
+
+
+def order_star_function(phi: StabilityFunction, Z) -> np.ndarray:
+    """F(z) = log|p(z)| - log|q(z)| - Re z, the log of |phi(z)| / |e^z|, for scalar or array Z.
+
+    The order star is {F > 0}. The exponential is folded into the subtraction so it never
+    overflows. NaN occurs only at exact common zeros of p and q; inf at a pole, -inf at a zero.
+    """
+    Z = np.asarray(Z, dtype=complex)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.log(np.abs(phi.p(Z))) - np.log(np.abs(phi.q(Z))) - Z.real
+
+
 __all__ = [
     "TOL",
     "StabilityFunction",
     "StabilityWarning",
+    "a_alpha_angle",
     "axis_extent",
     "imag_stable_intervals",
+    "is_a_stable",
+    "is_l_stable",
     "max_axis_crossing",
+    "order_star_function",
+    "r_infinity",
     "stability_magnitude",
+    "threshold_factor",
 ]

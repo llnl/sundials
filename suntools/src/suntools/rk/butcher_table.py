@@ -130,6 +130,9 @@ class ButcherTable:
     b_embedded : (stages,) ndarray or None  embedding weights
     method_order : int or None              order of the main method
     embedding_order : int or None           order of the embedded method
+
+    The properties ``is_stiffly_accurate``, ``is_fsal`` and ``stage_evaluations`` describe stage
+    reuse, which the cost-normalized stability metrics use.
     """
 
     def __init__(
@@ -148,6 +151,28 @@ class ButcherTable:
     def is_explicit(self) -> bool:
         """True if A is strictly lower triangular"""
         return not bool(np.any(np.abs(np.triu(self.A)) > roundoff_tol(self.A)))
+
+    @cached_property
+    def is_stiffly_accurate(self) -> bool:
+        """True if the last row of A equals b (within 100 eps), so y_{n+1} is the last stage."""
+        return bool(np.all(np.abs(self.A[-1, :] - self.b) <= 100.0 * EPS))
+
+    @cached_property
+    def is_fsal(self) -> bool:
+        """True if the first stage can be reused from the previous step's last stage.
+
+        Matches ARKODE's test: the first row of A is zero and the table is stiffly accurate.
+        """
+        return self.is_stiffly_accurate and bool(np.all(np.abs(self.A[0, :]) <= 100.0 * EPS))
+
+    @property
+    def stage_evaluations(self) -> int:
+        """Stage evaluations per step: ``stages``, minus one for an FSAL method.
+
+        This is the cost used to normalize stability extents. It assumes the reused stage is
+        skipped, which ARKODE does unless relaxation is enabled.
+        """
+        return self.stages - int(self.is_fsal)
 
     @property
     def has_embedding(self) -> bool:

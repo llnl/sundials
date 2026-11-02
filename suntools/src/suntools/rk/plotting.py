@@ -30,7 +30,14 @@ from matplotlib.patches import Patch
 from matplotlib.transforms import ScaledTranslation
 
 from .butcher_table import ButcherTable
-from .stability import axis_extent, imag_stable_intervals, max_axis_crossing, stability_magnitude
+from .metrics import stability_metrics
+from .stability import (
+    axis_extent,
+    imag_stable_intervals,
+    max_axis_crossing,
+    order_star_function,
+    stability_magnitude,
+)
 
 # ---------------------------------------------------------------------------
 # Output canvas
@@ -76,6 +83,8 @@ class PlotOptions:
     show_axis_extent: bool = True
     highlight_imag_axis_intervals: bool = False
     label_detached_imag_axis_intervals: bool = False
+    # Draw the A(alpha) rays and a box of stability metrics for the method and the embedding.
+    annotate_metrics: bool = False
 
     def __post_init__(self):
         if self.shade and self.shade_embedding:
@@ -523,6 +532,57 @@ def _mark_axis_extents(ax, phi, style: RegionStyle, options: PlotOptions):
                 )
 
 
+def _annotate_metrics(ax, table: ButcherTable, phi, style: RegionStyle, options: PlotOptions):
+    """Draw the A(alpha) rays and a text box of stability metrics for one function.
+
+    The method's box is at the lower left and the embedding's at the lower right. Rays are drawn
+    only for 0 < A(alpha) < 90 degrees.
+    """
+    embedding = style.side < 0
+    metrics = stability_metrics(table, embedding=embedding)
+    color = style.boundary_color
+
+    alpha = metrics.a_alpha
+    if alpha is not None and 0.0 < alpha < 90.0:
+        theta = np.radians(alpha)
+        # Long enough to cross any axes box; the axis limits are set afterwards.
+        length = 1e3
+        for sign in (1, -1):
+            ax.plot(
+                [0.0, -length * np.cos(theta)],
+                [0.0, sign * length * np.sin(theta)],
+                color=color,
+                lw=0.8,
+                ls=":",
+                zorder=4,
+            )
+
+    def number(value):
+        return "n/a" if value is None else f"{value:.4g}"
+
+    lines = ["embedding" if embedding else "method"]
+    if table.is_explicit:
+        lines.append(f"C = {number(metrics.ssp_coefficient)}")
+        lines.append(f"threshold = {number(metrics.threshold_factor)}")
+    else:
+        lines.append(rf"$A(\alpha)$ = {number(alpha)}" + ("" if alpha is None else r"$^\circ$"))
+        lines.append(rf"$|R(\infty)|$ = {number(metrics.r_infinity)}")
+        lines.append(f"C = {number(metrics.ssp_coefficient)}")
+    left = style.side > 0
+    ax.text(
+        0.02 if left else 0.98,
+        0.02,
+        "\n".join(lines),
+        transform=ax.transAxes,
+        ha="left" if left else "right",
+        va="bottom",
+        fontsize=_AXIS_LABEL_FONTSIZE * options.font_size / PlotOptions.font_size,
+        color=color,
+        bbox=_AXIS_LABEL_BOX,
+        zorder=7,
+    )
+
+
 def _draw_zeros_poles(ax, phi, options: PlotOptions):
     """Optionally mark the zeros and poles of phi; returns their legend handles."""
     handles = []
@@ -547,7 +607,9 @@ def _draw_zeros_poles(ax, phi, options: PlotOptions):
     return handles
 
 
-def _decorate_axes(ax, table: ButcherTable, bounds, legend_handles, font_size: float):
+def _decorate_axes(
+    ax, table: ButcherTable, bounds, legend_handles, font_size: float, *, title: str | None = None
+):
     """Axis limits, labels, title, legend, and grid."""
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlim(bounds[0], bounds[1])
@@ -556,7 +618,9 @@ def _decorate_axes(ax, table: ButcherTable, bounds, legend_handles, font_size: f
     ax.set_ylabel(r"Im$(z)$", fontsize=font_size)
     # Always use two lines as long names overrun one line and a constant title height keeps the top
     # margin and axes box fixed.
-    ax.set_title(f"Linear stability region for\n{table.name}", fontsize=font_size)
+    if title is None:
+        title = f"Linear stability region for\n{table.name}"
+    ax.set_title(title, fontsize=font_size)
     ax.tick_params(axis="both", labelsize=font_size)
     if legend_handles:
         ax.legend(handles=legend_handles, loc="upper right", fontsize=0.8 * font_size)
@@ -662,6 +726,11 @@ def plot_stability_region(
         if emb is not None:
             _mark_axis_extents(ax, emb, EMBEDDED_REGION_STYLE, options)
 
+    if options.annotate_metrics:
+        _annotate_metrics(ax, table, phi, MAIN_REGION_STYLE, options)
+        if emb is not None:
+            _annotate_metrics(ax, table, emb, EMBEDDED_REGION_STYLE, options)
+
     show_region = options.shade or shade_emb or len(region_handles) > 1
     _decorate_axes(
         ax,
@@ -672,6 +741,105 @@ def plot_stability_region(
     )
 
     # Only touch the file and the figure lifetime when we made the figure.
+    if created and filename:
+        fig.savefig(filename, dpi=options.dpi)
+    if created and close:
+        plt.close(fig)
+    return fig, ax
+
+
+# Clip the order-star function so poles and zeros contour cleanly; only its sign matters.
+_ORDER_STAR_CLIP = 1e3
+
+
+def _contour_if_crossed(ax, X, Y, values, level, **kwargs) -> bool:
+    """Contour *values* at *level* if the level lies inside their range; return whether drawn."""
+    if values.min() < level < values.max():
+        ax.contour(X, Y, values, levels=[level], **kwargs)
+        return True
+    return False
+
+
+def plot_order_star(
+    table: ButcherTable,
+    options: PlotOptions | None = None,
+    *,
+    filename: str | None = None,
+    ax=None,
+    close: bool = False,
+    embedding: bool = False,
+):
+    """Plot the order star { z : |phi(z)| > |exp(z)| } of the method, or of its embedding.
+
+    The star is shaded light gray and its boundary |phi(z)| = |exp(z)| is drawn in black; the thin
+    dashed curve is the stability boundary |phi(z)| = 1. Framing, canvas, ``show_zeros`` and
+    ``show_poles`` follow *options*. Returns (fig, ax). When *ax* is supplied the caller owns the
+    figure, so *filename* and *close* are ignored.
+    """
+    options = options or PlotOptions()
+    if embedding:
+        phi = table.embedded_stability_function
+        if phi is None:
+            raise ValueError(f"{table.name} has no embedding")
+        style = EMBEDDED_REGION_STYLE
+        symbol = r"\tilde{R}"
+        title = f"Embedding order star for\n{table.name}"
+    else:
+        phi = table.stability_function
+        style = MAIN_REGION_STYLE
+        symbol = "R"
+        title = f"Order star for\n{table.name}"
+
+    bounds = options.bounds or _auto_bounds(table, include_embedding=options.show_embedding)
+
+    created = ax is None
+    if created:
+        rect, axes_aspect = _axes_geometry(options.figure_size, colorbar=False)
+        fig = plt.figure(figsize=options.figure_size)
+        ax = fig.add_axes(rect)
+        bounds = _fit_bounds_to_aspect(bounds, axes_aspect)
+    else:
+        fig = ax.figure
+
+    axis_x = np.linspace(bounds[0], bounds[1], options.grid_points)
+    axis_y = np.linspace(bounds[2], bounds[3], options.grid_points)
+    X, Y = np.meshgrid(axis_x, axis_y)
+    Z = X + 1j * Y
+
+    F = order_star_function(phi, Z)
+    F = np.clip(
+        np.nan_to_num(F, nan=0.0, posinf=_ORDER_STAR_CLIP, neginf=-_ORDER_STAR_CLIP),
+        -_ORDER_STAR_CLIP,
+        _ORDER_STAR_CLIP,
+    )
+    if F.max() > 0.0:
+        ax.contourf(X, Y, F, levels=[0.0, 2.0 * _ORDER_STAR_CLIP], colors=["0.8"])
+    _contour_if_crossed(ax, X, Y, F, 0.0, colors=["k"], linewidths=1.5)
+    _contour_if_crossed(
+        ax,
+        X,
+        Y,
+        np.nan_to_num(stability_magnitude(phi, Z), nan=0.0, posinf=1e300),
+        1.0,
+        colors=[style.boundary_color],
+        linewidths=0.8,
+        linestyles="--",
+    )
+
+    handles = [
+        Patch(facecolor="0.8", edgecolor="k", label=rf"$|{symbol}(z)| > |e^z|$"),
+        Line2D([0], [0], color="k", lw=1.5, label=rf"$|{symbol}(z)| = |e^z|$"),
+        Line2D(
+            [0], [0], color=style.boundary_color, lw=0.8, ls="--", label=rf"$|{symbol}(z)| = 1$"
+        ),
+    ]
+    handles += _draw_zeros_poles(ax, phi, options)
+
+    ax.axhline(0.0, color="0.4", lw=0.8)
+    ax.axvline(0.0, color="0.4", lw=0.8)
+
+    _decorate_axes(ax, table, bounds, handles, options.font_size, title=title)
+
     if created and filename:
         fig.savefig(filename, dpi=options.dpi)
     if created and close:
