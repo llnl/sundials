@@ -1834,6 +1834,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   sunbooleantype calc_fslow;
   sunbooleantype need_inner_dsm;
   sunbooleantype do_embedding;
+  sunbooleantype use_sts_err;
   sunbooleantype nested_mri;
   int nvec;
 
@@ -1849,6 +1850,10 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   /* determine whether embedding stage is needed */
   do_embedding = !ark_mem->fixedstep ||
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
+
+  /* determine whether to include the STS error estimate (ExtSTS methods only) */
+  use_sts_err = step_mem->extsts_method && step_mem->extsts_use_err_est &&
+                do_embedding;
 
   /* initialize the current stage index */
   step_mem->istage = step_mem->cur_stage = 0;
@@ -1879,13 +1884,13 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
     }
   }
 
-  /* for ExtSTS methods with temporal error estimation enabled: estimate the
-     STS error in each fast solve */
+  /* for ExtSTS methods: enable/disable the STS error estimate in each fast
+     solve, and reset its accumulators */
   if (step_mem->extsts_method)
   {
-    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    retval = extSTS_BeginStepError(ark_mem, step_mem, use_sts_err);
     if (retval != ARK_SUCCESS) { return retval; }
-    need_inner_dsm = do_embedding;
+    need_inner_dsm = use_sts_err;
   }
 
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
@@ -2349,10 +2354,7 @@ int mriStep_TakeStepMRIGARK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPt
   } /* loop over stages */
 
   /* for ExtSTS methods: combine the MRI and STS error estimates */
-  if (do_embedding && step_mem->extsts_method)
-  {
-    extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
-  }
+  if (use_sts_err) { extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr); }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
 
@@ -2410,6 +2412,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
   sunbooleantype do_embedding;
+  sunbooleantype use_sts_err;
   sunbooleantype nested_mri;
   int nvec, max_stages;
   const sunrealtype tol = SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF;
@@ -2426,6 +2429,10 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* determine whether embedding stage is needed */
   do_embedding = !ark_mem->fixedstep ||
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
+
+  /* determine whether to include the STS error estimate (ExtSTS methods only) */
+  use_sts_err = step_mem->extsts_method && step_mem->extsts_use_err_est &&
+                do_embedding;
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
@@ -2460,13 +2467,13 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  /* for ExtSTS methods with temporal error estimation enabled: estimate the
-     STS error in each fast solve */
+  /* for ExtSTS methods: enable/disable the STS error estimate in each fast
+     solve, and reset its accumulators */
   if (step_mem->extsts_method)
   {
-    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    retval = extSTS_BeginStepError(ark_mem, step_mem, use_sts_err);
     if (retval != ARK_SUCCESS) { return retval; }
-    need_inner_dsm = do_embedding;
+    need_inner_dsm = use_sts_err;
   }
 
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
@@ -2879,10 +2886,7 @@ int mriStep_TakeStepMRISR(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     N_VScale(ONE, ytilde, ark_mem->ycur);
 
     /* for ExtSTS methods: combine with the STS error estimate */
-    if (step_mem->extsts_method)
-    {
-      extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
-    }
+    if (use_sts_err) { extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr); }
   }
 
   SUNLogExtraDebugVec(ARK_LOGGER, "updated solution", ark_mem->ycur, "ycur(:) =");
@@ -2943,6 +2947,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   sunrealtype cstage;                 /* current stage abscissa     */
   sunbooleantype need_inner_dsm;
   sunbooleantype do_embedding;
+  sunbooleantype use_sts_err;
   sunbooleantype nested_mri;
   int nvec;
 
@@ -2958,6 +2963,10 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* determine whether embedding stage is needed */
   do_embedding = !ark_mem->fixedstep ||
                  (ark_mem->AccumErrorType != ARK_ACCUMERROR_NONE);
+
+  /* determine whether to include the STS error estimate (ExtSTS methods only) */
+  use_sts_err = step_mem->extsts_method && step_mem->extsts_use_err_est &&
+                do_embedding;
 
   /* set N_Vector shortcuts */
   ytilde = ark_mem->tempv4;
@@ -2995,13 +3004,13 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     }
   }
 
-  /* for ExtSTS methods with temporal error estimation enabled: estimate the
-     STS error in each fast solve */
+  /* for ExtSTS methods: enable/disable the STS error estimate in each fast
+     solve, and reset its accumulators */
   if (step_mem->extsts_method)
   {
-    retval = extSTS_BeginStepError(ark_mem, step_mem, do_embedding);
+    retval = extSTS_BeginStepError(ark_mem, step_mem, use_sts_err);
     if (retval != ARK_SUCCESS) { return retval; }
-    need_inner_dsm = do_embedding;
+    need_inner_dsm = use_sts_err;
   }
 
   /* for adaptive computations, reset the inner integrator to the beginning of this step */
@@ -3292,10 +3301,7 @@ int mriStep_TakeStepMERK(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
     *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
 
     /* for ExtSTS methods: combine with the STS error estimate */
-    if (step_mem->extsts_method)
-    {
-      extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr);
-    }
+    if (use_sts_err) { extSTS_FinalizeStepError(ark_mem, step_mem, dsmPtr); }
   }
 
   return (ARK_SUCCESS);
@@ -3815,7 +3821,7 @@ int mriStep_StageERKFast(ARKodeMem ark_mem, ARKodeMRIStepMem step_mem,
     }
 
     /* for ExtSTS methods, accumulate the STS error estimate */
-    if (step_mem->extsts_method)
+    if (step_mem->extsts_method && step_mem->extsts_use_err_est)
     {
       retval = extSTS_AccumulateStageError(ark_mem, step_mem, t0, tf);
       if (retval != ARK_SUCCESS) { return retval; }

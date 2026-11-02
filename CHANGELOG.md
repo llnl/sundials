@@ -14,6 +14,12 @@ Updated `ARKodeGetReturnFlagName`, `CVodeGetReturnFlagName`,
 return `const char*` rather than `char*`. The returned string should no
 longer be freed by the user.
 
+Added `MRIStepSetUseExtSTSErrorEstimate` (command-line key
+`arkid.use_extsts_error_estimate`) to include the embedded error estimates of
+the super-time-stepping (STS) methods in the temporal error estimate of ExtSTS
+methods created with `MRIStepCreateExtSTS`, for use when the STS error may
+dominate.  The option is disabled by default.
+
 ### Bug Fixes
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`
@@ -27,6 +33,10 @@ the RKL step was called with an incorrect time argument.
 
 Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
 stored as the update frequency instead of restoring the default value.
+
+Fixed the `ark_adr1d_extsts` example to select an explicit MRI method by
+default when run with `--no-reaction`, and corrected its input check for
+`--build_mri_table`.
 
 ### Deprecation Notices
 

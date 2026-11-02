@@ -204,6 +204,8 @@ static void InputHelp()
   cout << "  --output <int>           : output level\n";
   cout << "  --nout <int>             : number of outputs\n";
   cout << "  --help                   : print options and exit\n";
+  cout << "  arkode.<key> <value>     : ARKODE option for ExtSTS, e.g.,\n";
+  cout << "                             arkode.use_extsts_error_estimate 1\n";
 }
 
 inline void find_arg(vector<string>& args, const string key, sunrealtype& dest)

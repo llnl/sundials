@@ -180,6 +180,7 @@ typedef struct ARKodeMRIStepMemRec
   sunbooleantype extsts_method;
 
   /* ExtSTS temporal error estimation (see arkode_mristep_extsts.c) */
+  sunbooleantype extsts_use_err_est; /* include the STS error estimate */
   sunrealtype extsts_dsm; /* STS error estimate for the current step attempt */
   sunrealtype extsts_acc; /* running sum of |dt_k| ||e_k||^2 over fast solves */
   sunrealtype extsts_dt_acc; /* running sum of |dt_k| over fast solves */

@@ -24,7 +24,8 @@
  * the semi-discrete solution is u(t) = exp(lambda t) sin(pi x), with
  * lambda = -(4 D / dx^2) sin^2(pi dx / 2).
  *
- * The tests are:
+ * Tests 1-4 enable the STS error estimate with
+ * MRIStepSetUseExtSTSErrorEstimate.  The tests are:
  *   1. c = 0 (no slow dynamics): the adaptive ExtSTS solution must be accurate
  *      and use a number of steps comparable to LSRKStep run directly.
  *   2. c = 1e-2: the adaptive ExtSTS solution must be accurate.
@@ -35,6 +36,9 @@
  *      estimate (from fixed-step error accumulation) must approximately equal
  *      the LSRKStep embedding estimate for the same step.
  *   5. MRI H-Tol controllers must be rejected for ExtSTS methods.
+ *   6. Option handling: the STS error estimate is disabled by default; the
+ *      setter rejects non-ExtSTS objects; the command-line key matches the
+ *      setter; and ARKodeSetDefaults disables the estimate again.
  *
  * The STS method is chosen by the first command-line argument (0 = RKC,
  * 1 = RKL; default 1).
@@ -49,6 +53,8 @@
 #include <nvector/nvector_serial.h>
 #include <sunadaptcontroller/sunadaptcontroller_mrihtol.h>
 #include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
+
+#include "arkode/arkode_mristep_impl.h"
 
 #define ZERO SUN_RCONST(0.0)
 #define ONE  SUN_RCONST(1.0)
@@ -69,7 +75,8 @@ typedef struct
 } UserData;
 
 /* f^D: diffusion */
-static int f_diffusion(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
+static int f_diffusion(SUNDIALS_MAYBE_UNUSED sunrealtype t, N_Vector y,
+                       N_Vector f, void* user_data)
 {
   UserData* udata      = (UserData*)user_data;
   const sunrealtype* u = N_VGetArrayPointer(y);
@@ -85,7 +92,8 @@ static int f_diffusion(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
 }
 
 /* f^E: advection */
-static int f_advection(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
+static int f_advection(SUNDIALS_MAYBE_UNUSED sunrealtype t, N_Vector y,
+                       N_Vector f, void* user_data)
 {
   UserData* udata      = (UserData*)user_data;
   const sunrealtype* u = N_VGetArrayPointer(y);
@@ -113,9 +121,13 @@ static int f_full(sunrealtype t, N_Vector y, N_Vector f, void* user_data)
 }
 
 /* dominant eigenvalue of f^D (advection only adds a small imaginary part) */
-static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
-                   sunrealtype* lambdaI, void* user_data, N_Vector temp1,
-                   N_Vector temp2, N_Vector temp3)
+static int dom_eig(SUNDIALS_MAYBE_UNUSED sunrealtype t,
+                   SUNDIALS_MAYBE_UNUSED N_Vector y,
+                   SUNDIALS_MAYBE_UNUSED N_Vector fn, sunrealtype* lambdaR,
+                   sunrealtype* lambdaI, void* user_data,
+                   SUNDIALS_MAYBE_UNUSED N_Vector temp1,
+                   SUNDIALS_MAYBE_UNUSED N_Vector temp2,
+                   SUNDIALS_MAYBE_UNUSED N_Vector temp3)
 {
   UserData* udata = (UserData*)user_data;
   *lambdaR        = -FOUR * udata->d / (udata->dx * udata->dx);
@@ -161,15 +173,18 @@ static int exact_inner_evolve(MRIStepInnerStepper stepper, sunrealtype t0,
   return 0;
 }
 
-static int exact_inner_fullrhs(MRIStepInnerStepper stepper, sunrealtype t,
-                               N_Vector y, N_Vector f, int mode)
+static int exact_inner_fullrhs(SUNDIALS_MAYBE_UNUSED MRIStepInnerStepper stepper,
+                               SUNDIALS_MAYBE_UNUSED sunrealtype t,
+                               SUNDIALS_MAYBE_UNUSED N_Vector y, N_Vector f,
+                               SUNDIALS_MAYBE_UNUSED int mode)
 {
   N_VConst(ZERO, f);
   return 0;
 }
 
-static int exact_inner_reset(MRIStepInnerStepper stepper, sunrealtype tR,
-                             N_Vector yR)
+static int exact_inner_reset(SUNDIALS_MAYBE_UNUSED MRIStepInnerStepper stepper,
+                             SUNDIALS_MAYBE_UNUSED sunrealtype tR,
+                             SUNDIALS_MAYBE_UNUSED N_Vector yR)
 {
   return 0;
 }
@@ -185,11 +200,22 @@ static int check_flag(int flag, const char* funcname)
   return 0;
 }
 
-/* Integrate to tf with ExtSTS (use_extsts) or LSRKStep run directly; return
-   the step count and the final solution in y */
-static int run_adaptive(sunbooleantype use_extsts, ARKODE_LSRKMethodType sts,
-                        UserData* udata, sunrealtype tf, N_Vector y,
-                        long int* nst, SUNContext ctx)
+/* Integrators compared by run_adaptive: LSRKStep run directly, or ExtSTS with
+   the STS error estimate left at its default, disabled or enabled with
+   MRIStepSetUseExtSTSErrorEstimate, or enabled from the command line */
+typedef enum
+{
+  RUN_LSRK,
+  RUN_EXTSTS_DEFAULT,
+  RUN_EXTSTS_OFF,
+  RUN_EXTSTS_ON,
+  RUN_EXTSTS_CLI
+} RunType;
+
+/* Integrate to tf with the integrator selected by run; return the step count
+   and the final solution in y */
+static int run_adaptive(RunType run, ARKODE_LSRKMethodType sts, UserData* udata,
+                        sunrealtype tf, N_Vector y, long int* nst, SUNContext ctx)
 {
   void* arkode_mem = NULL;
   void* sts_mem    = NULL;
@@ -198,12 +224,29 @@ static int run_adaptive(sunbooleantype use_extsts, ARKODE_LSRKMethodType sts,
 
   exact_solution(ZERO, y, udata);
 
-  if (use_extsts)
+  /* create the integrator; for ExtSTS, set the STS error option as requested */
+  if (run != RUN_LSRK)
   {
     arkode_mem = MRIStepCreateExtSTS(f_diffusion, f_advection, NULL, ZERO, y,
                                      ctx);
     if (arkode_mem == NULL) { return 1; }
     fails += check_flag(MRIStepGetSTS(arkode_mem, &sts_mem), "MRIStepGetSTS");
+    if (run == RUN_EXTSTS_OFF || run == RUN_EXTSTS_ON)
+    {
+      fails += check_flag(MRIStepSetUseExtSTSErrorEstimate(arkode_mem,
+                                                           run == RUN_EXTSTS_ON),
+                          "MRIStepSetUseExtSTSErrorEstimate");
+    }
+    else if (run == RUN_EXTSTS_CLI)
+    {
+      /* mimic "<program> arkode.use_extsts_error_estimate 1" */
+      char arg0[] = "ark_test_extsts_stserror";
+      char arg1[] = "arkode.use_extsts_error_estimate";
+      char arg2[] = "1";
+      char* cli[] = {arg0, arg1, arg2};
+      fails += check_flag(ARKodeSetOptions(arkode_mem, NULL, NULL, 3, cli),
+                          "ARKodeSetOptions");
+    }
   }
   else
   {
@@ -211,6 +254,8 @@ static int run_adaptive(sunbooleantype use_extsts, ARKODE_LSRKMethodType sts,
     if (arkode_mem == NULL) { return 1; }
     sts_mem = arkode_mem;
   }
+  /* common settings: STS method, analytic dominant eigenvalue (computed once),
+     tolerances and step limit on the outer integrator */
   fails += check_flag(ARKodeSetUserData(arkode_mem, udata),
                       "ARKodeSetUserData");
   fails += check_flag(ARKodeSetUserData(sts_mem, udata), "ARKodeSetUserData");
@@ -224,6 +269,7 @@ static int run_adaptive(sunbooleantype use_extsts, ARKODE_LSRKMethodType sts,
                       "ARKodeSStolerances");
   fails += check_flag(ARKodeSetMaxNumSteps(arkode_mem, 100000),
                       "ARKodeSetMaxNumSteps");
+  /* integrate to tf (skipped if any setup call failed) */
   if (fails == 0)
   {
     fails += check_flag(ARKodeEvolve(arkode_mem, tf, y, &t, ARK_NORMAL),
@@ -249,11 +295,12 @@ static int test_no_slow(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext c
   udata->c = ZERO;
   exact_solution(tf, yexact, udata);
 
-  fails += run_adaptive(SUNFALSE, sts, udata, tf, y, &nst_lsrk, ctx);
+  /* max-norm errors of LSRKStep and ExtSTS against the exact solution */
+  fails += run_adaptive(RUN_LSRK, sts, udata, tf, y, &nst_lsrk, ctx);
   N_VLinearSum(ONE, y, -ONE, yexact, y);
   const sunrealtype err_lsrk = N_VMaxNorm(y);
 
-  fails += run_adaptive(SUNTRUE, sts, udata, tf, y, &nst_extsts, ctx);
+  fails += run_adaptive(RUN_EXTSTS_ON, sts, udata, tf, y, &nst_extsts, ctx);
   N_VLinearSum(ONE, y, -ONE, yexact, y);
   const sunrealtype err_extsts = N_VMaxNorm(y);
 
@@ -261,6 +308,7 @@ static int test_no_slow(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext c
          "ExtSTS steps = %li, error = %.3e\n",
          nst_lsrk, (double)err_lsrk, nst_extsts, (double)err_extsts);
 
+  /* ExtSTS must meet the tolerance with an LSRKStep-like step count */
   if (err_extsts > SUN_RCONST(1.0e-4))
   {
     fprintf(stderr, "  FAIL: ExtSTS error %.3e exceeds 1e-4\n",
@@ -316,7 +364,8 @@ static int test_small_slow(ARKODE_LSRKMethodType sts, UserData* udata,
     ARKodeFree(&arkode_mem);
   }
 
-  fails += run_adaptive(SUNTRUE, sts, udata, tf, y, &nst_extsts, ctx);
+  /* ExtSTS solution error against the reference */
+  fails += run_adaptive(RUN_EXTSTS_ON, sts, udata, tf, y, &nst_extsts, ctx);
   N_VLinearSum(ONE, y, -ONE, yref, y);
   const sunrealtype err = N_VMaxNorm(y);
 
@@ -357,6 +406,8 @@ static int test_no_sts(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext ct
                                          y_extsts, ctx);
   if (extsts_mem == NULL) { return 1; }
   fails += check_flag(MRIStepGetSTS(extsts_mem, &sts_mem), "MRIStepGetSTS");
+  fails += check_flag(MRIStepSetUseExtSTSErrorEstimate(extsts_mem, SUNTRUE),
+                      "MRIStepSetUseExtSTSErrorEstimate");
   fails += check_flag(ARKodeSetUserData(extsts_mem, udata),
                       "ARKodeSetUserData");
   fails += check_flag(ARKodeSetUserData(sts_mem, udata), "ARKodeSetUserData");
@@ -389,6 +440,7 @@ static int test_no_sts(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext ct
   fails += check_flag(ARKodeSetMaxNumSteps(mri_mem, 100000),
                       "ARKodeSetMaxNumSteps");
 
+  /* integrate both to tf and compare step counts and final solutions */
   if (fails == 0)
   {
     fails += check_flag(ARKodeEvolve(extsts_mem, tf, y_extsts, &t, ARK_NORMAL),
@@ -455,6 +507,8 @@ static int test_one_step(ARKODE_LSRKMethodType sts, UserData* udata,
                       "LSRKStepSetDomEigFn");
   fails += check_flag(ARKodeSStolerances(extsts_mem, TOL, TOL),
                       "ARKodeSStolerances");
+  fails += check_flag(MRIStepSetUseExtSTSErrorEstimate(extsts_mem, SUNTRUE),
+                      "MRIStepSetUseExtSTSErrorEstimate");
   fails += check_flag(ARKodeSetFixedStep(extsts_mem, h), "ARKodeSetFixedStep");
   fails +=
     check_flag(ARKodeSetAccumulatedErrorType(extsts_mem, ARK_ACCUMERROR_MAX),
@@ -465,6 +519,7 @@ static int test_one_step(ARKODE_LSRKMethodType sts, UserData* udata,
                         "ARKodeEvolve");
     fails += check_flag(ARKodeGetAccumulatedError(extsts_mem, &dsm_extsts),
                         "ARKodeGetAccumulatedError");
+    /* convert the accumulated error to the WRMS dsm scale */
     dsm_extsts /= TOL;
   }
   ARKodeFree(&extsts_mem);
@@ -510,6 +565,7 @@ static int test_one_step(ARKODE_LSRKMethodType sts, UserData* udata,
          "ExtSTS dsm = %.3e, ratio = %.4f (expected %.4f)\n",
          (double)h, (double)dsm_lsrk, nattempts, (double)dsm_extsts,
          (double)ratio, (double)expected);
+  /* the LSRKStep estimate is only comparable if its first step was accepted */
   if (nattempts != 1)
   {
     fprintf(stderr, "  FAIL: LSRKStep step was rejected; reduce h\n");
@@ -552,6 +608,7 @@ static int test_htol_rejected(UserData* udata, SUNContext ctx)
   fails += check_flag(ARKodeSStolerances(extsts_mem, TOL, TOL),
                       "ARKodeSStolerances");
 
+  /* attach an MRI H-Tol controller; the failure is reported at the first step */
   SUNAdaptController HControl   = SUNAdaptController_I(ctx);
   SUNAdaptController TolControl = SUNAdaptController_I(ctx);
   SUNAdaptController htol = SUNAdaptController_MRIHTol(HControl, TolControl, ctx);
@@ -581,6 +638,129 @@ static int test_htol_rejected(UserData* udata, SUNContext ctx)
   return fails;
 }
 
+/* Test 6: option handling for MRIStepSetUseExtSTSErrorEstimate */
+static int test_option(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext ctx)
+{
+  const sunrealtype tf = SUN_RCONST(5.0);
+  long int nst_default = 0, nst_off = 0, nst_on = 0, nst_cli = 0;
+  MRIStepInnerStepper inner = NULL;
+  void* sts_mem             = NULL;
+  int fails                 = 0;
+  int flag;
+
+  N_Vector y_default = N_VNew_Serial(NX, ctx);
+  N_Vector y_off     = N_VClone(y_default);
+  N_Vector y_on      = N_VClone(y_default);
+  N_Vector y_cli     = N_VClone(y_default);
+
+  udata->d = DIFF;
+  udata->c = ZERO;
+
+  /* (a) default off: never calling the setter matches disabling it, and
+     (c) the command-line key matches enabling it with the setter.  Identical
+     code paths are expected here, so the solutions are compared exactly. */
+  fails += run_adaptive(RUN_EXTSTS_DEFAULT, sts, udata, tf, y_default,
+                        &nst_default, ctx);
+  fails += run_adaptive(RUN_EXTSTS_OFF, sts, udata, tf, y_off, &nst_off, ctx);
+  fails += run_adaptive(RUN_EXTSTS_ON, sts, udata, tf, y_on, &nst_on, ctx);
+  fails += run_adaptive(RUN_EXTSTS_CLI, sts, udata, tf, y_cli, &nst_cli, ctx);
+
+  /* differences between runs that should be identical */
+  N_VLinearSum(ONE, y_default, -ONE, y_off, y_off);
+  N_VLinearSum(ONE, y_on, -ONE, y_cli, y_cli);
+  const sunrealtype diff_off = N_VMaxNorm(y_off);
+  const sunrealtype diff_cli = N_VMaxNorm(y_cli);
+  printf("Test 6 (option): steps default = %li, off = %li, on = %li, "
+         "command line = %li; max |default - off| = %.3e, "
+         "max |on - command line| = %.3e\n",
+         nst_default, nst_off, nst_on, nst_cli, (double)diff_off,
+         (double)diff_cli);
+  if (nst_default != nst_off || diff_off != ZERO)
+  {
+    fprintf(stderr, "  FAIL: default run differs from disabled run\n");
+    fails++;
+  }
+  if (nst_on != nst_cli || diff_cli != ZERO)
+  {
+    fprintf(stderr, "  FAIL: command-line run differs from enabled run\n");
+    fails++;
+  }
+  if (nst_on == nst_default)
+  {
+    fprintf(stderr, "  FAIL: enabled run has the same step count as default\n");
+    fails++;
+  }
+
+  /* (b) setter return values: NULL memory, ExtSTS object, plain MRIStep */
+  flag = MRIStepSetUseExtSTSErrorEstimate(NULL, SUNTRUE);
+  if (flag != ARK_MEM_NULL)
+  {
+    fprintf(stderr, "  FAIL: setter with NULL memory returned %i\n", flag);
+    fails++;
+  }
+
+  /* the setter succeeds on an ExtSTS object */
+  exact_solution(ZERO, y_on, udata);
+  void* extsts_mem = MRIStepCreateExtSTS(f_diffusion, f_advection, NULL, ZERO,
+                                         y_on, ctx);
+  if (extsts_mem == NULL) { return fails + 1; }
+  fails += check_flag(MRIStepGetSTS(extsts_mem, &sts_mem), "MRIStepGetSTS");
+  flag = MRIStepSetUseExtSTSErrorEstimate(extsts_mem, SUNTRUE);
+  if (flag != ARK_SUCCESS)
+  {
+    fprintf(stderr, "  FAIL: setter on ExtSTS object returned %i\n", flag);
+    fails++;
+  }
+
+  /* (d) ARKodeSetDefaults disables the estimate again */
+  fails += check_flag(ARKodeSetDefaults(extsts_mem), "ARKodeSetDefaults");
+  ARKodeMRIStepMem step_mem = (ARKodeMRIStepMem)((ARKodeMem)extsts_mem)->step_mem;
+  if (step_mem->extsts_use_err_est)
+  {
+    fprintf(stderr, "  FAIL: ARKodeSetDefaults did not disable the option\n");
+    fails++;
+  }
+  ARKodeFree(&extsts_mem);
+
+  /* both the setter and the command-line key fail on a plain MRIStep object */
+  fails += check_flag(MRIStepInnerStepper_Create(ctx, &inner),
+                      "MRIStepInnerStepper_Create");
+  fails += check_flag(MRIStepInnerStepper_SetEvolveFn(inner, exact_inner_evolve),
+                      "MRIStepInnerStepper_SetEvolveFn");
+  fails += check_flag(MRIStepInnerStepper_SetFullRhsFn(inner, exact_inner_fullrhs),
+                      "MRIStepInnerStepper_SetFullRhsFn");
+  void* mri_mem = MRIStepCreate(f_advection, NULL, ZERO, y_on, inner, ctx);
+  if (mri_mem == NULL) { return fails + 1; }
+  flag = MRIStepSetUseExtSTSErrorEstimate(mri_mem, SUNTRUE);
+  if (flag != ARK_ILL_INPUT)
+  {
+    fprintf(stderr, "  FAIL: setter on plain MRIStep object returned %i\n", flag);
+    fails++;
+  }
+  {
+    char arg0[] = "ark_test_extsts_stserror";
+    char arg1[] = "arkode.use_extsts_error_estimate";
+    char arg2[] = "1";
+    char* cli[] = {arg0, arg1, arg2};
+    flag        = ARKodeSetOptions(mri_mem, NULL, NULL, 3, cli);
+    if (flag != ARK_ILL_INPUT)
+    {
+      fprintf(stderr,
+              "  FAIL: command-line key on plain MRIStep object returned %i\n",
+              flag);
+      fails++;
+    }
+  }
+  ARKodeFree(&mri_mem);
+  MRIStepInnerStepper_Free(&inner);
+
+  N_VDestroy(y_default);
+  N_VDestroy(y_off);
+  N_VDestroy(y_on);
+  N_VDestroy(y_cli);
+  return fails;
+}
+
 int main(int argc, char* argv[])
 {
   SUNContext ctx = NULL;
@@ -604,6 +784,7 @@ int main(int argc, char* argv[])
   fails += test_no_sts(sts, &udata, ctx);
   fails += test_one_step(sts, &udata, ctx);
   fails += test_htol_rejected(&udata, ctx);
+  fails += test_option(sts, &udata, ctx);
 
   N_VDestroy(udata.work);
   SUNContext_Free(&ctx);
