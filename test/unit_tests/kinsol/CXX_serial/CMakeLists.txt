@@ -59,9 +59,15 @@ foreach(test_tuple ${unit_tests})
     string(REPLACE " " "_" test_name "${test_target}_${test_args}")
   endif()
 
+  # This test checks its results internally and reports failure via its exit code.
+  set(test_options)
+  if(test_target STREQUAL "kin_test_dq_restore")
+    list(APPEND test_options NODIFF)
+  endif()
+
   # add test to regression tests
   sundials_add_test(
-    ${test_name} ${test_target}
+    ${test_name} ${test_target} ${test_options}
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out

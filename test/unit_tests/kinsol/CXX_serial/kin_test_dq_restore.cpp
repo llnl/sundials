@@ -41,6 +41,7 @@ struct ProbeData
   int rejections                          = 0;
 };
 
+// Reject a perturbation of the selected column; otherwise evaluate the linear system.
 int residual(N_Vector u, N_Vector f, void* user_data)
 {
   auto* data   = static_cast<ProbeData*>(user_data);
@@ -58,6 +59,7 @@ int residual(N_Vector u, N_Vector f, void* user_data)
   return 0;
 }
 
+// Supply the exact Jacobian for the success control without DQ evaluations.
 int jacobian(N_Vector, N_Vector, SUNMatrix matrix, void*, N_Vector, N_Vector)
 {
   for (sunindextype j = 0; j < length; ++j)
@@ -70,12 +72,33 @@ int jacobian(N_Vector, N_Vector, SUNMatrix matrix, void*, N_Vector, N_Vector)
   return 0;
 }
 
+// Report the routine responsible for an unexpected setup or query failure.
+bool check_flag(int flag, const char* routine)
+{
+  if (flag == 0) { return true; }
+  std::fprintf(stderr, "%s returned %d\n", routine, flag);
+  return false;
+}
+
+bool check_ptr(const void* pointer, const char* routine)
+{
+  if (pointer) { return true; }
+  std::fprintf(stderr, "%s returned NULL\n", routine);
+  return false;
+}
+
+// Exercise one rejected DQ column or a successful solve, then release resources.
 bool run_case(sunindextype column, int failure, bool exact)
 {
   SUNContext context = nullptr;
-  if (SUNContext_Create(SUN_COMM_NULL, &context)) { return false; }
+  if (!check_flag(SUNContext_Create(SUN_COMM_NULL, &context),
+                  "SUNContext_Create"))
+  {
+    return false;
+  }
   /* Expected setup failures are checked below; omit path-dependent diagnostics. */
-  if (SUNContext_ClearErrHandlers(context))
+  if (!check_flag(SUNContext_ClearErrHandlers(context),
+                  "SUNContext_ClearErrHandlers"))
   {
     SUNContext_Free(&context);
     return false;
@@ -86,33 +109,58 @@ bool run_case(sunindextype column, int failure, bool exact)
   SUNLinearSolver solver = u && matrix ? SUNLinSol_Dense(u, matrix, context)
                                        : nullptr;
   void* memory           = KINCreate(context);
-  bool passed            = u && scale && matrix && solver && memory;
+  // Check each allocation separately so every failure identifies its source.
+  bool passed = check_ptr(u, "N_VNew_Serial(u)");
+  passed      = check_ptr(scale, "N_VNew_Serial(scale)") && passed;
+  passed      = check_ptr(matrix, "SUNDenseMatrix") && passed;
+  passed      = check_ptr(solver, "SUNLinSol_Dense") && passed;
+  passed      = check_ptr(memory, "KINCreate") && passed;
   ProbeData data;
   data.column  = column;
   data.failure = failure;
   if (passed)
   {
     auto* values = N_VGetArrayPointer(u);
-    for (sunindextype i = 0; i < length; ++i) { values[i] = data.initial[i]; }
+    if (values)
+    {
+      for (sunindextype i = 0; i < length; ++i) { values[i] = data.initial[i]; }
+    }
     N_VConst(SUN_RCONST(1.0), scale);
-    int flag = KINInit(memory, residual, u);
-    if (flag == KIN_SUCCESS) { flag = KINSetUserData(memory, &data); }
-    if (flag == KIN_SUCCESS)
+    // Initialize the solver and stop setup at the first failed routine.
+    bool configured = check_ptr(values, "N_VGetArrayPointer");
+    int flag        = KIN_SUCCESS;
+    if (configured)
     {
-      flag = KINSetRelErrFunc(memory, SUN_RCONST(1.0e-4));
+      configured = check_flag(KINInit(memory, residual, u), "KINInit");
     }
-    if (flag == KIN_SUCCESS)
+    if (configured)
     {
-      flag = KINSetLinearSolver(memory, solver, matrix);
+      configured = check_flag(KINSetUserData(memory, &data), "KINSetUserData");
     }
-    if (flag == KIN_SUCCESS && exact) { flag = KINSetJacFn(memory, jacobian); }
-    if (flag == KIN_SUCCESS)
+    if (configured)
     {
-      flag = KINSol(memory, u, KIN_NONE, scale, scale);
+      configured = check_flag(KINSetRelErrFunc(memory, SUN_RCONST(1.0e-4)),
+                              "KINSetRelErrFunc");
     }
+    if (configured)
+    {
+      configured = check_flag(KINSetLinearSolver(memory, solver, matrix),
+                              "KINSetLinearSolver");
+    }
+    if (configured && exact)
+    {
+      configured = check_flag(KINSetJacFn(memory, jacobian), "KINSetJacFn");
+    }
+    if (configured) { flag = KINSol(memory, u, KIN_NONE, scale, scale); }
     long int evaluations = -1;
-    passed = KINGetNumLinFuncEvals(memory, &evaluations) == KINLS_SUCCESS;
-    if (failure != 0)
+    passed               = configured;
+    if (configured)
+    {
+      passed = check_flag(KINGetNumLinFuncEvals(memory, &evaluations),
+                          "KINGetNumLinFuncEvals");
+    }
+    // A rejected probe must preserve both failure propagation and the initial vector.
+    if (passed && failure != 0)
     {
       passed = passed && flag == KIN_LSETUP_FAIL && data.rejections == 1 &&
                evaluations == column + 1;
@@ -126,8 +174,9 @@ bool run_case(sunindextype column, int failure, bool exact)
         }
       }
     }
-    else
+    else if (passed)
     {
+      // Successful DQ and explicit Jacobian solves must reach the known root.
       const sunrealtype tolerance =
         SUN_RCONST(100.0) *
         std::sqrt(std::numeric_limits<sunrealtype>::epsilon());
@@ -144,6 +193,7 @@ bool run_case(sunindextype column, int failure, bool exact)
                    data.rejections, evaluations);
     }
   }
+  // Release every allocated object, including after setup failures.
   if (memory) { KINFree(&memory); }
   if (solver) { SUNLinSolFree(solver); }
   if (matrix) { SUNMatDestroy(matrix); }
@@ -157,6 +207,7 @@ bool run_case(sunindextype column, int failure, bool exact)
 int main()
 {
   int failures = 0;
+  // Cover both callback failure signs at every column.
   for (int failure : {1, -1})
   {
     for (sunindextype column = 0; column < length; ++column)
@@ -168,6 +219,7 @@ int main()
       if (!passed) { ++failures; }
     }
   }
+  // Check that both Jacobian paths retain successful solve behavior.
   for (bool exact : {false, true})
   {
     const bool passed = run_case(0, 0, exact);
