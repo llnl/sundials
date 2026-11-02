@@ -15,6 +15,7 @@
 sundials_add_example(
   cvs_krylov_demo_ls
   SOURCES cvs_krylov_demo_ls.c
+  EXAMPLE_TYPE develop
   INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
                 cvs_krylov_demo_ls_2.out)
 target_link_libraries(
