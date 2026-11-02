@@ -15,5 +15,6 @@
 sundials_add_example(
   cv_diurnal_kry
   SOURCES cv_diurnal_kry.c
+  EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
