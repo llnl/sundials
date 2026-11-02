@@ -32,6 +32,7 @@ foreach(example cvs_diurnal_kry cvs_diurnal_kry_bp)
   sundials_add_example(
     ${example}
     SOURCES ${example}.c
+    EXAMPLE_TYPE develop
     LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                    ${EXE_EXTRA_LINK_LIBS})
 endforeach()
