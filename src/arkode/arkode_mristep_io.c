@@ -92,7 +92,7 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
 /*---------------------------------------------------------------
   MRIStepSetUseExtSTSErrorEstimate:
 
-  Specifies whether an ExtSTS error estimateshould include the
+  Specifies whether an ExtSTS error estimate should include the
   STS sub-integrator's embedded error estimates.
   ---------------------------------------------------------------*/
 int MRIStepSetUseExtSTSErrorEstimate(void* arkode_mem, sunbooleantype onoff)

@@ -293,10 +293,10 @@ void extSTS_FinalizeStepError(SUNDIALS_MAYBE_UNUSED ARKodeMem ark_mem,
       : ZERO;
   *dsm = SUNRsqrt(SUNSQR(dsm_slow) + SUNSQR(step_mem->extsts_dsm));
 
-  SUNLogInfo(ARK_LOGGER, "extsts-error-estimate",
-             "dsm_slow = " SUN_FORMAT_G ", dsm_sts = " SUN_FORMAT_G
-             ", dsm = " SUN_FORMAT_G,
-             dsm_slow, step_mem->extsts_dsm, *dsm);
+  SUNLogDebug(ARK_LOGGER, "extsts-error-estimate",
+              "dsm_slow = " SUN_FORMAT_G ", dsm_sts = " SUN_FORMAT_G
+              ", dsm = " SUN_FORMAT_G,
+              dsm_slow, step_mem->extsts_dsm, *dsm);
 }
 
 /*** Inner stepper utility routines ***/
