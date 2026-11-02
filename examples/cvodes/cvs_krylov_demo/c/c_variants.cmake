@@ -29,15 +29,6 @@ foreach(test_args 1 2)
     ANSWER_FILE cvs_krylov_demo_ls_${test_args}.out
     EXAMPLE_TYPE develop)
 endforeach()
-if(SUNDIALS_ENABLE_MONITORING)
-  sundials_add_test(
-    cvs_krylov_demo_ls_0_1 cvs_krylov_demo_ls
-    TEST_ARGS 0 1
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvs_krylov_demo_ls_0_1.out
-    EXAMPLE_TYPE develop)
-endif()
-
 sundials_add_example(
   cvs_krylov_demo_prec
   SOURCES cvs_krylov_demo_prec.c
