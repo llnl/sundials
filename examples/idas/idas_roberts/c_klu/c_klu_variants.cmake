@@ -12,18 +12,20 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idas_roberts_asai_klu idas_roberts_klu)
+if(SUNDIALS_EXAMPLE_VARIANT MATCHES "^idas_roberts_(asai_)?klu$")
   sundials_add_example(
-    ${example}
-    SOURCES ${example}.c ${example_options}
+    ${SUNDIALS_EXAMPLE_VARIANT}
+    SOURCES ${SUNDIALS_EXAMPLE_VARIANT}.c
     LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
                    sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+endif()
 
-sundials_add_example(
-  idas_roberts_fsa_klu
-  SOURCES idas_roberts_fsa_klu.c
-  TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
-  TEST_ARGS -sensi stg t
-  LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                 sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+if(SUNDIALS_EXAMPLE_VARIANT STREQUAL "idas_roberts_fsa_klu")
+  sundials_add_example(
+    idas_roberts_fsa_klu
+    SOURCES idas_roberts_fsa_klu.c
+    TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
+    TEST_ARGS -sensi stg t
+    LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
+                   sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+endif()
