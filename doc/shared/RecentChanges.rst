@@ -15,6 +15,10 @@ The returned string should no longer be freed by the user.
 
 **Bug Fixes**
 
+Fixed IDAS simultaneous sensitivity error control to include sensitivity
+errors in the local error test and order-decrease estimates. Previously,
+sensitivity tolerances could be ignored when the state errors were small.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 
