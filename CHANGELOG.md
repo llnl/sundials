@@ -25,6 +25,9 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
+stored as the update frequency instead of restoring the default value.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
@@ -33,7 +36,7 @@ the RKL step was called with an incorrect time argument.
 
 Updated the MRIStep module in ARKODE to support *extended Super Time Stepping*
 (ExtSTS) methods for multi-physics simulations involving parabolic components,
-through the `MRIStepExtSTSCreate` function.  See the documentation section on
+through the `MRIStepCreateExtSTS` function.  See the documentation section on
 the mathematical methods in MRIStep for more details on the structure of ExtSTS
 methods, and the documentation section on a skeleton of usage for MRIStep for
 details on its usage.
