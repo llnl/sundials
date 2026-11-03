@@ -117,6 +117,7 @@ function(sundials_install_example_cmake _target)
         list(APPEND _languages "${CMAKE_MATCH_1}")
       endif()
       if(_library STREQUAL "MPI::MPI_Fortran")
+        set(_mpi_fortran TRUE)
         string(APPEND _target_commands
                "find_package(MPI REQUIRED COMPONENTS Fortran)\n")
       endif()
@@ -194,6 +195,14 @@ function(sundials_install_example_cmake _target)
       )
     endif()
   endforeach()
+
+  if(_mpi_fortran)
+    string(
+      APPEND
+      _compiler_settings
+      "set(MPI_Fortran_COMPILER\n  [==[${MPI_Fortran_COMPILER}]==]\n  CACHE FILEPATH \"MPI Fortran compiler\")\n\n"
+    )
+  endif()
 
   if(CUDA IN_LIST _languages
      AND DEFINED CMAKE_CUDA_HOST_COMPILER
