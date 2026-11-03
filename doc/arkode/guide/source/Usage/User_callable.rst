@@ -3781,10 +3781,9 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
 
    .. note::
 
-      If the preprocessing operation applies to RHS evaluations in the
-      :c:type:`SUNDomEigEstimator` as well, the user must ensure that the preprocessing
-      function provided with :c:func:`ARKodeSetPreRhsFn` and
-      :c:func:`SUNDomEigEstimator_SetPreRhsFn` are consistent and synchronized.
+      If a user also needs to employ preprocessing operations to a RHS function used by a
+      :c:type:`SUNDomEigEstimator` object, then they must also call :c:func:`SUNDomEigEstimator_SetPreRhsFn` 
+      with the same `prerhs_fn` supplied here.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param prerhs_fn: the user-supplied function to call. A ``NULL`` input
