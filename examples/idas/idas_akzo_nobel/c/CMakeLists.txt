@@ -16,7 +16,6 @@ foreach(example idas_akzo_nob_asai_dns idas_akzo_nob_dns)
   sundials_add_example(
     ${example}
     SOURCES ${example}.c
-    EXAMPLE_TYPE exclude-single)
-  target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+    EXAMPLE_TYPE exclude-single
+    LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 endforeach()

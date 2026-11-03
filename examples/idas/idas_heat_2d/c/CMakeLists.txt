@@ -16,7 +16,6 @@ foreach(example idas_heat_2d_bnd idas_heat_2d_kry)
   sundials_add_example(
     ${example}
     SOURCES ${example}.c
-    EXAMPLE_TYPE exclude-single)
-  target_link_libraries(${example} PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                                           ${EXE_EXTRA_LINK_LIBS})
+    EXAMPLE_TYPE exclude-single
+    LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 endforeach()
