@@ -28,4 +28,7 @@ Fixed a bug where the time-stepping module incorrectly allowed setting an adapti
 step option when using a fixed step size. Now, attempting to set an adaptive
 step option in a fixed step configuration will result in an error.
 
+Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
+value was stored as the update frequency instead of restoring the default value.
+
 **Deprecation Notices**

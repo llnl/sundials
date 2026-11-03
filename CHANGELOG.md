@@ -29,6 +29,9 @@ Fixed a bug where the time-stepping module incorrectly allowed setting an adapti
 step option when using a fixed step size. Now, attempting to set an adaptive
 step option in a fixed step configuration will result in an error.
 
+Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
+stored as the update frequency instead of restoring the default value.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
@@ -37,7 +40,7 @@ step option in a fixed step configuration will result in an error.
 
 Updated the MRIStep module in ARKODE to support *extended Super Time Stepping*
 (ExtSTS) methods for multi-physics simulations involving parabolic components,
-through the `MRIStepExtSTSCreate` function.  See the documentation section on
+through the `MRIStepCreateExtSTS` function.  See the documentation section on
 the mathematical methods in MRIStep for more details on the structure of ExtSTS
 methods, and the documentation section on a skeleton of usage for MRIStep for
 details on its usage.

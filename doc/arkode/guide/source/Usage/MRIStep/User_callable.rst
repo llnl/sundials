@@ -1647,7 +1647,7 @@ Main solver optional output functions
       MRIStep and LSRKStep components of the ExtSTS solver, they should first
       call :c:func:`ARKodeSetUserData` on the MRIStep object, and then call
       :c:func:`ARKodeSetUserData` on the LSRKStep object returned from
-      :c:func:`MRIStepCreateExtSTS`.  By default, the LSRKStep object will
+      :c:func:`MRIStepGetSTS`.  By default, the LSRKStep object will
       inherit the ``user_data`` pointer from the MRIStep object.
 
    .. versionadded:: 7.9.0 (ARKODE 6.9.0)
@@ -2603,6 +2603,10 @@ vector.
 
       All previously set options are retained but may be updated by calling
       the appropriate "Set" functions.
+
+      This function reinitializes both the MRIStep object and the inner
+      LSRKStep object, so the user need not reinitialize the LSRKStep object
+      returned by :c:func:`MRIStepGetSTS()` separately.
 
       If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
       sends an error message to the error handler function.
