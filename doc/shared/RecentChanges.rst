@@ -5,6 +5,8 @@
 
 **New Features and Enhancements**
 
+Added SuperLU_MT linear solver support in sundials4py.
+
 Added the utility function, :c:func:`SUNFileFlush` for flushing file
 pointers. This is useful when using the Fortran 2003 interfaces.
 
