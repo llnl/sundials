@@ -42,10 +42,9 @@ def test_create_adjoint_stepper(sunctx, nvec, sunstepper):
 
 def test_adjointstepper_reinit(sunctx, nvec, sunstepper):
     adj_stepper, scheme, mem_helper = make_adjoint_stepper(sunctx, sunstepper, nvec)
-    t0 = 0.0
-    y0 = nvec
     tf = 1.0
-    err = SUNAdjointStepper_ReInit(adj_stepper, t0, y0, tf, nvec)
+    final_step_idx = 0
+    err = SUNAdjointStepper_ReInit(adj_stepper, tf, nvec, final_step_idx)
     assert err == SUN_SUCCESS
 
 

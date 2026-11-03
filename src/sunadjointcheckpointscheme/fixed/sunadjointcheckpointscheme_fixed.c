@@ -249,20 +249,13 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector_Fixed(
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdjointCheckpointScheme_Destroy_Fixed(
-  SUNAdjointCheckpointScheme* self_ptr)
+SUNErrCode SUNAdjointCheckpointScheme_Destroy_Fixed(SUNAdjointCheckpointScheme self)
 {
-  SUNFunctionBegin((*self_ptr)->sunctx);
-
-  SUNAdjointCheckpointScheme self = *self_ptr;
+  SUNFunctionBegin(self->sunctx);
 
   SUNCheckCall(SUNDataNode_Destroy(&IMPL_MEMBER(self, root_node)));
 
   free(self->content);
-  free(self->ops);
-  free(self);
-
-  *self_ptr = NULL;
 
   return SUN_SUCCESS;
 }

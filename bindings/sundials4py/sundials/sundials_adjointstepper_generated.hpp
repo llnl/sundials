@@ -78,7 +78,7 @@ m.def(
   nb::call_policy<sundials4py::returns_references_to<9, 1>>());
 
 m.def("SUNAdjointStepper_ReInit", SUNAdjointStepper_ReInit, nb::arg("adj"),
-      nb::arg("t0"), nb::arg("y0"), nb::arg("tf"), nb::arg("sf"));
+      nb::arg("tf"), nb::arg("sf"), nb::arg("final_step_idx"));
 
 m.def(
   "SUNAdjointStepper_Evolve",

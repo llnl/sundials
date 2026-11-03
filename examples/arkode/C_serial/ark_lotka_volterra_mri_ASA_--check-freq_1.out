@@ -1,0 +1,44 @@
+Initial condition:
+ 1.000000000000000e+00
+ 1.000000000000000e+00
+Forward Solution:
+ 1.026343285832973e+00
+ 9.096920501898369e-01
+MRIStep Stats for Forward Solution:
+Current time                  = 10
+Steps                         = 1280
+Step attempts                 = 1280
+Stability limited steps       = 0
+Accuracy limited steps        = 0
+Error test fails              = 0
+NLS step fails                = 0
+Inequality constraint fails   = 0
+Initial step size             = 0.0078125
+Last step size                = 0.0078125
+Current step size             = 0.0078125
+Explicit slow RHS fn evals    = 3840
+Implicit slow RHS fn evals    = 0
+Inner stepper failures        = 0
+NLS iters                     = 0
+NLS fails                     = 0
+NLS iters per step            = 0
+LS setups                     = 0
+
+Adjoint terminal condition:
+ 2.634328583297307e-02
+-9.030794981016310e-02
+ 0.000000000000000e+00
+ 0.000000000000000e+00
+ 0.000000000000000e+00
+ 0.000000000000000e+00
+Adjoint Solution:
+ 2.995948351918399e-01
+-1.415178995789316e-02
+ 6.219530681715294e-01
+ 6.800063405335303e-02
+ 1.691738987678716e-01
+ 2.725575806503880e-01
+
+SUNAdjointStepper Stats:
+Num backwards steps           = 1280
+Num recompute steps           = 0

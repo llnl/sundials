@@ -94,6 +94,9 @@ struct arkode_user_supplied_fn_table
   nb::object mristep_domeig;
   nb::object mristep_preinnerfn;
   nb::object mristep_postinnerfn;
+  nb::object mristep_adjff;
+  nb::object mristep_adjfse;
+  nb::object mristep_adjfsi;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -489,6 +492,33 @@ inline int mristep_fsi_wrapper(sunrealtype t, N_Vector y, N_Vector ydot,
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<ARKRhsFn>, arkode_user_supplied_fn_table, ARKodeMem,
     1>(&arkode_user_supplied_fn_table::mristep_fsi, t, y, ydot, user_data);
+}
+
+inline int mristep_adjff_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
+                                 N_Vector sens_dot, void* user_data)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::mristep_adjff, t, y, sens,
+                  sens_dot, user_data);
+}
+
+inline int mristep_adjfse_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
+                                  N_Vector sens_dot, void* user_data)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::mristep_adjfse, t, y, sens,
+                  sens_dot, user_data);
+}
+
+inline int mristep_adjfsi_wrapper(sunrealtype t, N_Vector y, N_Vector sens,
+                                  N_Vector sens_dot, void* user_data)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNAdjRhsFn>, arkode_user_supplied_fn_table,
+    ARKodeMem, 1>(&arkode_user_supplied_fn_table::mristep_adjfsi, t, y, sens,
+                  sens_dot, user_data);
 }
 
 using MRIStepPreInnerStdFn = int(sunrealtype t, std::vector<N_Vector> f,

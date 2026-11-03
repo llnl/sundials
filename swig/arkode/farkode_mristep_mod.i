@@ -33,6 +33,9 @@
 // Treat MRIStepCoupling as void*
 %apply void* { MRIStepCoupling };
 
+// Treat MRIStepInnerAdjointProblem as void*
+%apply void* { MRIStepInnerAdjointProblem };
+
 // Process definitions from these files
 %include "arkode/arkode_mristep.h"
 %include "arkode/arkode_mristep_deprecated.h"

@@ -161,6 +161,12 @@ module farkode_mristep_mod
  public :: FMRIStepReInit
  public :: FMRIStepCreateExtSTS
  public :: FMRIStepReInitExtSTS
+ public :: FMRIStepInnerAdjointProblem_Create
+ public :: FMRIStepInnerAdjointProblem_GetAdjRhsFn
+ public :: FMRIStepInnerAdjointProblem_GetTerminalState
+ public :: FMRIStepInnerAdjointProblem_GetUserData
+ public :: FMRIStepInnerAdjointProblem_Free
+ public :: FMRIStepCreateAdjointStepper
  public :: FMRIStepSetCoupling
  public :: FMRIStepSetPreInnerFn
  public :: FMRIStepSetPostInnerFn
@@ -578,6 +584,67 @@ type(C_FUNPTR), value :: farg3
 type(C_FUNPTR), value :: farg4
 real(C_DOUBLE), intent(in) :: farg5
 type(C_PTR), value :: farg6
+integer(C_INT) :: fresult
+end function
+
+function swigc_FMRIStepInnerAdjointProblem_Create(farg1, farg2, farg3, farg4, farg5) &
+bind(C, name="_wrap_FMRIStepInnerAdjointProblem_Create") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_FUNPTR), value :: farg2
+type(C_PTR), value :: farg3
+type(C_PTR), value :: farg4
+type(C_PTR), value :: farg5
+integer(C_INT) :: fresult
+end function
+
+function swigc_FMRIStepInnerAdjointProblem_GetAdjRhsFn(farg1, farg2) &
+bind(C, name="_wrap_FMRIStepInnerAdjointProblem_GetAdjRhsFn") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FMRIStepInnerAdjointProblem_GetTerminalState(farg1, farg2) &
+bind(C, name="_wrap_FMRIStepInnerAdjointProblem_GetTerminalState") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FMRIStepInnerAdjointProblem_GetUserData(farg1, farg2) &
+bind(C, name="_wrap_FMRIStepInnerAdjointProblem_GetUserData") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+subroutine swigc_FMRIStepInnerAdjointProblem_Free(farg1) &
+bind(C, name="_wrap_FMRIStepInnerAdjointProblem_Free")
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+end subroutine
+
+function swigc_FMRIStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8, farg9) &
+bind(C, name="_wrap_FMRIStepCreateAdjointStepper") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+type(C_PTR), value :: farg2
+type(C_FUNPTR), value :: farg3
+type(C_FUNPTR), value :: farg4
+type(C_PTR), value :: farg5
+real(C_DOUBLE), intent(in) :: farg6
+type(C_PTR), value :: farg7
+type(C_PTR), value :: farg8
+type(C_PTR), value :: farg9
 integer(C_INT) :: fresult
 end function
 
@@ -2002,6 +2069,125 @@ farg4 = fi
 farg5 = t0
 farg6 = c_loc(y0)
 fresult = swigc_FMRIStepReInitExtSTS(farg1, farg2, farg3, farg4, farg5, farg6)
+swig_result = fresult
+end function
+
+function FMRIStepInnerAdjointProblem_Create(arkode_mem, adj_f, sf, user_data, problem) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_FUNPTR), intent(in), value :: adj_f
+type(N_Vector), target, intent(inout) :: sf
+type(C_PTR) :: user_data
+type(C_PTR), target, intent(inout) :: problem
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_FUNPTR) :: farg2
+type(C_PTR) :: farg3
+type(C_PTR) :: farg4
+type(C_PTR) :: farg5
+
+farg1 = arkode_mem
+farg2 = adj_f
+farg3 = c_loc(sf)
+farg4 = user_data
+farg5 = c_loc(problem)
+fresult = swigc_FMRIStepInnerAdjointProblem_Create(farg1, farg2, farg3, farg4, farg5)
+swig_result = fresult
+end function
+
+function FMRIStepInnerAdjointProblem_GetAdjRhsFn(problem, adj_f) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: problem
+type(C_FUNPTR), target, intent(inout) :: adj_f
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
+
+farg1 = problem
+farg2 = c_loc(adj_f)
+fresult = swigc_FMRIStepInnerAdjointProblem_GetAdjRhsFn(farg1, farg2)
+swig_result = fresult
+end function
+
+function FMRIStepInnerAdjointProblem_GetTerminalState(problem, sf) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: problem
+type(C_PTR) :: sf
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
+
+farg1 = problem
+farg2 = sf
+fresult = swigc_FMRIStepInnerAdjointProblem_GetTerminalState(farg1, farg2)
+swig_result = fresult
+end function
+
+function FMRIStepInnerAdjointProblem_GetUserData(problem, user_data) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: problem
+type(C_PTR), target, intent(inout) :: user_data
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
+
+farg1 = problem
+farg2 = c_loc(user_data)
+fresult = swigc_FMRIStepInnerAdjointProblem_GetUserData(farg1, farg2)
+swig_result = fresult
+end function
+
+subroutine FMRIStepInnerAdjointProblem_Free(problem)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR) :: problem
+type(C_PTR) :: farg1
+
+farg1 = problem
+call swigc_FMRIStepInnerAdjointProblem_Free(farg1)
+end subroutine
+
+function FMRIStepCreateAdjointStepper(arkode_mem, inner_stepper, fse, fsi, inner_problem, tf, sf, sunctx, adj_stepper_ptr) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+type(C_PTR) :: inner_stepper
+type(C_FUNPTR), intent(in), value :: fse
+type(C_FUNPTR), intent(in), value :: fsi
+type(C_PTR) :: inner_problem
+real(C_DOUBLE), intent(in) :: tf
+type(N_Vector), target, intent(inout) :: sf
+type(C_PTR) :: sunctx
+type(C_PTR), target, intent(inout) :: adj_stepper_ptr
+integer(C_INT) :: fresult
+type(C_PTR) :: farg1
+type(C_PTR) :: farg2
+type(C_FUNPTR) :: farg3
+type(C_FUNPTR) :: farg4
+type(C_PTR) :: farg5
+real(C_DOUBLE) :: farg6
+type(C_PTR) :: farg7
+type(C_PTR) :: farg8
+type(C_PTR) :: farg9
+
+farg1 = arkode_mem
+farg2 = inner_stepper
+farg3 = fse
+farg4 = fsi
+farg5 = inner_problem
+farg6 = tf
+farg7 = c_loc(sf)
+farg8 = sunctx
+farg9 = c_loc(adj_stepper_ptr)
+fresult = swigc_FMRIStepCreateAdjointStepper(farg1, farg2, farg3, farg4, farg5, farg6, farg7, farg8, farg9)
 swig_result = fresult
 end function
 

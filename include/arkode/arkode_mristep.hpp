@@ -31,6 +31,14 @@ struct MRIStepCouplingDeleter
   void operator()(MRIStepCoupling t) { MRIStepCoupling_Free(t); }
 };
 
+struct MRIStepInnerAdjointProblemDeleter
+{
+  void operator()(MRIStepInnerAdjointProblem problem)
+  {
+    MRIStepInnerAdjointProblem_Free(problem);
+  }
+};
+
 } // namespace experimental
 } // namespace sundials
 

@@ -41,7 +41,7 @@ typedef SUNErrCode (*SUNAdjointCheckpointSchemeLoadVectorFn)(
   sunrealtype* tout);
 
 typedef SUNErrCode (*SUNAdjointCheckpointSchemeDestroyFn)(
-  SUNAdjointCheckpointScheme* check_scheme);
+  SUNAdjointCheckpointScheme check_scheme);
 
 typedef SUNErrCode (*SUNAdjointCheckpointSchemeEnableDenseFn)(
   SUNAdjointCheckpointScheme check_scheme, sunbooleantype on_or_off);
@@ -112,6 +112,10 @@ SUNErrCode SUNAdjointCheckpointScheme_LoadVector(
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_Destroy(SUNAdjointCheckpointScheme*);
+
+SUNDIALS_EXPORT
+SUNErrCode SUNAdjointCheckpointScheme_Enable(SUNAdjointCheckpointScheme check_scheme,
+                                             sunbooleantype enable_or_disable);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNAdjointCheckpointScheme_EnableDense(

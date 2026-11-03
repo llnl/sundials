@@ -35,6 +35,9 @@ m.def("SUNAdjointCheckpointScheme_InsertVector",
       SUNAdjointCheckpointScheme_InsertVector, nb::arg("check_scheme"),
       nb::arg("step_num"), nb::arg("stage_num"), nb::arg("t"), nb::arg("state"));
 
+m.def("SUNAdjointCheckpointScheme_Enable", SUNAdjointCheckpointScheme_Enable,
+      nb::arg("check_scheme"), nb::arg("enable_or_disable"));
+
 m.def("SUNAdjointCheckpointScheme_EnableDense",
       SUNAdjointCheckpointScheme_EnableDense, nb::arg("check_scheme"),
       nb::arg("on_or_off"));

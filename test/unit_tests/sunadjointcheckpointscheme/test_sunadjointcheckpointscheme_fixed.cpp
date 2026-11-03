@@ -150,6 +150,43 @@ TEST_F(SUNAdjointCheckpointSchemeFixed, CreateWorks)
   EXPECT_EQ(err, SUN_SUCCESS);
 }
 
+TEST_F(SUNAdjointCheckpointSchemeFixed, EnableWorks)
+{
+  SUNErrCode err;
+  SUNAdjointCheckpointScheme cs     = NULL;
+  suncountertype interval           = 2;
+  suncountertype estimate           = 1;
+  sunbooleantype keep_after_loading = SUNTRUE;
+  sunbooleantype needs_saving       = SUNFALSE;
+
+  err = SUNAdjointCheckpointScheme_Create_Fixed(SUNDATAIOMODE_INMEM, mem_helper,
+                                                interval, estimate,
+                                                keep_after_loading, sunctx, &cs);
+  ASSERT_EQ(err, SUN_SUCCESS);
+
+  err = SUNAdjointCheckpointScheme_NeedsSaving(cs, 2, 0, SUN_RCONST(0.0),
+                                               &needs_saving);
+  EXPECT_EQ(err, SUN_SUCCESS);
+  EXPECT_EQ(needs_saving, SUNTRUE);
+
+  err = SUNAdjointCheckpointScheme_Enable(cs, SUNFALSE);
+  EXPECT_EQ(err, SUN_SUCCESS);
+  err = SUNAdjointCheckpointScheme_NeedsSaving(cs, 2, 0, SUN_RCONST(0.0),
+                                               &needs_saving);
+  EXPECT_EQ(err, SUN_SUCCESS);
+  EXPECT_EQ(needs_saving, SUNFALSE);
+
+  err = SUNAdjointCheckpointScheme_Enable(cs, SUNTRUE);
+  EXPECT_EQ(err, SUN_SUCCESS);
+  err = SUNAdjointCheckpointScheme_NeedsSaving(cs, 2, 0, SUN_RCONST(0.0),
+                                               &needs_saving);
+  EXPECT_EQ(err, SUN_SUCCESS);
+  EXPECT_EQ(needs_saving, SUNTRUE);
+
+  err = SUNAdjointCheckpointScheme_Destroy(&cs);
+  EXPECT_EQ(err, SUN_SUCCESS);
+}
+
 TEST_F(SUNAdjointCheckpointSchemeFixed, SingleStageWorks)
 {
   SUNErrCode err;

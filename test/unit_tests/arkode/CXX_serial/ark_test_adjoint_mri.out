@@ -1,0 +1,5 @@
+mu = 1, keep = 1, steps = 3, lambda error = 2.164e-05, parameter error = 1.612e-05
+mu = 1, keep = 0, steps = 3, lambda error = 2.164e-05, parameter error = 1.612e-05
+mu = 0, keep = 1, steps = 3, lambda error = 2.164e-05, parameter error = 0.000e+00
+mu = 0, keep = 0, steps = 3, lambda error = 2.164e-05, parameter error = 0.000e+00
+MRIStep adjoint failures = 0
