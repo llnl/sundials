@@ -19,6 +19,7 @@
 
 # List of test tuples of the form "name\;args"
 set(unit_tests
+    "idas_test_stgr_res_recovery.cpp\;"
     "idas_test_kpr.cpp\;"
     "idas_test_kpr.cpp\;--eta_min_fx 1.0 --eta_max_fx 2.0"
     "idas_test_kpr.cpp\;--eta_min 2"
@@ -67,9 +68,15 @@ foreach(test_tuple ${unit_tests})
     string(REPLACE " " "_" test_name "${test_target}_${test_args}")
   endif()
 
+  # The recovery test checks results internally and uses its exit code.
+  set(test_options)
+  if(test_target STREQUAL "idas_test_stgr_res_recovery")
+    list(APPEND test_options NODIFF)
+  endif()
+
   # add test to regression tests
   sundials_add_test(
-    ${test_name} ${test_target}
+    ${test_name} ${test_target} ${test_options}
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out
