@@ -15,7 +15,5 @@
 sundials_add_example(
   kin_food_web_kry
   SOURCES kin_food_web_kry.c
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  kin_food_web_kry PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
-                           ${EXE_EXTRA_LINK_LIBS})
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES ${KINSOL_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

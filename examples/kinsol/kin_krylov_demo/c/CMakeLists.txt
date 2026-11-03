@@ -15,7 +15,5 @@
 sundials_add_example(
   kin_krylov_demo_ls
   SOURCES kin_krylov_demo_ls.c
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  kin_krylov_demo_ls PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
-                             ${EXE_EXTRA_LINK_LIBS})
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES ${KINSOL_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
