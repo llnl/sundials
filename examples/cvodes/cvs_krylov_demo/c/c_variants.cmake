@@ -17,10 +17,8 @@ sundials_add_example(
   SOURCES cvs_krylov_demo_ls.c
   EXAMPLE_TYPE develop
   INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
-                cvs_krylov_demo_ls_2.out)
-target_link_libraries(
-  cvs_krylov_demo_ls PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                             ${EXE_EXTRA_LINK_LIBS})
+                cvs_krylov_demo_ls_2.out
+  LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 foreach(test_args 1 2)
   sundials_add_test(
     cvs_krylov_demo_ls_${test_args} cvs_krylov_demo_ls

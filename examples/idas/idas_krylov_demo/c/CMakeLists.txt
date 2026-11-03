@@ -15,10 +15,8 @@
 sundials_add_example(
   idas_krylov_demo_ls
   SOURCES idas_krylov_demo_ls.c
-  INSTALL_FILES idas_krylov_demo_ls_1.out idas_krylov_demo_ls_2.out)
-target_link_libraries(
-  idas_krylov_demo_ls PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                              ${EXE_EXTRA_LINK_LIBS})
+  INSTALL_FILES idas_krylov_demo_ls_1.out idas_krylov_demo_ls_2.out
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 foreach(test_args 1 2)
   sundials_add_test(
     idas_krylov_demo_ls_${test_args} idas_krylov_demo_ls

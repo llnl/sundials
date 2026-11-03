@@ -16,10 +16,8 @@ sundials_add_example(
   idas_analytic_mels
   SOURCES idas_analytic_mels.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES idas_analytic_mels_idas.init_step_1e-5.out)
-target_link_libraries(
-  idas_analytic_mels PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                             ${EXE_EXTRA_LINK_LIBS})
+  INSTALL_FILES idas_analytic_mels_idas.init_step_1e-5.out
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
   idas_analytic_mels_idas.init_step_1e-5 idas_analytic_mels
   TEST_ARGS idas.init_step 1e-5

@@ -15,7 +15,5 @@
 sundials_add_example(
   idas_hessian_asa_fsa
   SOURCES idas_hessian_asa_fsa.c
-  EXAMPLE_TYPE exclude-single)
-target_link_libraries(
-  idas_hessian_asa_fsa PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
-                               ${EXE_EXTRA_LINK_LIBS})
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
