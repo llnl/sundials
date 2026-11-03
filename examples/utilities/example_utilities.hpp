@@ -18,6 +18,9 @@
  * reduce duplicate utility functions across example programs.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_EXAMPLE_UTILITIES_HPP
+#define SUNDIALS_EXAMPLE_UTILITIES_HPP
+
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -130,3 +133,5 @@ inline void find_arg(std::vector<std::string>& args, const std::string key,
     args.erase(it, it + 2);
   }
 }
+
+#endif // SUNDIALS_EXAMPLE_UTILITIES_HPP

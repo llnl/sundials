@@ -1,4 +1,4 @@
-// #ifndef _NVECTOR_MANY_VECTOR_H
+// #ifndef SUNDIALS_NVECTOR_MANYVECTOR_H
 //
 // #ifdef __cplusplus
 // #endif

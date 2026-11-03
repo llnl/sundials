@@ -18,6 +18,9 @@
  * ark_adr1d_extsts.cpp for more details.
  * ---------------------------------------------------------------------------*/
 
+#ifndef SUNDIALS_ARK_ADR1D_EXTSTS_HPP
+#define SUNDIALS_ARK_ADR1D_EXTSTS_HPP
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -453,3 +456,5 @@ static int CloseOutput(UserOptions& uopts)
 }
 
 //---- end of file ----
+
+#endif // SUNDIALS_ARK_ADR1D_EXTSTS_HPP

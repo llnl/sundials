@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_MPI_ERRORS_H
-#define _SUNDIALS_MPI_ERRORS_H
+#ifndef SUNDIALS_SUNDIALS_MPI_ERRORS_H
+#define SUNDIALS_SUNDIALS_MPI_ERRORS_H
 
 #include <sundials/sundials_errors.h>
 
@@ -31,4 +31,4 @@ void SUNMPIAbortErrHandlerFn(int line, const char* func, const char* file,
 }
 #endif
 
-#endif /* _SUNDIALS_MPI_ERRORS_H */
+#endif /* SUNDIALS_SUNDIALS_MPI_ERRORS_H */

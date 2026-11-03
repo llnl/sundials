@@ -17,8 +17,8 @@
  * SUNMatrix interface to Ginkgo matrices
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNMATRIX_GINKGO_HPP
-#define _SUNMATRIX_GINKGO_HPP
+#ifndef SUNDIALS_SUNMATRIX_GINKGO_HPP
+#define SUNDIALS_SUNMATRIX_GINKGO_HPP
 
 #include <ginkgo/ginkgo.hpp>
 #include <memory>

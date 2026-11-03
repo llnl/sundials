@@ -17,8 +17,8 @@
  * This is the header file for the main CVODES integrator.
  * -----------------------------------------------------------------*/
 
-#ifndef _CVODES_H
-#define _CVODES_H
+#ifndef SUNDIALS_CVODES_H
+#define SUNDIALS_CVODES_H
 
 #include <cvodes/cvodes_ls.h>
 #include <cvodes/cvodes_proj.h>
@@ -328,7 +328,7 @@ SUNDIALS_EXPORT int CVodeGetNumConstraintCorrections(void* cvode_mem,
 SUNDIALS_EXPORT int CVodeGetUserData(void* cvode_mem, void** user_data);
 SUNDIALS_EXPORT int CVodePrintAllStats(void* cvode_mem, FILE* outfile,
                                        SUNOutputFormat fmt);
-SUNDIALS_EXPORT char* CVodeGetReturnFlagName(long int flag);
+SUNDIALS_EXPORT const char* CVodeGetReturnFlagName(long int flag);
 
 /* Free function */
 SUNDIALS_EXPORT void CVodeFree(void** cvode_mem);

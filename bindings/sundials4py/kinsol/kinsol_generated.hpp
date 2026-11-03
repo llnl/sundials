@@ -1,4 +1,4 @@
-// #ifndef _KINSOL_H
+// #ifndef SUNDIALS_KINSOL_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -224,7 +224,7 @@ sundials4py::scoped_def(m, "KINGetReturnFlagName", KINGetReturnFlagName,
 //
 // #endif
 //
-// #ifndef _KINLS_H
+// #ifndef SUNDIALS_KINSOL_LS_H
 //
 // #ifdef __cplusplus
 // #endif

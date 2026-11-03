@@ -3313,89 +3313,76 @@ int ARKodePrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
 
 /*-----------------------------------------------------------------*/
 
-char* ARKodeGetReturnFlagName(long int flag)
+const char* ARKodeGetReturnFlagName(long int flag)
 {
-  char* name;
-  name = (char*)malloc(27 * sizeof(char));
-
   switch (flag)
   {
-  case ARK_SUCCESS: sprintf(name, "ARK_SUCCESS"); break;
-  case ARK_TSTOP_RETURN: sprintf(name, "ARK_TSTOP_RETURN"); break;
-  case ARK_ROOT_RETURN: sprintf(name, "ARK_ROOT_RETURN"); break;
-  case ARK_WARNING: sprintf(name, "ARK_WARNING"); break;
-  case ARK_TOO_MUCH_WORK: sprintf(name, "ARK_TOO_MUCH_WORK"); break;
-  case ARK_TOO_MUCH_ACC: sprintf(name, "ARK_TOO_MUCH_ACC"); break;
-  case ARK_ERR_FAILURE: sprintf(name, "ARK_ERR_FAILURE"); break;
-  case ARK_CONV_FAILURE: sprintf(name, "ARK_CONV_FAILURE"); break;
-  case ARK_LINIT_FAIL: sprintf(name, "ARK_LINIT_FAIL"); break;
-  case ARK_LSETUP_FAIL: sprintf(name, "ARK_LSETUP_FAIL"); break;
-  case ARK_LSOLVE_FAIL: sprintf(name, "ARK_LSOLVE_FAIL"); break;
-  case ARK_RHSFUNC_FAIL: sprintf(name, "ARK_RHSFUNC_FAIL"); break;
-  case ARK_FIRST_RHSFUNC_ERR: sprintf(name, "ARK_FIRST_RHSFUNC_ERR"); break;
-  case ARK_REPTD_RHSFUNC_ERR: sprintf(name, "ARK_REPTD_RHSFUNC_ERR"); break;
-  case ARK_UNREC_RHSFUNC_ERR: sprintf(name, "ARK_UNREC_RHSFUNC_ERR"); break;
-  case ARK_RTFUNC_FAIL: sprintf(name, "ARK_RTFUNC_FAIL"); break;
-  case ARK_LFREE_FAIL: sprintf(name, "ARK_LFREE_FAIL"); break;
-  case ARK_MASSINIT_FAIL: sprintf(name, "ARK_MASSINIT_FAIL"); break;
-  case ARK_MASSSETUP_FAIL: sprintf(name, "ARK_MASSSETUP_FAIL"); break;
-  case ARK_MASSSOLVE_FAIL: sprintf(name, "ARK_MASSSOLVE_FAIL"); break;
-  case ARK_MASSFREE_FAIL: sprintf(name, "ARK_MASSFREE_FAIL"); break;
-  case ARK_MASSMULT_FAIL: sprintf(name, "ARK_MASSMULT_FAIL"); break;
-  case ARK_CONSTR_FAIL: sprintf(name, "ARK_CONSTR_FAIL"); break;
-  case ARK_MEM_FAIL: sprintf(name, "ARK_MEM_FAIL"); break;
-  case ARK_MEM_NULL: sprintf(name, "ARK_MEM_NULL"); break;
-  case ARK_ILL_INPUT: sprintf(name, "ARK_ILL_INPUT"); break;
-  case ARK_NO_MALLOC: sprintf(name, "ARK_NO_MALLOC"); break;
-  case ARK_BAD_K: sprintf(name, "ARK_BAD_K"); break;
-  case ARK_BAD_T: sprintf(name, "ARK_BAD_T"); break;
-  case ARK_BAD_DKY: sprintf(name, "ARK_BAD_DKY"); break;
-  case ARK_TOO_CLOSE: sprintf(name, "ARK_TOO_CLOSE"); break;
-  case ARK_VECTOROP_ERR: sprintf(name, "ARK_VECTOROP_ERR"); break;
-  case ARK_NLS_INIT_FAIL: sprintf(name, "ARK_NLS_INIT_FAIL"); break;
-  case ARK_NLS_SETUP_FAIL: sprintf(name, "ARK_NLS_SETUP_FAIL"); break;
-  case ARK_NLS_SETUP_RECVR: sprintf(name, "ARK_NLS_SETUP_RECVR"); break;
-  case ARK_NLS_OP_ERR: sprintf(name, "ARK_NLS_OP_ERR"); break;
-  case ARK_INNERSTEP_ATTACH_ERR:
-    sprintf(name, "ARK_INNERSTEP_ATTACH_ERR");
-    break;
-  case ARK_INNERSTEP_FAIL: sprintf(name, "ARK_INNERSTEP_FAIL"); break;
-  case ARK_OUTERTOINNER_FAIL: sprintf(name, "ARK_OUTERTOINNER_FAIL"); break;
-  case ARK_INNERTOOUTER_FAIL: sprintf(name, "ARK_INNERTOOUTER_FAIL"); break;
-  case ARK_POSTPROCESS_STEP_FAIL:
-    sprintf(name, "ARK_POSTPROCESS_STEP_FAIL");
-    break;
-  case ARK_POSTPROCESS_STAGE_FAIL:
-    sprintf(name, "ARK_POSTPROCESS_STAGE_FAIL");
-    break;
-  case ARK_PRESTEPFN_FAIL: sprintf(name, "ARK_PRESTEPFN_FAIL"); break;
-  case ARK_POSTSTEPFN_FAIL: sprintf(name, "ARK_POSTSTEPFN_FAIL"); break;
-  case ARK_PRERHSFN_FAIL: sprintf(name, "ARK_PRERHSFN_FAIL"); break;
-  case ARK_USER_PREDICT_FAIL: sprintf(name, "ARK_USER_PREDICT_FAIL"); break;
-  case ARK_INTERP_FAIL: sprintf(name, "ARK_INTERP_FAIL"); break;
-  case ARK_INVALID_TABLE: sprintf(name, "ARK_INVALID_TABLE"); break;
-  case ARK_CONTEXT_ERR: sprintf(name, "ARK_CONTEXT_ERR"); break;
-  case ARK_RELAX_FAIL: sprintf(name, "ARK_RELAX_FAIL"); break;
-  case ARK_RELAX_MEM_NULL: sprintf(name, "ARK_RELAX_MEM_NULL"); break;
-  case ARK_RELAX_FUNC_FAIL: sprintf(name, "ARK_RELAX_FUNC_FAIL"); break;
-  case ARK_RELAX_JAC_FAIL: sprintf(name, "ARK_RELAX_JAC_FAIL"); break;
-  case ARK_CONTROLLER_ERR: sprintf(name, "ARK_CONTROLLER_ERR"); break;
-  case ARK_STEPPER_UNSUPPORTED: sprintf(name, "ARK_STEPPER_UNSUPPORTED"); break;
-  case ARK_ADJ_RECOMPUTE_FAIL: sprintf(name, "ARK_ADJ_RECOMPUTE_FAIL"); break;
-  case ARK_ADJ_CHECKPOINT_FAIL: sprintf(name, "ARK_ADJ_CHECKPOINT_FAIL"); break;
-  case ARK_SUNADJSTEPPER_ERR: sprintf(name, "ARK_SUNADJSTEPPER_ERR"); break;
-  case ARK_DOMEIG_FAIL: sprintf(name, "ARK_DOMEIG_FAIL"); break;
-  case ARK_MAX_STAGE_LIMIT_FAIL:
-    sprintf(name, "ARK_MAX_STAGE_LIMIT_FAIL");
-    break;
-  case ARK_SUNSTEPPER_ERR: sprintf(name, "ARK_SUNSTEPPER_ERR"); break;
-  case ARK_STEP_DIRECTION_ERR: sprintf(name, "ARK_STEP_DIRECTION_ERR"); break;
-  case ARK_UNRECOGNIZED_ERROR: sprintf(name, "ARK_UNRECOGNIZED_ERROR"); break;
-  case ARK_STEP_H0_FAIL: sprintf(name, "ARK_STEP_H0_FAIL"); break;
-  default: sprintf(name, "NONE");
+  case ARK_SUCCESS: return "ARK_SUCCESS";
+  case ARK_TSTOP_RETURN: return "ARK_TSTOP_RETURN";
+  case ARK_ROOT_RETURN: return "ARK_ROOT_RETURN";
+  case ARK_WARNING: return "ARK_WARNING";
+  case ARK_TOO_MUCH_WORK: return "ARK_TOO_MUCH_WORK";
+  case ARK_TOO_MUCH_ACC: return "ARK_TOO_MUCH_ACC";
+  case ARK_ERR_FAILURE: return "ARK_ERR_FAILURE";
+  case ARK_CONV_FAILURE: return "ARK_CONV_FAILURE";
+  case ARK_LINIT_FAIL: return "ARK_LINIT_FAIL";
+  case ARK_LSETUP_FAIL: return "ARK_LSETUP_FAIL";
+  case ARK_LSOLVE_FAIL: return "ARK_LSOLVE_FAIL";
+  case ARK_RHSFUNC_FAIL: return "ARK_RHSFUNC_FAIL";
+  case ARK_FIRST_RHSFUNC_ERR: return "ARK_FIRST_RHSFUNC_ERR";
+  case ARK_REPTD_RHSFUNC_ERR: return "ARK_REPTD_RHSFUNC_ERR";
+  case ARK_UNREC_RHSFUNC_ERR: return "ARK_UNREC_RHSFUNC_ERR";
+  case ARK_RTFUNC_FAIL: return "ARK_RTFUNC_FAIL";
+  case ARK_LFREE_FAIL: return "ARK_LFREE_FAIL";
+  case ARK_MASSINIT_FAIL: return "ARK_MASSINIT_FAIL";
+  case ARK_MASSSETUP_FAIL: return "ARK_MASSSETUP_FAIL";
+  case ARK_MASSSOLVE_FAIL: return "ARK_MASSSOLVE_FAIL";
+  case ARK_MASSFREE_FAIL: return "ARK_MASSFREE_FAIL";
+  case ARK_MASSMULT_FAIL: return "ARK_MASSMULT_FAIL";
+  case ARK_CONSTR_FAIL: return "ARK_CONSTR_FAIL";
+  case ARK_MEM_FAIL: return "ARK_MEM_FAIL";
+  case ARK_MEM_NULL: return "ARK_MEM_NULL";
+  case ARK_ILL_INPUT: return "ARK_ILL_INPUT";
+  case ARK_NO_MALLOC: return "ARK_NO_MALLOC";
+  case ARK_BAD_K: return "ARK_BAD_K";
+  case ARK_BAD_T: return "ARK_BAD_T";
+  case ARK_BAD_DKY: return "ARK_BAD_DKY";
+  case ARK_TOO_CLOSE: return "ARK_TOO_CLOSE";
+  case ARK_VECTOROP_ERR: return "ARK_VECTOROP_ERR";
+  case ARK_NLS_INIT_FAIL: return "ARK_NLS_INIT_FAIL";
+  case ARK_NLS_SETUP_FAIL: return "ARK_NLS_SETUP_FAIL";
+  case ARK_NLS_SETUP_RECVR: return "ARK_NLS_SETUP_RECVR";
+  case ARK_NLS_OP_ERR: return "ARK_NLS_OP_ERR";
+  case ARK_INNERSTEP_ATTACH_ERR: return "ARK_INNERSTEP_ATTACH_ERR";
+  case ARK_INNERSTEP_FAIL: return "ARK_INNERSTEP_FAIL";
+  case ARK_OUTERTOINNER_FAIL: return "ARK_OUTERTOINNER_FAIL";
+  case ARK_INNERTOOUTER_FAIL: return "ARK_INNERTOOUTER_FAIL";
+  case ARK_POSTPROCESS_STEP_FAIL: return "ARK_POSTPROCESS_STEP_FAIL";
+  case ARK_POSTPROCESS_STAGE_FAIL: return "ARK_POSTPROCESS_STAGE_FAIL";
+  case ARK_PRESTEPFN_FAIL: return "ARK_PRESTEPFN_FAIL";
+  case ARK_POSTSTEPFN_FAIL: return "ARK_POSTSTEPFN_FAIL";
+  case ARK_PRERHSFN_FAIL: return "ARK_PRERHSFN_FAIL";
+  case ARK_USER_PREDICT_FAIL: return "ARK_USER_PREDICT_FAIL";
+  case ARK_INTERP_FAIL: return "ARK_INTERP_FAIL";
+  case ARK_INVALID_TABLE: return "ARK_INVALID_TABLE";
+  case ARK_CONTEXT_ERR: return "ARK_CONTEXT_ERR";
+  case ARK_RELAX_FAIL: return "ARK_RELAX_FAIL";
+  case ARK_RELAX_MEM_NULL: return "ARK_RELAX_MEM_NULL";
+  case ARK_RELAX_FUNC_FAIL: return "ARK_RELAX_FUNC_FAIL";
+  case ARK_RELAX_JAC_FAIL: return "ARK_RELAX_JAC_FAIL";
+  case ARK_CONTROLLER_ERR: return "ARK_CONTROLLER_ERR";
+  case ARK_STEPPER_UNSUPPORTED: return "ARK_STEPPER_UNSUPPORTED";
+  case ARK_ADJ_RECOMPUTE_FAIL: return "ARK_ADJ_RECOMPUTE_FAIL";
+  case ARK_ADJ_CHECKPOINT_FAIL: return "ARK_ADJ_CHECKPOINT_FAIL";
+  case ARK_SUNADJSTEPPER_ERR: return "ARK_SUNADJSTEPPER_ERR";
+  case ARK_DOMEIG_FAIL: return "ARK_DOMEIG_FAIL";
+  case ARK_MAX_STAGE_LIMIT_FAIL: return "ARK_MAX_STAGE_LIMIT_FAIL";
+  case ARK_SUNSTEPPER_ERR: return "ARK_SUNSTEPPER_ERR";
+  case ARK_STEP_DIRECTION_ERR: return "ARK_STEP_DIRECTION_ERR";
+  case ARK_UNRECOGNIZED_ERROR: return "ARK_UNRECOGNIZED_ERROR";
+  case ARK_STEP_H0_FAIL: return "ARK_STEP_H0_FAIL";
+  default: return "NONE";
   }
-
-  return (name);
 }
 
 /*===============================================================

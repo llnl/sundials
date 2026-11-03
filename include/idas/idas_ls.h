@@ -18,8 +18,8 @@
  * This is the header file for IDAS' linear solver interface.
  * ----------------------------------------------------------------*/
 
-#ifndef _IDASLS_H
-#define _IDASLS_H
+#ifndef SUNDIALS_IDAS_LS_H
+#define SUNDIALS_IDAS_LS_H
 
 #include <sundials/sundials_direct.h>
 #include <sundials/sundials_iterative.h>

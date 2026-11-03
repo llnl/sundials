@@ -1,4 +1,4 @@
-// #ifndef _NVECTOR_SERIAL_H
+// #ifndef SUNDIALS_NVECTOR_SERIAL_H
 //
 // #ifdef __cplusplus
 // #endif

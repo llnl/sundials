@@ -17,8 +17,8 @@
  * SUNDIALS configuration header file.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_CONFIG_H
-#define _SUNDIALS_CONFIG_H
+#ifndef SUNDIALS_CONFIG_H
+#define SUNDIALS_CONFIG_H
 
 #include "sundials/sundials_export.h"
 
@@ -306,4 +306,4 @@
 #define SUNDIALS_BUILD_WITH_PROFILING
 #endif
 
-#endif /* _SUNDIALS_CONFIG_H */
+#endif /* SUNDIALS_CONFIG_H */

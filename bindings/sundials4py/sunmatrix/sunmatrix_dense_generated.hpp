@@ -1,4 +1,4 @@
-// #ifndef _SUNMATRIX_DENSE_H
+// #ifndef SUNDIALS_SUNMATRIX_DENSE_H
 //
 // #ifdef __cplusplus
 // #endif

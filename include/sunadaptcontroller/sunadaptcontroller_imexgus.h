@@ -17,8 +17,8 @@
  * This is the header file for the SUNAdaptController_ImExGus module.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNADAPTCONTROLLER_IMEXGUS_H
-#define _SUNADAPTCONTROLLER_IMEXGUS_H
+#ifndef SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H
+#define SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H
 
 #include <stdio.h>
 #include <sundials/sundials_adaptcontroller.h>
@@ -93,4 +93,4 @@ SUNErrCode SUNAdaptController_Space_ImExGus(SUNAdaptController C,
 }
 #endif
 
-#endif /* _SUNADAPTCONTROLLER_IMEXGUS_H */
+#endif /* SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H */

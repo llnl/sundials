@@ -27,8 +27,8 @@
  * The implementations live in the per-family headers listed below.
  *----------------------------------------------------------------------------*/
 
-#ifndef SUNDIALS4PY_TYPES_HPP
-#define SUNDIALS4PY_TYPES_HPP
+#ifndef SUNDIALS_SUNDIALS4PY_TYPES_HPP
+#define SUNDIALS_SUNDIALS4PY_TYPES_HPP
 
 /* Basic array typedefs and the sundials4py exception hierarchy. */
 #include "sundials4py_core_types.hpp"
@@ -49,4 +49,4 @@
    it names all the classes above. */
 #include "sundials4py_custom_casters.hpp"
 
-#endif // SUNDIALS4PY_TYPES_HPP
+#endif // SUNDIALS_SUNDIALS4PY_TYPES_HPP

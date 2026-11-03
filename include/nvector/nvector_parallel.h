@@ -38,8 +38,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_PARALLEL_H
-#define _NVECTOR_PARALLEL_H
+#ifndef SUNDIALS_NVECTOR_PARALLEL_H
+#define SUNDIALS_NVECTOR_PARALLEL_H
 
 #include <mpi.h>
 #include <stdio.h>

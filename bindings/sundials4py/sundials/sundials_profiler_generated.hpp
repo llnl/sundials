@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_PROFILER_H
+// #ifndef SUNDIALS_SUNDIALS_PROFILER_H
 //
 // #ifdef __cplusplus
 // #endif

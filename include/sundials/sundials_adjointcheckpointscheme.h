@@ -15,8 +15,8 @@
  * SUNAdjointCheckpointScheme class declaration.
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNADJOINT_CHECKPOINTSCHEME_H
-#define _SUNADJOINT_CHECKPOINTSCHEME_H
+#ifndef SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
+#define SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H
 
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_types.h>
@@ -121,4 +121,4 @@ SUNErrCode SUNAdjointCheckpointScheme_EnableDense(
 }
 #endif
 
-#endif /*_SUNADJOINT_CHECKPOINTSCHEME_H*/
+#endif /* SUNDIALS_SUNDIALS_ADJOINTCHECKPOINTSCHEME_H */

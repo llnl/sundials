@@ -20,8 +20,8 @@
  * -----------------------------------------------------------------
  */
 
-#ifndef _KINSOL_IMPL_H
-#define _KINSOL_IMPL_H
+#ifndef SUNDIALS_KINSOL_IMPL_H
+#define SUNDIALS_KINSOL_IMPL_H
 
 #include <stdarg.h>
 

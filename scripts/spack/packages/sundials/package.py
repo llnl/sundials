@@ -670,11 +670,10 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "+mpi" in spec:
             entries.extend(
                 [
-                    self.cache_option_from_variant("MPI_ENABLE", "mpi"),
-                    cmake_cache_path("MPI_MPICC", spec["mpi"].mpicc),
-                    cmake_cache_path("MPI_MPICXX", spec["mpi"].mpicxx),
-                    cmake_cache_path("MPI_MPIF77", spec["mpi"].mpif77),
-                    cmake_cache_path("MPI_MPIF90", spec["mpi"].mpifc),
+                    self.cache_option_from_variant("SUNDIALS_ENABLE_MPI", "mpi"),
+                    cmake_cache_path("MPI_C_COMPILER", spec["mpi"].mpicc),
+                    cmake_cache_path("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
+                    cmake_cache_path("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
                 ]
             )
             if "scheduler=flux" in spec:

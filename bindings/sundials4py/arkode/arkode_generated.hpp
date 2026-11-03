@@ -1,4 +1,4 @@
-// #ifndef _ARKODE_H
+// #ifndef SUNDIALS_ARKODE_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1436,7 +1436,7 @@ sundials4py::scoped_def(
 //
 // #endif
 //
-// #ifndef _ARKLS_H
+// #ifndef SUNDIALS_ARKODE_LS_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1501,7 +1501,7 @@ sundials4py::scoped_def(m, "ARKodeSetMassLSNormFactor", ARKodeSetMassLSNormFacto
 //
 // #endif
 //
-// #ifndef _ARKODE_BUTCHER_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1585,7 +1585,7 @@ sundials4py::scoped_def(
 //
 // #endif
 //
-// #ifndef _ARKODE_ERK_TABLES_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_ERK_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1685,7 +1685,7 @@ sundials4py::scoped_def(m, "ARKodeButcherTable_ERKIDToName",
 //
 // #endif
 //
-// #ifndef _ARKODE_DIRK_TABLES_H
+// #ifndef SUNDIALS_ARKODE_BUTCHER_DIRK_H
 //
 // #ifdef __cplusplus
 // #endif
@@ -1780,7 +1780,7 @@ sundials4py::scoped_def(m, "ARKodeButcherTable_DIRKIDToName",
 //
 // #endif
 //
-// #ifndef _ARKODE_SPRKTABLE_H
+// #ifndef SUNDIALS_ARKODE_SPRK_H
 //
 // #ifdef __cplusplus
 // #endif

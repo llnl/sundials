@@ -38,8 +38,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_SERIAL_H
-#define _NVECTOR_SERIAL_H
+#ifndef SUNDIALS_NVECTOR_SERIAL_H
+#define SUNDIALS_NVECTOR_SERIAL_H
 
 #include <stdio.h>
 #include <sundials/sundials_nvector.h>

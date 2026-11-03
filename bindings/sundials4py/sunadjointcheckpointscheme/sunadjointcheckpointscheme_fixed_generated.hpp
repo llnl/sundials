@@ -1,4 +1,4 @@
-// #ifndef _SUNADJOINTCHECKPOINTSCHEME_FIXED_H
+// #ifndef SUNDIALS_SUNADJOINTCHECKPOINTSCHEME_FIXED_H
 //
 // #ifdef __cplusplus
 // #endif

@@ -1,4 +1,4 @@
-// #ifndef _SUNADJOINT_STEPPER_H
+// #ifndef SUNDIALS_SUNDIALS_ADJOINTSTEPPER_H
 //
 // #ifdef __cplusplus
 //

@@ -1,4 +1,4 @@
-// #ifndef SUNDIALS_NONLINSOLAUTO_H_
+// #ifndef SUNDIALS_SUNNONLINSOL_AUTO_H
 //
 // #ifdef __cplusplus
 //

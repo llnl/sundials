@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ----------------------------------------------------------------*/
 
-#ifndef _SUNMATRIX_GINKGOBATCH_HPP
-#define _SUNMATRIX_GINKGOBATCH_HPP
+#ifndef SUNDIALS_SUNMATRIX_GINKGOBATCH_HPP
+#define SUNDIALS_SUNMATRIX_GINKGOBATCH_HPP
 
 #include <memory>
 

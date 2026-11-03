@@ -1,4 +1,4 @@
-// #ifndef _SUNADAPTCONTROLLER_SODERLIND_H
+// #ifndef SUNDIALS_SUNADAPTCONTROLLER_SODERLIND_H
 //
 // #ifdef __cplusplus
 // #endif

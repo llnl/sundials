@@ -1,4 +1,4 @@
-// #ifndef _SUNADAPTCONTROLLER_MRIHTOL_H
+// #ifndef SUNDIALS_SUNADAPTCONTROLLER_MRIHTOL_H
 //
 // #ifdef __cplusplus
 // #endif
