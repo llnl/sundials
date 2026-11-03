@@ -44,9 +44,12 @@ Fixed a bug in the Power and Arnoldi `SUNDomEigEstimator` implementations where
 routine with the internal difference quotient approximation, so a user-supplied
 `ATimes` function (e.g., one attached after `LSRKStepSetDomEigEstimator`) was
 silently discarded. The internal approximation is now installed only when no
-user-supplied `ATimes` function is present.
-Passing `NULL` for the `ATimes` argument of `SUNDomEigEstimator_SetATimes`
-now reverts these estimators to the internal approximation.
+user-supplied `ATimes` function is present. Passing `NULL` for the `ATimes`
+argument of `SUNDomEigEstimator_SetATimes` now reverts these estimators to
+the internal approximation.
+
+Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
+stored as the update frequency instead of restoring the default value.
 
 ### Deprecation Notices
 
@@ -56,7 +59,7 @@ now reverts these estimators to the internal approximation.
 
 Updated the MRIStep module in ARKODE to support *extended Super Time Stepping*
 (ExtSTS) methods for multi-physics simulations involving parabolic components,
-through the `MRIStepExtSTSCreate` function.  See the documentation section on
+through the `MRIStepCreateExtSTS` function.  See the documentation section on
 the mathematical methods in MRIStep for more details on the structure of ExtSTS
 methods, and the documentation section on a skeleton of usage for MRIStep for
 details on its usage.

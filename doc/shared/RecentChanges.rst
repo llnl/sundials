@@ -44,9 +44,11 @@ estimator's ``ATimes`` routine with the internal difference quotient
 approximation, so a user-supplied ``ATimes`` function (e.g., one attached after
 :c:func:`LSRKStepSetDomEigEstimator`) was silently discarded. The internal
 approximation is now installed only when no user-supplied ``ATimes`` function is
-present.
-Passing ``NULL`` for the ``ATimes`` argument of
+present. Passing ``NULL`` for the ``ATimes`` argument of
 :c:func:`SUNDomEigEstimator_SetATimes` now reverts these estimators to the
 internal approximation.
+
+Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
+value was stored as the update frequency instead of restoring the default value.
 
 **Deprecation Notices**
