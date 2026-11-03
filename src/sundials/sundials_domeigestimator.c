@@ -315,8 +315,7 @@ SUNErrCode SUNDomEigEstimator_Initialize(SUNDomEigEstimator DEE)
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->initialize) { ier = DEE->ops->initialize(DEE); }
-  else { ier = SUN_ERR_NOT_IMPLEMENTED; }
+  ier = DEE->ops->initialize(DEE);
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
@@ -326,8 +325,7 @@ SUNErrCode SUNDomEigEstimator_Estimate(SUNDomEigEstimator DEE,
 {
   SUNErrCode ier;
   SUNDIALS_MARK_FUNCTION_BEGIN(getSUNProfiler(DEE));
-  if (DEE->ops->estimate) { ier = DEE->ops->estimate(DEE, lambdaR, lambdaI); }
-  else { ier = SUN_ERR_NOT_IMPLEMENTED; }
+  ier = DEE->ops->estimate(DEE, lambdaR, lambdaI);
   SUNDIALS_MARK_FUNCTION_END(getSUNProfiler(DEE));
   return (ier);
 }
