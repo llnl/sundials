@@ -15,7 +15,5 @@
 sundials_add_example(
   cvs_adv_diff_bnd_omp
   SOURCES cvs_adv_diff_bnd_omp.c
-  TEST_ARGS 4)
-target_link_libraries(
-  cvs_adv_diff_bnd_omp PRIVATE ${CVODES_C_LIBS} sundials_nvecopenmp
-                               ${EXE_EXTRA_LINK_LIBS})
+  TEST_ARGS 4
+  LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecopenmp ${EXE_EXTRA_LINK_LIBS})
