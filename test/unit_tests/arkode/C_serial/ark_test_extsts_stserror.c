@@ -61,9 +61,31 @@
 #define TWO  SUN_RCONST(2.0)
 #define FOUR SUN_RCONST(4.0)
 
-#define NX   200
+#define NX   50
 #define DIFF SUN_RCONST(0.1)
-#define TOL  SUN_RCONST(1.0e-6)
+
+/* Precision-dependent parameters.  TOL is the integration tolerance and REFTOL
+   the tolerance for the Test 2 reference solution.  HSTEP is the Test 4 step
+   size: the RKC/RKL embedding estimates in Test 4 must be dominated by
+   truncation error (which scales as HSTEP^3), not by roundoff in the STS
+   stages (which grows with the stage count, so with HSTEP and NX). */
+#if defined(SUNDIALS_SINGLE_PRECISION)
+#define TOL    SUN_RCONST(1.0e-3)
+#define REFTOL SUN_RCONST(1.0e-6)
+#define HSTEP  SUN_RCONST(0.2)
+#else
+#define TOL    SUN_RCONST(1.0e-6)
+#define REFTOL SUN_RCONST(1.0e-10)
+#define HSTEP  SUN_RCONST(0.02)
+#endif
+
+/* Pass thresholds.  ERRTOL bounds the solution error in Tests 1 and 2.
+   SAMETOL bounds the relative difference between ExtSTS and MRIStep in Test 3:
+   with f^D = 0 the STS error estimate is pure roundoff, of size
+   SUN_UNIT_ROUNDOFF / TOL in the weighted norm, so it perturbs the step sizes
+   (and hence the solution) by an amount that scales with that ratio. */
+#define ERRTOL  (SUN_RCONST(100.0) * TOL)
+#define SAMETOL (SUN_RCONST(100.0) * SUN_UNIT_ROUNDOFF / TOL)
 
 /* problem data */
 typedef struct
@@ -309,10 +331,10 @@ static int test_no_slow(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext c
          nst_lsrk, (double)err_lsrk, nst_extsts, (double)err_extsts);
 
   /* ExtSTS must meet the tolerance with an LSRKStep-like step count */
-  if (err_extsts > SUN_RCONST(1.0e-4))
+  if (err_extsts > ERRTOL)
   {
-    fprintf(stderr, "  FAIL: ExtSTS error %.3e exceeds 1e-4\n",
-            (double)err_extsts);
+    fprintf(stderr, "  FAIL: ExtSTS error %.3e exceeds %.1e\n",
+            (double)err_extsts, (double)ERRTOL);
     fails++;
   }
   if ((2 * nst_extsts < nst_lsrk) || (nst_extsts > 2 * nst_lsrk))
@@ -341,7 +363,7 @@ static int test_small_slow(ARKODE_LSRKMethodType sts, UserData* udata,
   udata->d = DIFF;
   udata->c = SUN_RCONST(1.0e-2);
 
-  /* reference: LSRKStep on f^D + f^E with tolerances 1e-10 */
+  /* reference: LSRKStep on f^D + f^E with tolerances REFTOL */
   {
     sunrealtype t = ZERO;
     exact_solution(ZERO, yref, udata);
@@ -354,8 +376,7 @@ static int test_small_slow(ARKODE_LSRKMethodType sts, UserData* udata,
                         "LSRKStepSetDomEigFn");
     fails += check_flag(LSRKStepSetDomEigFrequency(arkode_mem, 0),
                         "LSRKStepSetDomEigFrequency");
-    fails += check_flag(ARKodeSStolerances(arkode_mem, SUN_RCONST(1.0e-10),
-                                           SUN_RCONST(1.0e-10)),
+    fails += check_flag(ARKodeSStolerances(arkode_mem, REFTOL, REFTOL),
                         "ARKodeSStolerances");
     fails += check_flag(ARKodeSetMaxNumSteps(arkode_mem, 1000000),
                         "ARKodeSetMaxNumSteps");
@@ -371,9 +392,10 @@ static int test_small_slow(ARKODE_LSRKMethodType sts, UserData* udata,
 
   printf("Test 2 (c = 1e-2): ExtSTS steps = %li, error = %.3e\n", nst_extsts,
          (double)err);
-  if (err > SUN_RCONST(1.0e-4))
+  if (err > ERRTOL)
   {
-    fprintf(stderr, "  FAIL: ExtSTS error %.3e exceeds 1e-4\n", (double)err);
+    fprintf(stderr, "  FAIL: ExtSTS error %.3e exceeds %.1e\n", (double)err,
+            (double)ERRTOL);
     fails++;
   }
 
@@ -463,9 +485,10 @@ static int test_no_sts(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext ct
     fprintf(stderr, "  FAIL: step counts differ\n");
     fails++;
   }
-  if (diff > SUN_RCONST(1.0e-10))
+  if (diff > SAMETOL)
   {
-    fprintf(stderr, "  FAIL: solutions differ by %.3e\n", (double)diff);
+    fprintf(stderr, "  FAIL: solutions differ by %.3e (limit %.3e)\n",
+            (double)diff, (double)SAMETOL);
     fails++;
   }
 
@@ -482,7 +505,7 @@ static int test_no_sts(ARKODE_LSRKMethodType sts, UserData* udata, SUNContext ct
 static int test_one_step(ARKODE_LSRKMethodType sts, UserData* udata,
                          SUNContext ctx)
 {
-  const sunrealtype h = SUN_RCONST(0.02);
+  const sunrealtype h = HSTEP;
   sunrealtype t = ZERO, dsm_extsts = ZERO, dsm_lsrk = ZERO;
   long int nattempts = 0;
   void* sts_mem      = NULL;
