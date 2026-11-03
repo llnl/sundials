@@ -551,11 +551,11 @@ are printed at the end.
 Solutions
 ---------
 
-.. image:: figs/plot-ark_brusselator_1d_1.png
+.. image:: figs/plot-ark_brusselator1D_1.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator_1d_2.png
+.. image:: figs/plot-ark_brusselator1D_2.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator_1d_3.png
+.. image:: figs/plot-ark_brusselator1D_3.png
    :width: 30 %
 
 Brusselator PDE solution snapshots: left is at time :math:`t=0`,
@@ -635,11 +635,11 @@ are printed at the end.
 Solutions
 ---------
 
-.. image:: figs/plot-ark_brusselator_1d_FEM_1.png
+.. image:: figs/plot-ark_brusselator1D_FEM_1.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator_1d_FEM_2.png
+.. image:: figs/plot-ark_brusselator1D_FEM_2.png
    :width: 30 %
-.. image:: figs/plot-ark_brusselator_1d_FEM_3.png
+.. image:: figs/plot-ark_brusselator1D_FEM_3.png
    :width: 30 %
 
 Finite-element Brusselator PDE solution snapshots (created using the
