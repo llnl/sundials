@@ -29,4 +29,7 @@ Fixed a bug in LSRKStep where calls
 eigenvalue estimate incorrectly set the number of preprocessing iterations to
 the *initial* instead of the requested value.
 
+Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
+value was stored as the update frequency instead of restoring the default value.
+
 **Deprecation Notices**
