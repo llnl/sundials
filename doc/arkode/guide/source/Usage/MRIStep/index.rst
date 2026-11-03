@@ -34,4 +34,3 @@ are specific to MRIStep.
    Skeleton
    User_callable
    MRIStepCoupling
-   Custom_Inner_Stepper/index

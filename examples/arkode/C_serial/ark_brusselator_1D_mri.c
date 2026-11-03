@@ -123,29 +123,29 @@ int main(int argc, char* argv[])
   sunrealtype abstol = SUN_RCONST(1.0e-10);
 
   /* general problem variables */
-  sunrealtype hs;                           /* slow step size                 */
-  int retval;                               /* reusable return flag           */
-  N_Vector y                        = NULL; /* empty solution vector          */
-  N_Vector umask                    = NULL; /* empty mask vectors             */
-  N_Vector vmask                    = NULL;
-  N_Vector wmask                    = NULL;
-  SUNMatrix A                       = NULL; /* empty matrix for linear solver */
-  SUNLinearSolver LS                = NULL; /* empty linear solver structure  */
-  void* arkode_mem                  = NULL; /* empty ARKode memory structure  */
-  void* inner_arkode_mem            = NULL; /* empty ARKode memory structure  */
-  MRIStepInnerStepper inner_stepper = NULL; /* inner stepper                  */
-  sunrealtype t, dTout, tout;               /* current/output time data       */
-  sunrealtype u, v, w;                      /* temp data values               */
-  FILE *FID, *UFID, *VFID, *WFID;           /* output file pointers           */
-  int iout;                                 /* output counter                 */
-  long int nsts, nstf, nstf_a, netf;        /* step stats                     */
-  long int nfse, nffi;                      /* RHS stats                      */
-  long int nsetups, nje, nfeLS;             /* linear solver stats            */
-  long int nni, ncfn;                       /* nonlinear solver stats         */
-  sunindextype NEQ;                         /* number of equations            */
-  sunindextype i;                           /* counter                        */
-  UserData udata    = NULL;                 /* user data pointer              */
-  sunrealtype* data = NULL;                 /* array for vector data          */
+  sunrealtype hs;                  /* slow step size                 */
+  int retval;                      /* reusable return flag           */
+  N_Vector y               = NULL; /* empty solution vector          */
+  N_Vector umask           = NULL; /* empty mask vectors             */
+  N_Vector vmask           = NULL;
+  N_Vector wmask           = NULL;
+  SUNMatrix A              = NULL;   /* empty matrix for linear solver */
+  SUNLinearSolver LS       = NULL;   /* empty linear solver structure  */
+  void* arkode_mem         = NULL;   /* empty ARKode memory structure  */
+  void* inner_arkode_mem   = NULL;   /* empty ARKode memory structure  */
+  SUNStepper inner_stepper = NULL;   /* inner stepper                  */
+  sunrealtype t, dTout, tout;        /* current/output time data       */
+  sunrealtype u, v, w;               /* temp data values               */
+  FILE *FID, *UFID, *VFID, *WFID;    /* output file pointers           */
+  int iout;                          /* output counter                 */
+  long int nsts, nstf, nstf_a, netf; /* step stats                     */
+  long int nfse, nffi;               /* RHS stats                      */
+  long int nsetups, nje, nfeLS;      /* linear solver stats            */
+  long int nni, ncfn;                /* nonlinear solver stats         */
+  sunindextype NEQ;                  /* number of equations            */
+  sunindextype i;                    /* counter                        */
+  UserData udata    = NULL;          /* user data pointer              */
+  sunrealtype* data = NULL;          /* array for vector data          */
 
   /* Create the SUNDIALS context object for this simulation */
   SUNContext ctx;
@@ -251,8 +251,8 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "ARKodeSetJacFn", 1)) { return 1; }
 
   /* Create inner stepper */
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
   /*
    * Create the slow integrator and set options
@@ -386,13 +386,13 @@ int main(int argc, char* argv[])
          ncfn);
 
   /* Clean up and return with successful completion */
-  free(udata);                              /* Free user data         */
-  ARKodeFree(&inner_arkode_mem);            /* Free integrator memory */
-  MRIStepInnerStepper_Free(&inner_stepper); /* Free inner stepper */
-  ARKodeFree(&arkode_mem);                  /* Free integrator memory */
-  SUNLinSolFree(LS);                        /* Free linear solver     */
-  SUNMatDestroy(A);                         /* Free matrix            */
-  N_VDestroy(y);                            /* Free vectors           */
+  free(udata);                        /* Free user data         */
+  ARKodeFree(&inner_arkode_mem);      /* Free integrator memory */
+  SUNStepper_Destroy(&inner_stepper); /* Free inner stepper */
+  ARKodeFree(&arkode_mem);            /* Free integrator memory */
+  SUNLinSolFree(LS);                  /* Free linear solver     */
+  SUNMatDestroy(A);                   /* Free matrix            */
+  N_VDestroy(y);                      /* Free vectors           */
   N_VDestroy(umask);
   N_VDestroy(vmask);
   N_VDestroy(wmask);

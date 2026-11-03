@@ -368,20 +368,6 @@ SWIGEXPORT int _wrap_FARKodeInit(void *farg1) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeCreateMRIStepInnerStepper(void *farg1, void *farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  MRIStepInnerStepper *arg2 = (MRIStepInnerStepper *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (MRIStepInnerStepper *)(farg2);
-  result = (int)ARKodeCreateMRIStepInnerStepper(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FARKodeSStolerances(void *farg1, double const *farg2, double const *farg3) {
   int fresult ;
   void *arg1 = (void *) 0 ;

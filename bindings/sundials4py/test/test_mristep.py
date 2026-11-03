@@ -36,13 +36,6 @@ def test_multirate(sunctx):
         return ode_problem.f_linear(t, y, ydot, None)
 
     def ffast(t, y, ydot, _):
-        # test MRIStepInnerStepper_GetForcingData
-        status, tshift, tscale, forcing, nforcing = MRIStepInnerStepper_GetForcingData(
-            ode_problem.inner_stepper
-        )
-        assert status == ARK_SUCCESS
-        assert len(forcing) == nforcing
-
         return ode_problem.f_nonlinear(t, y, ydot, None)
 
     y = N_VNew_Serial(1, sunctx)
@@ -56,7 +49,7 @@ def test_multirate(sunctx):
     status = ARKodeSetFixedStep(inner_ark.get(), 5e-3)
     assert status == ARK_SUCCESS
 
-    status, inner_stepper = ARKodeCreateMRIStepInnerStepper(inner_ark.get())
+    status, inner_stepper = ARKodeCreateSUNStepper(inner_ark.get())
     assert status == ARK_SUCCESS
 
     # store inner_stepper in ode_problem so we can access it in ffast

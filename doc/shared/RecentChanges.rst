@@ -3,6 +3,22 @@
 
 **Major Features**
 
+Replaced the ARKODE ``MRIStepInnerStepper`` interface with :c:type:`SUNStepper`.
+:c:func:`MRIStepCreate` now accepts a :c:type:`SUNStepper`, which can created by
+:c:func:`ARKodeCreateSUNStepper` or by manually wrapping an IVP solving
+procedure. When porting a custom ``MRIStepInnerStepper`` to a
+:c:type:`SUNStepper`, most operations have the same signature, but forcing is
+handled slightly differently. A :c:type:`SUNStepper` is responsible for storing
+forcing data set via :c:func:`SUNStepper_SetForcing` and applying it in
+:c:func:`SUNStepper_Evolve`, possibly with the help of the new
+:c:func:`SUNStepper_AddForcing` function. See
+``examples/arkode/CXX_serial/ark_advection_diffusion_reaction.cpp`` for an
+example. :c:func:`SUNStepper_Evolve` and :c:type:`SUNStepperEvolveFn` now return
+an integer status where zero is success, positive values are recoverable
+failures, and negative values are fatal failures. Added accumulated error
+get/reset and relative tolerance operations to :c:type:`SUNStepper` to support
+:c:type:`SUNAdaptController_MRIHTol`.
+
 **New Features and Enhancements**
 
 Added the utility function, :c:func:`SUNFileFlush` for flushing file

@@ -406,8 +406,8 @@ program main
   retval = FARKodeSetAccumulatedErrorType(f_arkode_mem, acc_type)
   call check_retval(retval, "FARKodeSetAccumulatedErrorType")
 
-  retval = FARKodeCreateMRIStepInnerStepper(f_arkode_mem, f_stepper)
-  call check_retval(retval, "FARKodeCreateMRIStepInnerStepper")
+  retval = FARKodeCreateSUNStepper(f_arkode_mem, f_stepper)
+  call check_retval(retval, "FARKodeCreateSUNStepper")
 
   ! ------------------------------
   ! Create intermediate integrator
@@ -449,8 +449,8 @@ program main
   retval = FARKodeSetAdaptController(m_arkode_mem, m_controller)
   call check_retval(retval, "FARKodeSetAdaptController")
 
-  retval = FARKodeCreateMRIStepInnerStepper(m_arkode_mem, m_stepper)
-  call check_retval(retval, "FARKodeCreateMRIStepInnerStepper")
+  retval = FARKodeCreateSUNStepper(m_arkode_mem, m_stepper)
+  call check_retval(retval, "FARKodeCreateSUNStepper")
 
   ! ----------------------
   ! Create slow integrator
@@ -565,14 +565,14 @@ program main
   call FN_VDestroy(yvec)
 
   ! Fast integrator
-  retval = FMRIStepInnerStepper_Free(f_stepper)
+  retval = FSUNStepper_Destroy(f_stepper)
   call FARKodeFree(f_arkode_mem)
 
   ! Intermediate integrator
   retval = FSUNAdaptController_Destroy(m_controller)
   retval = FSUNAdaptController_Destroy(m_controller_H)
   retval = FSUNAdaptController_Destroy(m_controller_Tol)
-  retval = FMRIStepInnerStepper_Free(m_stepper)
+  retval = FSUNStepper_Destroy(m_stepper)
   call FARKodeFree(m_arkode_mem)
 
   ! Slow integrator

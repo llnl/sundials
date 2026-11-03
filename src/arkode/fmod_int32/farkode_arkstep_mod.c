@@ -431,20 +431,6 @@ SWIGEXPORT int _wrap_FARKStepCreateAdjointStepper(void *farg1, SUNAdjRhsFn farg2
 }
 
 
-SWIGEXPORT int _wrap_FARKStepCreateMRIStepInnerStepper(void *farg1, void *farg2) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  MRIStepInnerStepper *arg2 = (MRIStepInnerStepper *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (MRIStepInnerStepper *)(farg2);
-  result = (int)ARKStepCreateMRIStepInnerStepper(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FARKStepResize(void *farg1, N_Vector farg2, double const *farg3, double const *farg4, ARKVecResizeFn farg5, void *farg6) {
   int fresult ;
   void *arg1 = (void *) 0 ;

@@ -159,9 +159,9 @@ int main(int argc, char* argv[])
   if (check_retval(&retval, "ARKodeSetMaxNumSteps", 1)) return (1);
 
   // Create inner stepper wrapper
-  MRIStepInnerStepper inner_stepper = NULL; // inner stepper
-  retval = ARKodeCreateMRIStepInnerStepper(inner_arkode_mem, &inner_stepper);
-  if (check_retval(&retval, "ARKodeCreateMRIStepInnerStepper", 1)) return 1;
+  SUNStepper inner_stepper = NULL; // inner stepper
+  retval = ARKodeCreateSUNStepper(inner_arkode_mem, &inner_stepper);
+  if (check_retval(&retval, "ARKodeCreateSUNStepper", 1)) return 1;
 
   // Set up slow MRIStep integrator
   void* mristep_mem = NULL;
@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
   // Clean up and return
   MRIStepCoupling_Free(C);
   ARKodeFree(&inner_arkode_mem);
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
   ARKodeFree(&mristep_mem);
   if (LS) { SUNLinSolFree(LS); } // free system linear solver
   if (A) { SUNMatDestroy(A); }   // free system matrix
