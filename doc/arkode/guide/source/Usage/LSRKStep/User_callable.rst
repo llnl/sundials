@@ -257,10 +257,6 @@ Allowable Method Families
       with ``nsteps < 0`` resets the default value while ``nsteps = 0`` refers to
       constant dominant eigenvalue.
 
-
-      Calling this function with ``nsteps < 0`` resets the default value while
-      ``nsteps = 0`` refers to constant dominant eigenvalue.
-
       This routine will be called by :c:func:`ARKodeSetOptions`
       when using the key "arkid.dom_eig_frequency".
 
