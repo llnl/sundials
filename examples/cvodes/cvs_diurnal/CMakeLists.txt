@@ -13,12 +13,12 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c_diurnal_fsa_kry)
-  add_subdirectory(c_diurnal_kry)
-  add_subdirectory(c_diurnal_kry_bp)
+  add_subdirectory(c_fsa_kry)
+  add_subdirectory(c_kry)
+  add_subdirectory(c_kry_bp)
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c_mpi_diurnal_fsa_kry_p)
-    add_subdirectory(c_mpi_diurnal_kry_bbd_p)
-    add_subdirectory(c_mpi_diurnal_kry_p)
+    add_subdirectory(c_mpi_fsa_kry)
+    add_subdirectory(c_mpi_kry_bbd)
+    add_subdirectory(c_mpi_kry)
   endif()
 endif()
