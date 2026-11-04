@@ -322,11 +322,11 @@ def test_custom_nvector_integrates_with_arkode(sunctx):
         return SUN_SUCCESS
 
     arkode = ERKStepCreate(rhs, 0.0, y, sunctx)
-    assert ARKodeSStolerances(arkode.get(), 1e-7, 1e-10) == ARK_SUCCESS
+    assert ARKodeSStolerances(arkode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == ARK_SUCCESS
     status, tret = ARKodeEvolve(arkode.get(), 1.0, y, ARK_NORMAL)
     assert status == ARK_SUCCESS
     assert tret == pytest.approx(1.0)
-    assert y.data[0] == pytest.approx(np.exp(-1.0), rel=2e-6)
+    assert y.data[0] == pytest.approx(np.exp(-1.0), rel=float(100 * SUNREALTYPE_RTOL))
 
 
 def test_cvode_quadrature_init_without_nvspace(sunctx):
@@ -359,7 +359,7 @@ def test_void_operation_exception_reaches_cvode_caller(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), rhs, 0.0, y) == CV_SUCCESS
-    assert CVodeSStolerances(cvode.get(), 1e-7, 1e-10) == CV_SUCCESS
+    assert CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == CV_SUCCESS
     linear_solver = SUNLinSol_SPGMR(y, 0, 0, sunctx)
     assert CVodeSetLinearSolver(cvode.get(), linear_solver, None) == CV_SUCCESS
     with pytest.raises(LookupError, match="linear sum boom"):
@@ -369,7 +369,7 @@ def test_void_operation_exception_reaches_cvode_caller(sunctx):
     healthy = ArrayVector([1.0], sunctx)
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), rhs, 0.0, healthy) == CV_SUCCESS
-    assert CVodeSStolerances(cvode.get(), 1e-7, 1e-10) == CV_SUCCESS
+    assert CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == CV_SUCCESS
     linear_solver = SUNLinSol_SPGMR(healthy, 0, 0, sunctx)
     assert CVodeSetLinearSolver(cvode.get(), linear_solver, None) == CV_SUCCESS
     status, _ = CVode(cvode.get(), 0.1, healthy, CV_NORMAL)

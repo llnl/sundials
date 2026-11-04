@@ -123,6 +123,7 @@ def test_cvode_native_and_custom_vector_benchmark(sunctx):
 def _kinsol_solve(sunctx, custom):
     u = N_VNew_Serial(1, sunctx)
     scale = N_VNew_Serial(1, sunctx)
+    N_VConst(0.0, u)
     N_VConst(1.0, scale)
 
     def residual(state, result, _):

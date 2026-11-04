@@ -361,7 +361,7 @@ def test_custom_linear_solver_callbacks_through_cvode(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), rhs, 0.0, y) == CV_SUCCESS
-    assert CVodeSStolerances(cvode.get(), 1.0e-7, 1.0e-10) == CV_SUCCESS
+    assert CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == CV_SUCCESS
 
     solver = PackageDrivenIterativeSolver(sunctx)
     assert CVodeSetLinearSolver(cvode.get(), solver, None) == CV_SUCCESS
@@ -371,7 +371,9 @@ def test_custom_linear_solver_callbacks_through_cvode(sunctx):
     status, tret = CVode(cvode.get(), 0.2, y, CV_NORMAL)
     assert status == CV_SUCCESS
     assert tret == pytest.approx(0.2)
-    assert N_VGetArrayPointer(y)[0] == pytest.approx(np.exp(-0.2), rel=1.0e-5)
+    assert N_VGetArrayPointer(y)[0] == pytest.approx(
+        np.exp(-0.2), rel=float(100 * SUNREALTYPE_RTOL)
+    )
     assert solver.calls["solve"] > 0
     assert solver.calls["atimes"] > 0
     assert solver.calls["psetup"] > 0

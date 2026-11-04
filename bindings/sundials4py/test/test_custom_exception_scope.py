@@ -129,7 +129,7 @@ def test_nested_solver_does_not_disable_outer_capture(sunctx):
 
     cvode = CVodeCreate(CV_BDF, sunctx)
     assert CVodeInit(cvode.get(), rhs, 0.0, y) == CV_SUCCESS
-    assert CVodeSStolerances(cvode.get(), 1.0e-7, 1.0e-10) == CV_SUCCESS
+    assert CVodeSStolerances(cvode.get(), SUNREALTYPE_RTOL, SUNREALTYPE_ATOL) == CV_SUCCESS
     try:
         with pytest.raises(LookupError, match="nested linear sum boom"):
             CVode(cvode.get(), 0.1, y, CV_NORMAL)
