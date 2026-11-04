@@ -14,16 +14,27 @@ Updated `ARKodeGetReturnFlagName`, `CVodeGetReturnFlagName`,
 return `const char*` rather than `char*`. The returned string should no
 longer be freed by the user.
 
+Updated the shared embedding coefficients for the
+`ARKODE_SSP_LSPUM_ERK_3_1_2` and `ARKODE_SSP_LSPUM_SDIRK_3_1_2` methods to
+improve their temporal accuracy estimates.  Users who wish to revert to the
+previous coefficients can load the current table(s) using
+`ARKodeButcherTable_LoadERK` or `ARKodeButcherTable_LoadDIRK`
+and replace the internal `d` coefficients in the returned table with the
+previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
+
 ### Bug Fixes
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
 
-Fixed a bug in `FindMAGMA.cmake` which didn't allow use of MAGMA versions with 
+Fixed a bug in `FindMAGMA.cmake` which didn't allow use of MAGMA versions with
 multiple digits in an identifier.
 
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
+
+Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
+stored as the update frequency instead of restoring the default value.
 
 Fixed a bug in LSRKStep where the dominant eigenvalue was not recomputed after
 `ARKodeResize`, so steps after a resize could use the dominant eigenvalue of
@@ -39,7 +50,7 @@ the dominant eigenvalue was declared constant.
 
 Updated the MRIStep module in ARKODE to support *extended Super Time Stepping*
 (ExtSTS) methods for multi-physics simulations involving parabolic components,
-through the `MRIStepExtSTSCreate` function.  See the documentation section on
+through the `MRIStepCreateExtSTS` function.  See the documentation section on
 the mathematical methods in MRIStep for more details on the structure of ExtSTS
 methods, and the documentation section on a skeleton of usage for MRIStep for
 details on its usage.
