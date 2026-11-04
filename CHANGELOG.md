@@ -22,6 +22,12 @@ previous coefficients can load the current table(s) using
 and replace the internal `d` coefficients in the returned table with the
 previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
+Added `MRIStepSetUseExtSTSErrorEstimate` (command-line key
+`arkid.use_extsts_error_estimate`) to include the embedded error estimates of
+the super-time-stepping (STS) methods in the temporal error estimate of ExtSTS
+methods created with `MRIStepCreateExtSTS`, for use when the STS error may
+dominate.  The option is disabled by default.
+
 ### Bug Fixes
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`

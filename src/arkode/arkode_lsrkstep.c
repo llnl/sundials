@@ -231,6 +231,9 @@ void* lsrkStep_Create_Commons(ARKRhsFn rhs, sunrealtype t0, N_Vector y0,
   /* Initialize the flag regarding the maximum stage limit error */
   step_mem->suppress_max_stage_limit_error = SUNFALSE;
 
+  /* Only form the embedded error vector in fixed-step mode on request */
+  step_mem->compute_err_est = SUNFALSE;
+
   /* Initialize fused op work space */
   step_mem->cvals        = NULL;
   step_mem->Xvecs        = NULL;
@@ -965,8 +968,9 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (retval < 0) { return ARK_RHSFUNC_FAIL; }
   if (retval > 0) { return RHSFUNC_RECVR; }
 
-  /* Compute yerr (if step adaptivity enabled) */
-  if (!ark_mem->fixedstep)
+  /* Compute yerr (if step adaptivity or the ExtSTS error estimate is
+     enabled); in fixed-step mode the ewt is meaningless, so dsm stays zero */
+  if (!ark_mem->fixedstep || step_mem->compute_err_est)
   {
     /* Estimate the local error and compute its weighted RMS norm */
     cvals[0] = p8;
@@ -985,7 +989,10 @@ int lsrkStep_TakeStepRKC(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                  "status = failed vector op, retval = %i", retval);
       return ARK_VECTOROP_ERR;
     }
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    if (!ark_mem->fixedstep)
+    {
+      *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    }
   }
   lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
 
@@ -1398,8 +1405,9 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   if (retval < 0) { return ARK_RHSFUNC_FAIL; }
   if (retval > 0) { return RHSFUNC_RECVR; }
 
-  /* Compute yerr (if step adaptivity enabled) */
-  if (!ark_mem->fixedstep)
+  /* Compute yerr (if step adaptivity or the ExtSTS error estimate is
+     enabled); in fixed-step mode the ewt is meaningless, so dsm stays zero */
+  if (!ark_mem->fixedstep || step_mem->compute_err_est)
   {
     /* Estimate the local error and compute its weighted RMS norm */
     cvals[0] = p8;
@@ -1417,7 +1425,10 @@ int lsrkStep_TakeStepRKL(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
                  "status = failed vector op, retval = %i", retval);
       return ARK_VECTOROP_ERR;
     }
-    *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    if (!ark_mem->fixedstep)
+    {
+      *dsmPtr = N_VWrmsNorm(ark_mem->tempv1, ark_mem->ewt);
+    }
     lsrkStep_DomEigUpdateLogic(ark_mem, step_mem, *dsmPtr, ark_mem->tempv2);
   }
   else

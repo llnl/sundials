@@ -162,6 +162,7 @@ module farkode_mristep_mod
  public :: FMRIStepCreateExtSTS
  public :: FMRIStepReInitExtSTS
  public :: FMRIStepSetCoupling
+ public :: FMRIStepSetUseExtSTSErrorEstimate
  public :: FMRIStepSetPreInnerFn
  public :: FMRIStepSetPostInnerFn
  public :: FMRIStepGetCurrentCoupling
@@ -600,6 +601,15 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 type(C_PTR), value :: farg2
+integer(C_INT) :: fresult
+end function
+
+function swigc_FMRIStepSetUseExtSTSErrorEstimate(farg1, farg2) &
+bind(C, name="_wrap_FMRIStepSetUseExtSTSErrorEstimate") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+type(C_PTR), value :: farg1
+integer(C_INT), intent(in) :: farg2
 integer(C_INT) :: fresult
 end function
 
@@ -2151,6 +2161,22 @@ type(C_PTR) :: farg2
 farg1 = arkode_mem
 farg2 = mric
 fresult = swigc_FMRIStepSetCoupling(farg1, farg2)
+swig_result = fresult
+end function
+
+function FMRIStepSetUseExtSTSErrorEstimate(arkode_mem, onoff) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+integer(C_INT) :: swig_result
+type(C_PTR) :: arkode_mem
+integer(C_INT), intent(in) :: onoff
+integer(C_INT) :: fresult 
+type(C_PTR) :: farg1 
+integer(C_INT) :: farg2 
+
+farg1 = arkode_mem
+farg2 = onoff
+fresult = swigc_FMRIStepSetUseExtSTSErrorEstimate(farg1, farg2)
 swig_result = fresult
 end function
 

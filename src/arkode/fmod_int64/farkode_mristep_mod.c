@@ -805,6 +805,20 @@ SWIGEXPORT int _wrap_FMRIStepSetCoupling(void *farg1, void *farg2) {
 }
 
 
+SWIGEXPORT int _wrap_FMRIStepSetUseExtSTSErrorEstimate(void *farg1, int const *farg2) {
+  int fresult ;
+  void *arg1 = (void *) 0 ;
+  int arg2 ;
+  int result;
+  
+  arg1 = (void *)(farg1);
+  arg2 = (int)(*farg2);
+  result = (int)MRIStepSetUseExtSTSErrorEstimate(arg1,arg2);
+  fresult = (int)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT int _wrap_FMRIStepSetPreInnerFn(void *farg1, MRIStepPreInnerFn farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;

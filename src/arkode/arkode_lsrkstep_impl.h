@@ -178,6 +178,8 @@ typedef struct ARKodeLSRKStepMemRec
   long int step_nst;      /* The number of successful steps. */
   long int num_dee_iters; /* number of iterations in the DEE estimates */
   sunbooleantype suppress_max_stage_limit_error; /* suppress max stage errors */
+  sunbooleantype compute_err_est; /* form the RKC/RKL embedded error vector in
+                                    tempv1 even in fixed-step mode (ExtSTS) */
 
   /* Spectral info */
   sunrealtype lambdaR;         /* Real part of the dominated eigenvalue*/

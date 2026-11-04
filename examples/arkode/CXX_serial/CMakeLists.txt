@@ -40,7 +40,8 @@ set(ARKODE_examples
     "ark_kpr_Mt.cpp\;0 4 0 -10 0 10 1\;develop"
     "ark_kpr_nestedmri.cpp\;\;exclude-single"
     "ark_pendulum.cpp\;\;develop"
-    "ark_adr1d_extsts.cpp\;\;develop")
+    "ark_adr1d_extsts.cpp\;\;develop"
+    "ark_adr1d_extsts.cpp\;arkode.use_extsts_error_estimate 1\;develop")
 
 # Header files to install
 set(ARKODE_headers "ark_adr1d_extsts.hpp")
