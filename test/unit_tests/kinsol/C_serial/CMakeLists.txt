@@ -19,7 +19,7 @@
 
 # List of test tuples of the form "name\;args"
 set(unit_tests "kin_test_getuserdata\;" "kin_test_reuse_fp\;0"
-               "kin_test_reuse_fp\;1")
+               "kin_test_reuse_fp\;1" "kin_test_sparse_dq_jac\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -43,8 +43,32 @@ foreach(test_tuple ${unit_tests})
                       ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
     # libraries to link against
-    target_link_libraries(${test} sundials_kinsol sundials_nvecserial
-                          ${EXE_EXTRA_LINK_LIBS})
+    if("${test}" STREQUAL "kin_test_sparse_dq_jac")
+      # This test links the KINSOL objects directly so it can call the private
+      # sparse DQ Jacobian routine without changing installed library symbols.
+      target_link_libraries(
+        ${test}
+        PRIVATE $<TARGET_OBJECTS:sundials_kinsol_obj>
+                sundials_sunmemsys_obj
+                sundials_nvecserial_obj
+                sundials_sunmatrixband_obj
+                sundials_sunmatrixdense_obj
+                sundials_sunmatrixsparse_obj
+                sundials_sunlinsolband_obj
+                sundials_sunlinsoldense_obj
+                sundials_sunlinsolspbcgs_obj
+                sundials_sunlinsolspfgmr_obj
+                sundials_sunlinsolspgmr_obj
+                sundials_sunlinsolsptfqmr_obj
+                sundials_sunlinsolpcg_obj
+                sundials_sunnonlinsolnewton_obj
+                sundials_sunnonlinsolfixedpoint_obj
+                ${EXE_EXTRA_LINK_LIBS})
+      add_dependencies(${test} sundials_kinsol_obj)
+    else()
+      target_link_libraries(${test} sundials_kinsol sundials_nvecserial
+                            ${EXE_EXTRA_LINK_LIBS})
+    endif()
 
   endif()
 

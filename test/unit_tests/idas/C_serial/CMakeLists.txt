@@ -18,7 +18,8 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "idas_test_getuserdata\;" "idas_test_tstop\;")
+set(unit_tests "idas_test_getuserdata\;" "idas_test_sparse_dq_jac\;"
+               "idas_test_tstop\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -41,9 +42,41 @@ foreach(test_tuple ${unit_tests})
       ${test} PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
                       ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
-    # libraries to link against
-    target_link_libraries(${test} sundials_idas sundials_nvecserial
-                          ${EXE_EXTRA_LINK_LIBS})
+    if("${test}" STREQUAL "idas_test_sparse_dq_jac")
+
+      # We explicitly choose which object libraries to link to and link in the
+      # idas objects so that we have access to private functions w/o changing
+      # their visibility in the installed libraries.
+      target_link_libraries(
+        ${test}
+        PRIVATE $<TARGET_OBJECTS:sundials_idas_obj>
+                sundials_sunmemsys_obj
+                sundials_nvecserial_obj
+                sundials_sunmatrixband_obj
+                sundials_sunmatrixdense_obj
+                sundials_sunmatrixsparse_obj
+                sundials_sunlinsolband_obj
+                sundials_sunlinsoldense_obj
+                sundials_sunlinsolspbcgs_obj
+                sundials_sunlinsolspfgmr_obj
+                sundials_sunlinsolspgmr_obj
+                sundials_sunlinsolsptfqmr_obj
+                sundials_sunlinsolpcg_obj
+                sundials_sunnonlinsolnewton_obj
+                sundials_sunnonlinsolfixedpoint_obj
+                ${EXE_EXTRA_LINK_LIBS})
+
+      # Tell CMake that we depend on the IDAS library since it does not pick
+      # that up from $<TARGET_OBJECTS:sundials_idas_obj>.
+      add_dependencies(${test} sundials_idas_obj)
+
+    else()
+
+      # libraries to link against
+      target_link_libraries(${test} sundials_idas sundials_nvecserial
+                            ${EXE_EXTRA_LINK_LIBS})
+
+    endif()
 
   endif()
 

@@ -152,7 +152,8 @@ int KINSetLinearSolver(void* kinmem, SUNLinearSolver LS, SUNMatrix A)
   memset(kinls_mem, 0, sizeof(struct KINLsMemRec));
 
   /* set SUNLinearSolver pointer */
-  kinls_mem->LS = LS;
+  kinls_mem->LS             = LS;
+  kinls_mem->sparseDQgroups = NULL;
 
   /* Set defaults for Jacobian-related fields */
   if (A != NULL)
@@ -742,6 +743,10 @@ int kinLsDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, void* kinmem,
   {
     retval = kinLsBandDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
   }
+  else if (SUNMatGetID(Jac) == SUNMATRIX_SPARSE)
+  {
+    retval = kinLsSparseDQJac(u, fu, Jac, kin_mem, tmp1, tmp2);
+  }
   else
   {
     KINProcessError(kin_mem, KIN_ILL_INPUT, __LINE__, __func__, __FILE__,
@@ -927,6 +932,280 @@ int kinLsBandDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
 }
 
 /*------------------------------------------------------------------
+  kinLsSparseDQJac
+
+  This routine generates a sparse difference quotient approximation to
+  the Jacobian of F(u), retaining the input CSC SUNMatrix sparsity pattern.
+
+  Rather than perturbing one solution component at a time (as the dense
+  routine does, at a cost of N function evaluations), the columns of the
+  Jacobian are partitioned into "structurally orthogonal" groups by a
+  greedy Curtis-Powell-Reid coloring: no two columns in a group have a
+  nonzero in the same row. Every column in a group may then be perturbed
+  at once, since each row of the resulting difference receives a
+  contribution from at most one perturbed column. The cost is therefore
+  one function evaluation per group, which for a banded or otherwise
+  locally-coupled system is far fewer than N.
+
+  IMPORTANT: the sparsity pattern of the template matrix must be a
+  superset of the true Jacobian's nonzero structure. This is a
+  correctness requirement, not merely an accuracy one. If an entry that
+  is truly nonzero is absent from the pattern, then two columns that the
+  coloring believes are orthogonal may in fact both perturb the same row;
+  their contributions are summed into that row's difference, and the
+  values stored for entries that ARE in the pattern come out wrong. By
+  contrast, extra entries in the pattern are harmless -- they are simply
+  computed as (approximately) zero.
+
+  Structurally empty columns are never perturbed and are not assigned to
+  any group, so they neither cost an evaluation nor constrain the
+  coloring.
+
+  On return every entry of data[0 .. colptrs[N]-1] has been assigned; the
+  sparsity pattern itself is left untouched.
+  ------------------------------------------------------------------*/
+int kinLsSparseDQJac(N_Vector u, N_Vector fu, SUNMatrix Jac, KINMem kin_mem,
+                     N_Vector tmp1, N_Vector tmp2)
+{
+  N_Vector futemp, utemp;
+  sunbooleantype conflict;
+  sunrealtype inc, inc_inv;
+  sunrealtype *data, *fu_data, *futemp_data, *u_data, *utemp_data, *uscale_data;
+  sunindextype *colptrs, *rowvals, *groups, *rowmarks;
+  sunindextype group, groupsize, i, j, k, M, N, nnz, ngroups;
+  KINLsMem kinls_mem;
+  int retval = 0;
+
+  /* Sparse DQ currently operates on CSC matrices only */
+  if (SUNSparseMatrix_SparseType(Jac) != SUN_CSC_MAT)
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "kinLsSparseDQJac requires a CSC SUNMatrix");
+    return (KINLS_ILL_INPUT);
+  }
+
+  /* Access LsMem interface structure */
+  kinls_mem = (KINLsMem)kin_mem->kin_lmem;
+
+  /* Access matrix data */
+  M       = SUNSparseMatrix_Rows(Jac);
+  N       = SUNSparseMatrix_Columns(Jac);
+  nnz     = SUNSparseMatrix_NNZ(Jac);
+  colptrs = SUNSparseMatrix_IndexPointers(Jac);
+  rowvals = SUNSparseMatrix_IndexValues(Jac);
+  data    = SUNSparseMatrix_Data(Jac);
+
+  if (colptrs == NULL || rowvals == NULL || data == NULL)
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has NULL data or index arrays");
+    return (KINLS_ILL_INPUT);
+  }
+
+  if ((colptrs[0] != 0) || (colptrs[N] > nnz))
+  {
+    KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Sparse SUNMatrix has an invalid sparsity pattern");
+    return (KINLS_ILL_INPUT);
+  }
+
+  for (j = 0; j < N; j++)
+  {
+    if (colptrs[j] > colptrs[j + 1])
+    {
+      KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                      "Sparse SUNMatrix has an invalid sparsity pattern");
+      return (KINLS_ILL_INPUT);
+    }
+    for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+    {
+      if (rowvals[k] < 0 || rowvals[k] >= M)
+      {
+        KINProcessError(kin_mem, KINLS_ILL_INPUT, __LINE__, __func__, __FILE__,
+                        "Sparse SUNMatrix has an invalid row index");
+        return (KINLS_ILL_INPUT);
+      }
+    }
+  }
+
+  /* Rename work vectors for use as temporary values of F and u */
+  futemp = tmp1;
+  utemp  = tmp2;
+
+  /* Obtain pointers to the vector data */
+  fu_data     = N_VGetArrayPointer(fu);
+  futemp_data = N_VGetArrayPointer(futemp);
+  u_data      = N_VGetArrayPointer(u);
+  utemp_data  = N_VGetArrayPointer(utemp);
+  uscale_data = N_VGetArrayPointer(kin_mem->kin_uscale);
+
+  /* Build the column partition on the first call and reuse it thereafter:
+     it depends only on the sparsity pattern, which is held fixed for the
+     internal DQ Jacobian, so recomputing it at every Jacobian evaluation
+     would be wasted work. Any grouping cached from a previous pattern is
+     discarded in the Initialize routine, and the cached (M, N, nnz) triple
+     is a further guard against the matrix being resized underneath us. */
+  if ((kinls_mem->sparseDQgroups == NULL) || (kinls_mem->sparseDQM != M) ||
+      (kinls_mem->sparseDQN != N) || (kinls_mem->sparseDQnnz != colptrs[N]))
+  {
+    free(kinls_mem->sparseDQgroups);
+    kinls_mem->sparseDQgroups  = NULL;
+    kinls_mem->sparseDQngroups = 0;
+    kinls_mem->sparseDQM       = 0;
+    kinls_mem->sparseDQN       = 0;
+    kinls_mem->sparseDQnnz     = 0;
+
+    /* Allocate workspace for column groups */
+    groups = (sunindextype*)malloc(N * sizeof(sunindextype));
+    if (groups == NULL)
+    {
+      KINProcessError(kin_mem, KINLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (KINLS_MEM_FAIL);
+    }
+
+    rowmarks = (sunindextype*)malloc(M * sizeof(sunindextype));
+    if (rowmarks == NULL)
+    {
+      free(groups);
+      KINProcessError(kin_mem, KINLS_MEM_FAIL, __LINE__, __func__, __FILE__,
+                      MSG_LS_MEM_FAIL);
+      return (KINLS_MEM_FAIL);
+    }
+
+    /* Initialize the coloring state:
+         groups[j] == -1  column j is nonempty and not yet assigned
+         groups[j] == -2  column j is structurally empty; it is never
+                          perturbed and never joins a group
+         groups[j] >=  0  index of the group that column j belongs to
+       rowmarks[i] records the most recent group to claim row i, and starts
+       at -1 so that it cannot spuriously match group 0. */
+    for (j = 0; j < N; j++)
+    {
+      groups[j] = (colptrs[j] < colptrs[j + 1]) ? -1 : -2;
+    }
+    for (i = 0; i < M; i++) { rowmarks[i] = -1; }
+
+    /* Greedily partition the columns into structurally orthogonal groups.
+       Each pass builds one group by sweeping the columns in their natural
+       order, adding any still-unassigned column that does not collide with
+       a column already placed in this group.
+
+       The collision test reuses a single M-length array instead of a fresh
+       marker array per group: groups are numbered consecutively from zero
+       and rowmarks[i] is only ever overwritten with the current group index,
+       so "rowmarks[rowvals[k]] == ngroups" holds exactly when row rowvals[k]
+       was already claimed by a column in THIS group. Marks left behind by
+       earlier groups compare unequal and are ignored, so no clearing pass is
+       needed between groups.
+
+       Sweeping in natural column order is simple but not optimal; ordering
+       the columns by decreasing nonzero count (the classic DSM heuristic)
+       typically yields fewer groups. Note also that each pass rescans all N
+       columns, so construction costs O(ngroups*(N + nnz)). */
+    ngroups = 0;
+    for (;;)
+    {
+      groupsize = 0;
+      for (j = 0; j < N; j++)
+      {
+        if (groups[j] != -1) { continue; }
+
+        conflict = SUNFALSE;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          if (rowmarks[rowvals[k]] == ngroups)
+          {
+            conflict = SUNTRUE;
+            break;
+          }
+        }
+        if (conflict) { continue; }
+
+        groups[j] = ngroups;
+        groupsize++;
+        for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+        {
+          rowmarks[rowvals[k]] = ngroups;
+        }
+      }
+
+      /* A pass that places no column means every nonempty column has been
+         assigned, so the partition is complete. */
+      if (groupsize == 0) { break; }
+      ngroups++;
+    }
+
+    /* The row marks are scratch space for the coloring only; release them
+       now and cache just the partition itself. */
+    free(rowmarks);
+
+    kinls_mem->sparseDQgroups  = groups;
+    kinls_mem->sparseDQngroups = ngroups;
+    kinls_mem->sparseDQM       = M;
+    kinls_mem->sparseDQN       = N;
+    kinls_mem->sparseDQnnz     = colptrs[N];
+  }
+  else
+  {
+    groups  = kinls_mem->sparseDQgroups;
+    ngroups = kinls_mem->sparseDQngroups;
+  }
+
+  /* Initialize utemp. */
+  N_VScale(ONE, u, utemp);
+
+  /* Loop over the column groups, performing one evaluation per group. The
+     linear scan over all N columns to collect each group's members makes
+     this O(ngroups*N) overall; a group-to-columns index built during the
+     coloring would reduce it to O(N), but ngroups is small for the
+     locally-coupled systems this routine targets. */
+  /* Loop over column groups */
+  for (group = 0; group < ngroups; group++)
+  {
+    /* Increment all u[j] for j in this group. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      inc = kin_mem->kin_sqrt_relfunc *
+            SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
+      utemp_data[j] += inc;
+    }
+
+    /* Evaluate F with incremented u. Count the evaluation before testing the
+       return value, so that evaluations performed prior to a failure are
+       still reflected in nfeDQ. */
+    retval = kin_mem->kin_func(utemp, futemp, kin_mem->kin_user_data);
+    kinls_mem->nfeDQ++;
+    if (retval != 0) { return (retval); }
+
+    /* Restore utemp, then form and load difference quotients. Within this
+       group every row touched by column j was claimed by column j alone, so
+       futemp_data[row] - fu_data[row] isolates column j's contribution.
+       inc is recomputed rather than cached: it depends only on u_data[j] and
+       uscale_data[j], neither of which has changed, and KINSOL's DQ routine
+       has no third work vector in which to store it. */
+    for (j = 0; j < N; j++)
+    {
+      if (groups[j] != group) { continue; }
+
+      utemp_data[j] = u_data[j];
+      inc           = kin_mem->kin_sqrt_relfunc *
+            SUNMAX(SUNRabs(u_data[j]), ONE / SUNRabs(uscale_data[j]));
+      inc_inv = ONE / inc;
+
+      for (k = colptrs[j]; k < colptrs[j + 1]; k++)
+      {
+        data[k] = inc_inv * (futemp_data[rowvals[k]] - fu_data[rowvals[k]]);
+      }
+    }
+  }
+
+  return (0);
+}
+
+/*------------------------------------------------------------------
   kinLsDQJtimes
 
   This routine generates the matrix-vector product z = J*v using a
@@ -1017,6 +1296,18 @@ int kinLsInitialize(KINMem kin_mem)
   }
   kinls_mem = (KINLsMem)kin_mem->kin_lmem;
 
+  /* Discard any cached sparse DQ column grouping. A grouping is valid only
+     for the sparsity pattern it was built from, and a reinitialization may
+     supply a template matrix with a different pattern; comparing dimensions
+     and nonzero counts cannot reliably detect that. The grouping is dropped
+     here and rebuilt lazily on the next sparse DQ Jacobian evaluation. */
+  free(kinls_mem->sparseDQgroups);
+  kinls_mem->sparseDQgroups  = NULL;
+  kinls_mem->sparseDQngroups = 0;
+  kinls_mem->sparseDQM       = 0;
+  kinls_mem->sparseDQN       = 0;
+  kinls_mem->sparseDQnnz     = 0;
+
   /* Test for valid combinations of matrix & Jacobian routines: */
   if (kinls_mem->J == NULL)
   {
@@ -1028,13 +1319,15 @@ int kinLsInitialize(KINMem kin_mem)
   else if (kinls_mem->jacDQ)
   {
     /* If J is non-NULL, and 'jac' is not user-supplied:
-       - if A is dense or band, ensure that our DQ approx. is used
+       - if A is dense, band, or CSC sparse, ensure that our DQ approx. is used
        - otherwise => error */
     retval = 0;
     if (kinls_mem->J->ops->getid)
     {
       if ((SUNMatGetID(kinls_mem->J) == SUNMATRIX_DENSE) ||
-          (SUNMatGetID(kinls_mem->J) == SUNMATRIX_BAND))
+          (SUNMatGetID(kinls_mem->J) == SUNMATRIX_BAND) ||
+          ((SUNMatGetID(kinls_mem->J) == SUNMATRIX_SPARSE) &&
+           (SUNSparseMatrix_SparseType(kinls_mem->J) == SUN_CSC_MAT)))
       {
         kinls_mem->jac    = kinLsDQJac;
         kinls_mem->J_data = kin_mem;
@@ -1168,7 +1461,20 @@ int kinLsSetup(KINMem kin_mem)
     /* Clear the linear system matrix if necessary */
     if (SUNLinSolGetType(kinls_mem->LS) == SUNLINEARSOLVER_DIRECT)
     {
-      retval = SUNMatZero(kinls_mem->J);
+      /* The internal sparse DQ Jacobian is skipped here: SUNMatZero_Sparse
+         erases indexvals/indexptrs along with the data, destroying the
+         sparsity pattern that kinLsSparseDQJac fills into. Zeroing is
+         unnecessary in any case, since that routine overwrites every stored
+         value. Unlike CVODE and ARKODE, KINSOL needs no savedJ copy to recover
+         the pattern, because J is assembled directly by the Jacobian function
+         and nothing here mutates its structure.
+
+         A user-supplied sparse Jacobian function is expected to build the
+         pattern itself, so the zeroing path is kept for that case. */
+      retval = (kinls_mem->jacDQ &&
+                (SUNMatGetID(kinls_mem->J) == SUNMATRIX_SPARSE))
+                 ? SUN_SUCCESS
+                 : SUNMatZero(kinls_mem->J);
       if (retval != 0)
       {
         KINProcessError(kin_mem, KINLS_SUNMAT_FAIL, __LINE__, __func__,
@@ -1357,6 +1663,9 @@ int kinLsFree(KINMem kin_mem)
 
   /* Nullify SUNMatrix pointer */
   kinls_mem->J = NULL;
+
+  /* Free sparse DQ Jacobian workspace */
+  free(kinls_mem->sparseDQgroups);
 
   /* Free preconditioner memory (if applicable) */
   if (kinls_mem->pfree) { kinls_mem->pfree(kin_mem); }

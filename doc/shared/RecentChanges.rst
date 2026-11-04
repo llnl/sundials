@@ -21,6 +21,9 @@ previous coefficients can load the current table(s) using
 and replace the internal ``d`` coefficients in the returned table with the
 previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
+Added support to compute internal difference-quotient approximations to sparse
+Jacobians (CSC format only) for all SUNDIALS packages.
+
 **Bug Fixes**
 
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
