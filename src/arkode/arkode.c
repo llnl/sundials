@@ -2991,6 +2991,12 @@ int arkHandleFailure(ARKodeMem ark_mem, int flag)
     arkProcessError(ark_mem, ARK_SUNSTEPPER_ERR, __LINE__, __func__, __FILE__,
                     "An inner SUNStepper error occurred");
     break;
+  case ARK_CONTROLLER_ERR:
+    arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__, __FILE__,
+                    "At t = " SUN_FORMAT_G
+                    " the time step adaptivity controller failed",
+                    ark_mem->tcur);
+    break;
   default:
     /* This return should never happen */
     arkProcessError(ark_mem, ARK_UNRECOGNIZED_ERROR, __LINE__, __func__, __FILE__,
@@ -3455,6 +3461,7 @@ int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
      larger/smaller than current step, depending on dsm) */
   ttmp   = (dsm <= ONE) ? ark_mem->tn + ark_mem->h : ark_mem->tn;
   retval = arkAdapt(ark_mem, hadapt_mem, ark_mem->ycur, ttmp, ark_mem->h, dsm);
+  if (retval == ARK_CONTROLLER_ERR) { return (ARK_CONTROLLER_ERR); }
   if (retval != ARK_SUCCESS) { return (ARK_ERR_FAILURE); }
 
   /* if we've made it here then no nonrecoverable failures occurred; someone above
