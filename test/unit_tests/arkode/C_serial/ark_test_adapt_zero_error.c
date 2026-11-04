@@ -276,16 +276,54 @@ static const sunrealtype dsmseq[NSEQ] = {SUN_RCONST(0.31), SUN_RCONST(0.72),
                                          SUN_RCONST(0.27), SUN_RCONST(0.63),
                                          SUN_RCONST(0.5),  SUN_RCONST(0.95)};
 
-/* Reset the controller and store the first three positive errors, which fills
-   the history of every controller */
-static int fill_history(SUNAdaptController C)
+/* Call EstimateStep and check its return value; returns 1 on an error. On
+   return, hnew holds the controller output, or NaN if the controller did not
+   set it, so that the subsequent value check also fails deterministically. */
+static int estimate_step(const char* name, const char* what, SUNAdaptController C,
+                         sunrealtype h, sunrealtype dsm, sunrealtype* hnew)
 {
-  if (SUNAdaptController_Reset(C)) { return 1; }
-  for (int i = 0; i < 3; i++)
+  *hnew          = NAN;
+  SUNErrCode ier = SUNAdaptController_EstimateStep(C, h, ORDER, dsm, hnew);
+  if (ier != SUN_SUCCESS)
   {
-    if (SUNAdaptController_UpdateH(C, hseq[i], dsmseq[i])) { return 1; }
+    fprintf(stderr, "FAIL [%s] %s: EstimateStep returned %i (%s)\n", name, what,
+            ier, SUNGetErrMsg(ier));
+    return 1;
   }
   return 0;
+}
+
+/* Call UpdateH and check its return value; returns 1 on an error */
+static int update_h(const char* name, const char* what, SUNAdaptController C,
+                    sunrealtype h, sunrealtype dsm)
+{
+  SUNErrCode ier = SUNAdaptController_UpdateH(C, h, dsm);
+  if (ier != SUN_SUCCESS)
+  {
+    fprintf(stderr, "FAIL [%s] %s: UpdateH returned %i (%s)\n", name, what, ier,
+            SUNGetErrMsg(ier));
+    return 1;
+  }
+  return 0;
+}
+
+/* Reset the controller and store the first three positive errors, which fills
+   the history of every controller */
+static int fill_history(const char* name, SUNAdaptController C)
+{
+  SUNErrCode ier = SUNAdaptController_Reset(C);
+  if (ier != SUN_SUCCESS)
+  {
+    fprintf(stderr, "FAIL [%s] fill history: Reset returned %i (%s)\n", name,
+            ier, SUNGetErrMsg(ier));
+    return 1;
+  }
+  int fails = 0;
+  for (int i = 0; i < 3; i++)
+  {
+    fails += update_h(name, "fill history", C, hseq[i], dsmseq[i]);
+  }
+  return fails;
 }
 
 static int test_controller(const ControllerCase* cc, SUNContext sunctx)
@@ -308,29 +346,31 @@ static int test_controller(const ControllerCase* cc, SUNContext sunctx)
 
   /* (a) No change for positive errors: with a full history of positive
      errors, the step matches the controller formula */
-  fails += fill_history(C);
-  SUNAdaptController_EstimateStep(C, hseq[3], ORDER, dsmseq[3], &hnew);
+  fails += fill_history(cc->name, C);
+  fails += estimate_step(cc->name, "positive errors", C, hseq[3], dsmseq[3],
+                         &hnew);
   fails += check_value(cc->name, "positive errors", hnew,
                        expected_full(cc, hseq[3], ORDER, dsmseq[3], hseq[2],
                                      dsmseq[2], hseq[1], dsmseq[1]));
 
   /* (b) Zero current error with a positive history gives +Inf */
-  SUNAdaptController_EstimateStep(C, hseq[3], ORDER, SUN_RCONST(0.0), &hnew);
+  fails += estimate_step(cc->name, "zero current error", C, hseq[3],
+                         SUN_RCONST(0.0), &hnew);
   fails += check_inf(cc->name, "zero current error", hnew);
 
   /* (c) Zero stored error, then positive errors: the I controller is used
      until historysize positive errors have been stored, after which the
      controller formula applies to the new history */
-  fails += fill_history(C);
-  SUNAdaptController_UpdateH(C, hseq[3], SUN_RCONST(0.0));
+  fails += fill_history(cc->name, C);
+  fails += update_h(cc->name, "store zero error", C, hseq[3], SUN_RCONST(0.0));
   for (int j = 0; j <= cc->historysize; j++)
   {
     const int i = 4 + j;
     char what[64];
-    SUNAdaptController_EstimateStep(C, hseq[i], ORDER, dsmseq[i], &hnew);
     if (j < cc->historysize)
     {
       snprintf(what, sizeof(what), "step %i after zero error (I law)", j + 1);
+      fails += estimate_step(cc->name, what, C, hseq[i], dsmseq[i], &hnew);
       fails += check_value(cc->name, what, hnew,
                            expected_i_law(hseq[i], ORDER, dsmseq[i]));
     }
@@ -338,22 +378,27 @@ static int test_controller(const ControllerCase* cc, SUNContext sunctx)
     {
       snprintf(what, sizeof(what), "step %i after zero error (full history)",
                j + 1);
+      fails += estimate_step(cc->name, what, C, hseq[i], dsmseq[i], &hnew);
       fails +=
         check_value(cc->name, what, hnew,
                     expected_full(cc, hseq[i], ORDER, dsmseq[i], hseq[i - 1],
                                   dsmseq[i - 1], hseq[i - 2], dsmseq[i - 2]));
     }
-    SUNAdaptController_UpdateH(C, hseq[i], dsmseq[i]);
+    fails += update_h(cc->name, what, C, hseq[i], dsmseq[i]);
   }
 
   /* (d) Repeated zero errors: a zero current error after a stored zero gives
      +Inf, and a second stored zero still restarts the history */
-  fails += fill_history(C);
-  SUNAdaptController_UpdateH(C, hseq[3], SUN_RCONST(0.0));
-  SUNAdaptController_EstimateStep(C, hseq[4], ORDER, SUN_RCONST(0.0), &hnew);
+  fails += fill_history(cc->name, C);
+  fails += update_h(cc->name, "store first zero error", C, hseq[3],
+                    SUN_RCONST(0.0));
+  fails += estimate_step(cc->name, "repeated zero error", C, hseq[4],
+                         SUN_RCONST(0.0), &hnew);
   fails += check_inf(cc->name, "repeated zero error", hnew);
-  SUNAdaptController_UpdateH(C, hseq[4], SUN_RCONST(0.0));
-  SUNAdaptController_EstimateStep(C, hseq[5], ORDER, dsmseq[5], &hnew);
+  fails += update_h(cc->name, "store second zero error", C, hseq[4],
+                    SUN_RCONST(0.0));
+  fails += estimate_step(cc->name, "step after two zero errors (I law)", C,
+                         hseq[5], dsmseq[5], &hnew);
   fails += check_value(cc->name, "step after two zero errors (I law)", hnew,
                        expected_i_law(hseq[5], ORDER, dsmseq[5]));
 
