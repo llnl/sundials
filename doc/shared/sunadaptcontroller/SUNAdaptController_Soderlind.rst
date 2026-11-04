@@ -32,7 +32,9 @@ with default parameter values :math:`k_1 = 1.25`, :math:`k_2 = 0.5`,
 :math:`k_3 = -0.75`, :math:`k_4 = 0.25`, and :math:`k_5 = 0.75`, where
 :math:`p` is the global order of the time integration method. If there is
 insufficient history of past time steps and errors, i.e., on the first or second
-time step, an I controller is used.
+time step, an I controller is used. A zero error estimate restarts this
+history, so the I controller is also used until enough positive error estimates
+have been stored again.
 
 The SUNAdaptController_Soderlind controller is implemented as a derived
 SUNAdaptController class, and defines its *content* field as:

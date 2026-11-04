@@ -670,9 +670,20 @@ SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
   SODERLIND_EP(C)  = SODERLIND_BIAS(C) * dsm;
   SODERLIND_HPP(C) = SODERLIND_HP(C);
   SODERLIND_HP(C)  = h;
-  if (SODERLIND_FIRSTSTEPS(C) < SODERLIND_HISTORYSIZE(C))
+  if (SODERLIND_EP(C) > SUN_RCONST(0.0))
   {
-    SODERLIND_FIRSTSTEPS(C) += 1;
+    if (SODERLIND_FIRSTSTEPS(C) < SODERLIND_HISTORYSIZE(C))
+    {
+      SODERLIND_FIRSTSTEPS(C) += 1;
+    }
+  }
+  else
+  {
+    /* A zero error carries no trend information, and raising it to the history
+       exponents would give 0, Inf, or NaN. Restart the history so that
+       EstimateStep falls back to the I controller until enough positive errors
+       have been stored. */
+    SODERLIND_FIRSTSTEPS(C) = 0;
   }
   return SUN_SUCCESS;
 }

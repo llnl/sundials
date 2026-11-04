@@ -142,6 +142,20 @@ int arkAdapt(ARKodeMem ark_mem, ARKodeHAdaptMem hadapt_mem, N_Vector ycur,
     return (ARK_CONTROLLER_ERR);
   }
 
+  /* treat a NaN step size from the controller as a controller failure; without
+     this check, the SUNMIN/SUNMAX bounds below would silently turn it into
+     etamax*hcur, since every comparison with NaN is false */
+  if (isnan(h_acc))
+  {
+    SUNLogDebug(ARK_LOGGER, "controller-nan",
+                "hcur = " SUN_FORMAT_G ", dsm = " SUN_FORMAT_G
+                ", h_acc_controller = " SUN_FORMAT_G,
+                hcur, dsm, h_acc);
+    arkProcessError(ark_mem, ARK_CONTROLLER_ERR, __LINE__, __func__, __FILE__,
+                    "SUNAdaptController_EstimateStep returned NaN.");
+    return (ARK_CONTROLLER_ERR);
+  }
+
   SUNLogDebug(ARK_LOGGER, "new-step-before-bounds",
               "h_acc_controller = " SUN_FORMAT_G, h_acc);
 
