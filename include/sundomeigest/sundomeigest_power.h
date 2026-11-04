@@ -52,6 +52,9 @@ struct SUNDomEigEstimatorContent_Power_
   sunrealtype rel_tol;  /* Convergence criteria for the power iteration */
   sunrealtype res;      /* Residual from the last Estimate call */
 
+  sunrealtype lambdaR;    /* Real part of dominant eigenvalue */
+  sunrealtype lambdaI;    /* Imaginary part of dominant eigenvalue */
+
   SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
   long int nfevals; /* Number of RHS evaluations */

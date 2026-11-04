@@ -584,6 +584,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   *lambdaR = wr[0];
   *lambdaI = wi[0];
 
+  Arnoldi_CONTENT(DEE)->lambdaR = *lambdaR;
+  Arnoldi_CONTENT(DEE)->lambdaI = *lambdaI;
+
   return SUN_SUCCESS;
 }
 
@@ -642,10 +645,26 @@ SUNErrCode SUNDomEigEstimator_Write_Arnoldi(SUNDomEigEstimator DEE, FILE* outfil
           Arnoldi_CONTENT(DEE)->kry_dim);
   fprintf(outfile, "Num. preprocessing iters = %d\n",
           Arnoldi_CONTENT(DEE)->num_warmups);
+  if (Arnoldi_CONTENT(DEE)->warmup_to_tol)
+  {
+    fprintf(outfile, "Warmup to tol            = ON\n");
+    fprintf(outfile, "Tolerance for warmup     = " SUN_FORMAT_G "\n",
+            Arnoldi_CONTENT(DEE)->tol_warmup);
+  }
+  else
+  {
+    fprintf(outfile, "Warmup to tol            = OFF\n");
+  }
   fprintf(outfile, "Num. iters               = %ld\n",
           Arnoldi_CONTENT(DEE)->num_iters);
   fprintf(outfile, "Num. ATimes calls        = %ld\n\n",
           Arnoldi_CONTENT(DEE)->num_ATimes);
+  fprintf(outfile, "Num. RHS evals           = %ld\n\n",
+          Arnoldi_CONTENT(DEE)->nfevals);
+  fprintf(outfile, "Dominant eig lambdaR     = " SUN_FORMAT_G "\n",
+          Arnoldi_CONTENT(DEE)->lambdaR);
+  fprintf(outfile, "Dominant eig lambdaI     = " SUN_FORMAT_G "\n",
+          Arnoldi_CONTENT(DEE)->lambdaI);
 
   return SUN_SUCCESS;
 }

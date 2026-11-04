@@ -541,6 +541,9 @@ SUNErrCode SUNDomEigEstimator_Estimate_Power(SUNDomEigEstimator DEE,
     *lambdaI = ZERO;
   }
 
+  PI_CONTENT(DEE)->lambdaR = *lambdaR;
+  PI_CONTENT(DEE)->lambdaI = *lambdaI;
+
   return SUN_SUCCESS;
 }
 
@@ -623,6 +626,12 @@ SUNErrCode SUNDomEigEstimator_Write_Power(SUNDomEigEstimator DEE, FILE* outfile)
           PI_CONTENT(DEE)->num_iters);
   fprintf(outfile, "Num. ATimes calls        = %ld\n\n",
           PI_CONTENT(DEE)->num_ATimes);
+  fprintf(outfile, "Num. RHS evals           = %ld\n\n",
+          PI_CONTENT(DEE)->nfevals);
+  fprintf(outfile, "Dominant eig lambdaR     = " SUN_FORMAT_G "\n",
+          PI_CONTENT(DEE)->lambdaR);
+  fprintf(outfile, "Dominant eig lambdaI     = " SUN_FORMAT_G "\n",
+          PI_CONTENT(DEE)->lambdaI);
 
   return SUN_SUCCESS;
 }
