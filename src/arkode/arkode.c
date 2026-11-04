@@ -2813,7 +2813,7 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   ark_mem->fn_is_current = SUNFALSE;
 
   /* Notify time step controller object of successful step */
-  if (ark_mem->hadapt_mem->hcontroller)
+  if (ark_mem->hadapt_mem->hcontroller && !ark_mem->fixedstep)
   {
     retval = SUNAdaptController_UpdateH(ark_mem->hadapt_mem->hcontroller,
                                         ark_mem->h, dsm);

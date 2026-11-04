@@ -1303,19 +1303,15 @@ int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed)
     if (retval != ARK_SUCCESS) { return (retval); }
   }
 
-  /* set ark_mem "fixedstep" entry */
-  if (hfixed != ZERO)
-  {
-    ark_mem->fixedstep = SUNTRUE;
-    ark_mem->hin       = hfixed;
-  }
-  else { ark_mem->fixedstep = SUNFALSE; }
+  /* set ark_mem "fixedstep" and "hin" entries */  
+  ark_mem->fixedstep = (hfixed != ZERO);
+  ark_mem->hin       = hfixed;
 
   /* Clear previous initial step */
   ark_mem->h0u = ZERO;
 
   /* Reset error controller (e.g., error and step size history) */
-  if (ark_mem->hadapt_mem->hcontroller != NULL)
+  if ((hfixed != ZERO) && ark_mem->hadapt_mem->hcontroller)
   {
     retval = SUNAdaptController_Reset(ark_mem->hadapt_mem->hcontroller);
     if (retval != SUN_SUCCESS) { return (ARK_CONTROLLER_ERR); }
