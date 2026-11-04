@@ -110,7 +110,3 @@ system, etc. developers should adhere to the following checklist.
    * There is a 'litgen' GitHub action that we run on all pull requests. This action will,
      like with the SWIG action, run the generator and create a git patch file that you
      can apply locally. This is helpful if you are unable to setup sundials4py-generate locally.
-
-#. Unimplemented functions in each module should behave as follows when called:
-   * Optional functions must return ``SUN_ERR_NOT_IMPLEMENTED``.
-   * Required functions must cause a segmentation fault.
