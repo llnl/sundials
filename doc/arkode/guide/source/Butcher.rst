@@ -518,7 +518,7 @@ and the embedding has SSP coefficient equal to 1.15.
      \frac{11}{12} & \frac{11}{24} & \frac{11}{24} & 0 \\
      \hline
      2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
-     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
+     1 & \frac{73467}{180400} & \frac{32969}{180400} & \frac{41}{100}
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_LSPUM_ERK_3_1_2_stab_region.png
@@ -1850,7 +1850,7 @@ coefficient equal to 3.81.
      \frac{751}{924} & \frac{2033}{4620} & \frac{21}{110} & \frac{2}{11} \\
      \hline
      2 & \frac{24}{55} & \frac{1}{5} & \frac{4}{11} \\
-     1 & \frac{4247}{9840} & \frac{21343}{108240} & \frac{49}{132}
+     1 & \frac{73467}{180400} & \frac{32969}{180400} & \frac{41}{100}
    \end{array}
 
 .. figure:: /figs/arkode/ARKODE_SSP_LSPUM_SDIRK_3_1_2_stab_region.png
