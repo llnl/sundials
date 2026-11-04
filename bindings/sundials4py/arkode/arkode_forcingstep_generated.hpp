@@ -4,11 +4,12 @@
 // #endif
 //
 
-m.def("ForcingStepReInit", ForcingStepReInit, nb::arg("arkode_mem"),
-      nb::arg("stepper1"), nb::arg("stepper2"), nb::arg("t0"), nb::arg("y0"));
+sundials4py::scoped_def(m, "ForcingStepReInit", ForcingStepReInit,
+                        nb::arg("arkode_mem"), nb::arg("stepper1"),
+                        nb::arg("stepper2"), nb::arg("t0"), nb::arg("y0"));
 
-m.def(
-  "ForcingStepGetNumEvolves",
+sundials4py::scoped_def(
+  m, "ForcingStepGetNumEvolves",
   [](void* arkode_mem, int partition) -> std::tuple<int, long>
   {
     auto ForcingStepGetNumEvolves_adapt_modifiable_immutable_to_return =

@@ -5,8 +5,8 @@
 // #endif
 //
 
-m.def(
-  "SUNAdjointStepper_Create",
+sundials4py::scoped_def(
+  m, "SUNAdjointStepper_Create",
   [](SUNStepper fwd_sunstepper, sunbooleantype own_fwd, SUNStepper adj_sunstepper,
      sunbooleantype own_adj, suncountertype final_step_idx, sunrealtype tf,
      N_Vector sf, SUNAdjointCheckpointScheme checkpoint_scheme, SUNContext sunctx)
@@ -77,11 +77,12 @@ m.def(
   nb::rv_policy::reference,
   nb::call_policy<sundials4py::returns_references_to<9, 1>>());
 
-m.def("SUNAdjointStepper_ReInit", SUNAdjointStepper_ReInit, nb::arg("adj"),
-      nb::arg("t0"), nb::arg("y0"), nb::arg("tf"), nb::arg("sf"));
+sundials4py::scoped_def(m, "SUNAdjointStepper_ReInit", SUNAdjointStepper_ReInit,
+                        nb::arg("adj"), nb::arg("t0"), nb::arg("y0"),
+                        nb::arg("tf"), nb::arg("sf"));
 
-m.def(
-  "SUNAdjointStepper_Evolve",
+sundials4py::scoped_def(
+  m, "SUNAdjointStepper_Evolve",
   [](SUNAdjointStepper adj_stepper, sunrealtype tout,
      N_Vector sens) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -102,8 +103,8 @@ m.def(
   },
   nb::arg("adj_stepper"), nb::arg("tout"), nb::arg("sens"));
 
-m.def(
-  "SUNAdjointStepper_OneStep",
+sundials4py::scoped_def(
+  m, "SUNAdjointStepper_OneStep",
   [](SUNAdjointStepper adj_stepper, sunrealtype tout,
      N_Vector sens) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -124,15 +125,17 @@ m.def(
   },
   nb::arg("adj_stepper"), nb::arg("tout"), nb::arg("sens"));
 
-m.def("SUNAdjointStepper_RecomputeFwd", SUNAdjointStepper_RecomputeFwd,
-      nb::arg("adj_stepper"), nb::arg("start_idx"), nb::arg("t0"),
-      nb::arg("y0"), nb::arg("tf"));
+sundials4py::scoped_def(m, "SUNAdjointStepper_RecomputeFwd",
+                        SUNAdjointStepper_RecomputeFwd, nb::arg("adj_stepper"),
+                        nb::arg("start_idx"), nb::arg("t0"), nb::arg("y0"),
+                        nb::arg("tf"));
 
-m.def("SUNAdjointStepper_SetUserData", SUNAdjointStepper_SetUserData,
-      nb::arg("param_0"), nb::arg("user_data"));
+sundials4py::scoped_def(m, "SUNAdjointStepper_SetUserData",
+                        SUNAdjointStepper_SetUserData, nb::arg("param_0"),
+                        nb::arg("user_data"));
 
-m.def(
-  "SUNAdjointStepper_GetNumSteps",
+sundials4py::scoped_def(
+  m, "SUNAdjointStepper_GetNumSteps",
   [](SUNAdjointStepper adj_stepper) -> std::tuple<SUNErrCode, suncountertype>
   {
     auto SUNAdjointStepper_GetNumSteps_adapt_modifiable_immutable_to_return =
@@ -150,8 +153,8 @@ m.def(
   },
   nb::arg("adj_stepper"));
 
-m.def(
-  "SUNAdjointStepper_GetNumRecompute",
+sundials4py::scoped_def(
+  m, "SUNAdjointStepper_GetNumRecompute",
   [](SUNAdjointStepper adj_stepper) -> std::tuple<SUNErrCode, suncountertype>
   {
     auto SUNAdjointStepper_GetNumRecompute_adapt_modifiable_immutable_to_return =
@@ -170,8 +173,9 @@ m.def(
   },
   nb::arg("adj_stepper"));
 
-m.def("SUNAdjointStepper_PrintAllStats", SUNAdjointStepper_PrintAllStats,
-      nb::arg("adj_stepper"), nb::arg("outfile"), nb::arg("fmt"));
+sundials4py::scoped_def(m, "SUNAdjointStepper_PrintAllStats",
+                        SUNAdjointStepper_PrintAllStats, nb::arg("adj_stepper"),
+                        nb::arg("outfile"), nb::arg("fmt"));
 // #ifdef __cplusplus
 //
 // #endif

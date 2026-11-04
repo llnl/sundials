@@ -4,8 +4,8 @@
 // #endif
 //
 
-m.def(
-  "SUNProfiler_Create",
+sundials4py::scoped_def(
+  m, "SUNProfiler_Create",
   [](SUNComm comm, const char* title)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNProfiler>>>
   {
@@ -35,12 +35,14 @@ m.def(
   },
   nb::arg("comm"), nb::arg("title"), nb::rv_policy::reference);
 
-m.def("SUNProfiler_Begin", SUNProfiler_Begin, nb::arg("p"), nb::arg("name"));
+sundials4py::scoped_def(m, "SUNProfiler_Begin", SUNProfiler_Begin, nb::arg("p"),
+                        nb::arg("name"));
 
-m.def("SUNProfiler_End", SUNProfiler_End, nb::arg("p"), nb::arg("name"));
+sundials4py::scoped_def(m, "SUNProfiler_End", SUNProfiler_End, nb::arg("p"),
+                        nb::arg("name"));
 
-m.def(
-  "SUNProfiler_GetTimerResolution",
+sundials4py::scoped_def(
+  m, "SUNProfiler_GetTimerResolution",
   [](SUNProfiler p) -> std::tuple<SUNErrCode, double>
   {
     auto SUNProfiler_GetTimerResolution_adapt_modifiable_immutable_to_return =
@@ -57,8 +59,8 @@ m.def(
   },
   nb::arg("p"));
 
-m.def(
-  "SUNProfiler_GetElapsedTime",
+sundials4py::scoped_def(
+  m, "SUNProfiler_GetElapsedTime",
   [](SUNProfiler p, const char* name) -> std::tuple<SUNErrCode, double>
   {
     auto SUNProfiler_GetElapsedTime_adapt_modifiable_immutable_to_return =
@@ -75,9 +77,10 @@ m.def(
   },
   nb::arg("p"), nb::arg("name"));
 
-m.def("SUNProfiler_Print", SUNProfiler_Print, nb::arg("p"), nb::arg("fp"));
+sundials4py::scoped_def(m, "SUNProfiler_Print", SUNProfiler_Print, nb::arg("p"),
+                        nb::arg("fp"));
 
-m.def("SUNProfiler_Reset", SUNProfiler_Reset, nb::arg("p"));
+sundials4py::scoped_def(m, "SUNProfiler_Reset", SUNProfiler_Reset, nb::arg("p"));
 // #ifdef __cplusplus
 //
 // #endif

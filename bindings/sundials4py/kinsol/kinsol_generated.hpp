@@ -38,75 +38,81 @@ m.attr("KIN_LINESEARCH")          = 1;
 m.attr("KIN_PICARD")              = 2;
 m.attr("KIN_FP")                  = 3;
 
-m.def("KINSol", KINSol, nb::arg("kinmem"), nb::arg("uu"), nb::arg("strategy"),
-      nb::arg("u_scale"), nb::arg("f_scale"), "Solver function");
+sundials4py::scoped_def(m, "KINSetUserData", KINSetUserData, nb::arg("kinmem"),
+                        nb::arg("user_data"));
 
-m.def("KINSetUserData", KINSetUserData, nb::arg("kinmem"), nb::arg("user_data"));
+sundials4py::scoped_def(m, "KINSetDamping", KINSetDamping, nb::arg("kinmem"),
+                        nb::arg("beta"));
 
-m.def("KINSetDamping", KINSetDamping, nb::arg("kinmem"), nb::arg("beta"));
+sundials4py::scoped_def(m, "KINSetMAA", KINSetMAA, nb::arg("kinmem"),
+                        nb::arg("maa"));
 
-m.def("KINSetMAA", KINSetMAA, nb::arg("kinmem"), nb::arg("maa"));
+sundials4py::scoped_def(m, "KINSetOrthAA", KINSetOrthAA, nb::arg("kinmem"),
+                        nb::arg("orthaa"));
 
-m.def("KINSetOrthAA", KINSetOrthAA, nb::arg("kinmem"), nb::arg("orthaa"));
+sundials4py::scoped_def(m, "KINSetDelayAA", KINSetDelayAA, nb::arg("kinmem"),
+                        nb::arg("delay"));
 
-m.def("KINSetDelayAA", KINSetDelayAA, nb::arg("kinmem"), nb::arg("delay"));
+sundials4py::scoped_def(m, "KINSetDampingAA", KINSetDampingAA,
+                        nb::arg("kinmem"), nb::arg("beta"));
 
-m.def("KINSetDampingAA", KINSetDampingAA, nb::arg("kinmem"), nb::arg("beta"));
+sundials4py::scoped_def(m, "KINSetReturnNewest", KINSetReturnNewest,
+                        nb::arg("kinmem"), nb::arg("ret_newest"));
 
-m.def("KINSetReturnNewest", KINSetReturnNewest, nb::arg("kinmem"),
-      nb::arg("ret_newest"));
+sundials4py::scoped_def(m, "KINSetNumMaxIters", KINSetNumMaxIters,
+                        nb::arg("kinmem"), nb::arg("mxiter"));
 
-m.def("KINSetNumMaxIters", KINSetNumMaxIters, nb::arg("kinmem"),
-      nb::arg("mxiter"));
+sundials4py::scoped_def(m, "KINSetNoInitSetup", KINSetNoInitSetup,
+                        nb::arg("kinmem"), nb::arg("noInitSetup"));
 
-m.def("KINSetNoInitSetup", KINSetNoInitSetup, nb::arg("kinmem"),
-      nb::arg("noInitSetup"));
+sundials4py::scoped_def(m, "KINSetNoResMon", KINSetNoResMon, nb::arg("kinmem"),
+                        nb::arg("noNNIResMon"));
 
-m.def("KINSetNoResMon", KINSetNoResMon, nb::arg("kinmem"),
-      nb::arg("noNNIResMon"));
+sundials4py::scoped_def(m, "KINSetMaxSetupCalls", KINSetMaxSetupCalls,
+                        nb::arg("kinmem"), nb::arg("msbset"));
 
-m.def("KINSetMaxSetupCalls", KINSetMaxSetupCalls, nb::arg("kinmem"),
-      nb::arg("msbset"));
+sundials4py::scoped_def(m, "KINSetMaxSubSetupCalls", KINSetMaxSubSetupCalls,
+                        nb::arg("kinmem"), nb::arg("msbsetsub"));
 
-m.def("KINSetMaxSubSetupCalls", KINSetMaxSubSetupCalls, nb::arg("kinmem"),
-      nb::arg("msbsetsub"));
+sundials4py::scoped_def(m, "KINSetEtaForm", KINSetEtaForm, nb::arg("kinmem"),
+                        nb::arg("etachoice"));
 
-m.def("KINSetEtaForm", KINSetEtaForm, nb::arg("kinmem"), nb::arg("etachoice"));
+sundials4py::scoped_def(m, "KINSetEtaConstValue", KINSetEtaConstValue,
+                        nb::arg("kinmem"), nb::arg("eta"));
 
-m.def("KINSetEtaConstValue", KINSetEtaConstValue, nb::arg("kinmem"),
-      nb::arg("eta"));
+sundials4py::scoped_def(m, "KINSetEtaParams", KINSetEtaParams,
+                        nb::arg("kinmem"), nb::arg("egamma"), nb::arg("ealpha"));
 
-m.def("KINSetEtaParams", KINSetEtaParams, nb::arg("kinmem"), nb::arg("egamma"),
-      nb::arg("ealpha"));
+sundials4py::scoped_def(m, "KINSetResMonParams", KINSetResMonParams,
+                        nb::arg("kinmem"), nb::arg("omegamin"),
+                        nb::arg("omegamax"));
 
-m.def("KINSetResMonParams", KINSetResMonParams, nb::arg("kinmem"),
-      nb::arg("omegamin"), nb::arg("omegamax"));
+sundials4py::scoped_def(m, "KINSetResMonConstValue", KINSetResMonConstValue,
+                        nb::arg("kinmem"), nb::arg("omegaconst"));
 
-m.def("KINSetResMonConstValue", KINSetResMonConstValue, nb::arg("kinmem"),
-      nb::arg("omegaconst"));
+sundials4py::scoped_def(m, "KINSetNoMinEps", KINSetNoMinEps, nb::arg("kinmem"),
+                        nb::arg("noMinEps"));
 
-m.def("KINSetNoMinEps", KINSetNoMinEps, nb::arg("kinmem"), nb::arg("noMinEps"));
+sundials4py::scoped_def(m, "KINSetMaxNewtonStep", KINSetMaxNewtonStep,
+                        nb::arg("kinmem"), nb::arg("mxnewtstep"));
 
-m.def("KINSetMaxNewtonStep", KINSetMaxNewtonStep, nb::arg("kinmem"),
-      nb::arg("mxnewtstep"));
+sundials4py::scoped_def(m, "KINSetMaxBetaFails", KINSetMaxBetaFails,
+                        nb::arg("kinmem"), nb::arg("mxnbcf"));
 
-m.def("KINSetMaxBetaFails", KINSetMaxBetaFails, nb::arg("kinmem"),
-      nb::arg("mxnbcf"));
+sundials4py::scoped_def(m, "KINSetRelErrFunc", KINSetRelErrFunc,
+                        nb::arg("kinmem"), nb::arg("relfunc"));
 
-m.def("KINSetRelErrFunc", KINSetRelErrFunc, nb::arg("kinmem"),
-      nb::arg("relfunc"));
+sundials4py::scoped_def(m, "KINSetFuncNormTol", KINSetFuncNormTol,
+                        nb::arg("kinmem"), nb::arg("fnormtol"));
 
-m.def("KINSetFuncNormTol", KINSetFuncNormTol, nb::arg("kinmem"),
-      nb::arg("fnormtol"));
+sundials4py::scoped_def(m, "KINSetScaledStepTol", KINSetScaledStepTol,
+                        nb::arg("kinmem"), nb::arg("scsteptol"));
 
-m.def("KINSetScaledStepTol", KINSetScaledStepTol, nb::arg("kinmem"),
-      nb::arg("scsteptol"));
+sundials4py::scoped_def(m, "KINSetConstraints", KINSetConstraints,
+                        nb::arg("kinmem"), nb::arg("constraints"));
 
-m.def("KINSetConstraints", KINSetConstraints, nb::arg("kinmem"),
-      nb::arg("constraints"));
-
-m.def(
-  "KINGetNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "KINGetNumNonlinSolvIters",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
@@ -122,8 +128,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumFuncEvals",
+sundials4py::scoped_def(
+  m, "KINGetNumFuncEvals",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumFuncEvals_adapt_modifiable_immutable_to_return =
@@ -139,8 +145,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumBetaCondFails",
+sundials4py::scoped_def(
+  m, "KINGetNumBetaCondFails",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumBetaCondFails_adapt_modifiable_immutable_to_return =
@@ -156,8 +162,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumBacktrackOps",
+sundials4py::scoped_def(
+  m, "KINGetNumBacktrackOps",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumBacktrackOps_adapt_modifiable_immutable_to_return =
@@ -173,8 +179,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetFuncNorm",
+sundials4py::scoped_def(
+  m, "KINGetFuncNorm",
   [](void* kinmem) -> std::tuple<int, sunrealtype>
   {
     auto KINGetFuncNorm_adapt_modifiable_immutable_to_return =
@@ -190,8 +196,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetStepLength",
+sundials4py::scoped_def(
+  m, "KINGetStepLength",
   [](void* kinmem) -> std::tuple<int, sunrealtype>
   {
     auto KINGetStepLength_adapt_modifiable_immutable_to_return =
@@ -207,10 +213,11 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def("KINPrintAllStats", KINPrintAllStats, nb::arg("kinmem"),
-      nb::arg("outfile"), nb::arg("fmt"));
+sundials4py::scoped_def(m, "KINPrintAllStats", KINPrintAllStats,
+                        nb::arg("kinmem"), nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("KINGetReturnFlagName", KINGetReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "KINGetReturnFlagName", KINGetReturnFlagName,
+                        nb::arg("flag"));
 // #ifdef __cplusplus
 //
 // #endif
@@ -232,8 +239,8 @@ m.attr("KINLS_JACFUNC_ERR") = -6;
 m.attr("KINLS_SUNMAT_FAIL") = -7;
 m.attr("KINLS_SUNLS_FAIL")  = -8;
 
-m.def(
-  "KINSetLinearSolver",
+sundials4py::scoped_def(
+  m, "KINSetLinearSolver",
   [](void* kinmem, SUNLinearSolver LS,
      std::optional<SUNMatrix> A = std::nullopt) -> int
   {
@@ -252,8 +259,8 @@ m.def(
   },
   nb::arg("kinmem"), nb::arg("LS"), nb::arg("A").none() = nb::none());
 
-m.def(
-  "KINGetJac",
+sundials4py::scoped_def(
+  m, "KINGetJac",
   [](void* kinmem) -> std::tuple<int, SUNMatrix>
   {
     auto KINGetJac_adapt_modifiable_immutable_to_return =
@@ -269,8 +276,8 @@ m.def(
   },
   nb::arg("kinmem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "KINGetJacNumIters",
+sundials4py::scoped_def(
+  m, "KINGetJacNumIters",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetJacNumIters_adapt_modifiable_immutable_to_return =
@@ -286,8 +293,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumJacEvals",
+sundials4py::scoped_def(
+  m, "KINGetNumJacEvals",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumJacEvals_adapt_modifiable_immutable_to_return =
@@ -303,8 +310,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumLinFuncEvals",
+sundials4py::scoped_def(
+  m, "KINGetNumLinFuncEvals",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumLinFuncEvals_adapt_modifiable_immutable_to_return =
@@ -320,8 +327,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumPrecEvals",
+sundials4py::scoped_def(
+  m, "KINGetNumPrecEvals",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumPrecEvals_adapt_modifiable_immutable_to_return =
@@ -337,8 +344,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumPrecSolves",
+sundials4py::scoped_def(
+  m, "KINGetNumPrecSolves",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumPrecSolves_adapt_modifiable_immutable_to_return =
@@ -354,8 +361,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumLinIters",
+sundials4py::scoped_def(
+  m, "KINGetNumLinIters",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumLinIters_adapt_modifiable_immutable_to_return =
@@ -371,8 +378,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumLinConvFails",
+sundials4py::scoped_def(
+  m, "KINGetNumLinConvFails",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumLinConvFails_adapt_modifiable_immutable_to_return =
@@ -388,8 +395,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetNumJtimesEvals",
+sundials4py::scoped_def(
+  m, "KINGetNumJtimesEvals",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetNumJtimesEvals_adapt_modifiable_immutable_to_return =
@@ -405,8 +412,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def(
-  "KINGetLastLinFlag",
+sundials4py::scoped_def(
+  m, "KINGetLastLinFlag",
   [](void* kinmem) -> std::tuple<int, long>
   {
     auto KINGetLastLinFlag_adapt_modifiable_immutable_to_return =
@@ -422,7 +429,8 @@ m.def(
   },
   nb::arg("kinmem"));
 
-m.def("KINGetLinReturnFlagName", KINGetLinReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "KINGetLinReturnFlagName", KINGetLinReturnFlagName,
+                        nb::arg("flag"));
 // #ifdef __cplusplus
 //
 // #endif

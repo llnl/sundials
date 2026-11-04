@@ -4,14 +4,17 @@
 // #endif
 //
 
-m.def("ARKStepSetExplicit", ARKStepSetExplicit, nb::arg("arkode_mem"));
+sundials4py::scoped_def(m, "ARKStepSetExplicit", ARKStepSetExplicit,
+                        nb::arg("arkode_mem"));
 
-m.def("ARKStepSetImplicit", ARKStepSetImplicit, nb::arg("arkode_mem"));
+sundials4py::scoped_def(m, "ARKStepSetImplicit", ARKStepSetImplicit,
+                        nb::arg("arkode_mem"));
 
-m.def("ARKStepSetImEx", ARKStepSetImEx, nb::arg("arkode_mem"));
+sundials4py::scoped_def(m, "ARKStepSetImEx", ARKStepSetImEx,
+                        nb::arg("arkode_mem"));
 
-m.def(
-  "ARKStepSetTables",
+sundials4py::scoped_def(
+  m, "ARKStepSetTables",
   [](void* arkode_mem, int q, int p,
      std::optional<ARKodeButcherTable> Bi = std::nullopt,
      std::optional<ARKodeButcherTable> Be = std::nullopt) -> int
@@ -38,14 +41,16 @@ m.def(
   nb::arg("arkode_mem"), nb::arg("q"), nb::arg("p"),
   nb::arg("Bi").none() = nb::none(), nb::arg("Be").none() = nb::none());
 
-m.def("ARKStepSetTableNum", ARKStepSetTableNum, nb::arg("arkode_mem"),
-      nb::arg("itable"), nb::arg("etable"));
+sundials4py::scoped_def(m, "ARKStepSetTableNum", ARKStepSetTableNum,
+                        nb::arg("arkode_mem"), nb::arg("itable"),
+                        nb::arg("etable"));
 
-m.def("ARKStepSetTableName", ARKStepSetTableName, nb::arg("arkode_mem"),
-      nb::arg("itable"), nb::arg("etable"));
+sundials4py::scoped_def(m, "ARKStepSetTableName", ARKStepSetTableName,
+                        nb::arg("arkode_mem"), nb::arg("itable"),
+                        nb::arg("etable"));
 
-m.def(
-  "ARKStepGetCurrentButcherTables",
+sundials4py::scoped_def(
+  m, "ARKStepGetCurrentButcherTables",
   [](void* arkode_mem) -> std::tuple<int, ARKodeButcherTable, ARKodeButcherTable>
   {
     auto ARKStepGetCurrentButcherTables_adapt_modifiable_immutable_to_return =
@@ -66,8 +71,8 @@ m.def(
   " Optional output functions\n\n nb::rv_policy::reference",
   nb::rv_policy::reference);
 
-m.def(
-  "ARKStepGetTimestepperStats",
+sundials4py::scoped_def(
+  m, "ARKStepGetTimestepperStats",
   [](void* arkode_mem) -> std::tuple<int, long, long, long, long, long, long, long>
   {
     auto ARKStepGetTimestepperStats_adapt_modifiable_immutable_to_return =

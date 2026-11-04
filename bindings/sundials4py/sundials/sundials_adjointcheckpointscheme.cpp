@@ -38,8 +38,8 @@ void bind_sunadjointcheckpointscheme(nb::module_& m)
 
   nb::class_<SUNAdjointCheckpointScheme_>(m, "SUNAdjointCheckpointScheme_");
 
-  m.def(
-    "SUNAdjointCheckpointScheme_LoadVector",
+  sundials4py::scoped_def(
+    m, "SUNAdjointCheckpointScheme_LoadVector",
     [](SUNAdjointCheckpointScheme check_scheme, suncountertype step_num,
        suncountertype stage_num, sunbooleantype peek, N_Vector tmpl)
       -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<N_Vector>>, sunrealtype>

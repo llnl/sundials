@@ -13,8 +13,8 @@ void bind_nvector_manyvector(nb::module_& m)
 {
 #include "nvector_manyvector_generated.hpp"
 
-  m.def(
-    "N_VNew_ManyVector",
+  sundials4py::scoped_def(
+    m, "N_VNew_ManyVector",
     [](sunindextype num_subvectors, std::vector<N_Vector> vec_array_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
