@@ -78,7 +78,7 @@ foreach(example_tuple ${sunlinsol_spfgmr_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunlinsol_spfgmr_examples})
 
@@ -124,7 +124,7 @@ foreach(example_tuple ${sunlinsol_spfgmr_fortran_examples})
       ${test_name} ${example}
       TEST_ARGS ${example_args}
       EXAMPLE_TYPE ${example_type}
-      NODIFF)
+      NO_DIFF)
   endif()
 
 endforeach(example_tuple ${sunlinsol_spfgmr_fortran_examples})

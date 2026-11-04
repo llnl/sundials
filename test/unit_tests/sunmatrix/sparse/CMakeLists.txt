@@ -76,7 +76,7 @@ foreach(example_tuple ${sunmatrix_sparse_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunmatrix_sparse_examples})
 
@@ -129,6 +129,6 @@ foreach(example_tuple ${sunmatrix_sparse_fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunmatrix_sparse_fortran_examples})
