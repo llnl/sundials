@@ -13,6 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c_cvs_krylov_demo_ls)
-  add_subdirectory(c_cvs_krylov_demo_prec)
+  add_subdirectory(c_ls)
+  add_subdirectory(c_prec)
 endif()
