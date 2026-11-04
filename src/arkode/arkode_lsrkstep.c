@@ -343,7 +343,8 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   setup and allocations needed for the method and sets
   the call_fullrhs flag.
 
-  With other initialization types, this routine does nothing.
+  With RESIZE_INIT this routine only requests a new dominant eigenvalue
+  estimate. With RESET_INIT it does nothing.
   ---------------------------------------------------------------*/
 int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
 {
@@ -354,11 +355,15 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
-  /* immediately return if resize or reset */
-  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
+  /* the spectrum changes with the problem size, so force a new estimate */
+  if (init_type == RESIZE_INIT)
   {
+    step_mem->dom_eig_update     = SUNTRUE;
+    step_mem->dom_eig_is_current = SUNFALSE;
     return ARK_SUCCESS;
   }
+
+  if (init_type == RESET_INIT) { return ARK_SUCCESS; }
   /* enforce use of arkEwtSmallReal if using a fixed step size
      and an internal error weight function */
   if (ark_mem->fixedstep && !ark_mem->user_efun)

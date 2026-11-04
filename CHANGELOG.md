@@ -36,6 +36,12 @@ the RKL step was called with an incorrect time argument.
 Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
 stored as the update frequency instead of restoring the default value.
 
+Fixed a bug in LSRKStep where the dominant eigenvalue was not recomputed after
+`ARKodeResize`, so steps after a resize could use the dominant eigenvalue of
+the previous problem size until the update frequency set with
+`LSRKStepSetDomEigFrequency` elapsed, or for the rest of the simulation when
+the dominant eigenvalue was declared constant.
+
 ### Deprecation Notices
 
 ## Changes to SUNDIALS in release 7.9.0
