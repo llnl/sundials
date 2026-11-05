@@ -12,10 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idas_sl_crank_dns idas_sl_crank_fsa_dns)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    EXAMPLE_TYPE exclude-single
-    LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+sundials_add_example(
+  idas_akzo_nob_dns
+  SOURCES idas_akzo_nob_dns.c
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

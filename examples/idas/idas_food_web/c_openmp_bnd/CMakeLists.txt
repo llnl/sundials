@@ -12,12 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idas_food_web_kry_bbd_p idas_food_web_kry_p)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    MPI_NPROCS 4
-    EXAMPLE_TYPE exclude-single
-    LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDAS_C_LIBS} sundials_nvecparallel
-                   ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(example_options TEST_ARGS 4)
+sundials_add_example(
+  idas_food_web_bnd_omp
+  SOURCES idas_food_web_bnd_omp.c ${example_options}
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecopenmp ${EXE_EXTRA_LINK_LIBS})

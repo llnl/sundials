@@ -12,13 +12,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idas_food_web_bnd_omp idas_food_web_kry_omp)
-  set(example_options TEST_ARGS 4)
-  if(example STREQUAL "idas_food_web_kry_omp")
-    list(APPEND example_options NO_TEST INSTALL_FILES ${example}.out)
-  endif()
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c ${example_options}
-    LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecopenmp ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(example_options EXAMPLE_TYPE exclude-single)
+set(answer_file idas_roberts_asai_sps.out)
+if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
+  list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
+endif()
+sundials_add_example(
+  idas_roberts_asai_sps
+  SOURCES idas_roberts_asai_sps.c ${example_options}
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
+                 ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})

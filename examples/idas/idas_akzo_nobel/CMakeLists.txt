@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_asai_dns)
+  add_subdirectory(c_dns)
 endif()
 
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)

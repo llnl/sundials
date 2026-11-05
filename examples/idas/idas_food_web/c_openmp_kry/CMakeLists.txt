@@ -12,10 +12,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example idas_heat_2d_bnd idas_heat_2d_kry)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    EXAMPLE_TYPE exclude-single
-    LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(example_options TEST_ARGS 4)
+list(APPEND example_options NO_TEST INSTALL_FILES idas_food_web_kry_omp.out)
+sundials_add_example(
+  idas_food_web_kry_omp
+  SOURCES idas_food_web_kry_omp.c ${example_options}
+  LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecopenmp ${EXE_EXTRA_LINK_LIBS})
