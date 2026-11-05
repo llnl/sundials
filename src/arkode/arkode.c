@@ -2813,7 +2813,7 @@ int arkCompleteStep(ARKodeMem ark_mem, sunrealtype dsm)
   ark_mem->fn_is_current = SUNFALSE;
 
   /* Notify time step controller object of successful step */
-  if (ark_mem->hadapt_mem->hcontroller)
+  if (ark_mem->hadapt_mem->hcontroller && !ark_mem->fixedstep)
   {
     retval = SUNAdaptController_UpdateH(ark_mem->hadapt_mem->hcontroller,
                                         ark_mem->h, dsm);
@@ -3896,6 +3896,31 @@ void arkProcessError(ARKodeMem ark_mem, int error_code, int line,
   free(msg);
 
   return;
+}
+
+/*---------------------------------------------------------------
+  ark_check_adaptive_error:
+
+  Checks whether the adaptive set routine is compatible with the current
+  time-stepping configuration and returns an appropriate error code if it is not.
+  ---------------------------------------------------------------*/
+int ark_adaptive_set_error_handler(ARKodeMem ark_mem)
+{
+  if (ark_mem->fixedstep)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "time-stepping module uses a fixed step size");
+    return (ARK_ILL_INPUT);
+  }
+
+  if (!ark_mem->step_supports_adaptive)
+  {
+    arkProcessError(ark_mem, ARK_STEPPER_UNSUPPORTED, __LINE__, __func__,
+                    __FILE__, "time-stepping module does not support temporal adaptivity");
+    return (ARK_STEPPER_UNSUPPORTED);
+  }
+
+  return (ARK_SUCCESS);
 }
 
 /*---------------------------------------------------------------
