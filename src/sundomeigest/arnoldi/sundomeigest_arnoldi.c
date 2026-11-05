@@ -654,9 +654,9 @@ SUNErrCode SUNDomEigEstimator_Write_Arnoldi(SUNDomEigEstimator DEE, FILE* outfil
   else { fprintf(outfile, "Warmup to tol            = OFF\n"); }
   fprintf(outfile, "Num. iters               = %ld\n",
           Arnoldi_CONTENT(DEE)->num_iters);
-  fprintf(outfile, "Num. ATimes calls        = %ld\n\n",
+  fprintf(outfile, "Num. ATimes calls        = %ld\n",
           Arnoldi_CONTENT(DEE)->num_ATimes);
-  fprintf(outfile, "Num. RHS evals           = %ld\n\n",
+  fprintf(outfile, "Num. RHS evals           = %ld\n",
           Arnoldi_CONTENT(DEE)->nfevals);
   fprintf(outfile, "Dominant eig lambdaR     = " SUN_FORMAT_G "\n",
           Arnoldi_CONTENT(DEE)->lambdaR);
