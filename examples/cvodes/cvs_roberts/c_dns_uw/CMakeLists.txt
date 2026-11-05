@@ -13,26 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_diurnal_fsa_kry
-  SOURCES cvs_diurnal_fsa_kry.c
-  TEST_NAME cvs_diurnal_fsa_kry_-sensi_sim_t
-  TEST_ARGS -sensi sim t
-  EXAMPLE_TYPE exclude-single
-  INSTALL_FILES cvs_diurnal_fsa_kry_-sensi_stg_t.out
+  cvs_roberts_dns_uw
+  SOURCES cvs_roberts_dns_uw.c
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  cvs_diurnal_fsa_kry_-sensi_stg_t cvs_diurnal_fsa_kry
-  TEST_ARGS -sensi stg t
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE cvs_diurnal_fsa_kry_-sensi_stg_t.out
-  EXAMPLE_TYPE exclude-single)
-
-foreach(example cvs_diurnal_kry cvs_diurnal_kry_bp)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    EXAMPLE_TYPE develop
-    LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                   ${EXE_EXTRA_LINK_LIBS})
-endforeach()

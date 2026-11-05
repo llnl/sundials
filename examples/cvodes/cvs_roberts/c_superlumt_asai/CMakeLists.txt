@@ -12,9 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cvs_food_web_asai_kry cvs_food_web_asap_kry)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(answer_file cvs_roberts_asai_sps.out)
+set(example_options)
+list(APPEND example_options EXAMPLE_TYPE exclude-single)
+if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
+  list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
+endif()
+sundials_add_example(
+  cvs_roberts_asai_sps
+  SOURCES cvs_roberts_asai_sps.c ${example_options}
+  LINK_LIBRARIES
+    ${CVODES_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
+    ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})

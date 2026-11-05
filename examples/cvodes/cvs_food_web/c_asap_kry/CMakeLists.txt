@@ -13,22 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  cvs_krylov_demo_ls
-  SOURCES cvs_krylov_demo_ls.c
-  EXAMPLE_TYPE develop
-  INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
-                cvs_krylov_demo_ls_2.out
+  cvs_food_web_asap_kry
+  SOURCES cvs_food_web_asap_kry.c
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
-foreach(test_args 1 2)
-  sundials_add_test(
-    cvs_krylov_demo_ls_${test_args} cvs_krylov_demo_ls
-    TEST_ARGS ${test_args}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvs_krylov_demo_ls_${test_args}.out
-    EXAMPLE_TYPE develop)
-endforeach()
-sundials_add_example(
-  cvs_krylov_demo_prec
-  SOURCES cvs_krylov_demo_prec.c
-  LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
-                 ${EXE_EXTRA_LINK_LIBS})
