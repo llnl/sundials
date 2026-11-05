@@ -21,14 +21,14 @@ if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
   list(APPEND _common_libs OpenMP::OpenMP_CXX)
 endif()
 if(SUNDIALS_ENABLE_NVECTOR_CUDA)
-  set_source_files_properties(ark_brusselator_1d_task_local_nls.cpp
+  set_source_files_properties(${_brusselator_task_local_source}
                               PROPERTIES LANGUAGE CUDA)
   set(_cuda_libs ${_common_libs} sundials_nveccuda)
   sundials_add_example(
     ark_brusselator_1d_task_local_nls.USE_CUDAUVM_NVEC
-    SOURCES ark_brusselator_1d_task_local_nls.cpp
+    SOURCES ${_brusselator_task_local_source}
     NO_TEST
-    INSTALL_FILES ark_brusselator_1d.h plot_brusselator_1d.py
+    INSTALL_FILES ${_brusselator_task_local_header} plot_brusselator_1d.py
     COMPILE_DEFINITIONS PRIVATE USE_CUDAUVM_NVEC
     LINK_LIBRARIES PRIVATE MPI::MPI_CXX ${_cuda_libs})
 endif()

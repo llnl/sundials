@@ -22,14 +22,14 @@ if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
 endif()
 sundials_add_example(
   ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC
-  SOURCES ark_brusselator_1d_task_local_nls.cpp
+  SOURCES ${_brusselator_task_local_source}
   TEST_NAME ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC_--monitor
   TEST_ARGS --monitor
   MPI_NPROCS 4
   ANSWER_FILE ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC_--monitor.out
   EXAMPLE_TYPE develop
   INSTALL_FILES
-    ark_brusselator_1d.h
+    ${_brusselator_task_local_header}
     plot_brusselator_1d.py
     ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC_--monitor_--global-nls.out
     ark_brusselator_1d_task_local_nls.USE_SERIAL_NVEC_--monitor_--explicit_--tf_1.out
@@ -47,7 +47,7 @@ foreach(_args "--monitor --global-nls" "--monitor --explicit --tf 1")
     EXAMPLE_TYPE develop)
 endforeach()
 if(SUNDIALS_ENABLE_NVECTOR_CUDA)
-  set_source_files_properties(ark_brusselator_1d_task_local_nls.cpp
+  set_source_files_properties(${_brusselator_task_local_source}
                               PROPERTIES LANGUAGE CUDA)
   set(_cuda_libs ${_common_libs} sundials_nveccuda)
 endif()
