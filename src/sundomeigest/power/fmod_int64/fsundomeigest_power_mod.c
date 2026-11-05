@@ -660,6 +660,54 @@ SWIGEXPORT double _wrap_SUNDomEigEstimatorContent_Power__res_get(SwigClassWrappe
 }
 
 
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__lambdaR_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::lambdaR", return );
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->lambdaR = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNDomEigEstimatorContent_Power__lambdaR_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::lambdaR", return 0);
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->lambdaR);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__lambdaI_set(SwigClassWrapper const *farg1, double const *farg2) {
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  sunrealtype arg2 ;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::lambdaI", return );
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  arg2 = (sunrealtype)(*farg2);
+  if (arg1) (arg1)->lambdaI = arg2;
+}
+
+
+SWIGEXPORT double _wrap_SUNDomEigEstimatorContent_Power__lambdaI_get(SwigClassWrapper const *farg1) {
+  double fresult ;
+  struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
+  sunrealtype result;
+  
+  SWIG_check_mutable_nonnull(*farg1, "struct SUNDomEigEstimatorContent_Power_ *", "SUNDomEigEstimatorContent_Power_", "SUNDomEigEstimatorContent_Power_::lambdaI", return 0);
+  arg1 = (struct SUNDomEigEstimatorContent_Power_ *)(farg1->cptr);
+  result = (sunrealtype) ((arg1)->lambdaI);
+  fresult = (sunrealtype)(result);
+  return fresult;
+}
+
+
 SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Power__rhsfn_set(SwigClassWrapper const *farg1, SUNRhsFn farg2) {
   struct SUNDomEigEstimatorContent_Power_ *arg1 = (struct SUNDomEigEstimatorContent_Power_ *) 0 ;
   SUNRhsFn arg2 = (SUNRhsFn) 0 ;

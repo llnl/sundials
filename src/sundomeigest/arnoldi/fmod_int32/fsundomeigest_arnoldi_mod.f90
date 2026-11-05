@@ -68,6 +68,10 @@ module fsundomeigest_arnoldi_mod
   procedure :: get_rhs_linT => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_linT_get
   procedure :: set_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_set
   procedure :: get_num_ATimes => swigf_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get
+  procedure :: set_lambdaR => swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaR_set
+  procedure :: get_lambdaR => swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaR_get
+  procedure :: set_lambdaI => swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaI_set
+  procedure :: get_lambdaI => swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaI_get
   procedure :: set_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set
   procedure :: get_rhsfn => swigf_SUNDomEigEstimatorContent_Arnoldi__rhsfn_get
   procedure :: set_rhs_data => swigf_SUNDomEigEstimatorContent_Arnoldi__rhs_data_set
@@ -353,6 +357,40 @@ use, intrinsic :: ISO_C_BINDING
 import :: swigclasswrapper
 type(SwigClassWrapper) :: farg1
 integer(C_LONG) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaR_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__lambdaR_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaR_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__lambdaR_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
+end function
+
+subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaI_set(farg1, farg2) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__lambdaI_set")
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE), intent(in) :: farg2
+end subroutine
+
+function swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaI_get(farg1) &
+bind(C, name="_wrap_SUNDomEigEstimatorContent_Arnoldi__lambdaI_get") &
+result(fresult)
+use, intrinsic :: ISO_C_BINDING
+import :: swigclasswrapper
+type(SwigClassWrapper) :: farg1
+real(C_DOUBLE) :: fresult
 end function
 
 subroutine swigc_SUNDomEigEstimatorContent_Arnoldi__rhsfn_set(farg1, farg2) &
@@ -1074,6 +1112,56 @@ type(SwigClassWrapper) :: farg1
 
 farg1 = self%swigdata
 fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__num_ATimes_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaR_set(self, lambdar)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: lambdar
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = lambdar
+call swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaR_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaR_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaR_get(farg1)
+swig_result = fresult
+end function
+
+subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaI_set(self, lambdai)
+use, intrinsic :: ISO_C_BINDING
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+real(C_DOUBLE), intent(in) :: lambdai
+type(SwigClassWrapper) :: farg1 
+real(C_DOUBLE) :: farg2 
+
+farg1 = self%swigdata
+farg2 = lambdai
+call swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaI_set(farg1, farg2)
+end subroutine
+
+function swigf_SUNDomEigEstimatorContent_Arnoldi__lambdaI_get(self) &
+result(swig_result)
+use, intrinsic :: ISO_C_BINDING
+real(C_DOUBLE) :: swig_result
+class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
+real(C_DOUBLE) :: fresult 
+type(SwigClassWrapper) :: farg1 
+
+farg1 = self%swigdata
+fresult = swigc_SUNDomEigEstimatorContent_Arnoldi__lambdaI_get(farg1)
 swig_result = fresult
 end function
 
