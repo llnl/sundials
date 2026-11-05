@@ -17,5 +17,6 @@ sundials_add_example(
   SOURCES kin_laplace_picard_kry_f2003.f90
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_fkinsol_mod
                  ${EXE_EXTRA_LINK_LIBS}
-  PROPERTIES Fortran_MODULE_DIRECTORY
-             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/kin_laplace_picard_kry_f2003.dir)
+  PROPERTIES
+    Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/kin_laplace_picard_kry_f2003.dir)
