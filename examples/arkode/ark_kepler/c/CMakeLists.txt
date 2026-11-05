@@ -26,28 +26,23 @@ set(_args
     "--stepper SPRK --step-mode fixed --method ARKODE_SPRK_RUTH_3_3 --tf 50 --check-order --nout 1"
     "--stepper SPRK --step-mode fixed --method ARKODE_SPRK_YOSHIDA_6_8 --tf 50 --check-order --nout 1"
 )
-
 set(_answer_files ark_kepler.out)
 foreach(_arg ${_args})
   string(REPLACE " " "_" _suffix "${_arg}")
   list(APPEND _answer_files ark_kepler_${_suffix}.out)
 endforeach()
-
-if(NOT TARGET ark_kepler)
-  sundials_add_example(
-    ark_kepler
-    SOURCES ark_kepler.c
-    NO_TEST
-    INSTALL_FILES ark_kepler.h ark_kepler_plot.py ${_answer_files}
-    LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
-                   ${EXE_EXTRA_LINK_LIBS})
-endif()
+sundials_add_example(
+  ark_kepler
+  SOURCES ark_kepler.c
+  NO_TEST
+  INSTALL_FILES ark_kepler.h ark_kepler_plot.py ${_answer_files}
+  LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})
 sundials_add_test(
   ark_kepler ark_kepler
   ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   ANSWER_FILE ark_kepler.out
   EXAMPLE_TYPE develop)
-
 foreach(_arg ${_args})
   string(REPLACE " " "_" _suffix "${_arg}")
   set(_type develop)

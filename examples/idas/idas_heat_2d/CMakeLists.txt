@@ -13,7 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_bnd)
+  add_subdirectory(c_kry)
   if(SUNDIALS_ENABLE_MPI)
     add_subdirectory(c_mpi_fsa_kry_bbd)
     add_subdirectory(c_mpi_kry_bbd)

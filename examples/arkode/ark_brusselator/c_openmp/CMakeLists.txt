@@ -12,12 +12,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(_example ark_brusselator_1d_omp)
-  sundials_add_example(
-    ${_example}
-    SOURCES ${_example}.c
-    EXAMPLE_TYPE exclude-single
-    INSTALL_FILES plot_brusselator_1d.py
-    LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmp
-                   ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+sundials_add_example(
+  ark_brusselator_1d_omp
+  SOURCES ark_brusselator_1d_omp.c
+  EXAMPLE_TYPE exclude-single
+  INSTALL_FILES plot_brusselator_1d.py
+  LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmp
+                 ${EXE_EXTRA_LINK_LIBS})
