@@ -19,5 +19,8 @@ sundials_add_example(
           fsunlinsol_fortran_mod.f90
   NO_DIFF
   EXAMPLE_TYPE develop
+  PROPERTIES
+    Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/test_fnvector_fortran_mod.dir
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                  ${EXE_EXTRA_LINK_LIBS})
