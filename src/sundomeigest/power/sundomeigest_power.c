@@ -626,8 +626,7 @@ SUNErrCode SUNDomEigEstimator_Write_Power(SUNDomEigEstimator DEE, FILE* outfile)
           PI_CONTENT(DEE)->num_iters);
   fprintf(outfile, "Num. ATimes calls        = %ld\n",
           PI_CONTENT(DEE)->num_ATimes);
-  fprintf(outfile, "Num. RHS evals           = %ld\n",
-          PI_CONTENT(DEE)->nfevals);
+  fprintf(outfile, "Num. RHS evals           = %ld\n", PI_CONTENT(DEE)->nfevals);
   fprintf(outfile, "Dominant eig lambdaR     = " SUN_FORMAT_G "\n",
           PI_CONTENT(DEE)->lambdaR);
   fprintf(outfile, "Dominant eig lambdaI     = " SUN_FORMAT_G "\n",
