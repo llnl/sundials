@@ -305,8 +305,9 @@ static int dom_eig(sunrealtype t, N_Vector y, N_Vector fn, sunrealtype* lambdaR,
     if (check_flag(&flag, "SUNDomEigEstimator_Initialize", 1)) { return 1; }
   }
 
-  /* Set the linearization vector and time for the Jacobian-vector products */
-  flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y);
+  /* Set the linearization vector, time, and RHS value at the linearization
+     point for the Jacobian-vector products */
+  flag = SUNDomEigEstimator_SetRhsLinearizationPoint(DEE, t, y, fn);
   if (check_flag(&flag, "SUNDomEigEstimator_SetRhsLinearizationPoint", 1))
   {
     return -1;

@@ -34,6 +34,7 @@ struct SUNDomEigEstimatorFunctionTable
 {
   nb::object atimes;
   nb::object deerhs;
+  nb::object preprocessrhs;
 };
 
 template<typename... Args>
@@ -50,6 +51,15 @@ SUNErrCode sundomeigestimator_setrhs_wrapper(Args... args)
   return sundials4py::user_supplied_fn_caller<
     std::remove_pointer_t<SUNRhsFn>, SUNDomEigEstimatorFunctionTable,
     1>(&SUNDomEigEstimatorFunctionTable::deerhs, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+SUNErrCode sundomeigestimator_preprocessrhs_wrapper(Args... args)
+{
+  return sundials4py::user_supplied_fn_caller<
+    std::remove_pointer_t<SUNPreRhsFn>, SUNDomEigEstimatorFunctionTable,
+    1>(&SUNDomEigEstimatorFunctionTable::preprocessrhs,
+       std::forward<Args>(args)...);
 }
 
 #endif

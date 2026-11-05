@@ -3779,6 +3779,12 @@ Set time step postprocessing function              :c:func:`ARKodeSetPostprocess
       If the supplied function modifies any of the active state data, then all
       theoretical guarantees of solution accuracy and stability are lost.
 
+   .. note::
+
+      If a user also needs to employ preprocessing operations to a RHS function used by a
+      :c:type:`SUNDomEigEstimator` object, then they must also call :c:func:`SUNDomEigEstimator_SetPreRhsFn` 
+      with the same `prerhs_fn` supplied here.
+
    :param arkode_mem: pointer to the ARKODE memory block.
    :param prerhs_fn: the user-supplied function to call. A ``NULL`` input
                      function disables calling a pre-RHS function.
