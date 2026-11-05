@@ -83,11 +83,6 @@
 # -D SUNDIALS_TEST_ANSWER_DIR=<path to answer directory>
 
 function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
-  if(DEFINED SUNDIALS_EXAMPLE_VARIANT AND NOT EXECUTABLE STREQUAL
-                                          SUNDIALS_EXAMPLE_VARIANT)
-    return()
-  endif()
-
   set(options "NO_DIFF")
   set(oneValueArgs "MPI_NPROCS" "FLOAT_PRECISION" "INTEGER_PRECISION"
                    "ANSWER_DIR" "ANSWER_FILE" "EXAMPLE_TYPE")

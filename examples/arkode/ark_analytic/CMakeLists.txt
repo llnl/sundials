@@ -13,7 +13,13 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c_analytic)
+  add_subdirectory(c)
+  add_subdirectory(c_lsrk)
+  add_subdirectory(c_lsrk_varjac)
+  add_subdirectory(c_lsrk_domeigest)
+  add_subdirectory(c_mels)
+  add_subdirectory(c_nonlin)
+  add_subdirectory(c_ssprk)
   add_subdirectory(c_analytic_partitioned)
   if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
     add_subdirectory(c_openmp_device)

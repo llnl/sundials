@@ -12,21 +12,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(_example ark_heat_2d_p ark_heat_2d_lsrk_p)
-  set(_type develop)
-  if(_example STREQUAL "ark_heat_2d_lsrk_p")
-    set(_type exclude-single)
-  endif()
-  set(_args "--np 2 2")
-  string(REPLACE " " "_" _suffix "${_args}")
-  sundials_add_example(
-    ${_example}
-    SOURCES ${_example}.cpp
-    TEST_ARGS ${_args}
-    MPI_NPROCS 4
-    ANSWER_FILE ${_example}_${_suffix}.out
-    EXAMPLE_TYPE ${_type}
-    INSTALL_FILES plot_heat_2d_p.py plot_data_2d.py
-    LINK_LIBRARIES PRIVATE MPI::MPI_CXX sundials_arkode sundials_nvecparallel
-                   ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(_args "--np 2 2")
+string(REPLACE " " "_" _suffix "${_args}")
+sundials_add_example(
+  ark_heat_2d_p
+  SOURCES ark_heat_2d_p.cpp
+  TEST_ARGS ${_args}
+  MPI_NPROCS 4
+  ANSWER_FILE ark_heat_2d_p_${_suffix}.out
+  EXAMPLE_TYPE develop
+  INSTALL_FILES plot_heat_2d_p.py plot_data_2d.py
+  LINK_LIBRARIES PRIVATE MPI::MPI_CXX sundials_arkode sundials_nvecparallel
+                 ${EXE_EXTRA_LINK_LIBS})
