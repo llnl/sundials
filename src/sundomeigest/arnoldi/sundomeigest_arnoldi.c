@@ -651,10 +651,7 @@ SUNErrCode SUNDomEigEstimator_Write_Arnoldi(SUNDomEigEstimator DEE, FILE* outfil
     fprintf(outfile, "Tolerance for warmup     = " SUN_FORMAT_G "\n",
             Arnoldi_CONTENT(DEE)->tol_warmup);
   }
-  else
-  {
-    fprintf(outfile, "Warmup to tol            = OFF\n");
-  }
+  else { fprintf(outfile, "Warmup to tol            = OFF\n"); }
   fprintf(outfile, "Num. iters               = %ld\n",
           Arnoldi_CONTENT(DEE)->num_iters);
   fprintf(outfile, "Num. ATimes calls        = %ld\n\n",

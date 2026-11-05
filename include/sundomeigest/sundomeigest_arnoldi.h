@@ -55,8 +55,8 @@ struct SUNDomEigEstimatorContent_Arnoldi_
 
   long int num_ATimes; /* Number of ATimes calls */
 
-  sunrealtype lambdaR;    /* Real part of dominant eigenvalue */
-  sunrealtype lambdaI;    /* Imaginary part of dominant eigenvalue */
+  sunrealtype lambdaR; /* Real part of dominant eigenvalue */
+  sunrealtype lambdaI; /* Imaginary part of dominant eigenvalue */
 
   SUNRhsFn rhsfn;   /* User provided RHS function */
   void* rhs_data;   /* RHS function data */
