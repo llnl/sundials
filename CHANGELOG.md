@@ -12,6 +12,12 @@ variant contains its input files, scripts, and reference output. The old CVODE
 example Makefiles are no longer installed; use the installed CMakeLists.txt
 files instead.
 
+Reorganized the ARKODE examples using the same problem-based structure as the
+CVODE examples, with implementation language and optional third-party
+libraries represented by variant subdirectories. Each variant contains its
+input files, scripts, and reference output. The old ARKODE example Makefiles
+are no longer installed; use the installed CMakeLists.txt files instead.
+
 The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
 targets are now exported by installed SUNDIALS CMake packages. The installed
 Ginkgo targets also propagate their Ginkgo dependency to consumers.

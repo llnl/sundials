@@ -16,7 +16,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # Python port of the SUNDIALS ARKODE Lotka-Volterra adjoint
-# sensitivity example (ark_lotka_volterra_ASA.c)
+# sensitivity example (ark_lotka_volterra_asa.c)
 # -----------------------------------------------------------------
 import numpy as np
 import sundials4py.core as sun

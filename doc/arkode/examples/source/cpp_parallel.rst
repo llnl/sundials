@@ -26,13 +26,13 @@ Parallel C++ example problems
 
 
 
-.. _ark_heat2D:
+.. _ark_heat_2d:
 
-ark_heat2D
+ark_heat_2d
 ======================================================================
 
 ARKODE provides one parallel C++ example problem, that extends our
-previous :ref:`ark_heat1D` test to now simulate a two-dimensional heat
+previous :ref:`ark_heat_1d` test to now simulate a two-dimensional heat
 equation,
 
 .. math::
@@ -95,7 +95,7 @@ Bottom row, absolute error in these solutions.  Note that the relative
 error in these results is on the order :math:`10^{-4}`, corresponding
 to the spatial accuracy of the relatively coarse finite-difference
 mesh.  All plots are created using the supplied Python script,
-``plot_heat2D.py``.
+``plot_heat_2d.py``.
 
 
 .. image:: figs/plot-ark_heat2d_1.png

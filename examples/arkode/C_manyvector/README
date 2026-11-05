@@ -1,3 +1,0 @@
-List of ManyVector ARKODE C examples
-
-  ark_brusselator1D_mv      : stiff chemical kinetics PDE system  (IMEX/GMRES)

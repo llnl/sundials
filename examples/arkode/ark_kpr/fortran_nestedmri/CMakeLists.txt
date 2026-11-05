@@ -1,0 +1,37 @@
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+sundials_add_example(
+  ark_kpr_nestedmri_f2003
+  SOURCES ark_kpr_nestedmri_f2003.f90
+  EXAMPLE_TYPE develop
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_kpr_nestedmri_f2003.dir
+  LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
+                 ${EXE_EXTRA_LINK_LIBS})
+if(SUNDIALS_INDEX_SIZE MATCHES "64")
+  file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mri_f2003*.out")
+  set(_args
+      ""
+      "0 0.002"
+      "1 0.002"
+      "2 0.005"
+      "3 0.01"
+      "4 0.002"
+      "5 0.002"
+      "6 0.005"
+      "7 0.001"
+      "8 0.001"
+      "9 0.001")
+endif()
