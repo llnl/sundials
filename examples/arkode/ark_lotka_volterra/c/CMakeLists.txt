@@ -12,16 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-if(NOT TARGET ark_lotka_volterra_asa)
-  sundials_add_example(
-    ark_lotka_volterra_asa
-    SOURCES ark_lotka_volterra_asa.c
-    NO_TEST
-    INSTALL_FILES ark_lotka_volterra_asa_--check-freq_1.out
-                  ark_lotka_volterra_asa_--check-freq_5.out
-    LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
-                   ${EXE_EXTRA_LINK_LIBS})
-endif()
+sundials_add_example(
+  ark_lotka_volterra_asa
+  SOURCES ark_lotka_volterra_asa.c
+  NO_TEST
+  INSTALL_FILES ark_lotka_volterra_asa_--check-freq_1.out
+                ark_lotka_volterra_asa_--check-freq_5.out
+  LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})
 foreach(_freq 1 5)
   sundials_add_test(
     ark_lotka_volterra_asa_--check-freq_${_freq} ark_lotka_volterra_asa

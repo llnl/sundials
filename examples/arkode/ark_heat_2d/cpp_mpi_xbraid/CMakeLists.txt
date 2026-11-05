@@ -16,37 +16,21 @@ set(_xbraid_examples ark_heat_2d_xbraid ark_heat_2d_p_xbraid)
 if(SUNDIALS_ENABLE_HYPRE)
   list(APPEND _xbraid_examples ark_heat_2d_hypre_pfmg_xbraid)
 endif()
-foreach(_example ${_xbraid_examples})
-  if(_example STREQUAL "ark_heat_2d_xbraid")
-    set(_args "--x_print_level 0")
-    set(_tasks 4)
-    set(_type develop)
-  elseif(_example STREQUAL "ark_heat_2d_p_xbraid")
-    set(_args "--np 2 1 2 --x_print_level 0")
-    set(_tasks 4)
-    set(_type develop)
-  else()
-    set(_args "--np 2 1 2 --x_print_level 0")
-    set(_tasks 4)
-    set(_type develop)
-  endif()
-  string(REPLACE " " "_" _suffix "${_args}")
-  set(_libs MPI::MPI_CXX sundials_arkode sundials_arkode_xbraid
-            sundials_nvecparallel ${EXE_EXTRA_LINK_LIBS})
-  if(_example MATCHES "hypre")
-    list(APPEND _libs SUNDIALS::HYPRE SUNDIALS::XBRAID)
-  endif()
-  sundials_add_example(
-    ${_example}
-    SOURCES ${_example}.cpp
-    NO_TEST
-    INSTALL_FILES plot_heat_2d.py ${_example}_${_suffix}.out
-    LINK_LIBRARIES PRIVATE ${_libs})
-  sundials_add_test(
-    ${_example}_${_suffix} ${_example}
-    TEST_ARGS ${_args}
-    MPI_NPROCS ${_tasks}
-    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE ${_example}_${_suffix}.out
-    EXAMPLE_TYPE ${_type})
-endforeach()
+set(_args "--x_print_level 0")
+set(_tasks 4)
+string(REPLACE " " "_" _suffix "${_args}")
+set(_libs MPI::MPI_CXX sundials_arkode sundials_arkode_xbraid
+          sundials_nvecparallel ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  ark_heat_2d_xbraid
+  SOURCES ark_heat_2d_xbraid.cpp
+  NO_TEST
+  INSTALL_FILES plot_heat_2d.py ark_heat_2d_xbraid_${_suffix}.out
+  LINK_LIBRARIES PRIVATE ${_libs})
+sundials_add_test(
+  ark_heat_2d_xbraid_${_suffix} ark_heat_2d_xbraid
+  TEST_ARGS ${_args}
+  MPI_NPROCS ${_tasks}
+  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  ANSWER_FILE ark_heat_2d_xbraid_${_suffix}.out
+  EXAMPLE_TYPE develop)

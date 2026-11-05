@@ -13,5 +13,6 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_asai_kry)
+  add_subdirectory(c_asap_kry)
 endif()

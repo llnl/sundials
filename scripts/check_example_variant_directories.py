@@ -29,9 +29,16 @@ def main() -> int:
                     )
         for cmake_file in sorted(root.rglob("CMakeLists.txt")):
             contents = cmake_file.read_text()
+            if "SUNDIALS_EXAMPLE_VARIANT" in contents or "_variants.cmake" in contents:
+                violations.append((cmake_file.parent, "uses shared variant registration"))
             calls = len(re.findall(r"\bsundials_add_example\s*\(", contents, re.I))
-            if calls > 1 and "SUNDIALS_EXAMPLE_VARIANT" not in contents:
+            if calls > 1:
                 violations.append((cmake_file.parent, f"defines {calls} example variants"))
+            if re.search(r"sundials_add_example\s*\(\s*\$", contents):
+                violations.append((cmake_file.parent, "uses a variable executable name"))
+
+        for helper in sorted(root.rglob("*_variants.cmake")):
+            violations.append((helper, "is a shared variant registration file"))
 
         documents = (Path("doc") / package).rglob("*.tex") if args.check_docs else []
         for document in sorted(documents):

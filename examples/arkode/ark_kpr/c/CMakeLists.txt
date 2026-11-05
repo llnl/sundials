@@ -29,15 +29,13 @@ set(_args
     "12 3 0.005"
     "13 4 0.01")
 file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mri_*.out")
-if(NOT TARGET ark_kpr_mri)
-  sundials_add_example(
-    ark_kpr_mri
-    SOURCES ark_kpr_mri.c
-    NO_TEST
-    INSTALL_FILES ${_answer_files}
-    LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
-                   ${EXE_EXTRA_LINK_LIBS})
-endif()
+sundials_add_example(
+  ark_kpr_mri
+  SOURCES ark_kpr_mri.c
+  NO_TEST
+  INSTALL_FILES ${_answer_files}
+  LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
+                 ${EXE_EXTRA_LINK_LIBS})
 foreach(_arg ${_args})
   string(REPLACE " " "_" _suffix "${_arg}")
   set(_type develop)
