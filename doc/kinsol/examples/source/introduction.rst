@@ -111,8 +111,9 @@ following serial examples (using the :ref:`serial vector
 MPI examples
 ------------
 
-Supplied in the ``examples/kinsol/kin_food_web/c_mpi`` directory are the
-following parallel examples (using the :ref:`MPI parallel vector
+Supplied in the ``examples/kinsol/kin_food_web/c_mpi_kry`` and
+``examples/kinsol/kin_food_web/c_mpi_kry_bbd`` directories are the following
+parallel examples (using the :ref:`MPI parallel vector
 <NVectors.NVParallel>`):
 
 - ``kin_food_web_kry_p`` is a parallel implementation of ``kin_food_web_kry``.

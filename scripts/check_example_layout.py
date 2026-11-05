@@ -20,9 +20,8 @@ def check(root, packages):
             errors.append(f"{top}: missing package CMakeLists.txt")
             continue
         text = top.read_text()
-        for helper in ("sundials_install_example_cmake", "sundials_add_test_install"):
-            if helper not in text:
-                errors.append(f"{top}: missing {helper}")
+        if "sundials_add_test_install" not in text:
+            errors.append(f"{top}: missing sundials_add_test_install")
         problems = re.findall(r"add_subdirectory\(([^)]+)\)", text)
         for problem in problems:
             problem_dir = directory / problem

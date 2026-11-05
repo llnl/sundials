@@ -13,8 +13,11 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_bnd)
+  add_subdirectory(c_picard_bnd)
+  add_subdirectory(c_picard_kry)
 endif()
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
-  add_subdirectory(fortran)
+  add_subdirectory(fortran_bnd)
+  add_subdirectory(fortran_picard_kry)
 endif()
