@@ -12,6 +12,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+set(_brusselator_task_local_source
+    "${CMAKE_CURRENT_SOURCE_DIR}/ark_brusselator_1d_task_local_nls.cpp")
+set(_brusselator_task_local_header
+    "${CMAKE_CURRENT_SOURCE_DIR}/ark_brusselator_1d.h")
+
 if(SUNDIALS_ENABLE_C_EXAMPLES)
   add_subdirectory(c)
   add_subdirectory(c_1d)
