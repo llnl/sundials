@@ -13,12 +13,14 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(c)
+  add_subdirectory(c_bnd)
+  add_subdirectory(c_kry)
   if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
     add_subdirectory(c_klu)
   endif()
   if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(c_mpi)
+    add_subdirectory(c_mpi_kry_bbd)
+    add_subdirectory(c_mpi_kry)
   endif()
   if(SUNDIALS_ENABLE_PETSC)
     add_subdirectory(c_mpi_petsc_snes)

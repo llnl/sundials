@@ -12,12 +12,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example ida_heat_2d_kry_bbd_p ida_heat_2d_kry_p)
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c
-    MPI_NPROCS 4
-    EXAMPLE_TYPE exclude-single
-    LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecparallel
-                   ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+sundials_add_example(
+  ida_heat_2d_kry_p
+  SOURCES ida_heat_2d_kry_p.c
+  MPI_NPROCS 4
+  EXAMPLE_TYPE exclude-single
+  LINK_LIBRARIES PRIVATE MPI::MPI_C ${IDA_C_LIBS} sundials_nvecparallel
+                 ${EXE_EXTRA_LINK_LIBS})
