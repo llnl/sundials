@@ -16,7 +16,7 @@ sundials_add_example(
   ark_brusselator_fp
   SOURCES ark_brusselator_fp.c
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES ark_brusselator_fp_1.out
+  INSTALL_FILES ark_brusselator_fp_1.out plot_brusselator_1d.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  sundials_sundomeigestpower ${EXE_EXTRA_LINK_LIBS})
 if(SUNDIALS_ENABLE_MONITORING)

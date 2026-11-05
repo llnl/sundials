@@ -16,5 +16,6 @@ sundials_add_example(
   ark_heat_2d_lsrk
   SOURCES ark_heat_2d_lsrk.cpp
   EXAMPLE_TYPE exclude-single
+  INSTALL_FILES plot_heat_2d.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
