@@ -12,7 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/modules)
 sundials_add_example(
   test_ark_butcher_f2003
   SOURCES test_ark_butcher_f2003.f90
