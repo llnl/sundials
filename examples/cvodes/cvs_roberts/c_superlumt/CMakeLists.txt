@@ -12,32 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-foreach(example cvs_roberts_asai_sps cvs_roberts_fsa_sps cvs_roberts_sps)
-  set(answer_file ${example}.out)
-  set(example_options)
-  if(example STREQUAL "cvs_roberts_asai_sps")
-    list(APPEND example_options EXAMPLE_TYPE exclude-single)
-  elseif(example STREQUAL "cvs_roberts_fsa_sps")
-    set(answer_file cvs_roberts_fsa_sps_-sensi_stg1_t.out)
-    list(
-      APPEND
-      example_options
-      TEST_NAME
-      cvs_roberts_fsa_sps_-sensi_stg1_t
-      TEST_ARGS
-      -sensi
-      stg1
-      t
-      EXAMPLE_TYPE
-      exclude-single)
-  endif()
-  if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
-    list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
-  endif()
-  sundials_add_example(
-    ${example}
-    SOURCES ${example}.c ${example_options}
-    LINK_LIBRARIES
-      ${CVODES_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
-      ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
-endforeach()
+set(answer_file cvs_roberts_sps.out)
+set(example_options)
+if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
+  list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
+endif()
+sundials_add_example(
+  cvs_roberts_sps
+  SOURCES cvs_roberts_sps.c ${example_options}
+  LINK_LIBRARIES
+    ${CVODES_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
+    ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
