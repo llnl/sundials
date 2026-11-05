@@ -16,7 +16,8 @@ sundials_add_example(
   ark_kpr_nestedmri
   SOURCES ark_kpr_nestedmri.cpp
   EXAMPLE_TYPE exclude-single
-  INSTALL_FILES "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
+  INSTALL_FILES plot_sol.py
+                "${PROJECT_SOURCE_DIR}/examples/utilities/example_utilities.hpp"
   INCLUDE_DIRECTORIES PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
