@@ -162,7 +162,6 @@ int main(void)
   printf("\nChecking controller history after re-enabling adaptivity\n");
   fails += check_history(controller, ONE, ONE, ONE, ONE, 0);
 
-
   /* Take adaptive steps and record their step sizes and normalized errors */
   for (i = 0; i < 2; i++)
   {

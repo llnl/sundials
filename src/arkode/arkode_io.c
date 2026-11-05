@@ -1303,7 +1303,7 @@ int ARKodeSetFixedStep(void* arkode_mem, sunrealtype hfixed)
     if (retval != ARK_SUCCESS) { return (retval); }
   }
 
-  /* set ark_mem "fixedstep" and "hin" entries */  
+  /* set ark_mem "fixedstep" and "hin" entries */
   ark_mem->fixedstep = (hfixed != ZERO);
   ark_mem->hin       = hfixed;
 
