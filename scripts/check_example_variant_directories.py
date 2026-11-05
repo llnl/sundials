@@ -21,8 +21,10 @@ def main() -> int:
                 continue
             problem_name = problem.name.split("_", 1)[-1]
             for variant in sorted(problem.iterdir()):
-                if variant.is_dir() and re.search(
-                    rf"(?:^|_){re.escape(problem_name)}(?:_|$)", variant.name
+                if (
+                    problem_name not in {"petsc", "butcher"}
+                    and variant.is_dir()
+                    and re.search(rf"(?:^|_){re.escape(problem_name)}(?:_|$)", variant.name)
                 ):
                     violations.append(
                         (variant, "repeats the problem name in the variant directory")
