@@ -29,7 +29,7 @@ We note that of the ARKODE example programs located in the source code
 ``examples/arkode`` folder, the following demonstrate ``SPRKStep`` usage:
 
 * ``examples/arkode/ark_harmonic/c/ark_harmonic_symplectic.c``
-* ``examples/arkode/ark_harmonic/c/ark_damped_harmonic_symplectic.c``, and
+* ``examples/arkode/ark_harmonic/c_damped/ark_damped_harmonic_symplectic.c``, and
 * ``examples/arkode/ark_kepler/c/ark_kepler.c``
 
 .. toctree::
