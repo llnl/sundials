@@ -17,17 +17,42 @@
 # examples/idas level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# C examples
-if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(serial)
-  if(SUNDIALS_ENABLE_OPENMP)
-    add_subdirectory(C_openmp)
-  endif()
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(parallel)
-  endif()
-endif()
+set(IDAS_C_LIBS sundials_idas)
 
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
-  add_subdirectory(F2003_serial)
+# Examples are grouped by problem. Each problem directory contains variants
+# grouped by implementation language and optional TPLs.
+add_subdirectory(idas_akzo_nobel)
+add_subdirectory(idas_analytic)
+add_subdirectory(idas_brusselator)
+add_subdirectory(idas_food_web)
+add_subdirectory(idas_heat_2d)
+add_subdirectory(idas_hessian)
+add_subdirectory(idas_krylov_demo)
+add_subdirectory(idas_roberts)
+add_subdirectory(idas_slider_crank)
+
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+  get_property(
+    _idas_problem_directories
+    DIRECTORY
+    PROPERTY SUBDIRECTORIES)
+  set(_idas_example_directories)
+  foreach(_problem_dir ${_idas_problem_directories})
+    get_property(
+      _variant_dirs
+      DIRECTORY ${_problem_dir}
+      PROPERTY SUBDIRECTORIES)
+    list(APPEND _idas_example_directories ${_variant_dirs})
+  endforeach()
+
+  foreach(_example_dir ${_idas_example_directories})
+    file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
+         ${_example_dir})
+    if(_example_rel_dir STREQUAL "idas_roberts/c")
+      sundials_add_test_install(idas ${_example_rel_dir}
+                                EXECUTABLE idas_roberts_dns)
+    else()
+      sundials_add_test_install(idas ${_example_rel_dir})
+    endif()
+  endforeach()
 endif()
