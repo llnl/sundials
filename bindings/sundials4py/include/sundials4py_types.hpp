@@ -29,6 +29,8 @@ namespace nb = nanobind;
 namespace sundials4py {
 
 using Array1d = nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>;
+using ScalarArray1d =
+  nb::ndarray<sunscalartype, nb::numpy, nb::ndim<1>, nb::c_contig>;
 using IntArray1d  = nb::ndarray<int, nb::numpy, nb::ndim<1>, nb::c_contig>;
 using LongArray1d = nb::ndarray<long, nb::numpy, nb::ndim<1>, nb::c_contig>;
 

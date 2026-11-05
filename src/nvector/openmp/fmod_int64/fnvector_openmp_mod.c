@@ -226,6 +226,25 @@
 
 #include "nvector/nvector_openmp.h"
 
+
+
+
+
+typedef struct {
+  double real;
+  double imag;
+} SwigComplex_double;
+
+
+
+
+SWIGINTERN SwigComplex_double SWIG_create_complex_double(double real, double imag) {
+  SwigComplex_double result;
+  result.real = real;
+  result.imag = imag;
+  return result;
+}
+
 SWIGEXPORT N_Vector _wrap_FN_VNew_OpenMP(int64_t const *farg1, int const *farg2, void *farg3) {
   N_Vector fresult ;
   sunindextype arg1 ;
@@ -258,7 +277,7 @@ SWIGEXPORT N_Vector _wrap_FN_VNewEmpty_OpenMP(int64_t const *farg1, int const *f
 }
 
 
-SWIGEXPORT N_Vector _wrap_FN_VMake_OpenMP(int64_t const *farg1, double *farg2, int const *farg3, void *farg4) {
+SWIGEXPORT N_Vector _wrap_FN_VMake_OpenMP(int64_t const *farg1, SwigComplex_double *farg2, int const *farg3, void *farg4) {
   N_Vector fresult ;
   sunindextype arg1 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
@@ -362,7 +381,7 @@ SWIGEXPORT void _wrap_FN_VSpace_OpenMP(N_Vector farg1, int64_t *farg2, int64_t *
 }
 
 
-SWIGEXPORT void _wrap_FN_VSetArrayPointer_OpenMP(double *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VSetArrayPointer_OpenMP(SwigComplex_double *farg1, N_Vector farg2) {
   sunscalartype *arg1 = (sunscalartype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
@@ -372,27 +391,27 @@ SWIGEXPORT void _wrap_FN_VSetArrayPointer_OpenMP(double *farg1, N_Vector farg2) 
 }
 
 
-SWIGEXPORT void _wrap_FN_VLinearSum_OpenMP(double const *farg1, N_Vector farg2, double const *farg3, N_Vector farg4, N_Vector farg5) {
+SWIGEXPORT void _wrap_FN_VLinearSum_OpenMP(SwigComplex_double *farg1, N_Vector farg2, SwigComplex_double *farg3, N_Vector farg4, N_Vector farg5) {
   sunscalartype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   sunscalartype arg3 ;
   N_Vector arg4 = (N_Vector) 0 ;
   N_Vector arg5 = (N_Vector) 0 ;
   
-  arg1 = (sunscalartype)(*farg1);
+  arg1 = SWIG_ccomplex_construct(farg1->real, farg1->imag);
   arg2 = (N_Vector)(farg2);
-  arg3 = (sunscalartype)(*farg3);
+  arg3 = SWIG_ccomplex_construct(farg3->real, farg3->imag);
   arg4 = (N_Vector)(farg4);
   arg5 = (N_Vector)(farg5);
   N_VLinearSum_OpenMP(arg1,arg2,arg3,arg4,arg5);
 }
 
 
-SWIGEXPORT void _wrap_FN_VConst_OpenMP(double const *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VConst_OpenMP(SwigComplex_double *farg1, N_Vector farg2) {
   sunscalartype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   
-  arg1 = (sunscalartype)(*farg1);
+  arg1 = SWIG_ccomplex_construct(farg1->real, farg1->imag);
   arg2 = (N_Vector)(farg2);
   N_VConst_OpenMP(arg1,arg2);
 }
@@ -422,12 +441,12 @@ SWIGEXPORT void _wrap_FN_VDiv_OpenMP(N_Vector farg1, N_Vector farg2, N_Vector fa
 }
 
 
-SWIGEXPORT void _wrap_FN_VScale_OpenMP(double const *farg1, N_Vector farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VScale_OpenMP(SwigComplex_double *farg1, N_Vector farg2, N_Vector farg3) {
   sunscalartype arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
-  arg1 = (sunscalartype)(*farg1);
+  arg1 = SWIG_ccomplex_construct(farg1->real, farg1->imag);
   arg2 = (N_Vector)(farg2);
   arg3 = (N_Vector)(farg3);
   N_VScale_OpenMP(arg1,arg2,arg3);
@@ -454,13 +473,13 @@ SWIGEXPORT void _wrap_FN_VInv_OpenMP(N_Vector farg1, N_Vector farg2) {
 }
 
 
-SWIGEXPORT void _wrap_FN_VAddConst_OpenMP(N_Vector farg1, double const *farg2, N_Vector farg3) {
+SWIGEXPORT void _wrap_FN_VAddConst_OpenMP(N_Vector farg1, SwigComplex_double *farg2, N_Vector farg3) {
   N_Vector arg1 = (N_Vector) 0 ;
   sunscalartype arg2 ;
   N_Vector arg3 = (N_Vector) 0 ;
   
   arg1 = (N_Vector)(farg1);
-  arg2 = (sunscalartype)(*farg2);
+  arg2 = SWIG_ccomplex_construct(farg2->real, farg2->imag);
   arg3 = (N_Vector)(farg3);
   N_VAddConst_OpenMP(arg1,arg2,arg3);
 }
@@ -480,7 +499,7 @@ SWIGEXPORT double _wrap_FN_VDotProd_OpenMP(N_Vector farg1, N_Vector farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FN_VDotProdComplex_OpenMP(N_Vector farg1, N_Vector farg2, double *farg3) {
+SWIGEXPORT int _wrap_FN_VDotProdComplex_OpenMP(N_Vector farg1, N_Vector farg2, SwigComplex_double *farg3) {
   int fresult ;
   N_Vector arg1 = (N_Vector) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -632,7 +651,7 @@ SWIGEXPORT double _wrap_FN_VMinQuotient_OpenMP(N_Vector farg1, N_Vector farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FN_VLinearCombination_OpenMP(int const *farg1, double *farg2, void *farg3, N_Vector farg4) {
+SWIGEXPORT int _wrap_FN_VLinearCombination_OpenMP(int const *farg1, SwigComplex_double *farg2, void *farg3, N_Vector farg4) {
   int fresult ;
   int arg1 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
@@ -650,7 +669,7 @@ SWIGEXPORT int _wrap_FN_VLinearCombination_OpenMP(int const *farg1, double *farg
 }
 
 
-SWIGEXPORT int _wrap_FN_VScaleAddMulti_OpenMP(int const *farg1, double *farg2, N_Vector farg3, void *farg4, void *farg5) {
+SWIGEXPORT int _wrap_FN_VScaleAddMulti_OpenMP(int const *farg1, SwigComplex_double *farg2, N_Vector farg3, void *farg4, void *farg5) {
   int fresult ;
   int arg1 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
@@ -670,7 +689,7 @@ SWIGEXPORT int _wrap_FN_VScaleAddMulti_OpenMP(int const *farg1, double *farg2, N
 }
 
 
-SWIGEXPORT int _wrap_FN_VDotProdMulti_OpenMP(int const *farg1, N_Vector farg2, void *farg3, double *farg4) {
+SWIGEXPORT int _wrap_FN_VDotProdMulti_OpenMP(int const *farg1, N_Vector farg2, void *farg3, SwigComplex_double *farg4) {
   int fresult ;
   int arg1 ;
   N_Vector arg2 = (N_Vector) 0 ;
@@ -688,7 +707,7 @@ SWIGEXPORT int _wrap_FN_VDotProdMulti_OpenMP(int const *farg1, N_Vector farg2, v
 }
 
 
-SWIGEXPORT int _wrap_FN_VLinearSumVectorArray_OpenMP(int const *farg1, double const *farg2, void *farg3, double const *farg4, void *farg5, void *farg6) {
+SWIGEXPORT int _wrap_FN_VLinearSumVectorArray_OpenMP(int const *farg1, SwigComplex_double *farg2, void *farg3, SwigComplex_double *farg4, void *farg5, void *farg6) {
   int fresult ;
   int arg1 ;
   sunscalartype arg2 ;
@@ -699,9 +718,9 @@ SWIGEXPORT int _wrap_FN_VLinearSumVectorArray_OpenMP(int const *farg1, double co
   SUNErrCode result;
   
   arg1 = (int)(*farg1);
-  arg2 = (sunscalartype)(*farg2);
+  arg2 = SWIG_ccomplex_construct(farg2->real, farg2->imag);
   arg3 = (N_Vector *)(farg3);
-  arg4 = (sunscalartype)(*farg4);
+  arg4 = SWIG_ccomplex_construct(farg4->real, farg4->imag);
   arg5 = (N_Vector *)(farg5);
   arg6 = (N_Vector *)(farg6);
   result = (SUNErrCode)N_VLinearSumVectorArray_OpenMP(arg1,arg2,arg3,arg4,arg5,arg6);
@@ -710,7 +729,7 @@ SWIGEXPORT int _wrap_FN_VLinearSumVectorArray_OpenMP(int const *farg1, double co
 }
 
 
-SWIGEXPORT int _wrap_FN_VScaleVectorArray_OpenMP(int const *farg1, double *farg2, void *farg3, void *farg4) {
+SWIGEXPORT int _wrap_FN_VScaleVectorArray_OpenMP(int const *farg1, SwigComplex_double *farg2, void *farg3, void *farg4) {
   int fresult ;
   int arg1 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
@@ -728,7 +747,7 @@ SWIGEXPORT int _wrap_FN_VScaleVectorArray_OpenMP(int const *farg1, double *farg2
 }
 
 
-SWIGEXPORT int _wrap_FN_VConstVectorArray_OpenMP(int const *farg1, double const *farg2, void *farg3) {
+SWIGEXPORT int _wrap_FN_VConstVectorArray_OpenMP(int const *farg1, SwigComplex_double *farg2, void *farg3) {
   int fresult ;
   int arg1 ;
   sunscalartype arg2 ;
@@ -736,7 +755,7 @@ SWIGEXPORT int _wrap_FN_VConstVectorArray_OpenMP(int const *farg1, double const 
   SUNErrCode result;
   
   arg1 = (int)(*farg1);
-  arg2 = (sunscalartype)(*farg2);
+  arg2 = SWIG_ccomplex_construct(farg2->real, farg2->imag);
   arg3 = (N_Vector *)(farg3);
   result = (SUNErrCode)N_VConstVectorArray_OpenMP(arg1,arg2,arg3);
   fresult = (SUNErrCode)(result);

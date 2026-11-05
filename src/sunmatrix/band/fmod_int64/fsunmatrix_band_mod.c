@@ -226,6 +226,25 @@
 
 #include "sunmatrix/sunmatrix_band.h"
 
+
+
+
+
+typedef struct {
+  double real;
+  double imag;
+} SwigComplex_double;
+
+
+
+
+SWIGINTERN SwigComplex_double SWIG_create_complex_double(double real, double imag) {
+  SwigComplex_double result;
+  result.real = real;
+  result.imag = imag;
+  return result;
+}
+
 SWIGEXPORT SUNMatrix _wrap_FSUNBandMatrix(int64_t const *farg1, int64_t const *farg2, int64_t const *farg3, void *farg4) {
   SUNMatrix fresult ;
   sunindextype arg1 ;
@@ -428,14 +447,14 @@ SWIGEXPORT int _wrap_FSUNMatCopy_Band(SUNMatrix farg1, SUNMatrix farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(double const *farg1, SUNMatrix farg2, SUNMatrix farg3) {
+SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(SwigComplex_double *farg1, SUNMatrix farg2, SUNMatrix farg3) {
   int fresult ;
   sunscalartype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNMatrix arg3 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (sunscalartype)(*farg1);
+  arg1 = SWIG_ccomplex_construct(farg1->real, farg1->imag);
   arg2 = (SUNMatrix)(farg2);
   arg3 = (SUNMatrix)(farg3);
   result = (SUNErrCode)SUNMatScaleAdd_Band(arg1,arg2,arg3);
@@ -444,13 +463,13 @@ SWIGEXPORT int _wrap_FSUNMatScaleAdd_Band(double const *farg1, SUNMatrix farg2, 
 }
 
 
-SWIGEXPORT int _wrap_FSUNMatScaleAddI_Band(double const *farg1, SUNMatrix farg2) {
+SWIGEXPORT int _wrap_FSUNMatScaleAddI_Band(SwigComplex_double *farg1, SUNMatrix farg2) {
   int fresult ;
   sunscalartype arg1 ;
   SUNMatrix arg2 = (SUNMatrix) 0 ;
   SUNErrCode result;
   
-  arg1 = (sunscalartype)(*farg1);
+  arg1 = SWIG_ccomplex_construct(farg1->real, farg1->imag);
   arg2 = (SUNMatrix)(farg2);
   result = (SUNErrCode)SUNMatScaleAddI_Band(arg1,arg2);
   fresult = (SUNErrCode)(result);

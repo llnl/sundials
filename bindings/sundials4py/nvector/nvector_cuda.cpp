@@ -36,7 +36,7 @@ using namespace sundials::experimental;
 namespace sundials4py {
 
 using CudaArray1d =
-  nb::ndarray<sunrealtype, nb::device::cuda, nb::ndim<1>, nb::c_contig>;
+  nb::ndarray<sunscalartype, nb::device::cuda, nb::ndim<1>, nb::c_contig>;
 
 namespace nvector_detail {
 
@@ -60,7 +60,7 @@ void* cuda_stream(N_Vector v)
            : nullptr;
 }
 
-void require_compatible_pointer(N_Vector v, sunrealtype* ptr, ArrayDevice device)
+void require_compatible_pointer(N_Vector v, sunscalartype* ptr, ArrayDevice device)
 {
   if (!ptr && N_VGetLength(v) == 0) { return; }
   if (!ptr)
@@ -106,7 +106,7 @@ void require_compatible_pointer(N_Vector v, sunrealtype* ptr, ArrayDevice device
 
 } // namespace
 
-void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
+void replace_cuda_array_pointer(N_Vector v, sunscalartype* ptr,
                                 ArrayDevice device, nb::object owner)
 {
   require_cuda_nvector(v);
@@ -162,7 +162,10 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
     content->host_data   = replacement_alias;
   }
   else if (device == ArrayDevice::Cpu) { content->host_data = replacement; }
-  else { content->device_data = replacement; }
+  else
+  {
+    content->device_data = replacement;
+  }
 
   if (managed)
   {
@@ -170,13 +173,19 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
     owners.host_array   = nb::object();
     owners.device_array = nb::object();
     if (device == ArrayDevice::Cpu) { owners.host_array = std::move(owner); }
-    else { owners.device_array = std::move(owner); }
+    else
+    {
+      owners.device_array = std::move(owner);
+    }
   }
   else if (device == ArrayDevice::Cpu)
   {
     retain_python_host_array(v, std::move(owner));
   }
-  else { retain_python_device_array(v, std::move(owner)); }
+  else
+  {
+    retain_python_device_array(v, std::move(owner));
+  }
 
   SUNErrCode dealloc_status = SUN_SUCCESS;
   if (managed)
@@ -200,7 +209,7 @@ void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
   }
 }
 
-void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
+void copy_to_cuda_array_pointer(N_Vector v, const sunscalartype* ptr,
                                 ArrayDevice source_device)
 {
   require_cuda_nvector(v);
@@ -236,7 +245,8 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
   }
 
   auto source = SUNMemoryHelper_Wrap(content->mem_helper,
-                                     const_cast<sunrealtype*>(ptr), source_type);
+                                     const_cast<sunscalartype*>(ptr),
+                                     source_type);
   if (!source)
   {
     throw sundials4py::error_returned("Failed to wrap the array pointer");
@@ -250,7 +260,7 @@ void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
   {
     copy_status = SUNMemoryHelper_Copy(content->mem_helper,
                                        content->device_data, source,
-                                       length * sizeof(sunrealtype), stream);
+                                       length * sizeof(sunscalartype), stream);
     if (copy_status == SUN_SUCCESS)
     {
       cuda_status = cudaStreamSynchronize(
@@ -431,8 +441,7 @@ void bind_nvector_cuda(nb::module_& m)
     .def(
       "__dlpack__",
       [](const CudaDeviceArrayPointer& self, nb::object /* stream */)
-      { return self.dlpack(); },
-      nb::arg("stream") = nb::none())
+      { return self.dlpack(); }, nb::arg("stream") = nb::none())
     .def("__dlpack_device__", [](const CudaDeviceArrayPointer& self)
          { return nb::make_tuple(2, self.device_id); });
 
@@ -472,13 +481,13 @@ void bind_nvector_cuda(nb::module_& m)
 
   m.def(
     "N_VMake_Cuda",
-    [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
+    [](sunindextype vec_length, sundials4py::ScalarArray1d h_vdata_1d,
        std::uintptr_t d_vdata,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
       nvector_detail::require_vector_length(vec_length, h_vdata_1d);
       auto v = N_VMake_Cuda(vec_length, h_vdata_1d.data(),
-                            reinterpret_cast<sunrealtype*>(d_vdata), sunctx);
+                            reinterpret_cast<sunscalartype*>(d_vdata), sunctx);
       return nvector_detail::wrap_nvector(v);
     },
     nb::arg("vec_length"), nb::arg("h_vdata_1d"), nb::arg("d_vdata"),
@@ -488,7 +497,7 @@ void bind_nvector_cuda(nb::module_& m)
 
   m.def(
     "N_VMake_Cuda",
-    [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
+    [](sunindextype vec_length, sundials4py::ScalarArray1d h_vdata_1d,
        CudaArray1d d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
@@ -504,14 +513,15 @@ void bind_nvector_cuda(nb::module_& m)
 
   m.def(
     "N_VMake_Cuda",
-    [](sunindextype vec_length, sundials4py::Array1d h_vdata_1d,
+    [](sunindextype vec_length, sundials4py::ScalarArray1d h_vdata_1d,
        nb::object d_vdata_1d,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
       nvector_detail::require_vector_length(vec_length, h_vdata_1d);
       nvector_detail::require_vector_length(vec_length, d_vdata_1d);
+      nvector_detail::require_scalar_dtype(d_vdata_1d);
       auto v = N_VMake_Cuda(vec_length, h_vdata_1d.data(),
-                            reinterpret_cast<sunrealtype*>(
+                            reinterpret_cast<sunscalartype*>(
                               device_array_pointer(d_vdata_1d)),
                             sunctx);
       return nvector_detail::wrap_nvector(v);
@@ -526,7 +536,7 @@ void bind_nvector_cuda(nb::module_& m)
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
       return nvector_detail::wrap_nvector(
-        N_VMakeManaged_Cuda(vec_length, reinterpret_cast<sunrealtype*>(vdata),
+        N_VMakeManaged_Cuda(vec_length, reinterpret_cast<sunscalartype*>(vdata),
                             sunctx));
     },
     nb::arg("vec_length"), nb::arg("vdata"), nb::arg("sunctx"),

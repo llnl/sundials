@@ -1080,7 +1080,7 @@ end function
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set(self, lapack_a)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-real(C_DOUBLE), dimension(*), target, intent(inout) :: lapack_a
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: lapack_a
 type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
@@ -1092,7 +1092,7 @@ end subroutine
 function swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(:), pointer :: swig_result
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
 type(C_PTR) :: fresult 
 type(SwigClassWrapper) :: farg1 
@@ -1105,7 +1105,7 @@ end function
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set(self, lapack_wr)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-real(C_DOUBLE), dimension(*), target, intent(inout) :: lapack_wr
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: lapack_wr
 type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
@@ -1117,7 +1117,7 @@ end subroutine
 function swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(:), pointer :: swig_result
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
 type(C_PTR) :: fresult 
 type(SwigClassWrapper) :: farg1 
@@ -1130,7 +1130,7 @@ end function
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_set(self, lapack_wi)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-real(C_DOUBLE), dimension(*), target, intent(inout) :: lapack_wi
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: lapack_wi
 type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
@@ -1142,7 +1142,7 @@ end subroutine
 function swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(:), pointer :: swig_result
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
 type(C_PTR) :: fresult 
 type(SwigClassWrapper) :: farg1 
@@ -1155,7 +1155,7 @@ end function
 subroutine swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_set(self, lapack_work)
 use, intrinsic :: ISO_C_BINDING
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
-real(C_DOUBLE), dimension(*), target, intent(inout) :: lapack_work
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: lapack_work
 type(SwigClassWrapper) :: farg1 
 type(C_PTR) :: farg2 
 
@@ -1167,7 +1167,7 @@ end subroutine
 function swigf_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_get(self) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(:), pointer :: swig_result
+complex(C_DOUBLE_COMPLEX), dimension(:), pointer :: swig_result
 class(SUNDomEigEstimatorContent_Arnoldi_), intent(in) :: self
 type(C_PTR) :: fresult 
 type(SwigClassWrapper) :: farg1 

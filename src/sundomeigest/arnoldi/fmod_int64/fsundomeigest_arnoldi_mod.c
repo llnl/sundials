@@ -270,6 +270,25 @@ SWIGINTERN SwigClassWrapper SwigClassWrapper_uninitialized() {
 }
 
 
+
+
+
+typedef struct {
+  double real;
+  double imag;
+} SwigComplex_double;
+
+
+
+
+SWIGINTERN SwigComplex_double SWIG_create_complex_double(double real, double imag) {
+  SwigComplex_double result;
+  result.real = real;
+  result.imag = imag;
+  return result;
+}
+
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 # ifndef strtoull
@@ -699,7 +718,7 @@ SWIGEXPORT long _wrap_SUNDomEigEstimatorContent_Arnoldi__nfevals_get(SwigClassWr
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set(SwigClassWrapper const *farg1, double *farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set(SwigClassWrapper const *farg1, SwigComplex_double *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
   
@@ -710,8 +729,8 @@ SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_set(SwigClassW
 }
 
 
-SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get(SwigClassWrapper const *farg1) {
-  double * fresult ;
+SWIGEXPORT SwigComplex_double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get(SwigClassWrapper const *farg1) {
+  SwigComplex_double * fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *result = 0 ;
   
@@ -723,7 +742,7 @@ SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_A_get(SwigCl
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set(SwigClassWrapper const *farg1, double *farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set(SwigClassWrapper const *farg1, SwigComplex_double *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
   
@@ -734,8 +753,8 @@ SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_set(SwigClass
 }
 
 
-SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_get(SwigClassWrapper const *farg1) {
-  double * fresult ;
+SWIGEXPORT SwigComplex_double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_get(SwigClassWrapper const *farg1) {
+  SwigComplex_double * fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *result = 0 ;
   
@@ -747,7 +766,7 @@ SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wr_get(SwigC
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_set(SwigClassWrapper const *farg1, double *farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_set(SwigClassWrapper const *farg1, SwigComplex_double *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
   
@@ -758,8 +777,8 @@ SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_set(SwigClass
 }
 
 
-SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_get(SwigClassWrapper const *farg1) {
-  double * fresult ;
+SWIGEXPORT SwigComplex_double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_get(SwigClassWrapper const *farg1) {
+  SwigComplex_double * fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *result = 0 ;
   
@@ -771,7 +790,7 @@ SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_wi_get(SwigC
 }
 
 
-SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_set(SwigClassWrapper const *farg1, double *farg2) {
+SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_set(SwigClassWrapper const *farg1, SwigComplex_double *farg2) {
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *arg2 = (sunscalartype *) 0 ;
   
@@ -782,8 +801,8 @@ SWIGEXPORT void _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_set(SwigCla
 }
 
 
-SWIGEXPORT double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_get(SwigClassWrapper const *farg1) {
-  double * fresult ;
+SWIGEXPORT SwigComplex_double * _wrap_SUNDomEigEstimatorContent_Arnoldi__LAPACK_work_get(SwigClassWrapper const *farg1) {
+  SwigComplex_double * fresult ;
   struct SUNDomEigEstimatorContent_Arnoldi_ *arg1 = (struct SUNDomEigEstimatorContent_Arnoldi_ *) 0 ;
   sunscalartype *result = 0 ;
   

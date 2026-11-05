@@ -60,7 +60,10 @@ void bind_core(nb::module_& m)
           std::shared_ptr<FILE> fp;
           SUNErrCode status = SUNFileOpen(filename, modes, &tmp);
           if (status) { fp = nullptr; }
-          else { fp = std::shared_ptr<FILE>(tmp, std::fclose); }
+          else
+          {
+            fp = std::shared_ptr<FILE>(tmp, std::fclose);
+          }
           return std::make_tuple(status, fp);
         });
 
@@ -79,18 +82,31 @@ void bind_core(nb::module_& m)
   bind_sunstepper(m);
 
   //
-  // Expose sunrealtye and sunindextype as the corresponding numpy types
+  // Expose the configured real, scalar, and index types as NumPy types.
   //
 
   nb::object np = nb::module_::import_("numpy");
 #if defined(SUNDIALS_SINGLE_PRECISION)
   m.attr("sunrealtype") = np.attr("float32");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  m.attr("sunscalartype") = np.attr("complex64");
+#endif
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
   m.attr("sunrealtype") = np.attr("float64");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  m.attr("sunscalartype") = np.attr("complex128");
+#endif
 #elif defined(SUNDIALS_EXTENDED_PRECISION)
   m.attr("sunrealtype") = np.attr("longdouble");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  m.attr("sunscalartype") = np.attr("clongdouble");
+#endif
 #else
 #error Unknown sunrealtype, email sundials-users@llnl.gov
+#endif
+
+#if defined(SUNDIALS_SCALAR_TYPE_REAL)
+  m.attr("sunscalartype") = m.attr("sunrealtype");
 #endif
 
 #if defined(SUNDIALS_INT64_T)

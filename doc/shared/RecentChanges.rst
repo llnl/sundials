@@ -18,6 +18,11 @@ to match the configuration of the :c:type:`sunscalartype` alias.
 
 **New Features and Enhancements**
 
+sundials4py now supports builds with ``SUNDIALS_SCALAR_TYPE=COMPLEX``. The
+``sunscalartype`` attribute identifies the NumPy dtype for vector and matrix
+entries, while ``sunrealtype`` remains the dtype for times, tolerances, and
+norms.
+
 **Bug Fixes**
 
 **Deprecation Notices**

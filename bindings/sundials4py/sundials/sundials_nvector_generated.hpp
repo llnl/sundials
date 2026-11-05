@@ -125,15 +125,15 @@ m.def("N_VMinQuotient", N_VMinQuotient, nb::arg("num"), nb::arg("denom"));
 
 m.def(
   "N_VLinearCombination",
-  [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
+  [](int nvec, sundials4py::ScalarArray1d c_1d, std::vector<N_Vector> X_1d,
      N_Vector z) -> SUNErrCode
   {
     auto N_VLinearCombination_adapt_arr_ptr_to_std_vector =
-      [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
+      [](int nvec, sundials4py::ScalarArray1d c_1d, std::vector<N_Vector> X_1d,
          N_Vector z) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
-      N_Vector* X_1d_ptr    = X_1d.empty() ? nullptr : X_1d.data();
+      sunscalartype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
+      N_Vector* X_1d_ptr      = X_1d.empty() ? nullptr : X_1d.data();
 
       auto lambda_result = N_VLinearCombination(nvec, c_1d_ptr, X_1d_ptr, z);
       return lambda_result;
@@ -145,16 +145,16 @@ m.def(
 
 m.def(
   "N_VScaleAddMulti",
-  [](int nvec, sundials4py::Array1d a_1d, N_Vector x,
+  [](int nvec, sundials4py::ScalarArray1d a_1d, N_Vector x,
      std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
     auto N_VScaleAddMulti_adapt_arr_ptr_to_std_vector =
-      [](int nvec, sundials4py::Array1d a_1d, N_Vector x,
+      [](int nvec, sundials4py::ScalarArray1d a_1d, N_Vector x,
          std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
-      sunrealtype* a_1d_ptr = a_1d.size() == 0 ? nullptr : a_1d.data();
-      N_Vector* Y_1d_ptr    = Y_1d.empty() ? nullptr : Y_1d.data();
-      N_Vector* Z_1d_ptr    = Z_1d.empty() ? nullptr : Z_1d.data();
+      sunscalartype* a_1d_ptr = a_1d.size() == 0 ? nullptr : a_1d.data();
+      N_Vector* Y_1d_ptr      = Y_1d.empty() ? nullptr : Y_1d.data();
+      N_Vector* Z_1d_ptr      = Z_1d.empty() ? nullptr : Z_1d.data();
 
       auto lambda_result = N_VScaleAddMulti(nvec, a_1d_ptr, x, Y_1d_ptr,
                                             Z_1d_ptr);
@@ -170,14 +170,14 @@ m.def(
 m.def(
   "N_VDotProdMulti",
   [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
-     sundials4py::Array1d dotprods_1d) -> SUNErrCode
+     sundials4py::ScalarArray1d dotprods_1d) -> SUNErrCode
   {
     auto N_VDotProdMulti_adapt_arr_ptr_to_std_vector =
       [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
-         sundials4py::Array1d dotprods_1d) -> SUNErrCode
+         sundials4py::ScalarArray1d dotprods_1d) -> SUNErrCode
     {
       N_Vector* Y_1d_ptr = Y_1d.empty() ? nullptr : Y_1d.data();
-      sunrealtype* dotprods_1d_ptr =
+      sunscalartype* dotprods_1d_ptr =
         dotprods_1d.size() == 0 ? nullptr : dotprods_1d.data();
 
       auto lambda_result = N_VDotProdMulti(nvec, x, Y_1d_ptr, dotprods_1d_ptr);
@@ -191,11 +191,11 @@ m.def(
 
 m.def(
   "N_VLinearSumVectorArray",
-  [](int nvec, sunrealtype a, std::vector<N_Vector> X_1d, sunrealtype b,
+  [](int nvec, sunscalartype a, std::vector<N_Vector> X_1d, sunscalartype b,
      std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
     auto N_VLinearSumVectorArray_adapt_arr_ptr_to_std_vector =
-      [](int nvec, sunrealtype a, std::vector<N_Vector> X_1d, sunrealtype b,
+      [](int nvec, sunscalartype a, std::vector<N_Vector> X_1d, sunscalartype b,
          std::vector<N_Vector> Y_1d, std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
       N_Vector* X_1d_ptr = X_1d.empty() ? nullptr : X_1d.data();
@@ -215,16 +215,16 @@ m.def(
 
 m.def(
   "N_VScaleVectorArray",
-  [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
+  [](int nvec, sundials4py::ScalarArray1d c_1d, std::vector<N_Vector> X_1d,
      std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
     auto N_VScaleVectorArray_adapt_arr_ptr_to_std_vector =
-      [](int nvec, sundials4py::Array1d c_1d, std::vector<N_Vector> X_1d,
+      [](int nvec, sundials4py::ScalarArray1d c_1d, std::vector<N_Vector> X_1d,
          std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
-      N_Vector* X_1d_ptr    = X_1d.empty() ? nullptr : X_1d.data();
-      N_Vector* Z_1d_ptr    = Z_1d.empty() ? nullptr : Z_1d.data();
+      sunscalartype* c_1d_ptr = c_1d.size() == 0 ? nullptr : c_1d.data();
+      N_Vector* X_1d_ptr      = X_1d.empty() ? nullptr : X_1d.data();
+      N_Vector* Z_1d_ptr      = Z_1d.empty() ? nullptr : Z_1d.data();
 
       auto lambda_result = N_VScaleVectorArray(nvec, c_1d_ptr, X_1d_ptr,
                                                Z_1d_ptr);
@@ -238,10 +238,10 @@ m.def(
 
 m.def(
   "N_VConstVectorArray",
-  [](int nvec, sunrealtype c, std::vector<N_Vector> Z_1d) -> SUNErrCode
+  [](int nvec, sunscalartype c, std::vector<N_Vector> Z_1d) -> SUNErrCode
   {
     auto N_VConstVectorArray_adapt_arr_ptr_to_std_vector =
-      [](int nvec, sunrealtype c, std::vector<N_Vector> Z_1d) -> SUNErrCode
+      [](int nvec, sunscalartype c, std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
       N_Vector* Z_1d_ptr = Z_1d.empty() ? nullptr : Z_1d.data();
 
@@ -325,14 +325,14 @@ m.def("N_VMinQuotientLocal", N_VMinQuotientLocal, nb::arg("num"),
 m.def(
   "N_VDotProdMultiLocal",
   [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
-     sundials4py::Array1d dotprods_1d) -> SUNErrCode
+     sundials4py::ScalarArray1d dotprods_1d) -> SUNErrCode
   {
     auto N_VDotProdMultiLocal_adapt_arr_ptr_to_std_vector =
       [](int nvec, N_Vector x, std::vector<N_Vector> Y_1d,
-         sundials4py::Array1d dotprods_1d) -> SUNErrCode
+         sundials4py::ScalarArray1d dotprods_1d) -> SUNErrCode
     {
       N_Vector* Y_1d_ptr = Y_1d.empty() ? nullptr : Y_1d.data();
-      sunrealtype* dotprods_1d_ptr =
+      sunscalartype* dotprods_1d_ptr =
         dotprods_1d.size() == 0 ? nullptr : dotprods_1d.data();
 
       auto lambda_result = N_VDotProdMultiLocal(nvec, x, Y_1d_ptr,
@@ -347,12 +347,12 @@ m.def(
 
 m.def(
   "N_VDotProdMultiAllReduce",
-  [](int nvec_total, N_Vector x, sundials4py::Array1d sum_1d) -> SUNErrCode
+  [](int nvec_total, N_Vector x, sundials4py::ScalarArray1d sum_1d) -> SUNErrCode
   {
     auto N_VDotProdMultiAllReduce_adapt_arr_ptr_to_std_vector =
-      [](int nvec_total, N_Vector x, sundials4py::Array1d sum_1d) -> SUNErrCode
+      [](int nvec_total, N_Vector x, sundials4py::ScalarArray1d sum_1d) -> SUNErrCode
     {
-      sunrealtype* sum_1d_ptr = sum_1d.size() == 0 ? nullptr : sum_1d.data();
+      sunscalartype* sum_1d_ptr = sum_1d.size() == 0 ? nullptr : sum_1d.data();
 
       auto lambda_result = N_VDotProdMultiAllReduce(nvec_total, x, sum_1d_ptr);
       return lambda_result;

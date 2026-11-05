@@ -37,9 +37,8 @@ void bind_sunmatrix_band(nb::module_& m)
       auto owner = nb::find(A);
       auto ptr   = SUNBandMatrix_Data(A);
       // SUNBandMatrix_Data returns data that cannot be directly indexed as a 2-dimensional numpy array
-      return nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>(ptr,
-                                                                            {ldata},
-                                                                            owner);
+      return nb::ndarray<sunscalartype, nb::numpy, nb::ndim<1>,
+                         nb::c_contig>(ptr, {ldata}, owner);
     },
     nb::arg("A"), nb::rv_policy::reference);
 }

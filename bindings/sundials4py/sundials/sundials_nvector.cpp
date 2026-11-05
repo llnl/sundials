@@ -40,7 +40,7 @@ namespace sundials4py {
 
 namespace {
 
-void replace_host_array_pointer(N_Vector v, sunrealtype* ptr, nb::object owner)
+void replace_host_array_pointer(N_Vector v, sunscalartype* ptr, nb::object owner)
 {
   auto vector_id = N_VGetVectorID(v);
   if (vector_id == SUNDIALS_NVEC_SERIAL)
@@ -129,17 +129,7 @@ nvector_detail::ArrayDevice check_jax_array(N_Vector v, nb::object data, bool co
   }
   nvector_detail::require_vector_length(N_VGetLength(v), data, "JAX array");
 
-  auto dtype = data.attr("dtype");
-  if (nb::cast<std::string>(dtype.attr("kind")) != "f")
-  {
-    throw sundials4py::error_returned(
-      "N_VSetJaxArray requires a floating-point dtype");
-  }
-  if (nb::cast<size_t>(dtype.attr("itemsize")) != sizeof(sunrealtype))
-  {
-    throw sundials4py::error_returned(
-      "JAX array dtype does not match SUNDIALS precision");
-  }
+  nvector_detail::require_scalar_dtype(data);
 
   return device;
 }
@@ -162,11 +152,14 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
   auto device           = check_jax_array(v, data, copy_array);
   auto jax              = nb::module_::import_("jax");
   if (copy_array) { data.attr("block_until_ready")(); }
-  else { jax.attr("effects_barrier")(); }
+  else
+  {
+    jax.attr("effects_barrier")();
+  }
 
   auto source_address =
     nb::cast<std::uintptr_t>(data.attr("unsafe_buffer_pointer")());
-  auto source    = reinterpret_cast<sunrealtype*>(source_address);
+  auto source    = reinterpret_cast<sunscalartype*>(source_address);
   auto vector_id = N_VGetVectorID(v);
 
   if (vector_id == SUNDIALS_NVEC_SERIAL)
@@ -192,10 +185,13 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
       }
       if (length > 0)
       {
-        std::memcpy(destination, source, length * sizeof(sunrealtype));
+        std::memcpy(destination, source, length * sizeof(sunscalartype));
       }
     }
-    else { replace_host_array_pointer(v, source, std::move(data)); }
+    else
+    {
+      replace_host_array_pointer(v, source, std::move(data));
+    }
     return;
   }
 
@@ -258,9 +254,28 @@ void bind_nvector(nb::module_& m)
 #include "sundials_nvector_generated.hpp"
 
   m.def(
-    "N_VGetArrayPointer",
-    [](N_Vector v) { return nvector_detail::host_array(v); },
-    nb::rv_policy::reference);
+    "N_VDotProdComplex",
+    [](N_Vector x, N_Vector y)
+    {
+      sunscalartype result{};
+      auto status = N_VDotProdComplex(x, y, &result);
+      return std::make_tuple(status, result);
+    },
+    nb::arg("x"), nb::arg("y"));
+
+  m.def(
+    "N_VDotProdLocalComplex",
+    [](N_Vector x, N_Vector y)
+    {
+      sunscalartype result{};
+      auto status = N_VDotProdLocalComplex(x, y, &result);
+      return std::make_tuple(status, result);
+    },
+    nb::arg("x"), nb::arg("y"));
+
+  m.def(
+    "N_VGetArrayPointer", [](N_Vector v)
+    { return nvector_detail::host_array(v); }, nb::rv_policy::reference);
 
 #ifndef SUNDIALS_NVECTOR_CUDA
   m.def(
@@ -287,7 +302,7 @@ void bind_nvector(nb::module_& m)
         "If copy is None, its value is inferred from array: jax.Array uses "
         "copy=True and jax.ref.Ref uses copy=False. With copy=True, array "
         "must be a one-dimensional jax.Array whose "
-        "length and floating-point dtype match the N_Vector. Its values are "
+        "length and scalar dtype match the N_Vector. Its values are "
         "copied into the existing N_Vector storage. With copy=False, array "
         "must be a one-dimensional jax.ref.Ref; its storage is attached to "
         "the N_Vector without copying, and the Ref is retained as its owner. "
@@ -296,11 +311,11 @@ void bind_nvector(nb::module_& m)
 
   m.def(
     "N_VScaleAddMultiVectorArray",
-    [](int nvec, int nsum, sundials4py::Array1d c_1d,
+    [](int nvec, int nsum, sundials4py::ScalarArray1d c_1d,
        std::vector<N_Vector> X_1d, std::vector<std::vector<N_Vector>> Y_2d,
        std::vector<std::vector<N_Vector>> Z_2d) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+      sunscalartype* c_1d_ptr = c_1d.data();
       N_Vector* X_1d_ptr =
         reinterpret_cast<N_Vector*>(X_1d.empty() ? nullptr : X_1d.data());
 
@@ -322,11 +337,11 @@ void bind_nvector(nb::module_& m)
 
   m.def(
     "N_VLinearCombinationVectorArray",
-    [](int nvec, int nsum, sundials4py::Array1d c_1d,
+    [](int nvec, int nsum, sundials4py::ScalarArray1d c_1d,
        std::vector<std::vector<N_Vector>> X_2d,
        std::vector<N_Vector> Z_1d) -> SUNErrCode
     {
-      sunrealtype* c_1d_ptr = reinterpret_cast<sunrealtype*>(c_1d.data());
+      sunscalartype* c_1d_ptr = c_1d.data();
 
       // Convert X_2d to N_Vector**
       std::vector<N_Vector*> X_2d_ptrs;

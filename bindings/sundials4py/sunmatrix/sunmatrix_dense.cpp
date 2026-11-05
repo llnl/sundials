@@ -38,7 +38,7 @@ void bind_sunmatrix_dense(nb::module_& m)
       auto owner = nb::find(A);
       auto ptr   = SUNDenseMatrix_Data(A);
       // SUNDenseMatrix_Data returns a column-major ordered array (i.e., Fortran style)
-      return nb::ndarray<sunrealtype, nb::numpy, nb::ndim<2>,
+      return nb::ndarray<sunscalartype, nb::numpy, nb::ndim<2>,
                          nb::f_contig>(ptr, {rows, cols}, owner);
     },
     nb::arg("A"), nb::rv_policy::reference);

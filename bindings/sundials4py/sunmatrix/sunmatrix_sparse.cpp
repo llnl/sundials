@@ -37,9 +37,8 @@ void bind_sunmatrix_sparse(nb::module_& m)
       auto owner = nb::find(A);
       auto ptr   = SUNSparseMatrix_Data(A);
       // SUNSparseMatrix_Data returns data that cannot be directly indexed as a 2-dimensional numpy array
-      return nb::ndarray<sunrealtype, nb::numpy, nb::ndim<1>, nb::c_contig>(ptr,
-                                                                            {nnz},
-                                                                            owner);
+      return nb::ndarray<sunscalartype, nb::numpy, nb::ndim<1>,
+                         nb::c_contig>(ptr, {nnz}, owner);
     },
     nb::arg("A"), nb::rv_policy::reference);
 

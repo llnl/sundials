@@ -120,6 +120,22 @@ For example, the following builds the interface with 32-bit index types
    MAKEFLAGS="-j$(nproc)" pip install --no-build-isolation -Ceditable.rebuild=true -ve .[dev] \
       -C cmake.define.SUNDIALS_INDEX_SIZE=32
 
+For a complex arithmetic build, set the scalar type and allocate vector and
+matrix data with ``sunscalartype``. Times, tolerances, and norms use
+``sunrealtype``.
+
+.. code-block:: shell
+
+   pip install . -C cmake.define.SUNDIALS_SCALAR_TYPE=COMPLEX
+
+.. code-block:: python
+
+   import numpy as np
+   from sundials4py.core import sunrealtype, sunscalartype
+
+   values = np.array([1 + 2j, 3 - 4j], dtype=sunscalartype)
+   tolerance = sunrealtype(1e-8)
+
 Alternatively, you can set the CMAKE_ARGS environment variable:
 
 .. code-block:: shell
@@ -350,4 +366,3 @@ We must tell nanobind about these relationships using the ``nb::keep_alive`` fun
 more complex cases, the ``nb::call_policy`` function and ``sundials4py::returns_references_to``
 object. Refer to `the nanobind documentation <https://nanobind.readthedocs.io/en/latest/functions.html#lifetime-annotations>`__
 for more information as well as the source file ``bindings/sundials4py/sundials4py_helpers.hpp``.
-

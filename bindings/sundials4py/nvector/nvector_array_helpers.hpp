@@ -176,7 +176,7 @@ inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
     "device must be 'cpu', 'host', 'cuda', or None");
 }
 
-inline sundials4py::Array1d host_array(N_Vector v)
+inline sundials4py::ScalarArray1d host_array(N_Vector v)
 {
   auto ptr = N_VGetArrayPointer(v);
   if (!ptr)
@@ -185,7 +185,7 @@ inline sundials4py::Array1d host_array(N_Vector v)
   }
   auto owner = nanobind::find(v);
   size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-  return sundials4py::Array1d(ptr, 1, shape, owner);
+  return sundials4py::ScalarArray1d(ptr, 1, shape, owner);
 }
 
 template<typename GetNumpyArray, typename GetJaxArray, typename GetCupyArray,
@@ -253,10 +253,32 @@ inline void require_vector_length(sunindextype vec_length, nanobind::object arra
   }
 }
 
+inline void require_scalar_dtype(nanobind::object array)
+{
+  if (!PyObject_HasAttrString(array.ptr(), "dtype"))
+  {
+    throw sundials4py::error_returned("Array does not have a dtype");
+  }
+
+  auto dtype = array.attr("dtype");
+#if defined(SUNDIALS_SCALAR_TYPE_COMPLEX)
+  constexpr char expected_kind = 'c';
+#else
+  constexpr char expected_kind = 'f';
+#endif
+  auto kind = nanobind::cast<std::string>(dtype.attr("kind"));
+  if (kind.size() != 1 || kind[0] != expected_kind ||
+      nanobind::cast<size_t>(dtype.attr("itemsize")) != sizeof(sunscalartype))
+  {
+    throw sundials4py::error_returned(
+      "Array dtype does not match the SUNDIALS scalar type");
+  }
+}
+
 #ifdef SUNDIALS_NVECTOR_CUDA
-void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
+void replace_cuda_array_pointer(N_Vector v, sunscalartype* ptr,
                                 ArrayDevice device, nanobind::object owner);
-void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
+void copy_to_cuda_array_pointer(N_Vector v, const sunscalartype* ptr,
                                 ArrayDevice source_device);
 #endif
 

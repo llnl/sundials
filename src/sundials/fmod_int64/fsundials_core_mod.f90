@@ -1286,9 +1286,9 @@ end function
 subroutine swigc_FN_VLinearSum(farg1, farg2, farg3, farg4, farg5) &
 bind(C, name="_wrap_FN_VLinearSum")
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
-real(C_DOUBLE), intent(in) :: farg3
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg3
 type(C_PTR), value :: farg4
 type(C_PTR), value :: farg5
 end subroutine
@@ -1296,7 +1296,7 @@ end subroutine
 subroutine swigc_FN_VConst(farg1, farg2) &
 bind(C, name="_wrap_FN_VConst")
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 end subroutine
 
@@ -1319,7 +1319,7 @@ end subroutine
 subroutine swigc_FN_VScale(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VScale")
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 end subroutine
@@ -1342,7 +1342,7 @@ subroutine swigc_FN_VAddConst(farg1, farg2, farg3) &
 bind(C, name="_wrap_FN_VAddConst")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-real(C_DOUBLE), intent(in) :: farg2
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg2
 type(C_PTR), value :: farg3
 end subroutine
 
@@ -1492,9 +1492,9 @@ bind(C, name="_wrap_FN_VLinearSumVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT), intent(in) :: farg1
-real(C_DOUBLE), intent(in) :: farg2
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg2
 type(C_PTR), value :: farg3
-real(C_DOUBLE), intent(in) :: farg4
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg4
 type(C_PTR), value :: farg5
 type(C_PTR), value :: farg6
 integer(C_INT) :: fresult
@@ -1516,7 +1516,7 @@ bind(C, name="_wrap_FN_VConstVectorArray") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT), intent(in) :: farg1
-real(C_DOUBLE), intent(in) :: farg2
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
 end function
@@ -1829,7 +1829,7 @@ function swigc_FSUNMatScaleAdd(farg1, farg2, farg3) &
 bind(C, name="_wrap_FSUNMatScaleAdd") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 type(C_PTR), value :: farg3
 integer(C_INT) :: fresult
@@ -1839,7 +1839,7 @@ function swigc_FSUNMatScaleAddI(farg1, farg2) &
 bind(C, name="_wrap_FSUNMatScaleAddI") &
 result(fresult)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: farg1
+complex(C_DOUBLE_COMPLEX), intent(in) :: farg1
 type(C_PTR), value :: farg2
 integer(C_INT) :: fresult
 end function
@@ -4147,7 +4147,7 @@ end subroutine
 
 subroutine FN_VSetArrayPointer(v_data_1d, v)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(*), target, intent(inout) :: v_data_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: v_data_1d
 type(N_Vector), target, intent(inout) :: v
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4159,7 +4159,7 @@ end subroutine
 
 subroutine FN_VSetDeviceArrayPointer(d_vdata_1d, v)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(*), target, intent(inout) :: d_vdata_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: d_vdata_1d
 type(N_Vector), target, intent(inout) :: v
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4210,14 +4210,14 @@ end function
 
 subroutine FN_VLinearSum(a, x, b, y, z)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: a
+complex(C_DOUBLE_COMPLEX), intent(in) :: a
 type(N_Vector), target, intent(inout) :: x
-real(C_DOUBLE), intent(in) :: b
+complex(C_DOUBLE_COMPLEX), intent(in) :: b
 type(N_Vector), target, intent(inout) :: y
 type(N_Vector), target, intent(inout) :: z
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
-real(C_DOUBLE) :: farg3 
+complex(C_DOUBLE_COMPLEX) :: farg3 
 type(C_PTR) :: farg4 
 type(C_PTR) :: farg5 
 
@@ -4231,9 +4231,9 @@ end subroutine
 
 subroutine FN_VConst(c, z)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(N_Vector), target, intent(inout) :: z
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = c
@@ -4273,10 +4273,10 @@ end subroutine
 
 subroutine FN_VScale(c, x, z)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(N_Vector), target, intent(inout) :: x
 type(N_Vector), target, intent(inout) :: z
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
@@ -4313,10 +4313,10 @@ end subroutine
 subroutine FN_VAddConst(x, b, z)
 use, intrinsic :: ISO_C_BINDING
 type(N_Vector), target, intent(inout) :: x
-real(C_DOUBLE), intent(in) :: b
+complex(C_DOUBLE_COMPLEX), intent(in) :: b
 type(N_Vector), target, intent(inout) :: z
 type(C_PTR) :: farg1 
-real(C_DOUBLE) :: farg2 
+complex(C_DOUBLE_COMPLEX) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = c_loc(x)
@@ -4347,7 +4347,7 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(N_Vector), target, intent(inout) :: x
 type(N_Vector), target, intent(inout) :: y
-real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: result
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4521,7 +4521,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-real(C_DOUBLE), dimension(*), target, intent(inout) :: c_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: c_1d
 type(C_PTR) :: x_1d
 type(N_Vector), target, intent(inout) :: z
 integer(C_INT) :: fresult 
@@ -4543,7 +4543,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-real(C_DOUBLE), dimension(*), target, intent(inout) :: a_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: a_1d
 type(N_Vector), target, intent(inout) :: x
 type(C_PTR) :: y_1d
 type(C_PTR) :: z_1d
@@ -4570,7 +4570,7 @@ integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
 type(N_Vector), target, intent(inout) :: x
 type(C_PTR) :: y_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: dotprods_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: dotprods_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
@@ -4590,16 +4590,16 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-real(C_DOUBLE), intent(in) :: a
+complex(C_DOUBLE_COMPLEX), intent(in) :: a
 type(C_PTR) :: x_1d
-real(C_DOUBLE), intent(in) :: b
+complex(C_DOUBLE_COMPLEX), intent(in) :: b
 type(C_PTR) :: y_1d
 type(C_PTR) :: z_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
-real(C_DOUBLE) :: farg2 
+complex(C_DOUBLE_COMPLEX) :: farg2 
 type(C_PTR) :: farg3 
-real(C_DOUBLE) :: farg4 
+complex(C_DOUBLE_COMPLEX) :: farg4 
 type(C_PTR) :: farg5 
 type(C_PTR) :: farg6 
 
@@ -4618,7 +4618,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-real(C_DOUBLE), dimension(*), target, intent(inout) :: c_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: c_1d
 type(C_PTR) :: x_1d
 type(C_PTR) :: z_1d
 integer(C_INT) :: fresult 
@@ -4640,11 +4640,11 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(C_PTR) :: z_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
-real(C_DOUBLE) :: farg2 
+complex(C_DOUBLE_COMPLEX) :: farg2 
 type(C_PTR) :: farg3 
 
 farg1 = nvec
@@ -4723,7 +4723,7 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(N_Vector), target, intent(inout) :: x
 type(N_Vector), target, intent(inout) :: y
-real(C_DOUBLE), dimension(*), target, intent(inout) :: result
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: result
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
@@ -4868,7 +4868,7 @@ integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec
 type(N_Vector), target, intent(inout) :: x
 type(C_PTR) :: y_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: dotprods_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: dotprods_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
@@ -4889,7 +4889,7 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: nvec_total
 type(N_Vector), target, intent(inout) :: x
-real(C_DOUBLE), dimension(*), target, intent(inout) :: sum_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: sum_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
@@ -5203,11 +5203,11 @@ function FSUNMatScaleAdd(c, a, b) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(SUNMatrix), target, intent(inout) :: a
 type(SUNMatrix), target, intent(inout) :: b
 integer(C_INT) :: fresult 
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 type(C_PTR) :: farg3 
 
@@ -5222,10 +5222,10 @@ function FSUNMatScaleAddI(c, a) &
 result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
-real(C_DOUBLE), intent(in) :: c
+complex(C_DOUBLE_COMPLEX), intent(in) :: c
 type(SUNMatrix), target, intent(inout) :: a
 integer(C_INT) :: fresult 
-real(C_DOUBLE) :: farg1 
+complex(C_DOUBLE_COMPLEX) :: farg1 
 type(C_PTR) :: farg2 
 
 farg1 = c
@@ -5338,7 +5338,7 @@ type(C_PTR), target, intent(inout) :: h_2d
 integer(C_INT), intent(in) :: k
 integer(C_INT), intent(in) :: p
 real(C_DOUBLE), dimension(*), target, intent(inout) :: new_vk_norm
-real(C_DOUBLE), dimension(*), target, intent(inout) :: stemp_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: stemp_1d
 type(C_PTR) :: vtemp_1d
 integer(C_INT) :: fresult 
 type(C_PTR) :: farg1 
@@ -5366,7 +5366,7 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: n
 type(C_PTR), target, intent(inout) :: h_2d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: q_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: q_1d
 integer(C_INT), intent(in) :: job
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
@@ -5388,8 +5388,8 @@ use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 integer(C_INT), intent(in) :: n
 type(C_PTR), target, intent(inout) :: h_2d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: b_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: q_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: b_1d
 integer(C_INT) :: fresult 
 integer(C_INT) :: farg1 
 type(C_PTR) :: farg2 
@@ -5409,7 +5409,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
@@ -5437,7 +5437,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
@@ -5465,7 +5465,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
@@ -5493,7 +5493,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
@@ -5521,7 +5521,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax
@@ -5549,7 +5549,7 @@ result(swig_result)
 use, intrinsic :: ISO_C_BINDING
 integer(C_INT) :: swig_result
 type(C_PTR) :: q_1d
-real(C_DOUBLE), dimension(*), target, intent(inout) :: r_1d
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: r_1d
 type(N_Vector), target, intent(inout) :: df
 integer(C_INT), intent(in) :: m
 integer(C_INT), intent(in) :: mmax

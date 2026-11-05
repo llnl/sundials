@@ -226,6 +226,25 @@
 
 #include "nvector/nvector_mpiplusx.h"
 
+
+
+
+
+typedef struct {
+  double real;
+  double imag;
+} SwigComplex_double;
+
+
+
+
+SWIGINTERN SwigComplex_double SWIG_create_complex_double(double real, double imag) {
+  SwigComplex_double result;
+  result.real = real;
+  result.imag = imag;
+  return result;
+}
+
 SWIGEXPORT N_Vector _wrap_FN_VMake_MPIPlusX(int const *farg1, N_Vector farg2, void *farg3) {
   N_Vector fresult ;
   MPI_Comm arg1 ;
@@ -264,7 +283,7 @@ SWIGEXPORT int _wrap_FN_VGetVectorID_MPIPlusX(N_Vector farg1) {
 }
 
 
-SWIGEXPORT void _wrap_FN_VSetArrayPointer_MPIPlusX(double *farg1, N_Vector farg2) {
+SWIGEXPORT void _wrap_FN_VSetArrayPointer_MPIPlusX(SwigComplex_double *farg1, N_Vector farg2) {
   sunscalartype *arg1 = (sunscalartype *) 0 ;
   N_Vector arg2 = (N_Vector) 0 ;
   

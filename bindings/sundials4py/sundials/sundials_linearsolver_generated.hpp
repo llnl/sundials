@@ -28,15 +28,15 @@ auto pyEnumSUNGramSchmidtType =
 
 m.def(
   "SUNModifiedGS",
-  [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k,
+  [](std::vector<N_Vector> v_1d, sundials4py::ScalarArray1d h_2d, int k,
      int p) -> std::tuple<SUNErrCode, sunrealtype>
   {
     auto SUNModifiedGS_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k, int p,
-         sunrealtype* new_vk_norm) -> SUNErrCode
+      [](std::vector<N_Vector> v_1d, sundials4py::ScalarArray1d h_2d, int k,
+         int p, sunrealtype* new_vk_norm) -> SUNErrCode
     {
-      N_Vector* v_1d_ptr     = v_1d.empty() ? nullptr : v_1d.data();
-      sunrealtype** h_2d_ptr = reinterpret_cast<sunrealtype**>(
+      N_Vector* v_1d_ptr       = v_1d.empty() ? nullptr : v_1d.data();
+      sunscalartype** h_2d_ptr = reinterpret_cast<sunscalartype**>(
         h_2d.size() == 0 ? nullptr : h_2d.data());
 
       auto lambda_result = SUNModifiedGS(v_1d_ptr, h_2d_ptr, k, p, new_vk_norm);
@@ -44,7 +44,7 @@ m.def(
     };
     auto SUNModifiedGS_adapt_modifiable_immutable_to_return =
       [&SUNModifiedGS_adapt_arr_ptr_to_std_vector](std::vector<N_Vector> v_1d,
-                                                   sundials4py::Array1d h_2d,
+                                                   sundials4py::ScalarArray1d h_2d,
                                                    int k, int p)
       -> std::tuple<SUNErrCode, sunrealtype>
     {
@@ -62,21 +62,21 @@ m.def(
 
 m.def(
   "SUNClassicalGS",
-  [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k, int p,
-     sundials4py::Array1d stemp_1d,
+  [](std::vector<N_Vector> v_1d, sundials4py::ScalarArray1d h_2d, int k, int p,
+     sundials4py::ScalarArray1d stemp_1d,
      std::vector<N_Vector> vtemp_1d) -> std::tuple<SUNErrCode, sunrealtype>
   {
     auto SUNClassicalGS_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> v_1d, sundials4py::Array1d h_2d, int k, int p,
-         sunrealtype* new_vk_norm, sundials4py::Array1d stemp_1d,
+      [](std::vector<N_Vector> v_1d, sundials4py::ScalarArray1d h_2d, int k,
+         int p, sunrealtype* new_vk_norm, sundials4py::ScalarArray1d stemp_1d,
          std::vector<N_Vector> vtemp_1d) -> SUNErrCode
     {
-      N_Vector* v_1d_ptr     = v_1d.empty() ? nullptr : v_1d.data();
-      sunrealtype** h_2d_ptr = reinterpret_cast<sunrealtype**>(
+      N_Vector* v_1d_ptr       = v_1d.empty() ? nullptr : v_1d.data();
+      sunscalartype** h_2d_ptr = reinterpret_cast<sunscalartype**>(
         h_2d.size() == 0 ? nullptr : h_2d.data());
-      sunrealtype* stemp_1d_ptr = stemp_1d.size() == 0 ? nullptr
-                                                       : stemp_1d.data();
-      N_Vector* vtemp_1d_ptr    = vtemp_1d.empty() ? nullptr : vtemp_1d.data();
+      sunscalartype* stemp_1d_ptr = stemp_1d.size() == 0 ? nullptr
+                                                         : stemp_1d.data();
+      N_Vector* vtemp_1d_ptr = vtemp_1d.empty() ? nullptr : vtemp_1d.data();
 
       auto lambda_result = SUNClassicalGS(v_1d_ptr, h_2d_ptr, k, p, new_vk_norm,
                                           stemp_1d_ptr, vtemp_1d_ptr);
@@ -84,9 +84,9 @@ m.def(
     };
     auto SUNClassicalGS_adapt_modifiable_immutable_to_return =
       [&SUNClassicalGS_adapt_arr_ptr_to_std_vector](std::vector<N_Vector> v_1d,
-                                                    sundials4py::Array1d h_2d,
+                                                    sundials4py::ScalarArray1d h_2d,
                                                     int k, int p,
-                                                    sundials4py::Array1d stemp_1d,
+                                                    sundials4py::ScalarArray1d stemp_1d,
                                                     std::vector<N_Vector> vtemp_1d)
       -> std::tuple<SUNErrCode, sunrealtype>
     {
@@ -108,15 +108,16 @@ m.def(
 
 m.def(
   "SUNQRfact",
-  [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d, int job) -> int
+  [](int n, sundials4py::ScalarArray1d h_2d, sundials4py::ScalarArray1d q_1d,
+     int job) -> int
   {
     auto SUNQRfact_adapt_arr_ptr_to_std_vector =
-      [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d,
-         int job) -> int
+      [](int n, sundials4py::ScalarArray1d h_2d,
+         sundials4py::ScalarArray1d q_1d, int job) -> int
     {
-      sunrealtype** h_2d_ptr = reinterpret_cast<sunrealtype**>(
+      sunscalartype** h_2d_ptr = reinterpret_cast<sunscalartype**>(
         h_2d.size() == 0 ? nullptr : h_2d.data());
-      sunrealtype* q_1d_ptr = q_1d.size() == 0 ? nullptr : q_1d.data();
+      sunscalartype* q_1d_ptr = q_1d.size() == 0 ? nullptr : q_1d.data();
 
       auto lambda_result = SUNQRfact(n, h_2d_ptr, q_1d_ptr, job);
       return lambda_result;
@@ -128,17 +129,17 @@ m.def(
 
 m.def(
   "SUNQRsol",
-  [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d,
-     sundials4py::Array1d b_1d) -> int
+  [](int n, sundials4py::ScalarArray1d h_2d, sundials4py::ScalarArray1d q_1d,
+     sundials4py::ScalarArray1d b_1d) -> int
   {
     auto SUNQRsol_adapt_arr_ptr_to_std_vector =
-      [](int n, sundials4py::Array1d h_2d, sundials4py::Array1d q_1d,
-         sundials4py::Array1d b_1d) -> int
+      [](int n, sundials4py::ScalarArray1d h_2d,
+         sundials4py::ScalarArray1d q_1d, sundials4py::ScalarArray1d b_1d) -> int
     {
-      sunrealtype** h_2d_ptr = reinterpret_cast<sunrealtype**>(
+      sunscalartype** h_2d_ptr = reinterpret_cast<sunscalartype**>(
         h_2d.size() == 0 ? nullptr : h_2d.data());
-      sunrealtype* q_1d_ptr = q_1d.size() == 0 ? nullptr : q_1d.data();
-      sunrealtype* b_1d_ptr = b_1d.size() == 0 ? nullptr : b_1d.data();
+      sunscalartype* q_1d_ptr = q_1d.size() == 0 ? nullptr : q_1d.data();
+      sunscalartype* b_1d_ptr = b_1d.size() == 0 ? nullptr : b_1d.data();
 
       auto lambda_result = SUNQRsol(n, h_2d_ptr, q_1d_ptr, b_1d_ptr);
       return lambda_result;
@@ -150,15 +151,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_MGS",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_MGS_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_MGS(Q_1d_ptr, R_1d_ptr, df, m, mMax, QRdata);
       return lambda_result;
@@ -172,15 +173,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_ICWY",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_ICWY_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_ICWY(Q_1d_ptr, R_1d_ptr, df, m, mMax, QRdata);
       return lambda_result;
@@ -194,15 +195,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_ICWY_SB",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_ICWY_SB_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_ICWY_SB(Q_1d_ptr, R_1d_ptr, df, m, mMax,
                                             QRdata);
@@ -217,15 +218,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_CGS2",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_CGS2_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_CGS2(Q_1d_ptr, R_1d_ptr, df, m, mMax, QRdata);
       return lambda_result;
@@ -239,15 +240,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_DCGS2",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_DCGS2_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_DCGS2(Q_1d_ptr, R_1d_ptr, df, m, mMax,
                                           QRdata);
@@ -262,15 +263,15 @@ m.def(
 
 m.def(
   "SUNQRAdd_DCGS2_SB",
-  [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df, int m,
-     int mMax, void* QRdata) -> SUNErrCode
+  [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d, N_Vector df,
+     int m, int mMax, void* QRdata) -> SUNErrCode
   {
     auto SUNQRAdd_DCGS2_SB_adapt_arr_ptr_to_std_vector =
-      [](std::vector<N_Vector> Q_1d, sundials4py::Array1d R_1d, N_Vector df,
-         int m, int mMax, void* QRdata) -> SUNErrCode
+      [](std::vector<N_Vector> Q_1d, sundials4py::ScalarArray1d R_1d,
+         N_Vector df, int m, int mMax, void* QRdata) -> SUNErrCode
     {
-      N_Vector* Q_1d_ptr    = Q_1d.empty() ? nullptr : Q_1d.data();
-      sunrealtype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
+      N_Vector* Q_1d_ptr      = Q_1d.empty() ? nullptr : Q_1d.data();
+      sunscalartype* R_1d_ptr = R_1d.size() == 0 ? nullptr : R_1d.data();
 
       auto lambda_result = SUNQRAdd_DCGS2_SB(Q_1d_ptr, R_1d_ptr, df, m, mMax,
                                              QRdata);

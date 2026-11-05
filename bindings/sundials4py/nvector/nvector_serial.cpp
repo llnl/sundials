@@ -17,7 +17,7 @@ void bind_nvector_serial(nb::module_& m)
 
   m.def(
     "N_VMake_Serial",
-    [](sunindextype vec_length, sundials4py::Array1d data,
+    [](sunindextype vec_length, sundials4py::ScalarArray1d data,
        SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
     {
       nvector_detail::require_vector_length(vec_length, data);

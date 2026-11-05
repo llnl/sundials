@@ -56,6 +56,22 @@ when running pip. For example:
 Other SUNDIALS options can also be accessed in this way. Review
 :numref:`Installation.Options` for more information on the available options.
 
+Complex arithmetic
+^^^^^^^^^^^^^^^^^^
+
+To use complex-valued vector and matrix data, build sundials4py from source
+with the complex scalar type:
+
+.. code-block:: bash
+
+   export CMAKE_ARGS="-DSUNDIALS_SCALAR_TYPE=COMPLEX"
+   pip install sundials4py --no-binary=sundials4py
+
+Use ``sundials4py.core.sunscalartype`` for NumPy arrays that hold vector or
+matrix data. Times and tolerances use ``sundials4py.core.sunrealtype``. The
+``examples/python/arkode/ark_complex_oscillator.py`` example integrates a
+complex-valued ODE and prints its error against the analytic solution.
+
 CUDA support
 ^^^^^^^^^^^^
 

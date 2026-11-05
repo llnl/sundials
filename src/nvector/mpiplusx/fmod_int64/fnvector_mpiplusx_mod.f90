@@ -153,7 +153,7 @@ end function
 
 subroutine FN_VSetArrayPointer_MPIPlusX(vdata, v)
 use, intrinsic :: ISO_C_BINDING
-real(C_DOUBLE), dimension(*), target, intent(inout) :: vdata
+complex(C_DOUBLE_COMPLEX), dimension(*), target, intent(inout) :: vdata
 type(N_Vector), target, intent(inout) :: v
 type(C_PTR) :: farg1 
 type(C_PTR) :: farg2 
