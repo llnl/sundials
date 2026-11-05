@@ -16,6 +16,6 @@ sundials_add_example(
   ark_heat_1d
   SOURCES ark_heat_1d.c
   EXAMPLE_TYPE develop
-  INSTALL_FILES plot_heat_1d.py
+  INSTALL_FILES plot_heat_1d.py plot_heat_1d_adapt.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

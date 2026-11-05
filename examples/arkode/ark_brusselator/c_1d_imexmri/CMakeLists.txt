@@ -20,6 +20,7 @@ sundials_add_example(
   ANSWER_FILE ark_brusselator_1d_imexmri_0_0.001.out
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES
+    plot_brusselator_1d.py
     ark_brusselator_1d_imexmri_2_0.001.out
     ark_brusselator_1d_imexmri_3_0.001.out
     ark_brusselator_1d_imexmri_4_0.001.out
