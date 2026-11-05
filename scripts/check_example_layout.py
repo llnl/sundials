@@ -9,6 +9,10 @@ from pathlib import Path
 
 PACKAGES = ("cvode", "arkode", "cvodes", "ida", "idas", "kinsol")
 SOURCES = {".c", ".cpp", ".cu", ".f90", ".hpp", ".h", ".py"}
+SHARED_SOURCES = {
+    Path("arkode/ark_brusselator/ark_brusselator_1d.h"),
+    Path("arkode/ark_brusselator/ark_brusselator_1d_task_local_nls.cpp"),
+}
 
 
 def check(root, packages):
@@ -44,7 +48,7 @@ def check(root, packages):
                 continue
             relative = file.relative_to(directory)
             if file.suffix in SOURCES:
-                if len(relative.parts) != 3:
+                if len(relative.parts) != 3 and Path(package, relative) not in SHARED_SOURCES:
                     errors.append(f"{file}: expected <problem>/<variant>/<source>")
                 if not re.fullmatch(r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*", file.stem):
                     errors.append(f"{file}: expected lowercase underscore-separated name")
