@@ -642,5 +642,5 @@ ordering in the complex plane discussed above with
 We provide a simple example of a complex-valued example problem,
 including a custom complex-valued Fortran 2003 NVECTOR module, in the
 files ``examples/arkode/ark_fortran_custom/fortran_complex/ark_analytic_complex_f2003.f90``,
-``examples/arkode/ark_fortran_custom/fortran/fnvector_complex_mod.f90``, and
-``examples/arkode/ark_fortran_custom/fortran/test_fnvector_complex_mod.f90``.
+``examples/nvector/fortran_complex/fnvector_complex_mod.f90``, and
+``examples/nvector/fortran_complex/test_fnvector_complex_mod.f90``.
