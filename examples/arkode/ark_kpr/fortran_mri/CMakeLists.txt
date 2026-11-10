@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   file(GLOB _answer_files "${CMAKE_CURRENT_SOURCE_DIR}/ark_kpr_mri_f2003*.out")
   sundials_add_example(

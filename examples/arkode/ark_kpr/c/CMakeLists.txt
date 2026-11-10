@@ -12,6 +12,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's single-precision test exclusion for these cases.
+# Tests are registered separately below for their argument-specific answers.
 set(_args
     "0 1 0.005"
     "1 0 0.01"
