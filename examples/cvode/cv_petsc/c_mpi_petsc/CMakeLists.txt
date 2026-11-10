@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_petsc_ex7
+  EXAMPLE_TYPE develop
   SOURCES cv_petsc_ex7.c
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecpetsc
                  sundials_sunnonlinsolpetscsnes ${EXE_EXTRA_LINK_LIBS}

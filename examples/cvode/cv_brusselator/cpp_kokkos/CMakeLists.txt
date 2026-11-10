@@ -26,6 +26,7 @@ foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
     endif()
     sundials_add_example(
       ${example_target}
+      EXAMPLE_TYPE develop
       SOURCES cv_bruss_batched_kokkos.cpp ${example_options}
       EXTRA_ARGS --kokkos-disable-warnings
       INSTALL_FILES

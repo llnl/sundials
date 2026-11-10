@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_adv_diff_kry_hip
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_kry_hip.cpp
   LINK_LIBRARIES
     PRIVATE hip::device sundials_cvode sundials_nvechip
