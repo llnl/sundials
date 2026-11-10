@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   kin_robo_kin_dns_f2003
+  EXAMPLE_TYPE develop
   SOURCES kin_robo_kin_dns_f2003.f90
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_fkinsol_mod
                  ${EXE_EXTRA_LINK_LIBS}
