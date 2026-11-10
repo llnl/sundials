@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_diag_kry_bbd_f2003
+  EXAMPLE_TYPE develop
   SOURCES cv_diag_kry_bbd_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
