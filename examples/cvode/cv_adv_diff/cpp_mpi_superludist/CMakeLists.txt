@@ -23,6 +23,7 @@ endif()
 
 sundials_add_example(
   cv_adv_diff_sludist
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_sludist.cpp
   TEST_ARGS 2 1
   MPI_NPROCS 2
