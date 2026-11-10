@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   idas_roberts_fsa_klu
+  EXAMPLE_TYPE develop
   SOURCES idas_roberts_fsa_klu.c
   TEST_NAME idas_roberts_fsa_klu_-sensi_stg_t
   TEST_ARGS -sensi stg t

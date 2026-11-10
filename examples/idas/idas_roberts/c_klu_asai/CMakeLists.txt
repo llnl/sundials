@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   idas_roberts_asai_klu
+  EXAMPLE_TYPE develop
   SOURCES idas_roberts_asai_klu.c
   LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
