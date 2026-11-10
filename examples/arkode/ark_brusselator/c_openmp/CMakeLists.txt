@@ -15,6 +15,7 @@
 sundials_add_example(
   ark_brusselator_1d_omp
   SOURCES ark_brusselator_1d_omp.c
+  TEST_ARGS 4
   EXAMPLE_TYPE exclude-single
   INSTALL_FILES plot_brusselator_1d.py
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecopenmp
