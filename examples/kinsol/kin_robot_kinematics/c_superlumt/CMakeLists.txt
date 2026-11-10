@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   kin_robo_kin_slu
+  EXAMPLE_TYPE develop
   SOURCES kin_robo_kin_slu.c
   LINK_LIBRARIES
     PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt

@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   kin_em_mpicuda
+  EXAMPLE_TYPE develop
   SOURCES kin_em_mpicuda.cu
   MPI_NPROCS 2
   INSTALL_FILES kin_em_mpicuda.hpp
