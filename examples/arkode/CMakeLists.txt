@@ -60,6 +60,11 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_arkode_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_add_test_install(arkode ${_example_rel_dir})
+    if(_example_rel_dir STREQUAL "ark_brusselator/c")
+      sundials_add_test_install(arkode ${_example_rel_dir}
+                                EXECUTABLE ark_brusselator)
+    else()
+      sundials_add_test_install(arkode ${_example_rel_dir})
+    endif()
   endforeach()
 endif()

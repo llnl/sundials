@@ -15,8 +15,4 @@
 if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
   add_subdirectory(fortran_complex)
   add_subdirectory(fortran_brusselator_1d)
-  add_subdirectory(fortran_fnvector_fortran_mod)
-  add_subdirectory(fortran_fnvector_complex_mod)
-  add_subdirectory(fortran_fsunmatrix_fortran_mod)
-  add_subdirectory(fortran_fsunlinsol_fortran_mod)
 endif()
