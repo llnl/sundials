@@ -15,6 +15,7 @@
 # CVODE oneMKL C++ example
 sundials_add_example(
   cv_roberts_blockdiag_onemkl
+  EXAMPLE_TYPE develop
   SOURCES cv_roberts_blockdiag_onemkl.cpp
   LINK_LIBRARIES
     PRIVATE sundials_cvode sundials_nvecsycl sundials_sunlinsolonemkldense

@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_roberts_asai_klu
+  EXAMPLE_TYPE develop
   SOURCES cvs_roberts_asai_klu.c
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

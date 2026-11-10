@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_heat_2d_hypre_ls
+  EXAMPLE_TYPE develop
   SOURCES cv_heat_2d_hypre_ls.cpp
   TEST_NAME cv_heat_2d_hypre_ls_--np_2_2
   TEST_ARGS --np 2 2

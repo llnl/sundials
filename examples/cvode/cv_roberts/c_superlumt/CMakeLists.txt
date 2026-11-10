@@ -20,6 +20,7 @@ endif()
 
 sundials_add_example(
   cv_roberts_sps
+  EXAMPLE_TYPE develop
   SOURCES cv_roberts_sps.c ${_no_test}
   LINK_LIBRARIES
     PRIVATE ${CVODE_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
