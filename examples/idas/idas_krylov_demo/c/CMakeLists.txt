@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   idas_krylov_demo_ls
+  EXAMPLE_TYPE develop
   SOURCES idas_krylov_demo_ls.c
   INSTALL_FILES idas_krylov_demo_ls_1.out idas_krylov_demo_ls_2.out
   LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
