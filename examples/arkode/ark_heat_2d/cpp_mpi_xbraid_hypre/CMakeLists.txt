@@ -12,10 +12,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
-set(_xbraid_examples ark_heat_2d_xbraid ark_heat_2d_p_xbraid)
-if(SUNDIALS_ENABLE_HYPRE)
-  list(APPEND _xbraid_examples ark_heat_2d_hypre_pfmg_xbraid)
-endif()
 set(_args "--np 2 1 2 --x_print_level 0")
 set(_tasks 4)
 string(REPLACE " " "_" _suffix "${_args}")
