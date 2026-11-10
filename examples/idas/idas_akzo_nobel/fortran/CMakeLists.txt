@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   idas_akzo_nob_asai_dns_f2003
+  EXAMPLE_TYPE develop
   SOURCES idas_akzo_nob_asai_dns_f2003.f90
   LINK_LIBRARIES sundials_fidas_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES
