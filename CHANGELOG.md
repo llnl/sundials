@@ -6,14 +6,10 @@
 
 ### New Features and Enhancements
 
-Reorganized the CVODE, ARKODE, CVODES, IDA, IDAS, and KINSOL examples by
-problem, with implementation language and optional third-party libraries
-represented by underscore-separated variant subdirectories. Each variant
-contains its input files, scripts, and reference output. Example filenames
-and executable targets use lowercase, underscore-separated names. The old
-example Makefiles are no longer installed; use the installed CMakeLists.txt
-files instead. The serial and MPI KINSOL diagonal Fortran examples use
-distinct target names.
+Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
+subdirectories for each problem variant. The subdirectories contain the example
+source, input files, scripts, and reference output. The old example Makefiles
+are no longer installed; use the installed CMakeLists.txt files instead.
 
 The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
 targets are now exported by installed SUNDIALS CMake packages. The installed
