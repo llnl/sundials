@@ -16,6 +16,7 @@ sundials_add_example(
   cv_diurnal_kry_bbd_p
   SOURCES cv_diurnal_kry_bbd_p.c
   MPI_NPROCS 4
-  EXAMPLE_TYPE exclude-single
+  # The original exclude-sigle typo did not exclude single-precision dev tests.
+  EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecparallel
                  ${EXE_EXTRA_LINK_LIBS})
