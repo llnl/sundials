@@ -13,14 +13,12 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 sundials_add_example(
-  test_fsunlinsol_fortran_mod
-  SOURCES test_fsunlinsol_fortran_mod.f90 fnvector_complex_mod.f90
-          fnvector_fortran_mod.f90 fsunmatrix_fortran_mod.f90
-          fsunlinsol_fortran_mod.f90
+  test_fsunmatrix_fortran_mod
+  SOURCES test_fsunmatrix_fortran_mod.f90 fnvector_fortran_mod.f90
+          fsunmatrix_fortran_mod.f90
   NO_DIFF
   EXAMPLE_TYPE develop
   PROPERTIES
     Fortran_MODULE_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/test_fsunlinsol_fortran_mod.dir
-  LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
-                 ${EXE_EXTRA_LINK_LIBS})
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/test_fsunmatrix_fortran_mod.dir
+  LINK_LIBRARIES PRIVATE sundials_fcore_mod ${EXE_EXTRA_LINK_LIBS})
