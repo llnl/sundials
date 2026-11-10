@@ -75,9 +75,16 @@ pythonpath = [
 testpaths = [
   "bindings/sundials4py/test",
   "examples/python",
-  "examples/arkode",
-  "examples/cvodes",
-  "examples/idas"
+  "examples/arkode/ark_advection_diffusion_reaction/python",
+  "examples/arkode/ark_brusselator/python",
+  "examples/arkode/ark_heat_1d/python",
+  "examples/arkode/ark_kpr/python",
+  "examples/arkode/ark_lotka_volterra/python",
+  "examples/cvodes/cvs_brusselator/python",
+  "examples/cvodes/cvs_lotka_volterra/python",
+  "examples/cvodes/cvs_pr/python",
+  "examples/cvodes/cvs_vdp/python",
+  "examples/idas/idas_slider_crank/python"
 ]
 
 [tool.cibuildwheel]
