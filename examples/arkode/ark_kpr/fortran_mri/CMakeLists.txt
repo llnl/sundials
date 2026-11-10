@@ -24,7 +24,6 @@ if(SUNDIALS_INDEX_SIZE MATCHES "64")
     LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode
                    ${EXE_EXTRA_LINK_LIBS})
   set(_args
-      ""
       "0 0.002"
       "1 0.002"
       "2 0.005"
@@ -35,6 +34,11 @@ if(SUNDIALS_INDEX_SIZE MATCHES "64")
       "7 0.001"
       "8 0.001"
       "9 0.001")
+  sundials_add_test(
+    ark_kpr_mri_f2003 ark_kpr_mri_f2003
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE ark_kpr_mri_f2003.out
+    EXAMPLE_TYPE develop)
   foreach(_arg ${_args})
     if(_arg STREQUAL "")
       set(_suffix ark_kpr_mri_f2003)
