@@ -15,12 +15,13 @@
 set(answer_file cvs_roberts_asai_sps.out)
 set(example_options)
 list(APPEND example_options EXAMPLE_TYPE exclude-single)
-if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
+# Reference output was generated with 64-bit indices. Skip comparison with
+# 32-bit indices until index-specific answers are added.
+if(NOT SUNDIALS_INDEX_SIZE MATCHES "64")
   list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
 endif()
 sundials_add_example(
   cvs_roberts_asai_sps
   SOURCES cvs_roberts_asai_sps.c ${example_options}
-  LINK_LIBRARIES
-    ${CVODES_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
-    ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
+  LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial
+                 sundials_sunlinsolsuperlumt ${EXE_EXTRA_LINK_LIBS})
