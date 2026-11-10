@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_roberts_fsa_klu
+  EXAMPLE_TYPE develop
   SOURCES cvs_roberts_fsa_klu.c
   TEST_NAME cvs_roberts_fsa_klu_-sensi_stg1_t
   TEST_ARGS -sensi stg1 t
