@@ -25,10 +25,15 @@ if(SUNDIALS_ENABLE_MONITORING)
 endif()
 foreach(test_args ${_test_args})
   string(REPLACE " " "_" test_suffix "${test_args}")
+  set(_answer_file cvs_krylov_demo_ls_${test_suffix}.out)
+  if(test_args STREQUAL "0 1")
+    # Monitoring writes to a log file; stdout matches the default run.
+    set(_answer_file cvs_krylov_demo_ls.out)
+  endif()
   sundials_add_test(
     cvs_krylov_demo_ls_${test_suffix} cvs_krylov_demo_ls
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvs_krylov_demo_ls_${test_suffix}.out
+    ANSWER_FILE ${_answer_file}
     EXAMPLE_TYPE develop)
 endforeach()
