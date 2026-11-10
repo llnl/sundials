@@ -15,6 +15,7 @@
 # CVODE parallel C++ heat equation example
 sundials_add_example(
   cv_heat_2d_p
+  EXAMPLE_TYPE develop
   SOURCES cv_heat_2d_p.cpp
   TEST_ARGS --np 2 2
   MPI_NPROCS 4
