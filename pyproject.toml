@@ -74,7 +74,8 @@ pythonpath = [
 ]
 testpaths = [
   "bindings/sundials4py/test",
-  "examples/python"
+  "examples/python",
+  "examples/arkode"
 ]
 
 [tool.cibuildwheel]
