@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's single-precision test exclusion for these cases.
 sundials_add_example(
   cv_pendulum_dns
   SOURCES cv_pendulum_dns.c
