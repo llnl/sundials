@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's single-precision test exclusion for these cases.
 set(answer_file cvs_roberts_fsa_sps.out)
 set(example_options)
 set(answer_file cvs_roberts_fsa_sps_-sensi_stg1_t.out)

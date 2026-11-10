@@ -14,6 +14,8 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   test_ark_butcher_f2003
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/test_ark_butcher_f2003.dir
   SOURCES test_ark_butcher_f2003.f90
   NO_DIFF
   EXAMPLE_TYPE develop

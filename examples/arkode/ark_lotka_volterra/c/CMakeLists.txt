@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 sundials_add_example(
   ark_lotka_volterra_asa
   SOURCES ark_lotka_volterra_asa.c
