@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_diurnal_kry_mpimanyvec
+  EXAMPLE_TYPE develop
   SOURCES cv_diurnal_kry_mpimanyvec.c
   MPI_NPROCS 4
   LINK_LIBRARIES PRIVATE MPI::MPI_C ${CVODE_C_LIBS} sundials_nvecmpimanyvector
