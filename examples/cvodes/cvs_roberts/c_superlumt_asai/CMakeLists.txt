@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's single-precision test exclusion for these cases.
 set(answer_file cvs_roberts_asai_sps.out)
 set(example_options)
 list(APPEND example_options EXAMPLE_TYPE exclude-single)
