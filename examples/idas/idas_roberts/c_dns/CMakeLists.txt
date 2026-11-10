@@ -13,14 +13,10 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 set(example_options)
-list(APPEND example_options NO_TEST INSTALL_FILES idas_roberts_dns.out
+list(APPEND example_options INSTALL_FILES idas_roberts_dns.out
      idas_roberts_dns_stats.csv)
 sundials_add_example(
   idas_roberts_dns
   SOURCES idas_roberts_dns.c ${example_options}
   LINK_LIBRARIES PRIVATE ${IDAS_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})
-sundials_add_test(
-  idas_roberts_dns idas_roberts_dns
-  ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  ANSWER_FILE idas_roberts_dns.out)

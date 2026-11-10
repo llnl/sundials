@@ -23,6 +23,8 @@ list(
   -sensi
   stg
   t)
+# Reference output was generated with 32-bit indices. Skip comparison with
+# 64-bit indices until index-specific answers are added.
 if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
   list(APPEND example_options NO_TEST INSTALL_FILES ${answer_file})
 endif()
@@ -30,4 +32,4 @@ sundials_add_example(
   idas_roberts_fsa_sps
   SOURCES idas_roberts_fsa_sps.c ${example_options}
   LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial sundials_sunlinsolsuperlumt
-                 ${SUPERLUMT_LIBRARIES} ${EXE_EXTRA_LINK_LIBS})
+                 ${EXE_EXTRA_LINK_LIBS})
