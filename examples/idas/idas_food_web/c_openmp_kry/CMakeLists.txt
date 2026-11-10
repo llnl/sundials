@@ -13,6 +13,7 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 set(example_options TEST_ARGS 4)
+# No test until TestRunner supports the OpenMP output.
 list(APPEND example_options NO_TEST INSTALL_FILES idas_food_web_kry_omp.out)
 sundials_add_example(
   idas_food_web_kry_omp
