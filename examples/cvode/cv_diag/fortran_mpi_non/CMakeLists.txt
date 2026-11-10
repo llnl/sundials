@@ -14,6 +14,8 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_diag_non_p_f2003
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/cv_diag_non_p_f2003.dir
   EXAMPLE_TYPE develop
   SOURCES cv_diag_non_p_f2003.f90
   MPI_NPROCS 4

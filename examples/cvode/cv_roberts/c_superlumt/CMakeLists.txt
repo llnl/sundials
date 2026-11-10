@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Reference output was generated with 32-bit indices; skip 64-bit comparisons.
 if(SUNDIALS_INDEX_SIZE MATCHES "32")
   set(_no_test "")
 else()

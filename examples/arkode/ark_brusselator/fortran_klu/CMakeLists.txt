@@ -14,6 +14,9 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   ark_bruss_1d_fem_klu_f2003
+  PROPERTIES
+    Fortran_MODULE_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_bruss_1d_fem_klu_f2003.dir
   SOURCES ark_bruss_1d_fem_klu_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES

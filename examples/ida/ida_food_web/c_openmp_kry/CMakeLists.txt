@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# No test until TestRunner supports the OpenMP output.
 sundials_add_example(
   ida_food_web_kry_omp
   SOURCES ida_food_web_kry_omp.c

@@ -14,6 +14,8 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   ark_roberts_dns_f2003
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_roberts_dns_f2003.dir
   SOURCES ark_roberts_dns_f2003.f90
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_farkode_mod sundials_arkode

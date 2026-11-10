@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's single-precision test exclusion for these cases.
 sundials_add_example(
   idas_sl_crank_fsa_dns
   SOURCES idas_sl_crank_fsa_dns.c

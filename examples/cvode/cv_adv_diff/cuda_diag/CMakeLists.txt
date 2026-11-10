@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   set(_fused_lib sundials_cvode_fused_cuda)
 endif()

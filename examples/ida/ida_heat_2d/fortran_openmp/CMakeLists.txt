@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Preserve develop's unconditional exclusion of these Fortran OpenMP tests.
 if(SUNDIALS_INDEX_SIZE MATCHES "64")
   sundials_add_example(
     ida_heat_2d_kry_omp_f2003
