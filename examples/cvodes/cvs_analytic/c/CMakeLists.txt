@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_analytic_mels
+  EXAMPLE_TYPE develop
   SOURCES cvs_analytic_mels.c
   INSTALL_FILES cvs_analytic_mels_cvodes.max_order_3.out
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial

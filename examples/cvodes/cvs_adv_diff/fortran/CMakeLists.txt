@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_adv_diff_fsa_non_f2003
+  EXAMPLE_TYPE develop
   SOURCES cvs_adv_diff_fsa_non_f2003.f90
   TEST_NAME cvs_adv_diff_fsa_non_f2003_-sensi_stg_t
   TEST_ARGS -sensi stg t

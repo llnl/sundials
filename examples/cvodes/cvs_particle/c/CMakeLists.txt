@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_particle_dns
+  EXAMPLE_TYPE develop
   SOURCES cvs_particle_dns.c
   INSTALL_FILES plot_cvs_particle.py
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
