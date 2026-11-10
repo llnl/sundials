@@ -44,6 +44,11 @@ if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
   foreach(_example_dir ${_ida_example_directories})
     file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
          ${_example_dir})
-    sundials_add_test_install(ida ${_example_rel_dir})
+    if(_example_rel_dir STREQUAL "ida_roberts/c")
+      sundials_add_test_install(ida ${_example_rel_dir}
+                                EXECUTABLE ida_roberts_dns)
+    else()
+      sundials_add_test_install(ida ${_example_rel_dir})
+    endif()
   endforeach()
 endif()

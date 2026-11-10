@@ -19,11 +19,16 @@ sundials_add_example(
   INSTALL_FILES cvs_krylov_demo_ls_0_1.out cvs_krylov_demo_ls_1.out
                 cvs_krylov_demo_ls_2.out
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
-foreach(test_args 1 2)
+set(_test_args 1 2)
+if(SUNDIALS_ENABLE_MONITORING)
+  list(APPEND _test_args "0 1")
+endif()
+foreach(test_args ${_test_args})
+  string(REPLACE " " "_" test_suffix "${test_args}")
   sundials_add_test(
-    cvs_krylov_demo_ls_${test_args} cvs_krylov_demo_ls
+    cvs_krylov_demo_ls_${test_suffix} cvs_krylov_demo_ls
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    ANSWER_FILE cvs_krylov_demo_ls_${test_args}.out
+    ANSWER_FILE cvs_krylov_demo_ls_${test_suffix}.out
     EXAMPLE_TYPE develop)
 endforeach()
