@@ -14,5 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   kin_fer_tron_dns
+  EXAMPLE_TYPE develop
   SOURCES kin_fer_tron_dns.c
   LINK_LIBRARIES ${KINSOL_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

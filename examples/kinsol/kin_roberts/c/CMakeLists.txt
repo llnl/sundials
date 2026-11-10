@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   kin_roberts_fp
+  EXAMPLE_TYPE develop
   SOURCES kin_roberts_fp.c
   INSTALL_FILES kin_roberts_fp_kinsol.m_aa_1.out
   LINK_LIBRARIES PRIVATE ${KINSOL_C_LIBS} sundials_nvecserial
