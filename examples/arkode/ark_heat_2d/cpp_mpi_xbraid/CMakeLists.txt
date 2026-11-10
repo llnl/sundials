@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 set(_args "--x_print_level 0")
 set(_tasks 4)
 string(REPLACE " " "_" _suffix "${_args}")
