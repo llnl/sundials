@@ -21,6 +21,7 @@ if(NOT SUNDIALS_INDEX_SIZE MATCHES "64")
 endif()
 sundials_add_example(
   cvs_roberts_sps
+  EXAMPLE_TYPE develop
   SOURCES cvs_roberts_sps.c ${example_options}
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolsuperlumt ${EXE_EXTRA_LINK_LIBS})

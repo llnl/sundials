@@ -14,5 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_adv_diff_kry_sycl
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_kry_sycl.cpp
   LINK_LIBRARIES sundials_cvode sundials_nvecsycl ${EXE_EXTRA_LINK_LIBS})
