@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 set(_kin_analytic_outputs
     kin_analytic_fp_--damping_fn.out
     kin_analytic_fp_--damping_fp_0.5.out
