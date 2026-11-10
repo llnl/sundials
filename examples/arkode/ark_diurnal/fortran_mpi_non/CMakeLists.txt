@@ -14,6 +14,8 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   ark_diag_non_f2003
+  PROPERTIES Fortran_MODULE_DIRECTORY
+             ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ark_diag_non_f2003.dir
   SOURCES ark_diag_non_f2003.f90
   MPI_NPROCS 4
   FLOAT_PRECISION 2
