@@ -12,6 +12,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+# Tests are registered separately below for their argument-specific answers.
 set(_brusselator_task_local_source
     "${CMAKE_CURRENT_SOURCE_DIR}/ark_brusselator_1d_task_local_nls.cpp")
 set(_brusselator_task_local_header
