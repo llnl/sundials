@@ -18,6 +18,7 @@ endif()
 
 sundials_add_example(
   cv_adv_diff_kry_cuda
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_kry_cuda.cu
   LINK_LIBRARIES PRIVATE sundials_cvode sundials_nveccuda ${_fused_lib}
                  ${EXE_EXTRA_LINK_LIBS})

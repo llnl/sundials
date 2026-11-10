@@ -23,6 +23,7 @@ if((RAJA_BACKENDS MATCHES "TARGET_OPENMP") OR (RAJA_BACKENDS MATCHES "OPENMP"))
 endif()
 sundials_add_example(
   cv_adv_diff_kry_raja
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_kry_raja.cpp
   SOURCE_PROPERTIES LANGUAGE ${_lang}
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecraja

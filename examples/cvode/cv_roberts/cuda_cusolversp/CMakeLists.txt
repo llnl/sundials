@@ -18,6 +18,7 @@ endif()
 
 sundials_add_example(
   cv_roberts_block_cusolversp_batchqr
+  EXAMPLE_TYPE develop
   SOURCES cv_roberts_block_cusolversp_batchqr.cu
   LINK_LIBRARIES sundials_sunlinsolcusolversp sundials_cvode sundials_nveccuda
                  ${_fused_lib} ${EXE_EXTRA_LINK_LIBS})
