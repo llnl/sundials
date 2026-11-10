@@ -14,5 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_lotka_volterra_asa
+  EXAMPLE_TYPE develop
   SOURCES cvs_lotka_volterra_asa.c
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

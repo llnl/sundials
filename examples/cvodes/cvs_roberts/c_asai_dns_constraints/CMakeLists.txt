@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_roberts_asai_dns_constraints
+  EXAMPLE_TYPE develop
   SOURCES cvs_roberts_asai_dns_constraints.c
   LINK_LIBRARIES PRIVATE ${CVODES_C_LIBS} sundials_nvecserial
                  ${EXE_EXTRA_LINK_LIBS})

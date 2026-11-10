@@ -15,5 +15,6 @@
 set(example_options TEST_ARGS 4)
 sundials_add_example(
   idas_food_web_bnd_omp
+  EXAMPLE_TYPE develop
   SOURCES idas_food_web_bnd_omp.c ${example_options}
   LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecopenmp ${EXE_EXTRA_LINK_LIBS})

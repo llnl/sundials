@@ -14,5 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   idas_food_web_bnd
+  EXAMPLE_TYPE develop
   SOURCES idas_food_web_bnd.c
   LINK_LIBRARIES ${IDAS_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})

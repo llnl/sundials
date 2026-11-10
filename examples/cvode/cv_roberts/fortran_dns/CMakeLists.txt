@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_roberts_dns_f2003
+  EXAMPLE_TYPE develop
   SOURCES cv_roberts_dns_f2003.f90
   LINK_LIBRARIES ${CVODE_C_LIBS} sundials_fcvode_mod ${EXE_EXTRA_LINK_LIBS}
   PROPERTIES Fortran_MODULE_DIRECTORY

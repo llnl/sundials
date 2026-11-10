@@ -14,5 +14,6 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cvs_food_web_asap_kry
+  EXAMPLE_TYPE develop
   SOURCES cvs_food_web_asap_kry.c
   LINK_LIBRARIES ${CVODES_C_LIBS} sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
