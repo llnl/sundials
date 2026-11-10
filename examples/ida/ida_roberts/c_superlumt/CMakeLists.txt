@@ -13,6 +13,8 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 set(example_options)
+# Reference output was generated with 32-bit indices. Skip comparison with
+# 64-bit indices until index-specific answers are added.
 if(NOT SUNDIALS_INDEX_SIZE MATCHES "32")
   list(APPEND example_options NO_TEST INSTALL_FILES ida_roberts_sps.out)
 else()
