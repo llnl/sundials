@@ -14,6 +14,7 @@
 # -----------------------------------------------------------------
 sundials_add_example(
   cv_adv_diff_bnd_omp
+  EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_bnd_omp.c
   TEST_ARGS 4
   LINK_LIBRARIES PRIVATE ${CVODE_C_LIBS} sundials_nvecopenmp
