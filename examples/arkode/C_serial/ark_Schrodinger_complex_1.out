@@ -1,0 +1,32 @@
+
+1D Schrodinger PDE test problem:
+  N = 128
+  domain length:  L = 6.28319
+  hbar = 1,  m = 1,  V0 = 0
+  time integration method:  DIRK
+        t      ||psi||_rms   probability    ||error||_rms
+   ---------------------------------------------------------
+    0.000000    0.398942    1.0000000000    0.0000e+00
+    0.100000    0.398942    0.9999997574    6.8998e-08
+    0.200000    0.398942    0.9999992975    2.0073e-07
+    0.300000    0.398942    0.9999992239    2.2440e-07
+    0.400000    0.398942    0.9999996413    1.2169e-07
+    0.500000    0.398942    0.9999996644    1.2314e-07
+    0.600000    0.398942    0.9999996929    1.3249e-07
+    0.700000    0.398942    0.9999999685    1.0761e-07
+    0.800000    0.398942    0.9999990780    2.9309e-07
+    0.900000    0.398942    0.9999999095    1.4474e-07
+    1.000000    0.398942    0.9999991635    2.8655e-07
+   ---------------------------------------------------------
+  probability drift |P - P0| = 8.3648e-07
+
+Final Solver Statistics:
+   Internal solver steps = 22 (attempted = 25)
+   Total RHS evals:  Fe = 0,  Fi = 253
+   Total linear solver setups = 0
+   Total linear iterations = 1113
+   Total number of Jacobian-vector products = 1113
+   Total number of linear solver convergence failures = 0
+   Total number of Newton iterations = 125
+   Total number of nonlinear solver convergence failures = 0
+   Total number of error test failures = 3

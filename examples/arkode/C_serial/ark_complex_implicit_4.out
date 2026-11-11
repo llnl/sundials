@@ -53,11 +53,11 @@ ARKStep time step module parameters:
     4.000 | -2.61457 + -3.02721i |  3.02721 + -2.61457i |  4.75680 + -0.65364i
     5.000 |  1.41831 + -4.79462i |  4.79462 +  1.41831i |  5.95892 +  0.28366i
    ----------------------------------------------------------------------------
-    Max-norm of the error is 4.48334e-06
+    Max-norm of the error is 4.48324e-06
    ----------------------------------------------------------------------------
 
 Final Solver Statistics:
-Current time                  = 5.07229745359717
+Current time                  = 5.07231007765274
 Steps                         = 95
 Step attempts                 = 95
 Stability limited steps       = 0
@@ -66,8 +66,8 @@ Error test fails              = 0
 NLS step fails                = 0
 Inequality constraint fails   = 0
 Initial step size             = 6.103515625e-12
-Last step size                = 0.0925222606042113
-Current step size             = 0.0926758539200684
+Last step size                = 0.0925222841373751
+Current step size             = 0.092675878015757
 Explicit RHS fn evals         = 0
 Implicit RHS fn evals         = 1138
 NLS iters                     = 660
@@ -75,13 +75,13 @@ NLS fails                     = 0
 NLS iters per step            = 6.94736842105263
 LS setups                     = 20
 Jac fn evals                  = 0
-LS RHS fn evals               = 1848
+LS RHS fn evals               = 1661
 Prec setup evals              = 2
-Prec solves                   = 2323
-LS iters                      = 1848
+Prec solves                   = 2136
+LS iters                      = 1661
 LS fails                      = 0
 Jac-times setups              = 0
-Jac-times evals               = 1848
-LS iters per NLS iter         = 2.8
+Jac-times evals               = 1661
+LS iters per NLS iter         = 2.51666666666667
 Jac evals per NLS iter        = 0
 Prec evals per NLS iter       = 0.00303030303030303
