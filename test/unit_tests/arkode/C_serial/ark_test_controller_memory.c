@@ -123,17 +123,18 @@ int main(void)
     retval = ARKodeEvolve(arkode_mem, t + ONE, y, &t, ARK_ONE_STEP);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { return 1; }
 
-    retval = ARKodeGetLastStep(arkode_mem, &hlast[i+1]);
+    retval = ARKodeGetLastStep(arkode_mem, &hlast[i + 1]);
     if (check_retval(&retval, "ARKodeGetLastStep", 1)) { return 1; }
 
     retval = ARKodeGetEstLocalErrors(arkode_mem, ele);
     if (check_retval(&retval, "ARKodeGetEstLocalErrors", 1)) { return 1; }
     retval = ARKodeGetErrWeights(arkode_mem, ewt);
     if (check_retval(&retval, "ARKodeGetErrWeights", 1)) { return 1; }
-    elast[i+1] = content->bias * N_VWrmsNorm(ele, ewt);
+    elast[i + 1] = content->bias * N_VWrmsNorm(ele, ewt);
 
-    printf("\nChecking controller history after adaptive step %i\n", i+1);
-    fails += check_history(controller, elast[i+1], elast[i], hlast[i+1], hlast[i], i+1);
+    printf("\nChecking controller history after adaptive step %i\n", i + 1);
+    fails += check_history(controller, elast[i + 1], elast[i], hlast[i + 1],
+                           hlast[i], i + 1);
   }
 
   printf("\nFixed-step set to " SUN_FORMAT_G "\n", hfixed);
@@ -151,7 +152,7 @@ int main(void)
     retval = ARKodeEvolve(arkode_mem, t + ONE, y, &t, ARK_ONE_STEP);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { return 1; }
 
-    printf("\nChecking controller history after fixed step %i\n", i+1);
+    printf("\nChecking controller history after fixed step %i\n", i + 1);
     fails += check_history(controller, ONE, ONE, ONE, ONE, 0);
   }
 
@@ -168,17 +169,18 @@ int main(void)
     retval = ARKodeEvolve(arkode_mem, t + ONE, y, &t, ARK_ONE_STEP);
     if (check_retval(&retval, "ARKodeEvolve", 1)) { return 1; }
 
-    retval = ARKodeGetLastStep(arkode_mem, &hlast[i+1]);
+    retval = ARKodeGetLastStep(arkode_mem, &hlast[i + 1]);
     if (check_retval(&retval, "ARKodeGetLastStep", 1)) { return 1; }
 
     retval = ARKodeGetEstLocalErrors(arkode_mem, ele);
     if (check_retval(&retval, "ARKodeGetEstLocalErrors", 1)) { return 1; }
     retval = ARKodeGetErrWeights(arkode_mem, ewt);
     if (check_retval(&retval, "ARKodeGetErrWeights", 1)) { return 1; }
-    elast[i+1] = content->bias * N_VWrmsNorm(ele, ewt);
+    elast[i + 1] = content->bias * N_VWrmsNorm(ele, ewt);
 
-    printf("\nChecking controller history after adaptive step %i\n", i+1);
-    fails += check_history(controller, elast[i+1], elast[i], hlast[i+1], hlast[i], i+1);
+    printf("\nChecking controller history after adaptive step %i\n", i + 1);
+    fails += check_history(controller, elast[i + 1], elast[i], hlast[i + 1],
+                           hlast[i], i + 1);
   }
 
   /* Free integrator, controller, vectors, and context */
