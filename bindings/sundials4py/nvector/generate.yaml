@@ -107,6 +107,28 @@ modules:
     # Getting and setting array pointers requires us to do something custom
     - "^N_VGetSubvectorArrayPointer_ManyVector$"
     - "^N_VSetSubvectorArrayPointer_ManyVector$"
+  nvector_mpimanyvector:
+    path: nvector/nvector_mpimanyvector_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_mpimanyvector.h
+    fn_exclude_by_name__regex:
+    # Take an MPI_Comm and an array of N_Vectors whose lifetimes we must manage, so we manually bind to them.
+    - "^N_VMake_MPIManyVector$"
+    - "^N_VNew_MPIManyVector$"
+    # Returns a subvector that must keep its parent alive and needs bounds checking.
+    - "^N_VGetSubvector_MPIManyVector$"
+    # Getting and setting array pointers requires us to do something custom
+    - "^N_VGetSubvectorArrayPointer_MPIManyVector$"
+    - "^N_VSetSubvectorArrayPointer_MPIManyVector$"
+  nvector_mpiplusx:
+    path: nvector/nvector_mpiplusx_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_mpiplusx.h
+    fn_exclude_by_name__regex:
+    # Takes an MPI_Comm and must keep the local vector and SUNContext alive, so we manually bind to it.
+    - "^N_VMake_MPIPlusX$"
+    # Returns the local vector, which must keep its parent alive.
+    - "^N_VGetLocalVector_MPIPlusX$"
   nvector_cuda:
     path: nvector/nvector_cuda_generated.hpp
     headers:

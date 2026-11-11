@@ -67,3 +67,13 @@ def test_custom_queue_and_flush_and_restore_default(capfd):
 
     # Verify the custom handler was NOT called again
     assert len(messages) == 1
+
+
+def test_create_logger_with_none_comm():
+    status, logger = SUNLogger_Create(None, 0)
+    assert status == SUN_SUCCESS
+    assert logger is not None
+
+    status, logger = SUNLogger_CreateFromEnv(None)
+    assert status == SUN_SUCCESS
+    assert logger is not None

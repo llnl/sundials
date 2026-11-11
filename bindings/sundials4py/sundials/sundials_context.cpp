@@ -22,6 +22,7 @@
 
 #include "sundials/sundials_errors.h"
 #include "sundials4py.hpp"
+#include "sundials_comm.hpp"
 
 #include <sundials/sundials_context.hpp>
 #include <sundials/sundials_logger.hpp>
@@ -42,6 +43,29 @@ namespace sundials4py {
 void bind_suncontext(nb::module_& m)
 {
 #include "sundials_context_generated.hpp"
+
+  // SUNContext_Create stores the communicator handle without duplicating it, so
+  // the context keeps the Python communicator object alive (keep_alive from
+  // the context, entry 1 of the returned tuple, to argument 1).
+  m.def(
+    "SUNContext_Create",
+    [](nb::handle comm)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
+    {
+      SUNComm c = to_suncomm(comm);
+      SUNContext sunctx_out;
+      SUNErrCode r = SUNContext_Create(c, &sunctx_out);
+      return std::make_tuple(r, our_make_shared<std::remove_pointer_t<SUNContext>,
+                                                SUNContextDeleter>(sunctx_out));
+    },
+    nb::arg("comm").none(), nb::rv_policy::reference,
+    nb::call_policy<sundials4py::returns_references_to<1, 1>>(),
+    "Create a SUNContext.\n\n"
+    "comm may be None, SUN_COMM_NULL, or (in MPI builds) an mpi4py "
+    "communicator. The context keeps the communicator object alive. The "
+    "communicator must not be freed while the context lives. With a non-null "
+    "communicator the call is collective over comm (the context creates a "
+    "logger and a profiler that duplicate it).");
 
   nb::class_<SUNContext_>(m, "SUNContext_");
 

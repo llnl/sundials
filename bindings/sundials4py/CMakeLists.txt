@@ -86,6 +86,7 @@ set(sundials_SOURCES
     sundials/sundials_adaptcontroller.cpp
     sundials/sundials_adjointcheckpointscheme.cpp
     sundials/sundials_adjointstepper.cpp
+    sundials/sundials_comm.cpp
     sundials/sundials_context.cpp
     sundials/sundials_core.cpp
     sundials/sundials_domeigestimator.cpp
@@ -129,6 +130,14 @@ endif()
 # Conditionally add KLU bindings
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   list(APPEND sundials_SOURCES sunlinsol/sunlinsol_klu.cpp)
+endif()
+
+# Conditionally add MPI vector bindings
+if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
+  list(APPEND sundials_SOURCES nvector/nvector_mpimanyvector.cpp)
+endif()
+if(SUNDIALS_ENABLE_NVECTOR_MPIPLUSX)
+  list(APPEND sundials_SOURCES nvector/nvector_mpiplusx.cpp)
 endif()
 
 # Create the Python sundials library. The ROCm distribution installs a
@@ -205,6 +214,34 @@ endif()
 
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   target_link_libraries(${sundials4py_target} PRIVATE sundials_sunlinsolklu)
+endif()
+
+if(SUNDIALS_ENABLE_MPI)
+  # SUNComm is MPI_Comm in MPI builds, so the communicator conversion layer
+  # needs the mpi4py C API (mpi4py must be built against the same MPI).
+  execute_process(
+    COMMAND "${Python_EXECUTABLE}" -c
+            "import mpi4py; print(mpi4py.get_include())"
+    RESULT_VARIABLE _mpi4py_result
+    OUTPUT_VARIABLE _mpi4py_include
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT _mpi4py_result EQUAL 0)
+    message(
+      FATAL_ERROR
+        "sundials4py with SUNDIALS_ENABLE_MPI=ON requires mpi4py built against the same MPI; install it and build with --no-build-isolation"
+    )
+  endif()
+  target_include_directories(${sundials4py_target} PRIVATE ${_mpi4py_include})
+  target_link_libraries(${sundials4py_target} PRIVATE MPI::MPI_C)
+endif()
+
+if(SUNDIALS_ENABLE_NVECTOR_MPIMANYVECTOR)
+  target_link_libraries(${sundials4py_target}
+                        PRIVATE sundials_nvecmpimanyvector)
+endif()
+
+if(SUNDIALS_ENABLE_NVECTOR_MPIPLUSX)
+  target_link_libraries(${sundials4py_target} PRIVATE sundials_nvecmpiplusx)
 endif()
 
 # Install directive for scikit-build-core

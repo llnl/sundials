@@ -58,3 +58,33 @@ def test_push_pop_err_handlers():
     # Popping again should do nothing
     status = SUNContext_PopErrHandler(sunctx)
     assert status == SUN_SUCCESS
+
+
+def test_create_with_comm_variants():
+    # None and SUN_COMM_NULL both mean the null communicator
+    err, sunctx = SUNContext_Create(None)
+    assert err == SUN_SUCCESS
+    assert sunctx is not None
+
+    err, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    assert err == SUN_SUCCESS
+    assert sunctx is not None
+
+
+@pytest.mark.parametrize("bad_comm", [1, True, False, 1.5, "comm", object()])
+def test_create_rejects_invalid_comm(bad_comm):
+    with pytest.raises(TypeError):
+        SUNContext_Create(bad_comm)
+
+
+def test_nvector_communicator_is_null_for_serial():
+    err, sunctx = SUNContext_Create(SUN_COMM_NULL)
+    v = N_VNew_Serial(3, sunctx)
+    assert N_VGetCommunicator(v) == SUN_COMM_NULL
+
+
+def test_create_accepts_integer_like_zero():
+    err, sunctx = SUNContext_Create(np.int64(0))
+    assert err == SUN_SUCCESS
+    with pytest.raises(TypeError):
+        SUNContext_Create(np.int64(1))

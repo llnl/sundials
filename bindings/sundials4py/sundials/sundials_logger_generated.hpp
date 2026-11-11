@@ -18,68 +18,6 @@ auto pyEnumSUNLogLevel =
 // #endif
 //
 
-m.def(
-  "SUNLogger_Create",
-  [](SUNComm comm, int output_rank)
-    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
-  {
-    auto SUNLogger_Create_adapt_modifiable_immutable_to_return =
-      [](SUNComm comm, int output_rank) -> std::tuple<SUNErrCode, SUNLogger>
-    {
-      SUNLogger logger_adapt_modifiable;
-
-      SUNErrCode r = SUNLogger_Create(comm, output_rank,
-                                      &logger_adapt_modifiable);
-      return std::make_tuple(r, logger_adapt_modifiable);
-    };
-    auto SUNLogger_Create_adapt_return_type_to_shared_ptr =
-      [&SUNLogger_Create_adapt_modifiable_immutable_to_return](SUNComm comm,
-                                                               int output_rank)
-      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
-    {
-      auto lambda_result =
-        SUNLogger_Create_adapt_modifiable_immutable_to_return(comm, output_rank);
-
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNLogger>,
-                                             SUNLoggerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNLogger_Create_adapt_return_type_to_shared_ptr(comm, output_rank);
-  },
-  nb::arg("comm"), nb::arg("output_rank"), nb::rv_policy::reference);
-
-m.def(
-  "SUNLogger_CreateFromEnv",
-  [](SUNComm comm)
-    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
-  {
-    auto SUNLogger_CreateFromEnv_adapt_modifiable_immutable_to_return =
-      [](SUNComm comm) -> std::tuple<SUNErrCode, SUNLogger>
-    {
-      SUNLogger logger_adapt_modifiable;
-
-      SUNErrCode r = SUNLogger_CreateFromEnv(comm, &logger_adapt_modifiable);
-      return std::make_tuple(r, logger_adapt_modifiable);
-    };
-    auto SUNLogger_CreateFromEnv_adapt_return_type_to_shared_ptr =
-      [&SUNLogger_CreateFromEnv_adapt_modifiable_immutable_to_return](SUNComm comm)
-      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
-    {
-      auto lambda_result =
-        SUNLogger_CreateFromEnv_adapt_modifiable_immutable_to_return(comm);
-
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNLogger>,
-                                             SUNLoggerDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNLogger_CreateFromEnv_adapt_return_type_to_shared_ptr(comm);
-  },
-  nb::arg("comm"), nb::rv_policy::reference);
-
 m.def("SUNLogger_SetErrorFilename", SUNLogger_SetErrorFilename,
       nb::arg("logger"), nb::arg("error_filename"));
 

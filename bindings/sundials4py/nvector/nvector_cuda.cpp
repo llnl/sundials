@@ -330,7 +330,15 @@ struct CudaDeviceArrayPointer
   nb::object owner;
   int device_id = 0;
 
-  explicit CudaDeviceArrayPointer(N_Vector x) : x(x), owner(nb::find(x))
+  explicit CudaDeviceArrayPointer(N_Vector x)
+    : CudaDeviceArrayPointer(x, nb::find(x))
+  {}
+
+  // owner is the Python object that must keep the data alive. It differs from
+  // x when x is the local vector of an MPIPlusX vector (the owner is then the
+  // parent MPIPlusX wrapper).
+  CudaDeviceArrayPointer(N_Vector x, nb::handle owner)
+    : x(x), owner(nb::borrow(owner))
   {
     auto ptr = N_VGetDeviceArrayPointer(x);
     if (!ptr)
@@ -358,19 +366,24 @@ struct CudaDeviceArrayPointer
       throw sundials4py::error_returned("Failed to get device array pointer");
     }
     size_t shape[1]{static_cast<size_t>(N_VGetLength(x))};
-    return CudaArray1d(ptr, 1, shape, owner);
+    // Pass the device id explicitly: the default (0) would mislabel buffers
+    // that live on other devices.
+    return CudaArray1d(ptr, 1, shape, owner, /*strides=*/nullptr,
+                       nb::dtype<sunrealtype>(), nb::device::cuda::value,
+                       device_id);
   }
 };
 
-nb::object device_pointer_object(N_Vector v)
+nb::object device_pointer_object(const nvector_detail::ArrayTarget& target)
 {
-  require_cuda_nvector(v);
-  return nb::cast(CudaDeviceArrayPointer(v));
+  require_cuda_nvector(target.v);
+  return nb::cast(CudaDeviceArrayPointer(target.v, target.owner));
 }
 
 nb::object get_numpy_array(N_Vector v)
 {
-  if (is_cuda_nvector(v))
+  auto target = nvector_detail::resolve_array_target(v);
+  if (is_cuda_nvector(target.v))
   {
     throw sundials4py::error_returned(
       "N_VGetNumpyArray is not supported for CUDA N_Vectors; use a CUDA "
@@ -382,38 +395,39 @@ nb::object get_numpy_array(N_Vector v)
 
 nb::object get_cupy_array(N_Vector v)
 {
-  require_cuda_nvector(v);
-  sync_device(v);
+  auto target = nvector_detail::resolve_array_target(v);
+  require_cuda_nvector(target.v);
+  sync_device(target.v);
   return nb::module_::import_("cupy").attr("from_dlpack")(
-    device_pointer_object(v));
+    device_pointer_object(target));
 }
 
 nb::object get_torch_tensor(N_Vector v)
 {
-  auto torch = nb::module_::import_("torch");
-  if (!is_cuda_nvector(v))
+  auto torch  = nb::module_::import_("torch");
+  auto target = nvector_detail::resolve_array_target(v);
+  if (!is_cuda_nvector(target.v))
   {
     return torch.attr("from_numpy")(nb::cast(host_array(v)));
   }
 
-  require_cuda_nvector(v);
-  sync_device(v);
+  sync_device(target.v);
   return torch.attr("utils").attr("dlpack").attr("from_dlpack")(
-    device_pointer_object(v));
+    device_pointer_object(target));
 }
 
 nb::object get_jax_array(N_Vector v)
 {
-  auto jax = nb::module_::import_("jax");
-  if (!is_cuda_nvector(v))
+  auto jax    = nb::module_::import_("jax");
+  auto target = nvector_detail::resolve_array_target(v);
+  if (!is_cuda_nvector(target.v))
   {
     return jax.attr("dlpack").attr("from_dlpack")(nb::cast(host_array(v)),
                                                   nb::none(), nb::none());
   }
 
-  require_cuda_nvector(v);
-  sync_device(v);
-  return jax.attr("dlpack").attr("from_dlpack")(device_pointer_object(v),
+  sync_device(target.v);
+  return jax.attr("dlpack").attr("from_dlpack")(device_pointer_object(target),
                                                 nb::none(), false);
 }
 
@@ -534,7 +548,14 @@ void bind_nvector_cuda(nb::module_& m)
 
   m.def(
     "N_VGetDeviceArrayPointer",
-    [](N_Vector x) { return CudaDeviceArrayPointer(x); }, nb::arg("x"));
+    [](N_Vector x)
+    {
+      // MPIPlusX vectors resolve to their local vector (MPIManyVector raises).
+      auto t = nvector_detail::resolve_array_target(x);
+      require_cuda_nvector(t.v);
+      return CudaDeviceArrayPointer(t.v, t.owner);
+    },
+    nb::arg("x"));
 
   nvector_detail::bind_nvector_array_accessors(m, &get_numpy_array,
                                                &get_jax_array, &get_cupy_array,

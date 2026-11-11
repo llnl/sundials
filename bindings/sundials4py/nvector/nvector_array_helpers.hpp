@@ -29,6 +29,13 @@
 #include <sundials/sundials_nvector.h>
 #include <sundials/sundials_nvector.hpp>
 
+#ifdef SUNDIALS_NVECTOR_MPIMANYVECTOR
+#include <nvector/nvector_mpimanyvector.h>
+#endif
+#ifdef SUNDIALS_NVECTOR_MPIPLUSX
+#include <nvector/nvector_mpiplusx.h>
+#endif
+
 namespace sundials4py {
 namespace nvector_detail {
 
@@ -176,16 +183,78 @@ inline ArrayDevice parse_device(nanobind::object device, N_Vector v)
     "device must be 'cpu', 'host', 'cuda', or None");
 }
 
+/// The N_Vector whose data an array accessor should expose, and the Python
+/// object that must own (keep alive) the resulting array view.
+struct ArrayTarget
+{
+  N_Vector v;
+  nanobind::handle owner;
+};
+
+/// Routes array access for distributed vectors: an MPIPlusX vector resolves to
+/// its local vector (the owner stays the parent MPIPlusX wrapper, because the
+/// local vector may have no Python wrapper), and an MPIManyVector raises.
+inline ArrayTarget resolve_array_target(N_Vector v)
+{
+  ArrayTarget target{v, nanobind::find(v)};
+#ifdef SUNDIALS_NVECTOR_MPIPLUSX
+  while (N_VGetVectorID(target.v) == SUNDIALS_NVEC_MPIPLUSX)
+  {
+    target.v = N_VGetLocalVector_MPIPlusX(target.v);
+    if (!target.v)
+    {
+      throw sundials4py::error_returned(
+        "N_VGetLocalVector_MPIPlusX returned NULL");
+    }
+  }
+#endif
+#ifdef SUNDIALS_NVECTOR_MPIMANYVECTOR
+  if (N_VGetVectorID(target.v) == SUNDIALS_NVEC_MPIMANYVECTOR)
+  {
+    throw sundials4py::error_returned(
+      "array access is not supported for MPIManyVector; use "
+      "N_VGetSubvector_MPIManyVector");
+  }
+#endif
+  return target;
+}
+
+/// Makes `nurse` keep `patient` alive.
+inline void keep_alive_objects(PyObject* nurse, PyObject* patient)
+{
+#if NB_VERSION_MAJOR >= 3
+  NB_CALL(keep_alive_py)(NB_CTX, nurse, patient);
+#else
+  nanobind::detail::keep_alive(nurse, patient);
+#endif
+}
+
+/// Returns a Python object for `child`, an N_Vector that is owned by (lives
+/// inside) the vector wrapped by `parent`, with reference_internal semantics.
+/// If `child` already has a wrapper, that wrapper is returned unchanged. It is
+/// kept alive by the parent already when it was supplied at construction, and
+/// adding a keep_alive back to the parent would create an uncollectable cycle.
+inline nanobind::object child_vector_object(nanobind::handle parent,
+                                            N_Vector child)
+{
+  nanobind::handle existing = nanobind::find(child);
+  if (existing.is_valid()) { return nanobind::borrow(existing); }
+
+  nanobind::object result = nanobind::cast(child, nanobind::rv_policy::reference);
+  keep_alive_objects(result.ptr(), parent.ptr());
+  return result;
+}
+
 inline sundials4py::Array1d host_array(N_Vector v)
 {
-  auto ptr = N_VGetArrayPointer(v);
+  auto target = resolve_array_target(v);
+  auto ptr    = N_VGetArrayPointer(target.v);
   if (!ptr)
   {
     throw sundials4py::error_returned("Failed to get array pointer");
   }
-  auto owner = nanobind::find(v);
-  size_t shape[1]{static_cast<size_t>(N_VGetLength(v))};
-  return sundials4py::Array1d(ptr, 1, shape, owner);
+  size_t shape[1]{static_cast<size_t>(N_VGetLength(target.v))};
+  return sundials4py::Array1d(ptr, 1, shape, target.owner);
 }
 
 template<typename GetNumpyArray, typename GetJaxArray, typename GetCupyArray,

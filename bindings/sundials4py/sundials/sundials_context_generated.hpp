@@ -4,36 +4,6 @@
 // #endif
 //
 
-m.def(
-  "SUNContext_Create",
-  [](SUNComm comm)
-    -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
-  {
-    auto SUNContext_Create_adapt_modifiable_immutable_to_return =
-      [](SUNComm comm) -> std::tuple<SUNErrCode, SUNContext>
-    {
-      SUNContext sunctx_out_adapt_modifiable;
-
-      SUNErrCode r = SUNContext_Create(comm, &sunctx_out_adapt_modifiable);
-      return std::make_tuple(r, sunctx_out_adapt_modifiable);
-    };
-    auto SUNContext_Create_adapt_return_type_to_shared_ptr =
-      [&SUNContext_Create_adapt_modifiable_immutable_to_return](SUNComm comm)
-      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
-    {
-      auto lambda_result =
-        SUNContext_Create_adapt_modifiable_immutable_to_return(comm);
-
-      return std::make_tuple(std::get<0>(lambda_result),
-                             our_make_shared<std::remove_pointer_t<SUNContext>,
-                                             SUNContextDeleter>(
-                               std::get<1>(lambda_result)));
-    };
-
-    return SUNContext_Create_adapt_return_type_to_shared_ptr(comm);
-  },
-  nb::arg("comm"), nb::rv_policy::reference);
-
 m.def("SUNContext_GetLastError", SUNContext_GetLastError, nb::arg("sunctx"));
 
 m.def("SUNContext_PeekLastError", SUNContext_PeekLastError, nb::arg("sunctx"));

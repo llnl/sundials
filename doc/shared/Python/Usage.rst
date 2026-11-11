@@ -102,6 +102,118 @@ source:
    export CMAKE_ARGS="-DSUNDIALS_ENABLE_KLU=ON -DKLU_ROOT=/path/to/suitesparse/installation"
    pip install sundials4py --no-binary=sundials4py
 
+.. _Python.Usage.MPI:
+
+Distributed memory (MPI)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+sundials4py can expose the MPIPlusX and MPIManyVector ``N_Vector``
+implementations. This requires a source build with MPI enabled and
+`mpi4py <https://mpi4py.readthedocs.io>`_ built against the **same MPI
+library**. Prebuilt wheels are not MPI-enabled. Because the build imports
+mpi4py, build without build isolation, which means the build requirements
+from ``pyproject.toml`` must be installed first. Install mpi4py from source so
+that it is built against the system MPI (its compiler wrappers must be on
+``PATH``):
+
+.. code-block:: bash
+
+   pip install "scikit-build-core[pyproject]>=1.1.2" "nanobind>=2.9.2" numpy
+   pip install --no-binary mpi4py mpi4py
+   export CMAKE_ARGS="-DSUNDIALS_ENABLE_MPI=ON"
+   pip install sundials4py --no-binary=sundials4py --no-build-isolation
+
+or, from a source checkout of SUNDIALS:
+
+.. code-block:: bash
+
+   CMAKE_ARGS="-DSUNDIALS_ENABLE_MPI=ON" pip install --no-build-isolation .
+
+Do not combine an MPI source build with the prebuilt ROCm package
+(``sundials4py-rocm``, see above). When ``sundials4py-rocm`` is installed,
+importing ``sundials4py`` delegates to it and the MPI vectors of the source
+build are not available, so install only one of them.
+
+The first time a communicator is converted, sundials4py compares the MPI
+implementation reported by mpi4py with the one it was built against. A
+definite mismatch of implementation family (for example Open MPI versus MPICH,
+whose ``MPI_Comm`` representations differ) raises ``RuntimeError``. If the
+families cannot be determined or the library version strings merely differ, a
+``RuntimeWarning`` is emitted instead. Importing sundials4py never imports
+mpi4py.
+
+Communicators
+"""""""""""""
+
+``SUNContext_Create``, ``SUNLogger_Create``, ``SUNLogger_CreateFromEnv``,
+``SUNProfiler_Create``, ``N_VMake_MPIPlusX`` and ``N_VMake_MPIManyVector``
+accept an ``mpi4py.MPI.Comm``, ``None``, or ``SUN_COMM_NULL`` (the integer
+``0``). ``None`` and ``SUN_COMM_NULL`` mean no communicator in every build;
+any integer-like object equal to zero (but not a ``bool``) is accepted as
+``SUN_COMM_NULL``. Other integers (such as raw MPI handles) raise ``TypeError``. In builds
+without MPI, passing an mpi4py communicator raises ``TypeError``.
+
+``N_VGetCommunicator`` returns ``SUN_COMM_NULL`` for vectors without a
+communicator. For MPI vectors it returns a *borrowed* mpi4py communicator for
+the vector's internal communicator. It is valid only while the vector lives and
+must not be freed with ``Free()``.
+
+``SUNContext_Create``, ``SUNLogger_Create``, ``SUNLogger_CreateFromEnv`` and
+``SUNProfiler_Create`` are collective over a non-null communicator (the context,
+logger and profiler duplicate it), so every rank of the communicator must call
+them in the same order. This is also true of ``N_VMake_MPIPlusX`` and
+``N_VMake_MPIManyVector``.
+
+A ``SUNContext`` stores the communicator handle without duplicating it, so it
+keeps the Python communicator object alive. Do not call ``Free()`` on that
+communicator while the context exists. Vectors, loggers and profilers duplicate
+the communicator. Calling ``MPI.Finalize()`` explicitly before all SUNDIALS
+objects are destroyed is not supported. Normal interpreter exit is safe.
+
+MPIPlusX and MPIManyVector
+""""""""""""""""""""""""""
+
+.. code-block:: python
+
+   from mpi4py import MPI
+   import sundials4py.core as sun
+
+   comm = MPI.COMM_WORLD
+   status, sunctx = sun.SUNContext_Create(comm)
+   local = sun.N_VNew_Serial(n_local, sunctx)  # or N_VNew_Cuda
+   y = sun.N_VMake_MPIPlusX(comm, local, sunctx)
+   u = sun.N_VGetNumpyArray(y)  # the local data, of length n_local
+
+The vector constructors are collective: every rank must call them in the same
+order. The vectors keep their subvectors (copied into a tuple, so later changes
+to the caller's list have no effect) and the ``SUNContext`` alive.
+``N_VNew_MPIManyVector`` takes the communicator from its subvectors, at least
+one of which must be MPI-aware.
+
+The array accessors (``N_VGetNumpyArray``, ``N_VGetTorchTensor``,
+``N_VGetCupyArray``, ``N_VGetJaxArray``, ``N_VGetArrayPointer``,
+``N_VSetJaxArray``) act on the local vector of an MPIPlusX vector and raise for
+an MPIManyVector, for which you should use ``N_VGetSubvector_MPIManyVector``.
+Wrappers returned by ``N_VGetLocalVector_MPIPlusX`` and
+``N_VGetSubvector_MPIManyVector`` obtained inside a callback are valid only
+during that callback and should not be stored.
+
+With CUDA local vectors use one MPI rank per GPU. Select the device before
+creating any SUNDIALS CUDA object, either with ``CUDA_VISIBLE_DEVICES`` or with
+``torch.cuda.set_device``, and do not change it afterwards.
+
+Guidelines
+""""""""""
+
+- Callback return codes and root-function values must be identical on all
+  ranks, otherwise ranks can diverge and deadlock.
+- Launch with ``mpiexec -n N python -m mpi4py script.py`` so that an uncaught
+  exception on one rank aborts all ranks instead of hanging.
+- Matrix-based linear solvers (dense, band, KLU) and internal difference
+  quotient dense/band Jacobians are not meaningful with MPI vectors.
+- Use ``SUNLinSol_SPGMRSetGSType(LS, SUN_CLASSICAL_GS)`` to reduce the number of
+  global reductions, and enable fused operations (``N_VEnableFusedOps_MPIPlusX``).
+
 .. _Python.Usage.Modules:
 
 Modules
@@ -119,7 +231,8 @@ imported) for accessing specific SUNDIALS features:
 - ``sundials4py.core`` contains all the shared SUNDIALS classes and functions as
   well as many of the native SUNDIALS class implementations:
 
-  - NVector: serial and many-vector
+  - NVector: serial and many-vector, plus (in builds that enable them) CUDA,
+    HIP, MPIPlusX, and MPIManyVector
 
   - SUNMatix: band, dense, and sparse
 
@@ -318,8 +431,8 @@ effective when its JIT compilation or GPU execution amortizes this setup cost.
 
 The CUDA Python interface currently treats ``cuda`` as a device type rather
 than accepting a CUDA device ordinal. A CUDA ``N_Vector`` uses the device
-selected by its CUDA configuration. Support for multiple CUDA devices is a
-future enhancement.
+selected by its CUDA configuration. To use several GPUs, run one MPI rank per
+GPU with the MPIPlusX ``N_Vector`` (see :ref:`Python.Usage.MPI`).
 
 An ``N_Vector`` is one-dimensional by definition, so the Python accessors
 require one-dimensional arrays. Applications that need a multidimensional

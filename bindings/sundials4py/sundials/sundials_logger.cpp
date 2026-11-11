@@ -21,6 +21,7 @@
  * -----------------------------------------------------------------*/
 
 #include "sundials4py.hpp"
+#include "sundials_comm.hpp"
 
 #include <sundials/sundials_logger.hpp>
 #include <sundials/sundials_types.h>
@@ -36,6 +37,38 @@ namespace sundials4py {
 void bind_sunlogger(nb::module_& m)
 {
 #include "sundials_logger_generated.hpp"
+
+  m.def(
+    "SUNLogger_Create",
+    [](nb::handle comm, int output_rank)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
+    {
+      SUNComm c = to_suncomm(comm);
+      SUNLogger logger_out;
+      SUNErrCode r = SUNLogger_Create(c, output_rank, &logger_out);
+      return std::make_tuple(r, our_make_shared<std::remove_pointer_t<SUNLogger>,
+                                                SUNLoggerDeleter>(logger_out));
+    },
+    nb::arg("comm").none(), nb::arg("output_rank"), nb::rv_policy::reference,
+    "Create a SUNLogger. With a non-null communicator the call is collective "
+    "over comm (the logger duplicates it).");
+
+  m.def(
+    "SUNLogger_CreateFromEnv",
+    [](nb::handle comm)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
+    {
+      SUNComm c = to_suncomm(comm);
+      SUNLogger logger_out;
+      SUNErrCode r = SUNLogger_CreateFromEnv(c, &logger_out);
+      return std::make_tuple(r, our_make_shared<std::remove_pointer_t<SUNLogger>,
+                                                SUNLoggerDeleter>(logger_out));
+    },
+    nb::arg("comm").none(), nb::rv_policy::reference,
+    "Create a SUNLogger configured from the environment. With a non-null "
+    "communicator the call is collective over comm (the logger duplicates "
+    "it).");
+
   nb::class_<SUNLogger_>(m, "SUNLogger_");
 
   m.def("SUNLogger_SetErrorFile", SUNLogger_SetErrorFile, nb::arg("logger"),

@@ -74,7 +74,14 @@ struct HipDeviceArrayPointer
   int device_id;
 
   explicit HipDeviceArrayPointer(N_Vector v)
-    : x(v), owner(nb::find(v)), device_id(0)
+    : HipDeviceArrayPointer(v, nb::find(v))
+  {}
+
+  // owner is the Python object that must keep the data alive. It differs from
+  // v when v is the local vector of an MPIPlusX vector (the owner is then the
+  // parent MPIPlusX wrapper).
+  HipDeviceArrayPointer(N_Vector v, nb::handle owner)
+    : x(v), owner(nb::borrow(owner)), device_id(0)
   {
     require_hip_nvector(v);
     auto ptr = N_VGetDeviceArrayPointer_Hip(v);
@@ -93,15 +100,21 @@ struct HipDeviceArrayPointer
       throw sundials4py::error_returned("HIP N_Vector has no device storage");
     }
     size_t shape[1]{static_cast<size_t>(N_VGetLength(x))};
-    return HipArray1d(ptr, 1, shape, owner);
+    // Pass the device id explicitly: the default (0) would mislabel buffers
+    // that live on other devices.
+    return HipArray1d(ptr, 1, shape, owner, /*strides=*/nullptr,
+                      nb::dtype<sunrealtype>(), nb::device::rocm::value,
+                      device_id);
   }
 };
 
-nb::object device_pointer_object(N_Vector v)
+nb::object device_pointer_object(N_Vector vec)
 {
-  require_hip_nvector(v);
-  sync_device(v);
-  return nb::cast(HipDeviceArrayPointer(v));
+  // MPIPlusX vectors resolve to their local vector (MPIManyVector raises).
+  auto target = nvector_detail::resolve_array_target(vec);
+  require_hip_nvector(target.v);
+  sync_device(target.v);
+  return nb::cast(HipDeviceArrayPointer(target.v, target.owner));
 }
 
 nb::object get_cupy_array(N_Vector v)
@@ -138,6 +151,8 @@ void require_hip_pointer(const sunrealtype* ptr)
 
 void set_jax_array(nb::object data, N_Vector v, bool copy)
 {
+  // MPIPlusX vectors act on their local vector (MPIManyVector raises).
+  v = nvector_detail::resolve_array_target(v).v;
   require_hip_nvector(v);
   if (copy ? !nvector_detail::is_jax_array(data)
            : !nvector_detail::is_jax_ref(data))
@@ -156,10 +171,7 @@ void set_jax_array(nb::object data, N_Vector v, bool copy)
 
   auto jax = nb::module_::import_("jax");
   if (copy) { data.attr("block_until_ready")(); }
-  else
-  {
-    jax.attr("effects_barrier")();
-  }
+  else { jax.attr("effects_barrier")(); }
   auto address = nb::cast<std::uintptr_t>(data.attr("unsafe_buffer_pointer")());
   auto source  = reinterpret_cast<sunrealtype*>(address);
   if (N_VGetLength(v) == 0) { return; }
@@ -213,8 +225,10 @@ void bind_nvector_hip(nb::module_& m)
 
   nb::class_<HipDeviceArrayPointer>(m, "_HipDeviceArrayPointer")
     .def(
-      "__dlpack__", [](const HipDeviceArrayPointer& self, nb::object /* stream */)
-      { return self.dlpack(); }, nb::arg("stream") = nb::none())
+      "__dlpack__",
+      [](const HipDeviceArrayPointer& self, nb::object /* stream */)
+      { return self.dlpack(); },
+      nb::arg("stream") = nb::none())
     .def("__dlpack_device__", [](const HipDeviceArrayPointer& self)
          { return nb::make_tuple(10, self.device_id); });
 
@@ -240,8 +254,7 @@ void bind_nvector_hip(nb::module_& m)
   m.def(
     "N_VNewManaged_Hip",
     [](sunindextype vec_length,
-       SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
-    {
+       SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>> {
       return nvector_detail::wrap_nvector(N_VNewManaged_Hip(vec_length, sunctx));
     },
     nb::arg("vec_length"), nb::arg("sunctx"), nb::keep_alive<0, 2>());
@@ -311,8 +324,10 @@ void bind_nvector_hip(nb::module_& m)
 
   m.def(
     "N_VGetDeviceArrayPointer_Hip",
-    [](N_Vector v) -> std::uintptr_t
+    [](N_Vector vec) -> std::uintptr_t
     {
+      // MPIPlusX vectors resolve to their local vector (MPIManyVector raises).
+      N_Vector v = nvector_detail::resolve_array_target(vec).v;
       if (N_VGetVectorID(v) != SUNDIALS_NVEC_HIP)
       {
         throw sundials4py::error_returned(

@@ -21,6 +21,7 @@
  * -----------------------------------------------------------------*/
 
 #include "sundials4py.hpp"
+#include "sundials_comm.hpp"
 
 #include <sundials/sundials_profiler.hpp>
 
@@ -35,6 +36,22 @@ namespace sundials4py {
 void bind_sunprofiler(nb::module_& m)
 {
 #include "sundials_profiler_generated.hpp"
+
+  m.def(
+    "SUNProfiler_Create",
+    [](nb::handle comm, const char* title)
+      -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNProfiler>>>
+    {
+      SUNComm c = to_suncomm(comm);
+      SUNProfiler p_out;
+      SUNErrCode r = SUNProfiler_Create(c, title, &p_out);
+      return std::make_tuple(r,
+                             our_make_shared<std::remove_pointer_t<SUNProfiler>,
+                                             SUNProfilerDeleter>(p_out));
+    },
+    nb::arg("comm").none(), nb::arg("title"), nb::rv_policy::reference,
+    "Create a SUNProfiler. With a non-null communicator the call is "
+    "collective over comm (the profiler duplicates it).");
 
   nb::class_<SUNProfiler_>(m, "SUNProfiler_");
 }

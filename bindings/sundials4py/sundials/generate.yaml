@@ -57,6 +57,8 @@ modules:
     # nanobind cannot bind to functions which take functions points, so we do do something custom
     - "^SUNContext_PushErrHandler$"
     - "^SUNContext_PopErrHandler$"
+    # SUNComm parameters are converted by hand (None, SUN_COMM_NULL or an mpi4py communicator), see sundials_comm.hpp
+    - "^SUNContext_Create$"
   sundials_domeigestimator:
     path: sundials/sundials_domeigestimator_generated.hpp
     headers:
@@ -95,6 +97,9 @@ modules:
     - "^SUNLogger_Get.*File$"
     # nanobind cannot bind to functions which take function pointers, so we do something custom
     - "^SUNLogger_SetQueueAndFlushMsgFns$"
+    # SUNComm parameters are converted by hand (None, SUN_COMM_NULL or an mpi4py communicator), see sundials_comm.hpp
+    - "^SUNLogger_Create$"
+    - "^SUNLogger_CreateFromEnv$"
   sundials_matrix:
     path: sundials/sundials_matrix_generated.hpp
     headers:
@@ -150,10 +155,15 @@ modules:
     # ** parameters are not yet supported by litgen yet, so we do something custom
     - "^N_VLinearCombinationVectorArray$"
     - "^N_VScaleAddMultiVectorArray$"
+    # returns a SUNComm, which is converted by hand (see sundials_comm.hpp)
+    - "^N_VGetCommunicator$"
   sundials_profiler:
     path: sundials/sundials_profiler_generated.hpp
     headers:
     - ../../include/sundials/sundials_profiler.h
+    fn_exclude_by_name__regex:
+    # SUNComm parameters are converted by hand (None, SUN_COMM_NULL or an mpi4py communicator), see sundials_comm.hpp
+    - "^SUNProfiler_Create$"
   sundials_stepper:
     path: sundials/sundials_stepper_generated.hpp
     headers:

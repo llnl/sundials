@@ -31,7 +31,17 @@ previous coefficients can load the current table(s) using
 and replace the internal `d` coefficients in the returned table with the
 previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
+Added support for the MPIPlusX and MPIManyVector `N_Vector` modules to
+sundials4py in source builds with `-DSUNDIALS_ENABLE_MPI=ON`. Communicators are
+passed as `mpi4py` communicators, and `None` (and, in all builds, any integer-like
+object equal to zero other than a `bool`) is now accepted as a synonym for
+`SUN_COMM_NULL`.
+
 ### Bug Fixes
+
+Fixed a bug in the sundials4py CUDA `N_Vector` DLPack interface where the DLPack
+capsule always reported device 0 (`__dlpack_device__` was correct), so PyTorch,
+CuPy and JAX arrays of vectors on other CUDA devices were mislabeled.
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.

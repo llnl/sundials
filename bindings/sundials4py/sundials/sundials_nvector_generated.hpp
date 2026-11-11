@@ -77,8 +77,6 @@ m.def(
   },
   nb::arg("w"));
 
-m.def("N_VGetCommunicator", N_VGetCommunicator, nb::arg("v"));
-
 m.def("N_VGetLength", N_VGetLength, nb::arg("v"));
 
 m.def("N_VGetLocalLength", N_VGetLocalLength, nb::arg("v"));

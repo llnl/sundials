@@ -32,6 +32,7 @@
 #include "sundials/sundials_config.h"
 
 #include "../nvector/nvector_array_helpers.hpp"
+#include "sundials_comm.hpp"
 
 namespace nb = nanobind;
 using namespace sundials::experimental;
@@ -146,6 +147,9 @@ nvector_detail::ArrayDevice check_jax_array(N_Vector v, nb::object data, bool co
 
 void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
 {
+  // MPIPlusX vectors act on their local vector (MPIManyVector raises).
+  v = nvector_detail::resolve_array_target(v).v;
+
   if (!copy.has_value())
   {
     if (nvector_detail::is_jax_ref(data)) { copy = false; }
@@ -256,6 +260,15 @@ nb::object get_jax_array(N_Vector v)
 void bind_nvector(nb::module_& m)
 {
 #include "sundials_nvector_generated.hpp"
+
+  m.def(
+    "N_VGetCommunicator",
+    [](N_Vector v) { return from_suncomm(N_VGetCommunicator(v)); }, nb::arg("v"),
+    "Return the communicator of an N_Vector.\n\n"
+    "Returns SUN_COMM_NULL (the int 0) for vectors without a communicator. "
+    "In MPI builds, otherwise returns a borrowed mpi4py communicator view of "
+    "the vector's internal communicator. It is valid only while the vector "
+    "lives and must not be freed with Free().");
 
   m.def(
     "N_VGetArrayPointer",

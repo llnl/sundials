@@ -40,6 +40,12 @@ void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
 void bind_nvector_manyvector(nb::module_& m);
+#ifdef SUNDIALS_NVECTOR_MPIMANYVECTOR
+void bind_nvector_mpimanyvector(nb::module_& m);
+#endif
+#ifdef SUNDIALS_NVECTOR_MPIPLUSX
+void bind_nvector_mpiplusx(nb::module_& m);
+#endif
 #ifdef SUNDIALS4PY_NVECTOR_CUDA
 void bind_nvector_cuda(nb::module_& m);
 #endif
@@ -161,6 +167,12 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_nvector_serial(core_m);
   sundials4py::bind_nvector_manyvector(core_m);
+#ifdef SUNDIALS_NVECTOR_MPIMANYVECTOR
+  sundials4py::bind_nvector_mpimanyvector(core_m);
+#endif
+#ifdef SUNDIALS_NVECTOR_MPIPLUSX
+  sundials4py::bind_nvector_mpiplusx(core_m);
+#endif
 #ifdef SUNDIALS4PY_NVECTOR_CUDA
   sundials4py::bind_nvector_cuda(core_m);
 #endif
