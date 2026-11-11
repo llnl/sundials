@@ -5,6 +5,16 @@
 
 **New Features and Enhancements**
 
+Added initial HIP support to sundials4py. Builds with the HIP N_Vector enabled
+now expose HIP vector constructors, device pointer access, explicit host/device
+copies, and the HIP memory helper.
+ROCm CuPy, PyTorch, and JAX array accessors support HIP heat equation examples,
+including immutable JAX arrays and JAX Refs.
+Added a ``rocm`` sundials4py extra that selects a separate
+``sundials4py-rocm`` wheel and requires a ROCm build of PyTorch. The ROCm wheel
+loads PyTorch's HIP runtime before its native extension and rejects a
+different loaded runtime.
+
 Added the utility function, :c:func:`SUNFileFlush` for flushing file
 pointers. This is useful when using the Fortran 2003 interfaces.
 

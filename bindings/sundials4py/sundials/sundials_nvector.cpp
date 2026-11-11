@@ -56,7 +56,7 @@ void replace_host_array_pointer(N_Vector v, sunrealtype* ptr, nb::object owner)
     return;
   }
 
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
   if (vector_id == SUNDIALS_NVEC_CUDA)
   {
     nvector_detail::replace_cuda_array_pointer(v, ptr,
@@ -199,7 +199,7 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
     return;
   }
 
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
   if (vector_id == SUNDIALS_NVEC_CUDA)
   {
     if (copy_array)
@@ -225,7 +225,7 @@ void set_jax_array(nb::object data, N_Vector v, std::optional<bool> copy)
     "N_VSetJaxArray only supports serial and CUDA N_Vectors");
 }
 
-#ifndef SUNDIALS_NVECTOR_CUDA
+#ifndef SUNDIALS4PY_NVECTOR_CUDA
 using nvector_detail::ArrayDevice;
 using nvector_detail::host_array;
 
@@ -262,7 +262,7 @@ void bind_nvector(nb::module_& m)
     [](N_Vector v) { return nvector_detail::host_array(v); },
     nb::rv_policy::reference);
 
-#ifndef SUNDIALS_NVECTOR_CUDA
+#ifndef SUNDIALS4PY_NVECTOR_CUDA
   m.def(
     "N_VGetDeviceArrayPointer",
     [](N_Vector v) -> std::uintptr_t

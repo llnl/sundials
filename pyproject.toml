@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core[pyproject] >=0.4.3", "nanobind >= 2.9.2"]
+requires = ["scikit-build-core[pyproject] >=1.1.2", "nanobind >= 2.9.2"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -25,6 +25,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+rocm = [
+  # This local version exists on the PyTorch ROCm 6.3 index. pip must be
+  # configured to see that index (or a mirror containing the wheel).
+  "torch == 2.7.0+rocm6.3",
+  "sundials4py-rocm == 7.9.0",
+]
 dev = [
   # Keep the build tooling available for --no-build-isolation developer builds.
   "hatchling",
@@ -45,7 +51,7 @@ Source = "https://github.com/LLNL/sundials"
 
 [tool.scikit-build]
 # Protect the configuration against future changes in scikit-build-core
-minimum-version = "0.4"
+minimum-version = "1.1.2"
 
 # Setuptools-style build caching in a local directory
 build-dir = "build_sundials4py/{wheel_tag}"

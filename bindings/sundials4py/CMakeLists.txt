@@ -120,36 +120,53 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
        sunmemory/sunmemory_cuda.cpp)
 endif()
 
+# Conditionally add HIP bindings
+if(SUNDIALS_ENABLE_NVECTOR_HIP)
+  list(APPEND sundials_SOURCES nvector/nvector_hip.cpp
+       sunmemory/sunmemory_hip.cpp)
+endif()
+
 # Conditionally add KLU bindings
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
   list(APPEND sundials_SOURCES sunlinsol/sunlinsol_klu.cpp)
 endif()
 
-# Create the Python sundials library
-nanobind_add_module(sundials4py STABLE_ABI NB_STATIC ${sundials_SOURCES})
+# Create the Python sundials library. The ROCm distribution installs a
+# differently named extension so pip never has two distributions owning the
+# same native file.
+if(SUNDIALS4PY_ROCM_DISTRIBUTION)
+  set(sundials4py_target _native)
+else()
+  set(sundials4py_target sundials4py)
+endif()
+nanobind_add_module(${sundials4py_target} STABLE_ABI NB_STATIC
+                   ${sundials_SOURCES})
+if(SUNDIALS4PY_ROCM_DISTRIBUTION)
+  target_compile_definitions(_native PRIVATE SUNDIALS4PY_ROCM_DISTRIBUTION)
+endif()
 
 if(SKBUILD)
   if(APPLE)
     set_target_properties(
-      sundials4py
+      ${sundials4py_target}
       PROPERTIES INSTALL_NAME_DIR "@rpath"
                  INSTALL_RPATH "@loader_path/${CMAKE_INSTALL_LIBDIR}")
   elseif(UNIX)
     set_target_properties(
-      sundials4py PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
+      ${sundials4py_target} PROPERTIES INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
   endif()
 endif()
 
 # Include private header locations
 target_include_directories(
-  sundials4py
+  ${sundials4py_target}
   PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include ${SUNDIALS_SOURCE_DIR}/src
           ${SUNDIALS_SOURCE_DIR}/src/arkode ${SUNDIALS_SOURCE_DIR}/src/cvodes
           ${SUNDIALS_SOURCE_DIR}/src/idas ${SUNDIALS_SOURCE_DIR}/src/kinsol)
 
 # Link against sundials libraries
 target_link_libraries(
-  sundials4py
+  ${sundials4py_target}
   PRIVATE sundials_arkode
           sundials_cvodes
           sundials_idas
@@ -172,13 +189,32 @@ target_link_libraries(
           sundials_core)
 
 if(SUNDIALS_ENABLE_NVECTOR_CUDA)
-  target_link_libraries(sundials4py PRIVATE sundials_nveccuda CUDA::cudart)
-  target_include_directories(sundials4py PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+  target_link_libraries(${sundials4py_target} PRIVATE sundials_nveccuda
+                        CUDA::cudart)
+  target_include_directories(${sundials4py_target}
+                             PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+  target_compile_definitions(${sundials4py_target}
+                             PRIVATE SUNDIALS4PY_NVECTOR_CUDA)
+endif()
+
+if(SUNDIALS_ENABLE_NVECTOR_HIP)
+  target_link_libraries(${sundials4py_target} PRIVATE sundials_nvechip hip::device)
+  target_compile_definitions(${sundials4py_target}
+                             PRIVATE SUNDIALS4PY_NVECTOR_HIP)
 endif()
 
 if(SUNDIALS_ENABLE_SUNLINSOL_KLU)
-  target_link_libraries(sundials4py PRIVATE sundials_sunlinsolklu)
+  target_link_libraries(${sundials4py_target} PRIVATE sundials_sunlinsolklu)
 endif()
 
 # Install directive for scikit-build-core
-install(TARGETS sundials4py LIBRARY DESTINATION .)
+if(SUNDIALS4PY_ROCM_DISTRIBUTION)
+  install(TARGETS _native LIBRARY DESTINATION sundials4py_rocm
+          COMPONENT sundials4py_rocm)
+  install(FILES "${CMAKE_CURRENT_LIST_DIR}/rocm/__init__.py"
+          DESTINATION sundials4py_rocm COMPONENT sundials4py_rocm)
+  install(FILES "${SUNDIALS_SOURCE_DIR}/LICENSE" "${SUNDIALS_SOURCE_DIR}/NOTICE"
+          DESTINATION sundials4py_rocm COMPONENT sundials4py_rocm)
+else()
+  install(TARGETS sundials4py LIBRARY DESTINATION .)
+endif()

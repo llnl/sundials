@@ -131,3 +131,22 @@ modules:
     # Kernel execution policies are C++ CUDA objects that are not currently
     # exposed through sundials4py.
     - "^N_VSetKernelExecPolicy_Cuda$"
+  nvector_hip:
+    path: nvector/nvector_hip_generated.hpp
+    headers:
+    - ../../include/nvector/nvector_hip.h
+    fn_exclude_by_name__regex:
+    # Constructors and pointer access need Python ownership and address handling.
+    - "^N_VNewEmpty_Hip$"
+    - "^N_VNew_Hip$"
+    - "^N_VNewManaged_Hip$"
+    - "^N_VNewWithMemHelp_Hip$"
+    - "^N_VMake_Hip$"
+    - "^N_VMakeManaged_Hip$"
+    - "^N_VSetHostArrayPointer_Hip$"
+    - "^N_VSetDeviceArrayPointer_Hip$"
+    - "^N_VGetHostArrayPointer_Hip$"
+    - "^N_VGetDeviceArrayPointer_Hip$"
+    - "^N_VCopyToDevice_Hip$"
+    - "^N_VCopyFromDevice_Hip$"
+    - "^N_VSetKernelExecPolicy_Hip$"

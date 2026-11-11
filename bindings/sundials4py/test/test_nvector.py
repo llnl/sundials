@@ -16,6 +16,8 @@
 # -----------------------------------------------------------------
 
 import gc
+import subprocess
+import sys
 import weakref
 
 import numpy as np
@@ -35,6 +37,9 @@ def test_nvector_array_helpers_are_always_available():
     assert "N_VSetDeviceArrayPointer_Cuda" not in globals()
     assert "N_VGetHostArrayPointer_Cuda" not in globals()
     assert "N_VGetDeviceArrayPointer_Cuda" not in globals()
+    assert "N_VSetHostArrayPointer_Hip" not in globals()
+    assert "N_VSetDeviceArrayPointer_Hip" not in globals()
+    assert "N_VGetHostArrayPointer_Hip" not in globals()
 
 
 def test_create_manyvector(sunctx):
@@ -275,6 +280,78 @@ def test_create_nvector_cuda_with_memhelp(use_managed_mem, sunctx):
     _check_cuda_nvector_const(nvec, 4.0)
 
 
+@pytest.mark.skipif("N_VNew_Hip" not in globals(), reason="HIP bindings are not enabled")
+def test_create_nvector_hip(sunctx):
+    nvec = N_VNew_Hip(5, sunctx)
+    assert nvec is not None
+    assert N_VGetLength(nvec) == 5
+    assert N_VGetDeviceArrayPointer_Hip(nvec) != 0
+    N_VConst(2.0, nvec)
+    N_VCopyFromDevice_Hip(nvec)
+    assert_allclose(N_VGetArrayPointer(nvec), 2.0)
+
+
+@pytest.mark.skipif(
+    "N_VGetDeviceArrayPointer_Hip" not in globals(), reason="HIP bindings are not enabled"
+)
+def test_hip_device_pointer_rejects_serial_nvector(sunctx):
+    nvec = N_VNew_Serial(5, sunctx)
+    with pytest.raises(RuntimeError, match="requires a HIP N_Vector"):
+        N_VGetDeviceArrayPointer_Hip(nvec)
+
+
+@pytest.mark.skipif("N_VGetCupyArray_Hip" not in globals(), reason="HIP bindings are not enabled")
+def test_hip_array_accessors_reject_serial_nvector(sunctx):
+    nvec = N_VNew_Serial(5, sunctx)
+    for accessor in (N_VGetCupyArray_Hip, N_VGetTorchTensor_Hip, N_VGetJaxArray_Hip):
+        with pytest.raises(RuntimeError, match="Expected a HIP N_Vector"):
+            accessor(nvec)
+    with pytest.raises(RuntimeError, match="Expected a HIP N_Vector"):
+        N_VSetJaxArray_Hip(np.zeros(5, dtype=sunrealtype), nvec)
+
+
+@pytest.mark.skipif("N_VNewManaged_Hip" not in globals(), reason="HIP bindings are not enabled")
+def test_create_nvector_hip_managed(sunctx):
+    nvec = N_VNewManaged_Hip(5, sunctx)
+    assert nvec is not None
+    assert N_VIsManagedMemory_Hip(nvec)
+    assert N_VGetDeviceArrayPointer_Hip(nvec) != 0
+    N_VConst(3.0, nvec)
+
+
+@pytest.mark.skipif(
+    "N_VNewWithMemHelp_Hip" not in globals(), reason="HIP bindings are not enabled"
+)
+@pytest.mark.parametrize("use_managed_mem", [False, True])
+def test_create_nvector_hip_with_memhelp(use_managed_mem, sunctx):
+    mem_helper = SUNMemoryHelper_Hip(sunctx)
+    assert mem_helper is not None
+    nvec = N_VNewWithMemHelp_Hip(5, use_managed_mem, mem_helper, sunctx)
+    assert nvec is not None
+    assert N_VGetDeviceArrayPointer_Hip(nvec) != 0
+    N_VConst(4.0, nvec)
+
+
+@pytest.mark.skipif("N_VMake_Hip" not in globals(), reason="HIP bindings are not enabled")
+def test_make_nvector_hip_cupy_array(sunctx):
+    cupy = pytest.importorskip("cupy")
+    if not cupy.cuda.runtime.is_hip:
+        pytest.skip("CuPy does not use the HIP backend")
+
+    h_arr = np.zeros(5, dtype=sunrealtype)
+    d_arr = cupy.arange(5, dtype=sunrealtype)
+    nvec = N_VMake_Hip(5, h_arr, d_arr, sunctx)
+
+    h_arr_ref = weakref.ref(h_arr)
+    d_arr_ref = weakref.ref(d_arr)
+    del h_arr, d_arr
+    gc.collect()
+    assert h_arr_ref() is not None
+    assert d_arr_ref() is not None
+
+    N_VConst(3.0, nvec)
+
+
 def _torch_dtype():
     import torch
 
@@ -283,6 +360,42 @@ def _torch_dtype():
     if sunrealtype == np.float64:
         return torch.float64
     return torch.longdouble
+
+
+@pytest.mark.parametrize("torch_first", [False, True])
+def test_make_nvector_hip_torch_tensor(torch_first):
+    torch = pytest.importorskip("torch")
+    if "N_VMake_Hip" not in globals():
+        pytest.skip("HIP bindings are not enabled")
+    if torch.version.hip is None or not torch.cuda.is_available():
+        pytest.skip("PyTorch HIP is not available")
+
+    imports = (
+        "import torch\nimport sundials4py.core as sun"
+        if torch_first
+        else "import sundials4py.core as sun\nimport torch"
+    )
+    code = f"""\
+import numpy as np
+{imports}
+
+_, ctx = sun.SUNContext_Create(sun.SUN_COMM_NULL)
+dtype = torch.float32 if np.dtype(sun.sunrealtype) == np.dtype(np.float32) else torch.float64
+host = np.zeros(5, dtype=sun.sunrealtype)
+device = torch.zeros(5, device="cuda", dtype=dtype)
+vec = sun.N_VMake_Hip(5, host, device, ctx)
+view = sun.N_VGetTorchTensor_Hip(vec)
+assert sun.N_VGetDeviceArrayPointer_Hip(vec) == device.data_ptr() == view.data_ptr()
+view[2] = 3.0
+torch.cuda.synchronize()
+sun.N_VCopyFromDevice_Hip(vec)
+np.testing.assert_allclose(host, [0.0, 0.0, 3.0, 0.0, 0.0])
+sun.N_VConst(4.0, vec)
+torch.cuda.synchronize()
+np.testing.assert_allclose(view.cpu().numpy(), 4.0)
+"""
+    result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def _jax_cuda_device_or_skip(jax):

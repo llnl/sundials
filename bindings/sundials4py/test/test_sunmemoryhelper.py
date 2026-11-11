@@ -35,3 +35,9 @@ def test_create_memory_helper_cuda(sunctx):
     if mem_helper is None:
         pytest.fail("CUDA memory helper creation failed")
     assert mem_helper is not None
+
+
+@pytest.mark.skipif("SUNMemoryHelper_Hip" not in globals(), reason="HIP bindings are not enabled")
+def test_create_memory_helper_hip(sunctx):
+    mem_helper = SUNMemoryHelper_Hip(sunctx)
+    assert mem_helper is not None

@@ -78,6 +78,19 @@ backends for CUDA N_Vectors:
 The required array framework must be installed separately. CPU-only builds
 continue to support NumPy and the CPU modes of PyTorch and JAX.
 
+ROCm support
+^^^^^^^^^^^^
+
+Install with the PyTorch ROCm 6.3 package index:
+
+.. code-block:: bash
+
+   python -m pip install --extra-index-url https://download.pytorch.org/whl/rocm6.3 'sundials4py[rocm]'
+
+The extra installs ``sundials4py-rocm`` and PyTorch ``2.7.0+rocm6.3``. The
+ROCm wheel includes PyTorch's AMD GPU targets and loads its HIP runtime before
+the native bindings.
+
 KLU support
 ^^^^^^^^^^^
 

@@ -40,13 +40,19 @@ void bind_kinsol(nb::module_& m);
 
 void bind_nvector_serial(nb::module_& m);
 void bind_nvector_manyvector(nb::module_& m);
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
 void bind_nvector_cuda(nb::module_& m);
+#endif
+#ifdef SUNDIALS4PY_NVECTOR_HIP
+void bind_nvector_hip(nb::module_& m);
 #endif
 
 void bind_sumemoryhelper_sys(nb::module_& m);
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
 void bind_sunmemoryhelper_cuda(nb::module_& m);
+#endif
+#ifdef SUNDIALS4PY_NVECTOR_HIP
+void bind_sunmemoryhelper_hip(nb::module_& m);
 #endif
 
 void bind_sunadaptcontroller_imexgus(nb::module_& m);
@@ -82,8 +88,35 @@ void bind_sunnonlinsol_auto(nb::module_& m);
 // Define main module, sundials4py, and all of its submodules
 //
 
+#ifdef SUNDIALS4PY_ROCM_DISTRIBUTION
+NB_MODULE(_native, m)
+#else
 NB_MODULE(sundials4py, m)
+#endif
 {
+#ifndef SUNDIALS4PY_ROCM_DISTRIBUTION
+  // The optional ROCm wheel owns a separate extension. Load it before any
+  // CPU bindings are registered so its nanobind types are the only active
+  // SUNDIALS types in this process.
+  nb::object rocm_spec =
+    nb::module_::import_("importlib.util").attr("find_spec")(
+      "sundials4py_rocm");
+  if (!rocm_spec.is_none())
+  {
+    nb::module_ rocm = nb::module_::import_("sundials4py_rocm");
+    nb::dict modules = nb::module_::import_("sys").attr("modules");
+    m.attr("__version__") = rocm.attr("__version__");
+    for (const char* name : {"core", "test", "arkode", "cvodes", "idas",
+                             "kinsol"})
+    {
+      nb::object submodule = rocm.attr(name);
+      m.attr(name)         = submodule;
+      modules[nb::str((std::string("sundials4py.") + name).c_str())] =
+        submodule;
+    }
+    return;
+  }
+#endif
 #ifdef NDEBUG
   // The nanobind leak warnings can be quite noisy due to leaks within Python itself, so we disable them for Release builds.
   nb::set_leak_warnings(false);
@@ -128,8 +161,11 @@ NB_MODULE(sundials4py, m)
 
   sundials4py::bind_nvector_serial(core_m);
   sundials4py::bind_nvector_manyvector(core_m);
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
   sundials4py::bind_nvector_cuda(core_m);
+#endif
+#ifdef SUNDIALS4PY_NVECTOR_HIP
+  sundials4py::bind_nvector_hip(core_m);
 #endif
 
   sundials4py::bind_sunadaptcontroller_imexgus(core_m);
@@ -156,8 +192,11 @@ NB_MODULE(sundials4py, m)
   sundials4py::bind_sunmatrix_sparse(core_m);
 
   sundials4py::bind_sumemoryhelper_sys(core_m);
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
   sundials4py::bind_sunmemoryhelper_cuda(core_m);
+#endif
+#ifdef SUNDIALS4PY_NVECTOR_HIP
+  sundials4py::bind_sunmemoryhelper_hip(core_m);
 #endif
 
   sundials4py::bind_sunnonlinsol_fixedpoint(core_m);

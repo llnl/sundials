@@ -1,0 +1,44 @@
+[build-system]
+requires = ["scikit-build-core[pyproject] >=1.1.2", "nanobind >= 2.9.2"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "sundials4py-rocm"
+version = "7.9.0"
+description = "ROCm native backend for sundials4py"
+authors = [{ name = "SUNDIALS Developers", email = "sundials-users@llnl.gov" }]
+license = "BSD-3-Clause"
+requires-python = ">=3.12"
+dependencies = [
+  "sundials4py == 7.9.0",
+  "torch == 2.7.0+rocm6.3",
+]
+
+[project.urls]
+Homepage = "https://computing.llnl.gov/projects/sundials"
+Source = "https://github.com/LLNL/sundials"
+
+[tool.scikit-build]
+minimum-version = "1.1.2"
+build-dir = "../../../build_sundials4py/rocm-wheel/{wheel_tag}"
+wheel.py-api = "cp312"
+wheel.packages = []
+cmake.source-dir = "../../.."
+cmake.build-type = "RelWithDebInfo"
+cmake.args = [
+  "-DBUILD_SHARED_LIBS:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_CVODE:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_IDA:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_C_EXAMPLES:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_CXX_EXAMPLES:BOOL=OFF",
+  "-DSUNDIALS_ENABLE_PYTHON:BOOL=ON",
+  "-DSUNDIALS_ENABLE_HIP:BOOL=ON",
+  "-DSUNDIALS_ENABLE_NVECTOR_HIP:BOOL=ON",
+  "-DSUNDIALS4PY_ROCM_DISTRIBUTION:BOOL=ON",
+  # Match the code objects reported by torch 2.7.0+rocm6.3. A single wheel
+  # must contain every supported target because pip cannot select by GPU model.
+  "-DAMDGPU_TARGETS=gfx900;gfx906;gfx908;gfx90a;gfx942;gfx1030;gfx1100;gfx1101;gfx1102;gfx1200;gfx1201",
+]
+
+[tool.scikit-build.install]
+components = ["sundials4py_rocm"]

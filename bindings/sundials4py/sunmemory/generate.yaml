@@ -42,3 +42,7 @@ modules:
     path: sunmemory/sunmemory_cuda_generated.hpp
     headers:
     - ../../include/sunmemory/sunmemory_cuda.h
+  sunmemory_hip:
+    path: sunmemory/sunmemory_hip_generated.hpp
+    headers:
+    - ../../include/sunmemory/sunmemory_hip.h

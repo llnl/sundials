@@ -253,12 +253,12 @@ inline void require_vector_length(sunindextype vec_length, nanobind::object arra
   }
 }
 
-#ifdef SUNDIALS_NVECTOR_CUDA
+#ifdef SUNDIALS4PY_NVECTOR_CUDA
 void replace_cuda_array_pointer(N_Vector v, sunrealtype* ptr,
                                 ArrayDevice device, nanobind::object owner);
 void copy_to_cuda_array_pointer(N_Vector v, const sunrealtype* ptr,
                                 ArrayDevice source_device);
-#endif // SUNDIALS_NVECTOR_CUDA
+#endif // SUNDIALS4PY_NVECTOR_CUDA
 
 } // namespace nvector_detail
 } // namespace sundials4py
