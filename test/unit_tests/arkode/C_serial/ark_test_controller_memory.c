@@ -58,8 +58,8 @@ int main(void)
   SUNAdaptController controller               = NULL;
   SUNAdaptControllerContent_Soderlind content = NULL;
   sunrealtype t                               = ZERO;
-  sunrealtype hlast[2]                        = {ONE, ONE};
-  sunrealtype elast[2]                        = {ONE, ONE};
+  sunrealtype hlast[3]                        = {ONE, ONE, ONE};
+  sunrealtype elast[3]                        = {ONE, ONE, ONE};
   sunrealtype hfixed                          = SUN_RCONST(0.001);
   int retval;
   int fails = 0;
