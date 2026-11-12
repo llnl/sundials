@@ -26,13 +26,13 @@ OpenMP C example problems
 
 
 
-.. _ark_brusselator1D_omp:
+.. _ark_brusselator_1d_omp:
 
-ark_brusselator1D_omp
+ark_brusselator_1d_omp
 ============================================
 
 This problem is mathematically identical to the one-dimensional
-reaction-diffusion brusselator model, :ref:`ark_brusselator1D`.  As
+reaction-diffusion brusselator model, :ref:`ark_brusselator_1d`.  As
 before, we investigate a time-dependent system of partial differential
 equations with 3 components, :math:`Y = [u,\, v,\, w]^T` that satisfy
 the equations,

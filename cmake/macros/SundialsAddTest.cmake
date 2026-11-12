@@ -83,7 +83,6 @@
 # -D SUNDIALS_TEST_ANSWER_DIR=<path to answer directory>
 
 function(SUNDIALS_ADD_TEST NAME EXECUTABLE)
-
   set(options "NO_DIFF")
   set(oneValueArgs "MPI_NPROCS" "FLOAT_PRECISION" "INTEGER_PRECISION"
                    "ANSWER_DIR" "ANSWER_FILE" "EXAMPLE_TYPE")

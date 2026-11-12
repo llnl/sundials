@@ -230,6 +230,9 @@ cp -r $sundialsdir/cmake $tmpdir/
 
 cp    $sundialsdir/examples/CMakeLists.txt $tmpdir/examples/
 cp    $sundialsdir/examples/README.md $tmpdir/examples/
+cp -r $sundialsdir/examples/nvector $tmpdir/examples/
+cp -r $sundialsdir/examples/sunlinsol $tmpdir/examples/
+cp -r $sundialsdir/examples/sunmatrix $tmpdir/examples/
 cp -r $sundialsdir/examples/utilities $tmpdir/examples/
 cp -r $sundialsdir/examples/templates $tmpdir/examples/
 
