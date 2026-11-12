@@ -79,7 +79,11 @@ testpaths = [
   "examples/arkode/ark_brusselator/python",
   "examples/arkode/ark_heat_1d/python",
   "examples/arkode/ark_kpr/python",
-  "examples/arkode/ark_lotka_volterra/python"
+  "examples/arkode/ark_lotka_volterra/python",
+  "examples/cvodes/cvs_brusselator/python",
+  "examples/cvodes/cvs_lotka_volterra/python",
+  "examples/cvodes/cvs_pr/python",
+  "examples/cvodes/cvs_vdp/python"
 ]
 
 [tool.cibuildwheel]
