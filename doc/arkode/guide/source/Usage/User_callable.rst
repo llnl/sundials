@@ -1374,6 +1374,8 @@ Use compensated summation for accumulating time    :c:func:`ARKodeSetUseCompensa
 .. c:function:: int ARKodeSetMinStep(void* arkode_mem, sunrealtype hmin)
 
    Specifies the lower bound on the magnitude of the time step size.
+   The bound is applied when an adaptive step or retry is selected. A step
+   clipped to reach a stop time may be smaller than *hmin*.
 
    :param arkode_mem: pointer to the ARKODE memory block.
    :param hmin: minimum absolute value of the time step size :math:`(\ge 0)`.
@@ -4084,10 +4086,14 @@ Current stage index, and total number of stages        :c:func:`ARKodeGetStageIn
 
 .. c:function:: int ARKodeGetCurrentStep(void* arkode_mem, sunrealtype* hcur)
 
-   Returns the integration step size to be attempted on the next internal step.
+   Returns the stored next-step proposal. For adaptive methods, the current
+   minimum and maximum step-size bounds are applied when the proposal is
+   consumed, so the attempted step may differ from this value. A stop time may
+   shorten the attempted step further. During a pre-step callback, this value
+   is the selected trial step.
 
    :param arkode_mem: pointer to the ARKODE memory block.
-   :param hcur: step size to be attempted on the next internal step.
+   :param hcur: stored next-step proposal.
 
    :retval ARK_SUCCESS: the function exited successfully.
    :retval ARK_MEM_NULL: ``arkode_mem`` was ``NULL``.
