@@ -32,6 +32,10 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 **Bug Fixes**
 
+Fixed a bug in ARKODE where updated minimum and maximum step-size bounds were
+not applied when consuming a saved adaptive step-size proposal, including
+proposals that underflow to zero.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 

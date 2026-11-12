@@ -194,12 +194,6 @@ int arkAdapt(ARKodeMem ark_mem, ARKodeHAdaptMem hadapt_mem, N_Vector ycur,
   /* set basic value of ark_eta */
   ark_mem->eta = h_acc / hcur;
 
-  /* enforce minimum time step size */
-  ark_mem->eta = SUNMAX(ark_mem->eta, ark_mem->hmin / SUNRabs(hcur));
-
-  /* enforce maximum time step size */
-  ark_mem->eta /= SUNMAX(ONE, SUNRabs(hcur) * ark_mem->hmax_inv * ark_mem->eta);
-
   SUNLogDebug(ARK_LOGGER, "new-step-eta", "eta = " SUN_FORMAT_G, ark_mem->eta);
 
   return (retval);

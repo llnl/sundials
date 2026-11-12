@@ -44,6 +44,30 @@
   Exported functions
   ===============================================================*/
 
+/* Apply absolute step size bounds to a selected trial step, then clip it
+   to the stop time if necessary. */
+static sunrealtype arkBoundStep(ARKodeMem ark_mem, sunrealtype h,
+                                sunbooleantype enforce_min_on_zero)
+{
+  sunrealtype ah = SUNRabs(h);
+
+  if (ah > ZERO && ark_mem->hmax_inv > ZERO && ah * ark_mem->hmax_inv > ONE)
+  {
+    h = SUNRcopysign(ONE / ark_mem->hmax_inv, h);
+  }
+  if ((ah > ZERO || enforce_min_on_zero) && SUNRabs(h) < ark_mem->hmin)
+  {
+    h = SUNRcopysign(ark_mem->hmin, h);
+  }
+
+  if (ark_mem->tstopset && ((ark_mem->tn + h - ark_mem->tstop) * h > ZERO))
+  {
+    h = (ark_mem->tstop - ark_mem->tn) * (ONE - FOUR * ark_mem->uround);
+  }
+
+  return h;
+}
+
 /*---------------------------------------------------------------
   ARKodeResize:
 
@@ -754,6 +778,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     - loop over attempts at a new step:
       * try to take step (via time stepper module),
         handle solver convergence or other failures
+      * select and bound the concrete trial step; retry reductions are
+        bounded before the next attempt
       * if the stepper requests ARK_RETRY_STEP, we
         retry the step without accumulating failures.
         A stepper should never request this multiple
@@ -847,23 +873,8 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
     }
     else { ark_mem->tolsf = ONE; }
 
-    /* Check for h below roundoff level in tn */
-    if (ark_mem->tcur + ark_mem->h == ark_mem->tcur)
-    {
-      ark_mem->nhnil++;
-      if (ark_mem->nhnil <= ark_mem->mxhnil)
-      {
-        arkProcessError(ark_mem, ARK_WARNING, __LINE__, __func__, __FILE__,
-                        MSG_ARK_HNIL, ark_mem->tcur, ark_mem->h);
-      }
-      if (ark_mem->nhnil == ark_mem->mxhnil)
-      {
-        arkProcessError(ark_mem, ARK_WARNING, __LINE__, __func__, __FILE__,
-                        MSG_ARK_HNIL_DONE);
-      }
-    }
-
-    /* Update parameter for upcoming step size */
+    /* Consume the previously computed proposal once.  Equality denotes
+       either no proposal change or one already consumed on a retry. */
     if (ark_mem->hprime != ark_mem->h)
     {
       ark_mem->h      = ark_mem->h * ark_mem->eta;
@@ -883,6 +894,29 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
           ark_mem->h = (ark_mem->tstop - ark_mem->tcur) *
                        (ONE - FOUR * ark_mem->uround);
         }
+      }
+    }
+    else
+    {
+      /* Apply current absolute bounds when the proposal becomes a trial. */
+      ark_mem->h      = arkBoundStep(ark_mem, ark_mem->h, SUNTRUE);
+      ark_mem->hprime = ark_mem->next_h = ark_mem->h;
+      ark_mem->eta    = ONE;
+    }
+
+    /* Check for h below roundoff level in tn using the selected trial. */
+    if (ark_mem->tcur + ark_mem->h == ark_mem->tcur)
+    {
+      ark_mem->nhnil++;
+      if (ark_mem->nhnil <= ark_mem->mxhnil)
+      {
+        arkProcessError(ark_mem, ARK_WARNING, __LINE__, __func__, __FILE__,
+                        MSG_ARK_HNIL, ark_mem->tcur, ark_mem->h);
+      }
+      if (ark_mem->nhnil == ark_mem->mxhnil)
+      {
+        arkProcessError(ark_mem, ARK_WARNING, __LINE__, __func__, __FILE__,
+                        MSG_ARK_HNIL_DONE);
       }
     }
 
@@ -1020,9 +1054,11 @@ int ARKodeEvolve(void* arkode_mem, sunrealtype tout, N_Vector yout,
         return (ARK_ERR_FAILURE);
       }
 
-      /* update h, hprime and next_h for next iteration */
+      /* Consume the retry reduction, then enforce current absolute bounds. */
       ark_mem->h *= ark_mem->eta;
+      ark_mem->h = arkBoundStep(ark_mem, ark_mem->h, SUNTRUE);
       ark_mem->next_h = ark_mem->hprime = ark_mem->h;
+      ark_mem->eta = ONE;
 
       /* reset tcur to last saved internal time before reattempting step
          (and optionally ycur to yn ) */
@@ -2026,7 +2062,7 @@ sunbooleantype arkCheckNvectorOptional(ARKodeMem ark_mem)
 int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
 {
   int retval, hflag, istate;
-  sunrealtype tout_hin, rh, htmp;
+  sunrealtype tout_hin, htmp;
   sunbooleantype conOK;
 
   /* Is tout too close to tn? */
@@ -2284,23 +2320,8 @@ int arkInitialSetup(ARKodeMem ark_mem, sunrealtype tout)
       ark_mem->hadapt_mem->etamax = ark_mem->hadapt_mem->growth;
     }
 
-    /* Enforce step size bounds */
-    rh = SUNRabs(ark_mem->h) * ark_mem->hmax_inv;
-    if (rh > ONE) { ark_mem->h /= rh; }
-    if (SUNRabs(ark_mem->h) < ark_mem->hmin)
-    {
-      ark_mem->h *= ark_mem->hmin / SUNRabs(ark_mem->h);
-    }
-
-    /* Check for approach to tstop */
-    if (ark_mem->tstopset)
-    {
-      if ((ark_mem->tcur + ark_mem->h - ark_mem->tstop) * ark_mem->h > ZERO)
-      {
-        ark_mem->h = (ark_mem->tstop - ark_mem->tcur) *
-                     (ONE - FOUR * ark_mem->uround);
-      }
-    }
+    /* Enforce absolute bounds and check for approach to tstop. */
+    ark_mem->h = arkBoundStep(ark_mem, ark_mem->h, SUNFALSE);
 
     /* Set initial time step factors */
     ark_mem->h0u    = ark_mem->h;
@@ -3461,9 +3482,6 @@ int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
      has recommended an 'eta' value for the next step -- enforce bounds on that value
      and set upcoming step size */
   ark_mem->eta = SUNMIN(ark_mem->eta, ark_mem->hadapt_mem->etamax);
-  ark_mem->eta = SUNMAX(ark_mem->eta, ark_mem->hmin / SUNRabs(ark_mem->h));
-  ark_mem->eta /=
-    SUNMAX(ONE, SUNRabs(ark_mem->h) * ark_mem->hmax_inv * ark_mem->eta);
 
   /* If est. local error norm dsm passes test, return ARK_SUCCESS */
   if (dsm <= ONE) { return (ARK_SUCCESS); }
@@ -3485,11 +3503,8 @@ int arkCheckTemporalError(ARKodeMem ark_mem, int* nflagPtr, int* nefPtr,
     ark_mem->eta = SUNMIN(ark_mem->eta, hadapt_mem->etamxf);
   }
 
-  /* Enforce min/max step bounds once again due to adjustments above */
+  /* Enforce relative bounds once again due to adjustments above */
   ark_mem->eta = SUNMIN(ark_mem->eta, ark_mem->hadapt_mem->etamax);
-  ark_mem->eta = SUNMAX(ark_mem->eta, ark_mem->hmin / SUNRabs(ark_mem->h));
-  ark_mem->eta /=
-    SUNMAX(ONE, SUNRabs(ark_mem->h) * ark_mem->hmax_inv * ark_mem->eta);
 
   return (TRY_AGAIN);
 }
