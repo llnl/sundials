@@ -22,8 +22,28 @@ import pytest
 pytest.importorskip("mpi4py")
 
 import sundials4py.core as sun  # noqa: E402
-from sundials4py.arkode import *  # noqa: E402,F403
-from sundials4py.cvodes import *  # noqa: E402,F403
+from sundials4py.arkode import (  # noqa: E402
+    ARK_NORMAL,
+    ARK_SUCCESS,
+    ARKodeEvolve,
+    ARKodeGetNumLinIters,
+    ARKodeGetNumSteps,
+    ARKodeSetLinearSolver,
+    ARKodeSStolerances,
+    ARKStepCreate,
+)
+from sundials4py.cvodes import (  # noqa: E402
+    CV_BDF,
+    CV_NORMAL,
+    CV_SUCCESS,
+    CVode,
+    CVodeCreate,
+    CVodeGetNumLinIters,
+    CVodeGetNumSteps,
+    CVodeInit,
+    CVodeSetLinearSolver,
+    CVodeSStolerances,
+)
 
 if not hasattr(sun, "N_VMake_MPIPlusX"):
     pytest.skip("sundials4py was built without MPI support", allow_module_level=True)
@@ -45,8 +65,9 @@ class Diffusion1D:
     """u_t = DIFF u_xx on (0, 1) with u = 0 at both ends. If comm is None the
     whole grid lives in this process and no halo exchange happens."""
 
-    def __init__(self, comm, n_local, offset):
+    def __init__(self, comm, n_local, offset, xp=np):
         self.comm = comm
+        self.xp = xp
         self.n_local = n_local
         self.offset = offset
         self.dx = 1.0 / (NX + 1)
@@ -59,22 +80,34 @@ class Diffusion1D:
         return (self.offset + np.arange(1, self.n_local + 1)) * self.dx
 
     def f(self, t, yvec, fvec, _):
-        u = sun.N_VGetNumpyArray(yvec)
-        f = sun.N_VGetNumpyArray(fvec)
-        ext = np.zeros(self.n_local + 2, dtype=u.dtype)
+        u = self.array(yvec)
+        f = self.array(fvec)
+        ext = self.xp.zeros(self.n_local + 2, dtype=u.dtype)
         ext[1:-1] = u
         if self.comm is not None:
             # halo exchange of the boundary values (zeros at the domain ends)
-            lo = np.ascontiguousarray(u[:1])
-            hi = np.ascontiguousarray(u[-1:])
+            lo = np.ascontiguousarray(self.to_host(u[:1]))
+            hi = np.ascontiguousarray(self.to_host(u[-1:]))
             from_left = np.zeros(1, dtype=u.dtype)
             from_right = np.zeros(1, dtype=u.dtype)
             self.comm.Sendrecv(hi, dest=self.right, recvbuf=from_left, source=self.left)
-            self.comm.Sendrecv(lo, dest=self.left, recvbuf=from_right, source=self.right)
+            self.comm.Sendrecv(
+                lo, dest=self.left, recvbuf=from_right, source=self.right
+            )
             ext[0] = from_left[0]
             ext[-1] = from_right[0]
         f[:] = DIFF * (ext[:-2] - 2.0 * ext[1:-1] + ext[2:]) / self.dx**2
+        if self.xp is not np:
+            self.xp.cuda.get_current_stream().synchronize()
         return 0
+
+    def array(self, vector):
+        if self.xp is np:
+            return sun.N_VGetNumpyArray(vector)
+        return sun.N_VGetCupyArray(vector)
+
+    def to_host(self, array):
+        return array if self.xp is np else self.xp.asnumpy(array)
 
 
 def decompose(comm):
@@ -111,19 +144,28 @@ def run(integrator, y, problem, sunctx):
 
 
 @pytest.mark.parametrize("integrator", ["arkstep", "cvodes"])
-def test_diffusion_matches_single_rank_reference(integrator):
+@pytest.mark.parametrize("backend", ["serial", "cuda"])
+def test_diffusion_matches_single_rank_reference(integrator, backend):
+    xp = np
+    if backend == "cuda":
+        if not hasattr(sun, "N_VNew_Cuda"):
+            pytest.skip("sundials4py was built without CUDA support")
+        xp = pytest.importorskip("cupy")
     comm = MPI.COMM_WORLD
     status, sunctx = sun.SUNContext_Create(comm)
     assert status == sun.SUN_SUCCESS
 
-    # Distributed solve with MPIPlusX over a serial local vector
+    # Distributed solve; CUDA halo exchanges are staged through host buffers.
     n_local, offset = decompose(comm)
-    local = sun.N_VNew_Serial(n_local, sunctx)
+    factory = sun.N_VNew_Serial if backend == "serial" else sun.N_VNew_Cuda
+    local = factory(n_local, sunctx)
     y = sun.N_VMake_MPIPlusX(comm, local, sunctx)
-    problem = Diffusion1D(comm, n_local, offset)
-    sun.N_VGetNumpyArray(y)[:] = initial_condition(problem.x())
+    problem = Diffusion1D(comm, n_local, offset, xp)
+    problem.array(y)[:] = xp.asarray(initial_condition(problem.x()))
+    if backend == "cuda":
+        xp.cuda.get_current_stream().synchronize()
     counts = run(integrator, y, problem, sunctx)
-    u_dist = np.concatenate(comm.allgather(np.array(sun.N_VGetNumpyArray(y))))
+    u_dist = np.concatenate(comm.allgather(np.array(problem.to_host(problem.array(y)))))
 
     # Reference: the whole problem, redundantly on every rank, serial vector
     status, ref_ctx = sun.SUNContext_Create(None)

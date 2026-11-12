@@ -37,6 +37,11 @@ passed as `mpi4py` communicators, and `None` (and, in all builds, any integer-li
 object equal to zero other than a `bool`) is now accepted as a synonym for
 `SUN_COMM_NULL`.
 
+Added MPI heat equation examples for NumPy CPU vectors and CUDA vectors accessed
+through JAX and PyTorch, with a shared solver setup and a performance comparison
+script. The GPU examples use host-staged halo exchanges and do not require
+CUDA-aware MPI.
+
 ### Bug Fixes
 
 Fixed a bug in the sundials4py CUDA `N_Vector` DLPack interface where the DLPack
