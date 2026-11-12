@@ -25,6 +25,19 @@
 #include <limits>
 #include <nvector/nvector_hip.h>
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+#include <thrust/execution_policy.h>
+#include <thrust/extrema.h>
+#include <thrust/functional.h>
+#include <thrust/inner_product.h>
+#include <thrust/iterator/transform_iterator.h>
+#include <thrust/iterator/zip_iterator.h>
+#include <thrust/reduce.h>
+#include <thrust/system/hip/execution_policy.h>
+#include <thrust/transform.h>
+#include <thrust/transform_reduce.h>
+#endif
+
 #include "VectorArrayKernels.hip.hpp"
 #include "VectorKernels.hip.hpp"
 #include "sundials/sundials_errors.h"
@@ -82,6 +95,13 @@ static void PostKernelLaunch();
   ((sunrealtype*)NVEC_HIP_PRIVATE(x)->reduce_buffer_dev->ptr)
 #define NVEC_HIP_DCOUNTERp(x) \
   ((unsigned int*)NVEC_HIP_PRIVATE(x)->device_counter->ptr)
+
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+static hipStream_t NVectorHipReduceStream(N_Vector v)
+{
+  return *(NVEC_HIP_CONTENT(v)->reduce_exec_policy->stream());
+}
+#endif
 
 /*
  * Private structure definition
@@ -858,8 +878,28 @@ void N_VAddConst_Hip(N_Vector X, sunrealtype b, N_Vector Z)
   PostKernelLaunch();
 }
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+static sunrealtype thrustDotProd(sunrealtype* X, sunrealtype* W, sunindextype N,
+                                 hipStream_t stream)
+{
+  return thrust::inner_product(thrust::hip::par.on(stream), X, X + N, W, ZERO);
+}
+#endif
+
 sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
 {
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  if (NVEC_HIP_CONTENT(X)->reduce_exec_policy->usesThrust())
+  {
+    const sunindextype N = NVEC_HIP_CONTENT(X)->length;
+    if (N > 0)
+    {
+      return thrustDotProd(NVEC_HIP_DDATAp(X), NVEC_HIP_DDATAp(Y), N,
+                           NVectorHipReduceStream(X));
+    }
+  }
+#endif
+
   bool atomic;
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -904,8 +944,39 @@ sunrealtype N_VDotProd_Hip(N_Vector X, N_Vector Y)
   return gpu_result;
 }
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+/* Reduction operator returning the larger of the magnitudes of its arguments */
+struct MaxAbs
+{
+  __host__ __device__ sunrealtype operator()(const sunrealtype& x,
+                                             const sunrealtype& y) const
+  {
+    const sunrealtype ax = (x < ZERO ? -x : x);
+    const sunrealtype ay = (y < ZERO ? -y : y);
+    return (ax > ay ? ax : ay);
+  }
+};
+
+static sunrealtype thrustMaxNorm(sunrealtype* X, sunindextype N,
+                                 hipStream_t stream)
+{
+  return thrust::reduce(thrust::hip::par.on(stream), X, X + N, ZERO, MaxAbs());
+}
+#endif
+
 sunrealtype N_VMaxNorm_Hip(N_Vector X)
 {
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  if (NVEC_HIP_CONTENT(X)->reduce_exec_policy->usesThrust())
+  {
+    const sunindextype N = NVEC_HIP_CONTENT(X)->length;
+    if (N > 0)
+    {
+      return thrustMaxNorm(NVEC_HIP_DDATAp(X), N, NVectorHipReduceStream(X));
+    }
+  }
+#endif
+
   bool atomic;
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -951,8 +1022,42 @@ sunrealtype N_VMaxNorm_Hip(N_Vector X)
   return gpu_result;
 }
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+/* Maps a (x, w) pair to the weighted square (x * w)^2 */
+struct WeightedSquare
+{
+  __host__ __device__ sunrealtype
+  operator()(const thrust::tuple<sunrealtype, sunrealtype>& xw) const
+  {
+    const sunrealtype xiwi = thrust::get<0>(xw) * thrust::get<1>(xw);
+    return xiwi * xiwi;
+  }
+};
+
+static sunrealtype thrustWSqrSum(sunrealtype* X, sunrealtype* W, sunindextype N,
+                                 hipStream_t stream)
+{
+  const auto begin = thrust::make_zip_iterator(thrust::make_tuple(X, W));
+  return thrust::transform_reduce(thrust::hip::par.on(stream), begin, begin + N,
+                                  WeightedSquare(), ZERO,
+                                  thrust::plus<sunrealtype>());
+}
+#endif
+
 sunrealtype N_VWSqrSumLocal_Hip(N_Vector X, N_Vector W)
 {
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  if (NVEC_HIP_CONTENT(X)->reduce_exec_policy->usesThrust())
+  {
+    const sunindextype N = NVEC_HIP_CONTENT(X)->length;
+    if (N > 0)
+    {
+      return thrustWSqrSum(NVEC_HIP_DDATAp(X), NVEC_HIP_DDATAp(W), N,
+                           NVectorHipReduceStream(X));
+    }
+  }
+#endif
+
   bool atomic;
   size_t grid, block, shMemSize;
   hipStream_t stream;
@@ -1057,8 +1162,31 @@ sunrealtype N_VWrmsNormMask_Hip(N_Vector X, N_Vector W, N_Vector Id)
   return std::sqrt(sum / NVEC_HIP_CONTENT(X)->length);
 }
 
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+static sunrealtype thrustMin(sunrealtype* X, sunindextype N, hipStream_t stream)
+{
+  sunrealtype* xmin = thrust::min_element(thrust::hip::par.on(stream), X, X + N);
+  sunrealtype xm = ZERO;
+  SUNDIALS_HIP_VERIFY(hipStreamSynchronize(stream));
+  SUNDIALS_HIP_VERIFY(
+    hipMemcpy(&xm, xmin, sizeof(sunrealtype), hipMemcpyDeviceToHost));
+  return xm;
+}
+#endif
+
 sunrealtype N_VMin_Hip(N_Vector X)
 {
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  if (NVEC_HIP_CONTENT(X)->reduce_exec_policy->usesThrust())
+  {
+    const sunindextype N = NVEC_HIP_CONTENT(X)->length;
+    if (N > 0)
+    {
+      return thrustMin(NVEC_HIP_DDATAp(X), N, NVectorHipReduceStream(X));
+    }
+  }
+#endif
+
   bool atomic;
   size_t grid, block, shMemSize;
   hipStream_t stream;
