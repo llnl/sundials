@@ -83,7 +83,8 @@ testpaths = [
   "examples/cvodes/cvs_brusselator/python",
   "examples/cvodes/cvs_lotka_volterra/python",
   "examples/cvodes/cvs_pr/python",
-  "examples/cvodes/cvs_vdp/python"
+  "examples/cvodes/cvs_vdp/python",
+  "examples/idas/idas_slider_crank/python"
 ]
 
 [tool.cibuildwheel]

@@ -104,7 +104,7 @@ the matrix implementation compatible with the linear solver. (see Chapter
 :numref:`SUNMatrix` for more information).
 
 Other headers may be needed, according to the choice of preconditioner, etc. For
-example, in the example ``idasFoodWeb_kry_p`` (see :cite:p:`ida_ex`),
+example, in the example ``idas_food_web_kry_p`` (see :cite:p:`ida_ex`),
 preconditioning is done with a block-diagonal matrix. For this, even though the
 ``SUNLINSOL_SPGMR`` linear solver is used, the header
 ``sundials/sundials_dense.h`` is included for access to the underlying generic

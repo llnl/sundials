@@ -27,6 +27,10 @@ Reorganized the CVODES examples using the same problem-based structure as the
 CVODE and ARKODE examples. The old CVODES example Makefiles are no longer
 installed; use the installed CMakeLists.txt files instead.
 
+Reorganized the IDAS examples using the same problem-based structure as the
+CVODE and ARKODE examples. The old IDAS example Makefiles are no longer
+installed; use the installed CMakeLists.txt files instead.
+
 The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
 targets are now exported by installed SUNDIALS CMake packages. The installed
 Ginkgo targets also propagate their Ginkgo dependency to consumers.
