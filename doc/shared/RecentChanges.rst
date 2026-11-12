@@ -32,6 +32,11 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 **Bug Fixes**
 
+Fixed IDAS staggered forward sensitivity analysis retrying a failed
+converged-state residual evaluation without restoring the attempted step.
+Recoverable failures now reduce the step size and count toward the existing
+convergence-failure limit.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 

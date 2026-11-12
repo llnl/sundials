@@ -1,0 +1,8 @@
+staggered control: PASS
+simultaneous control: PASS
+recoverable residual: PASS
+first-step residual: PASS
+recoverable with quadratures: PASS
+persistent residual: PASS
+first-step persistent: PASS
+unrecoverable residual: PASS
