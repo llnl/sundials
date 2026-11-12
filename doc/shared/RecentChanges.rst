@@ -5,31 +5,10 @@
 
 **New Features and Enhancements**
 
-Reorganized the IDA examples by problem, with implementation language and
-optional third-party libraries represented by variant subdirectories. Each
-variant contains its input files and reference output. The old IDA example
-Makefiles are no longer installed; use the installed CMakeLists.txt files
-instead.
-
-Reorganized the CVODE examples by problem, with implementation language and
-optional third-party libraries represented by variant subdirectories. Each
-variant contains its input files, scripts, and reference output. The old CVODE
-example Makefiles are no longer installed; use the installed CMakeLists.txt
-files instead.
-
-Reorganized the ARKODE examples using the same problem-based structure as the
-CVODE examples, with implementation language and optional third-party
-libraries represented by variant subdirectories. Each variant contains its
-input files, scripts, and reference output. The old ARKODE example Makefiles
+Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
+subdirectories for each problem variant. The subdirectories contain the example
+source, input files, scripts, and reference output. The old example Makefiles
 are no longer installed; use the installed CMakeLists.txt files instead.
-
-Reorganized the CVODES examples using the same problem-based structure as the
-CVODE and ARKODE examples. The old CVODES example Makefiles are no longer
-installed; use the installed CMakeLists.txt files instead.
-
-Reorganized the IDAS examples using the same problem-based structure as the
-CVODE and ARKODE examples. The old IDAS example Makefiles are no longer
-installed; use the installed CMakeLists.txt files instead.
 
 The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
 targets are now exported by installed SUNDIALS CMake packages. The installed

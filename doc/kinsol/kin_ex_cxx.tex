@@ -2,12 +2,12 @@
 \section{C++ example problems}\label{s:ex_cpp}
 %===============================================================================
 
-\subsection{A parallel matrix-free example: kin\_heat2D\_nonlin\_p}
-\label{ss:kin_heat2D_nonlin_p}
+\subsection{A parallel matrix-free example: kin\_heat\_2d\_nonlin\_p}
+\label{ss:kin_heat_2d_nonlin_p}
 
 As an illustration of the use of the {\kinsol} package for the solution of
 nonlinear systems in parallel, we give a sample program called
-\id{kin\_heat2D\_nonlin\_p.cpp}.  It uses the {\kinsol} \id{KINFP} iteration
+\id{kin\_heat\_2d\_nonlin\_p.cpp}.  It uses the {\kinsol} \id{KINFP} iteration
 with Anderson Acceleration and the {\nvecp} module (which provides a parallel
 implementation of {\nvector}) for the solution of the following test problem.
 This example highlights the use of the various orthogonalization routine options
@@ -119,12 +119,12 @@ Flag & Function \\
 \end{table}
 %-------------------------------------------------------------------------------
 
-\subsection{A parallel example using {\hypre}: kin\_heat2D\_nonlin\_hypre\_pfmg}
-\label{ss:kin_heat2D_nonlin_hypre_pfmg}
+\subsection{A parallel example using {\hypre}: kin\_heat\_2d\_nonlin\_hypre\_pfmg}
+\label{ss:kin_heat_2d_nonlin_hypre_pfmg}
 
 As an illustration of the use of the {\kinsol} package for the solution of
 nonlinear systems in parallel and using {\hypre} linear solvers, we give a
-sample program called \\ \id{kin\_heat2D\_nonlin\_hypre\_pfmg.cpp}.  It uses the
+sample program called \\ \id{kin\_heat\_2d\_nonlin\_hypre\_pfmg.cpp}.  It uses the
 {\kinsol} \id{KINFP} iteration and the {\nvecp} module (which provides a
 parallel implementation of {\nvector}) for the solution of the following test
 problem.  This example highlights the use of the various orthogonalization
@@ -181,7 +181,7 @@ setup of the linear solver can be found in the \id{Setup\_LS} function, and
 setup of the {\hypre} preconditioner can be found in the \id{Setup\_Hypre}
 function within the main file.
 
-All input parameter flags available for Example \ref{ss:kin_heat2D_nonlin_p} are
+All input parameter flags available for Example \ref{ss:kin_heat_2d_nonlin_p} are
 also available for this problem.  In addition, all runtime flags controlling the
 linear solver and {\hypre} related parameters are set using the flags in the
 following table.

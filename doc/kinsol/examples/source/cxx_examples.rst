@@ -19,11 +19,11 @@
 C++ Example Problems
 ====================
 
-Parallel Matrix-Free Example: kin_heat2D_nonlin_p
+Parallel Matrix-Free Example: kin_heat_2d_nonlin_p
 -------------------------------------------------
 
 As an illustration using KINSOL for the solution of nonlinear systems in
-parallel, we give a sample program called ``kin_heat2D_nonlin_p.cpp``. It uses
+parallel, we give a sample program called ``kin_heat_2d_nonlin_p.cpp``. It uses
 the KINSOL fixed-point (``KIN_FP``) iteration with Anderson Acceleration and the
 :ref:`MPI parallel vector <NVectors.NVParallel>` for the solution of a
 steady-state 2D heat equation with an additional nonlinear term defined by
@@ -157,12 +157,12 @@ Input Parameter Flags for Nonlinear Function :math:`c(u)`
 | ``--c 17`` | :math:`c(u) = u + u e^{-u} + e^u (u + \sin(u) - \cos(u))^3`                          |
 +------------+--------------------------------------------------------------------------------------+
 
-Parallel Example Using hypre: kin_heat2D_nonlin_hypre_pfmg
+Parallel Example Using hypre: kin_heat_2d_nonlin_hypre_pfmg
 ----------------------------------------------------------
 
 As an illustration of the use of the KINSOL package for the solution of
 nonlinear systems in parallel and using *hypre* linear solvers, we give a sample
-program called ``kin_heat2D_nonlin_hypre_pfmg.cpp``. It uses the KINSOL
+program called ``kin_heat_2d_nonlin_hypre_pfmg.cpp``. It uses the KINSOL
 fixed-point (``KIN_FP``) iteration with Anderson Acceleration and the :ref:`MPI
 parallel vector <NVectors.NVParallel>` for the solution of a steady-state 2D
 heat equation with an additional nonlinear term defined by :math:`c(u)`:
