@@ -80,6 +80,10 @@ $tar $tarfile $distrobase/src/sundomeigest
 
 echo "   --- Add examples to $tarfile"
 $tar $tarfile $distrobase/examples/CMakeLists.txt
+$tar $tarfile $distrobase/examples/README.md
+$tar $tarfile $distrobase/examples/nvector
+$tar $tarfile $distrobase/examples/sunlinsol
+$tar $tarfile $distrobase/examples/sunmatrix
 $tar $tarfile $distrobase/examples/templates
 $tar $tarfile $distrobase/examples/utilities
 

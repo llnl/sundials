@@ -55,6 +55,7 @@ sundials4py:
       - any-glob-to-any-file:
           - 'bindings/sundials4py/**'
           - 'examples/python/**'
+          - 'examples/*/*/python/**'
           - 'pyproject.toml'
 
 tools:
