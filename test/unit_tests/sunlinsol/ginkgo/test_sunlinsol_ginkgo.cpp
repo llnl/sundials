@@ -73,230 +73,24 @@ const std::unordered_map<std::string, int> methods{{"bicg", 0}, {"bicgstab", 1},
 const std::unordered_map<std::string, int> matrix_types{{"csr", 0}, {"dense", 1}};
 
 /* -------------------------------------------------------------------------- *
- * Matrix fill functions                                                      *
+ * Matrix data fill function                                                  *
  * -------------------------------------------------------------------------- */
 
-#if defined(USE_CUDA) || defined(USE_HIP)
-__global__ void fill_kernel(sunindextype mat_rows, sunindextype mat_cols,
-                            sunindextype* row_ptrs, sunindextype* col_idxs,
-                            sunrealtype* mat_data)
+static void fill_matrix_data(gko::matrix_data<sunrealtype, sunindextype>& matrix_data)
 {
-  const sunindextype row = blockIdx.x * blockDim.x + threadIdx.x;
-  const sunindextype nnz = 3 * mat_rows - 2;
-
-  if (row == 0)
+  const auto num_rows = matrix_data.size[0];
+  for (gko::size_type row = 0; row < num_rows; ++row)
   {
-    // first row
-    mat_data[0] = 2;
-    mat_data[1] = -1;
-    col_idxs[0] = 0;
-    col_idxs[1] = 1;
-    row_ptrs[0] = 0;
-  }
-  else if (row == mat_rows - 1)
-  {
-    // last row
-    mat_data[nnz - 2]      = -1;
-    mat_data[nnz - 1]      = 2;
-    col_idxs[nnz - 2]      = mat_rows - 2;
-    col_idxs[nnz - 1]      = mat_rows - 1;
-    row_ptrs[mat_rows - 1] = nnz - 2;
-    row_ptrs[mat_rows]     = nnz;
-  }
-  else if (row < mat_rows)
-  {
-    // other rows
-    sunindextype idx  = 3 * row - 1;
-    mat_data[idx]     = -1;
-    mat_data[idx + 1] = 2;
-    mat_data[idx + 2] = -1;
-    col_idxs[idx]     = row - 1;
-    col_idxs[idx + 1] = row;
-    col_idxs[idx + 2] = row + 1;
-    row_ptrs[row]     = idx;
-  }
-}
-
-__global__ void fill_kernel(sunindextype mat_rows, sunindextype mat_cols,
-                            sunrealtype* mat_data)
-{
-  const sunindextype row = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (row == 0)
-  {
-    // first row
-    mat_data[0] = 2;
-    mat_data[1] = -1;
-  }
-  else if (row == mat_rows - 1)
-  {
-    // last row
-    mat_data[mat_cols * mat_rows - 2] = -1;
-    mat_data[mat_cols * mat_rows - 1] = 2;
-  }
-  else if (row < mat_rows)
-  {
-    // other rows
-    sunindextype idx  = mat_cols * row + row;
-    mat_data[idx - 1] = -1;
-    mat_data[idx]     = 2;
-    mat_data[idx + 1] = -1;
-  }
-}
-#endif
-
-static void fill_matrix(
-  std::shared_ptr<gko::matrix::Csr<sunrealtype, sunindextype>> matrix)
-{
-  sunindextype mat_rows  = static_cast<sunindextype>(matrix->get_size()[0]);
-  sunindextype mat_cols  = static_cast<sunindextype>(matrix->get_size()[1]);
-  sunindextype* row_ptrs = matrix->get_row_ptrs();
-  sunindextype* col_idxs = matrix->get_col_idxs();
-  sunrealtype* mat_data  = matrix->get_values();
-
-#if defined(USE_CUDA) || defined(USE_HIP)
-  unsigned threads_per_block = 256;
-  unsigned num_blocks = (mat_rows + threads_per_block - 1) / threads_per_block;
-
-  fill_kernel<<<num_blocks, threads_per_block>>>(mat_rows, mat_cols, row_ptrs,
-                                                 col_idxs, mat_data);
-  HIP_OR_CUDA_OR_SYCL(hipDeviceSynchronize(), cudaDeviceSynchronize(), );
-#elif defined(USE_SYCL)
-  std::dynamic_pointer_cast<const gko::DpcppExecutor>(matrix->get_executor())
-    ->get_queue()
-    ->submit(
-      [&](sycl::handler& cgh)
-      {
-        cgh.parallel_for(mat_rows,
-                         [=](sycl::id<1> id)
-                         {
-                           const sunindextype row = id[0];
-                           // copied from fill_kernel for csr`
-                           const sunindextype nnz = 3 * mat_rows - 2;
-
-                           if (row == 0)
-                           {
-                             // first row
-                             mat_data[0] = 2;
-                             mat_data[1] = -1;
-                             col_idxs[0] = 0;
-                             col_idxs[1] = 1;
-                             row_ptrs[0] = 0;
-                           }
-                           else if (row == mat_rows - 1)
-                           {
-                             // last row
-                             mat_data[nnz - 2]      = -1;
-                             mat_data[nnz - 1]      = 2;
-                             col_idxs[nnz - 2]      = mat_rows - 2;
-                             col_idxs[nnz - 1]      = mat_rows - 1;
-                             row_ptrs[mat_rows - 1] = nnz - 2;
-                             row_ptrs[mat_rows]     = nnz;
-                           }
-                           else if (row < mat_rows)
-                           {
-                             // other rows
-                             sunindextype idx  = 3 * row - 1;
-                             mat_data[idx]     = -1;
-                             mat_data[idx + 1] = 2;
-                             mat_data[idx + 2] = -1;
-                             col_idxs[idx]     = row - 1;
-                             col_idxs[idx + 1] = row;
-                             col_idxs[idx + 2] = row + 1;
-                             row_ptrs[row]     = idx;
-                           }
-                         });
-      });
-  matrix->get_executor()->synchronize();
-#else
-  // Matrix entries
-  const sunrealtype vals[] = {-1, 2, -1};
-
-  // Fill matrix
-  int idx     = 0;
-  row_ptrs[0] = idx;
-  for (auto row = 0; row < mat_rows; ++row)
-  {
-    for (auto diag_offset : {-1, 0, 1})
+    if (row > 0)
     {
-      auto col = row + diag_offset;
-      if (0 <= col && col < mat_cols)
-      {
-        mat_data[idx] = vals[diag_offset + 1];
-        col_idxs[idx] = col;
-        ++idx;
-      }
+      matrix_data.nonzeros.emplace_back(row, row - 1, sunrealtype{-1.0});
     }
-    row_ptrs[row + 1] = idx;
-  }
-#endif
-}
-
-static void fill_matrix(std::shared_ptr<gko::matrix::Dense<sunrealtype>> matrix)
-{
-  sunindextype mat_rows = static_cast<sunindextype>(matrix->get_size()[0]);
-  sunindextype mat_cols = static_cast<sunindextype>(matrix->get_size()[1]);
-  sunrealtype* mat_data = matrix->get_values();
-
-#if defined(USE_CUDA) || defined(USE_HIP)
-  unsigned threads_per_block = 256;
-  unsigned num_blocks = (mat_rows + threads_per_block - 1) / threads_per_block;
-
-  fill_kernel<<<num_blocks, threads_per_block>>>(mat_rows, mat_cols, mat_data);
-  HIP_OR_CUDA_OR_SYCL(hipDeviceSynchronize(), cudaDeviceSynchronize(), );
-#elif defined(USE_SYCL)
-  std::dynamic_pointer_cast<const gko::DpcppExecutor>(matrix->get_executor())
-    ->get_queue()
-    ->submit(
-      [&](sycl::handler& cgh)
-      {
-        cgh.parallel_for(mat_rows,
-                         [=](sycl::id<1> id)
-                         {
-                           const sunindextype row = id[0];
-                           // copied from fill_kernel for dense
-                           if (row == 0)
-                           {
-                             // first row
-                             mat_data[0] = 2;
-                             mat_data[1] = -1;
-                           }
-                           else if (row == mat_rows - 1)
-                           {
-                             // last row
-                             mat_data[mat_cols * mat_rows - 2] = -1;
-                             mat_data[mat_cols * mat_rows - 1] = 2;
-                           }
-                           else if (row < mat_rows)
-                           {
-                             // other rows
-                             sunindextype idx  = mat_cols * row + row;
-                             mat_data[idx - 1] = -1;
-                             mat_data[idx]     = 2;
-                             mat_data[idx + 1] = -1;
-                           }
-                         });
-      });
-  matrix->get_executor()->synchronize();
-#else
-  // Matrix entries
-  const sunrealtype vals[] = {-1, 2, -1};
-
-  // Fill matrix
-  for (auto row = 0; row < mat_rows; ++row)
-  {
-    for (auto diag_offset : {-1, 0, 1})
+    matrix_data.nonzeros.emplace_back(row, row, sunrealtype{2.0});
+    if (row < num_rows - 1)
     {
-      auto col = row + diag_offset;
-      if (0 <= col && col < mat_cols)
-      {
-        // Data stored in row-major format
-        auto idx      = row * mat_cols + col;
-        mat_data[idx] = vals[diag_offset + 1];
-      }
+      matrix_data.nonzeros.emplace_back(row, row + 1, sunrealtype{-1.0});
     }
   }
-#endif
 }
 
 /* -------------------------------------------------------------------------- *
@@ -465,6 +259,17 @@ int main(int argc, char* argv[])
 
   auto matrix_dim{gko::dim<2>(matrows, matcols)};
 
+  auto gko_matdata =
+    matcond > 0
+      ? gko::matrix_data<sunrealtype,
+                         sunindextype>::cond(matrows,
+                                             gko::remove_complex<sunrealtype>{
+                                               matcond},
+                                             distribution_real, engine)
+      : gko::matrix_data<sunrealtype, sunindextype>(matrix_dim);
+
+  if (matcond <= 0) { fill_matrix_data(gko_matdata); }
+
   if (matrix_type == "csr")
   {
     using GkoMatrixType = gko::matrix::Csr<sunrealtype, sunindextype>;
@@ -472,16 +277,8 @@ int main(int argc, char* argv[])
     auto gko_matrix =
       gko::share(GkoMatrixType::create(gko_exec, matrix_dim, matrix_nnz));
 
-    if (matcond > 0)
-    {
-      auto gko_matdata{gko::matrix_data<
-        sunrealtype, sunindextype>::cond(matrows,
-                                         gko::remove_complex<sunrealtype>{matcond},
-                                         distribution_real, engine)};
-      gko_matdata.remove_zeros();
-      gko_matrix->read(gko_matdata);
-    }
-    else { fill_matrix(gko_matrix); }
+    gko_matdata.remove_zeros();
+    gko_matrix->read(gko_matdata);
     A = std::make_unique<sundials::ginkgo::Matrix<GkoMatrixType>>(std::move(
                                                                     gko_matrix),
                                                                   sunctx);
@@ -490,20 +287,7 @@ int main(int argc, char* argv[])
   {
     using GkoMatrixType = gko::matrix::Dense<sunrealtype>;
     auto gko_matrix = gko::share(GkoMatrixType::create(gko_exec, matrix_dim));
-    if (matcond > 0)
-    {
-      auto gko_matdata{gko::matrix_data<
-        sunrealtype, sunindextype>::cond(matrows,
-                                         gko::remove_complex<sunrealtype>{matcond},
-                                         distribution_real, engine)};
-      gko_matdata.remove_zeros();
-      gko_matrix->read(gko_matdata);
-    }
-    else
-    {
-      gko_matrix->fill(0.0);
-      fill_matrix(gko_matrix);
-    }
+    gko_matrix->read(gko_matdata);
     A = std::make_unique<sundials::ginkgo::Matrix<GkoMatrixType>>(std::move(
                                                                     gko_matrix),
                                                                   sunctx);
