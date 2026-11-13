@@ -224,7 +224,7 @@ using ARKRelaxStdFn = std::tuple<int, sunrealtype>(N_Vector y, void* user_data);
 
 inline int arkode_relaxfn_wrapper(N_Vector y, sunrealtype* r, void* user_data)
 {
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_arkode_fn_table(user_data);
   auto fn       = nb::cast<std::function<ARKRelaxStdFn>>(fn_table->relaxfn);
 
   auto result = fn(y, nullptr);
@@ -267,7 +267,7 @@ inline int arkode_lsprecsetupfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
                                         sunbooleantype* jcurPtr,
                                         sunrealtype gamma, void* user_data)
 {
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_arkode_fn_table(user_data);
   auto fn = nb::cast<std::function<ARKLsPrecSetupStdFn>>(fn_table->lsprecsetupfn);
 
   auto result = fn(t, y, fy, jok, gamma, nullptr);
@@ -312,7 +312,7 @@ inline int arkode_lslinsysfn_wrapper(sunrealtype t, N_Vector y, N_Vector fy,
                                      sunrealtype gamma, void* user_data,
                                      N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_arkode_fn_table(user_data);
   auto fn = nb::cast<std::function<ARKLsLinSysStdFn>>(fn_table->lslinsysfn);
 
   auto result = fn(t, y, fy, A, M, jok, gamma, nullptr, tmp1, tmp2, tmp3);
@@ -507,7 +507,7 @@ using MRIStepPreInnerStdFn = int(sunrealtype t, std::vector<N_Vector> f,
 inline int mristep_preinnerfn_wrapper(sunrealtype t, N_Vector* f_1d, int nvecs,
                                       void* user_data)
 {
-  auto fn_table = static_cast<arkode_user_supplied_fn_table*>(user_data);
+  auto fn_table = get_arkode_fn_table(user_data);
   auto fn =
     nb::cast<std::function<MRIStepPreInnerStdFn>>(fn_table->mristep_preinnerfn);
 

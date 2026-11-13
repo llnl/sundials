@@ -125,6 +125,39 @@ def test_implicit(sunctx):
     assert_allclose(N_VGetArrayPointer(sol), N_VGetArrayPointer(y), atol=100 * SUNREALTYPE_RTOL)
 
 
+def test_implicit_with_python_preconditioner(sunctx):
+    y = N_VNew_Serial(1, sunctx)
+    N_VGetArrayPointer(y)[0] = 1.0
+    calls = {"setup": 0, "solve": 0}
+
+    def rhs(t, yvec, ydotvec, _):
+        N_VScale(-1.0, yvec, ydotvec)
+        return 0
+
+    def psetup(t, yvec, fy, jok, gamma, _):
+        calls["setup"] += 1
+        return 0, True
+
+    def psolve(t, yvec, fy, r, z, gamma, delta, lr, _):
+        calls["solve"] += 1
+        N_VScale(1.0 / (1.0 + gamma), r, z)
+        return 0
+
+    ark = ARKStepCreate(None, rhs, 0.0, y, sunctx)
+    mem = ark.get()
+    ls = SUNLinSol_PCG(y, SUN_PREC_RIGHT, 20, sunctx)
+    assert ARKodeSStolerances(mem, 1e-6, 1e-10) == ARK_SUCCESS
+    assert ARKodeSetLinearSolver(mem, ls, None) == ARK_SUCCESS
+    assert ARKodeSetPreconditioner(mem, psetup, psolve) == ARK_SUCCESS
+    assert ARKodeSetLinear(mem, 0) == ARK_SUCCESS
+
+    status, tret = ARKodeEvolve(mem, 1.0, y, ARK_NORMAL)
+    assert status == ARK_SUCCESS
+    assert calls["setup"] > 0
+    assert calls["solve"] > 0
+    assert_allclose(N_VGetArrayPointer(y)[0], np.exp(-tret), rtol=1e-4)
+
+
 def test_implicit_with_dense_ls_and_jac(sunctx):
     y = N_VNew_Serial(1, sunctx)
 
