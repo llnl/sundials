@@ -65,9 +65,10 @@ class Diffusion1D:
     """u_t = DIFF u_xx on (0, 1) with u = 0 at both ends. If comm is None the
     whole grid lives in this process and no halo exchange happens."""
 
-    def __init__(self, comm, n_local, offset, xp=np):
+    def __init__(self, comm, n_local, offset, xp=np, backend="serial"):
         self.comm = comm
         self.xp = xp
+        self.backend = backend
         self.n_local = n_local
         self.offset = offset
         self.dx = 1.0 / (NX + 1)
@@ -104,7 +105,10 @@ class Diffusion1D:
     def array(self, vector):
         if self.xp is np:
             return sun.N_VGetNumpyArray(vector)
-        return sun.N_VGetCupyArray(vector)
+        accessor = (
+            sun.N_VGetCupyArray_Hip if self.backend == "hip" else sun.N_VGetCupyArray
+        )
+        return accessor(vector)
 
     def to_host(self, array):
         return array if self.xp is np else self.xp.asnumpy(array)
@@ -144,25 +148,27 @@ def run(integrator, y, problem, sunctx):
 
 
 @pytest.mark.parametrize("integrator", ["arkstep", "cvodes"])
-@pytest.mark.parametrize("backend", ["serial", "cuda"])
+@pytest.mark.parametrize("backend", ["serial", "cuda", "hip"])
 def test_diffusion_matches_single_rank_reference(integrator, backend):
     xp = np
-    if backend == "cuda":
-        if not hasattr(sun, "N_VNew_Cuda"):
-            pytest.skip("sundials4py was built without CUDA support")
+    if backend != "serial":
+        if not hasattr(sun, f"N_VNew_{backend.title()}"):
+            pytest.skip(f"sundials4py was built without {backend.upper()} support")
         xp = pytest.importorskip("cupy")
+        if bool(xp.cuda.runtime.is_hip) != (backend == "hip"):
+            pytest.skip(f"CuPy was not built for {backend.upper()}")
     comm = MPI.COMM_WORLD
     status, sunctx = sun.SUNContext_Create(comm)
     assert status == sun.SUN_SUCCESS
 
-    # Distributed solve; CUDA halo exchanges are staged through host buffers.
+    # GPU halo exchanges are staged through host buffers.
     n_local, offset = decompose(comm)
-    factory = sun.N_VNew_Serial if backend == "serial" else sun.N_VNew_Cuda
+    factory = getattr(sun, f"N_VNew_{backend.title()}")
     local = factory(n_local, sunctx)
     y = sun.N_VMake_MPIPlusX(comm, local, sunctx)
-    problem = Diffusion1D(comm, n_local, offset, xp)
+    problem = Diffusion1D(comm, n_local, offset, xp, backend)
     problem.array(y)[:] = xp.asarray(initial_condition(problem.x()))
-    if backend == "cuda":
+    if backend != "serial":
         xp.cuda.get_current_stream().synchronize()
     counts = run(integrator, y, problem, sunctx)
     u_dist = np.concatenate(comm.allgather(np.array(problem.to_host(problem.array(y)))))

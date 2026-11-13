@@ -42,6 +42,10 @@ through JAX and PyTorch, with a shared solver setup and a performance comparison
 script. The GPU examples use host-staged halo exchanges and do not require
 CUDA-aware MPI.
 
+Added MPI+HIP coverage for sundials4py MPIPlusX and MPIManyVector vectors and
+ROCm JAX and PyTorch heat equation examples. Halo exchanges use host buffers and
+do not require HIP-aware MPI.
+
 **Bug Fixes**
 
 Fixed a bug in the sundials4py CUDA ``N_Vector`` DLPack interface where the

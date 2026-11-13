@@ -35,6 +35,33 @@ time, and warmup time. All ranks use visible GPU 0. On multi-GPU systems, use yo
 launcher to set `CUDA_VISIBLE_DEVICES` for each rank. On a single GPU, ranks share
 that GPU. JAX preallocation must be disabled before import when ranks share it.
 
+For ROCm, build sundials4py from source with `SUNDIALS_ENABLE_MPI=ON` and
+`SUNDIALS_ENABLE_HIP=ON`, and install mpi4py against the same MPI library.
+The separate `sundials4py-rocm` wheel is built without MPI and takes precedence
+over the source extension when installed, so remove it from this environment.
+Use the following source build, with `ROCM_PATH` and `HIP_PATH` set if CMake
+cannot find the ROCm installation:
+
+```sh
+python -m pip uninstall sundials4py-rocm
+python -m pip install --no-build-isolation -e . \
+	-Ccmake.define.SUNDIALS_ENABLE_MPI=ON \
+	-Ccmake.define.SUNDIALS_ENABLE_HIP=ON
+```
+
+Install ROCm builds of PyTorch and JAX, then run:
+
+```sh
+export XLA_PYTHON_CLIENT_PREALLOCATE=false
+mpiexec -n 2 python -m mpi4py examples/python/arkode/ark_heat1D_mpi_jax_hip.py
+mpiexec -n 2 python -m mpi4py examples/python/arkode/ark_heat1D_mpi_torch_hip.py
+```
+
+ROCm PyTorch uses the `torch.cuda` API to select and synchronize HIP devices.
+Set `ROCR_VISIBLE_DEVICES` per rank when assigning separate GPUs. The HIP
+examples also stage halo rows through host memory, so HIP-aware MPI is not
+required.
+
 To increase vector work without increasing spatial stiffness, pass `--fields`.
 Fields are independent heat equations, not a coupled PDE. Pass `--multimode` to
 initialize two sine modes with field-dependent amplitudes. The default remains a
