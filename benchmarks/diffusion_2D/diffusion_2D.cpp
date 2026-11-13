@@ -190,6 +190,15 @@ int UserData::parse_args(vector<string>& args, bool outproc)
     args.erase(it);
   }
 
+#if defined(USE_CUDA) || defined(USE_HIP)
+  it = find(args.begin(), args.end(), "--host-staging");
+  if (it != args.end())
+  {
+    host_staging = true;
+    args.erase(it);
+  }
+#endif
+
   // Recompute total number of nodes
   nodes = nx * ny;
 
@@ -213,6 +222,9 @@ void UserData::help()
   cout << "  --ky <kx>    : y-direction diffusion coefficient" << endl;
   cout << "  --noforcing  : disable forcing term" << endl;
   cout << "  --tf <time>  : final time" << endl;
+#if defined(USE_CUDA) || defined(USE_HIP)
+  cout << "  --host-staging : stage GPU halos through host memory for MPI" << endl;
+#endif
 }
 
 void UserData::print()
@@ -227,6 +239,9 @@ void UserData::print()
   cout << "  kx             = " << kx << endl;
   cout << "  ky             = " << ky << endl;
   cout << "  forcing        = " << forcing << endl;
+#if defined(USE_CUDA) || defined(USE_HIP)
+  cout << "  host staging   = " << host_staging << endl;
+#endif
   cout << "  tf             = " << tf << endl;
   cout << "  xu             = " << xu << endl;
   cout << "  yu             = " << yu << endl;
@@ -439,8 +454,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrW)
   {
-    flag = MPI_Irecv(Wrecv, (int)ny_loc, MPI_SUNREALTYPE, ipW, MPI_ANY_TAG,
-                     comm_c, &reqRW);
+    flag = MPI_Irecv(host_staging ? Wrecv_host.data() : Wrecv, (int)ny_loc,
+                     MPI_SUNREALTYPE, ipW, MPI_ANY_TAG, comm_c, &reqRW);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Irecv = " << flag << endl;
@@ -450,8 +465,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrE)
   {
-    flag = MPI_Irecv(Erecv, (int)ny_loc, MPI_SUNREALTYPE, ipE, MPI_ANY_TAG,
-                     comm_c, &reqRE);
+    flag = MPI_Irecv(host_staging ? Erecv_host.data() : Erecv, (int)ny_loc,
+                     MPI_SUNREALTYPE, ipE, MPI_ANY_TAG, comm_c, &reqRE);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Irecv = " << flag << endl;
@@ -461,8 +476,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrS)
   {
-    flag = MPI_Irecv(Srecv, (int)nx_loc, MPI_SUNREALTYPE, ipS, MPI_ANY_TAG,
-                     comm_c, &reqRS);
+    flag = MPI_Irecv(host_staging ? Srecv_host.data() : Srecv, (int)nx_loc,
+                     MPI_SUNREALTYPE, ipS, MPI_ANY_TAG, comm_c, &reqRS);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Irecv = " << flag << endl;
@@ -472,8 +487,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrN)
   {
-    flag = MPI_Irecv(Nrecv, (int)nx_loc, MPI_SUNREALTYPE, ipN, MPI_ANY_TAG,
-                     comm_c, &reqRN);
+    flag = MPI_Irecv(host_staging ? Nrecv_host.data() : Nrecv, (int)nx_loc,
+                     MPI_SUNREALTYPE, ipN, MPI_ANY_TAG, comm_c, &reqRN);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Irecv = " << flag << endl;
@@ -493,9 +508,14 @@ int UserData::start_exchange(const N_Vector u)
     return -1;
   }
 
+#if defined(USE_CUDA) || defined(USE_HIP)
+  if (host_staging && stage_send_buffers()) { return -1; }
+#endif
+
   if (HaveNbrW)
   {
-    flag = MPI_Isend(Wsend, (int)ny_loc, MPI_SUNREALTYPE, ipW, 0, comm_c, &reqSW);
+    flag = MPI_Isend(host_staging ? Wsend_host.data() : Wsend, (int)ny_loc,
+                     MPI_SUNREALTYPE, ipW, 0, comm_c, &reqSW);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Isend = " << flag << endl;
@@ -505,7 +525,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrE)
   {
-    flag = MPI_Isend(Esend, (int)ny_loc, MPI_SUNREALTYPE, ipE, 1, comm_c, &reqSE);
+    flag = MPI_Isend(host_staging ? Esend_host.data() : Esend, (int)ny_loc,
+                     MPI_SUNREALTYPE, ipE, 1, comm_c, &reqSE);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Isend = " << flag << endl;
@@ -515,7 +536,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrS)
   {
-    flag = MPI_Isend(Ssend, (int)nx_loc, MPI_SUNREALTYPE, ipS, 2, comm_c, &reqSS);
+    flag = MPI_Isend(host_staging ? Ssend_host.data() : Ssend, (int)nx_loc,
+                     MPI_SUNREALTYPE, ipS, 2, comm_c, &reqSS);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Isend = " << flag << endl;
@@ -525,7 +547,8 @@ int UserData::start_exchange(const N_Vector u)
 
   if (HaveNbrN)
   {
-    flag = MPI_Isend(Nsend, (int)nx_loc, MPI_SUNREALTYPE, ipN, 3, comm_c, &reqSN);
+    flag = MPI_Isend(host_staging ? Nsend_host.data() : Nsend, (int)nx_loc,
+                     MPI_SUNREALTYPE, ipN, 3, comm_c, &reqSN);
     if (flag != MPI_SUCCESS)
     {
       cerr << "Error in MPI_Isend = " << flag << endl;
@@ -609,6 +632,10 @@ int UserData::end_exchange()
       return -1;
     }
   }
+
+#if defined(USE_CUDA) || defined(USE_HIP)
+  if (host_staging && stage_recv_buffers()) { return -1; }
+#endif
 
   // Return success
   return 0;

@@ -120,6 +120,10 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
        sunmemory/sunmemory_cuda.cpp)
 endif()
 
+if(SUNDIALS_ENABLE_NVECTOR_MPIPLUSX)
+  list(APPEND sundials_SOURCES nvector/nvector_mpiplusx.cpp)
+endif()
+
 # Conditionally add HIP bindings
 if(SUNDIALS_ENABLE_NVECTOR_HIP)
   list(APPEND sundials_SOURCES nvector/nvector_hip.cpp
@@ -195,6 +199,13 @@ if(SUNDIALS_ENABLE_NVECTOR_CUDA)
                              PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
   target_compile_definitions(${sundials4py_target}
                              PRIVATE SUNDIALS4PY_NVECTOR_CUDA)
+endif()
+
+if(SUNDIALS_ENABLE_NVECTOR_MPIPLUSX)
+  target_link_libraries(${sundials4py_target} PRIVATE sundials_nvecmpiplusx
+                                                     MPI::MPI_CXX)
+  target_compile_definitions(${sundials4py_target}
+                             PRIVATE SUNDIALS4PY_NVECTOR_MPIPLUSX)
 endif()
 
 if(SUNDIALS_ENABLE_NVECTOR_HIP)

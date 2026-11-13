@@ -39,6 +39,7 @@ int PSetup(sunrealtype t, N_Vector u, N_Vector f, sunbooleantype jok,
   // (since boundary RHS is 0, set boundary diagonals to the same)
   sunrealtype c = ONE / (ONE - gamma * cc);
   N_VConst(c, udata->diag);
+  *jcurPtr = SUNTRUE;
 
   // Return success
   return 0;

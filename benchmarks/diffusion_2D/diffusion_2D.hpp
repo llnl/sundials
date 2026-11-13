@@ -88,6 +88,9 @@ struct UserData
   // Enable/disable forcing
   bool forcing = true;
 
+  // Stage GPU halo buffers through host memory for MPI without GPU support
+  bool host_staging = false;
+
   // Final time
   sunrealtype tf = ONE;
 
@@ -158,6 +161,9 @@ struct UserData
   sunrealtype* Srecv = NULL;
   sunrealtype* Nrecv = NULL;
 
+  // Host halo buffers used when MPI cannot access GPU memory
+  vector<sunrealtype> Wrecv_host, Erecv_host, Srecv_host, Nrecv_host;
+
   // Receive requests for neighbor exchange
   MPI_Request reqRW;
   MPI_Request reqRE;
@@ -169,6 +175,7 @@ struct UserData
   sunrealtype* Esend = NULL;
   sunrealtype* Ssend = NULL;
   sunrealtype* Nsend = NULL;
+  vector<sunrealtype> Wsend_host, Esend_host, Ssend_host, Nsend_host;
 
   // Send requests for neighbor exchange
   MPI_Request reqSW;
@@ -194,6 +201,8 @@ struct UserData
 private:
   int allocate_buffers();
   int pack_buffers(const N_Vector u);
+  int stage_send_buffers();
+  int stage_recv_buffers();
   int free_buffers();
 };
 

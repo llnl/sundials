@@ -33,6 +33,63 @@
 #error Define USE_CUDA or USE_HIP
 #endif
 
+namespace
+{
+int copy_to_host(vector<sunrealtype>& host, const sunrealtype* device)
+{
+  if (host.empty()) { return 0; }
+#if defined(USE_HIP)
+  hipError_t flag = hipMemcpy(host.data(), device,
+                             host.size() * sizeof(sunrealtype),
+                             hipMemcpyDeviceToHost);
+  if (flag != hipSuccess)
+  {
+    cerr << "hipMemcpy device to host failed: " << hipGetErrorString(flag)
+         << endl;
+    return -1;
+  }
+#else
+  cudaError_t flag = cudaMemcpy(host.data(), device,
+                               host.size() * sizeof(sunrealtype),
+                               cudaMemcpyDeviceToHost);
+  if (flag != cudaSuccess)
+  {
+    cerr << "cudaMemcpy device to host failed: " << cudaGetErrorString(flag)
+         << endl;
+    return -1;
+  }
+#endif
+  return 0;
+}
+
+int copy_to_device(sunrealtype* device, const vector<sunrealtype>& host)
+{
+  if (host.empty()) { return 0; }
+#if defined(USE_HIP)
+  hipError_t flag = hipMemcpy(device, host.data(),
+                             host.size() * sizeof(sunrealtype),
+                             hipMemcpyHostToDevice);
+  if (flag != hipSuccess)
+  {
+    cerr << "hipMemcpy host to device failed: " << hipGetErrorString(flag)
+         << endl;
+    return -1;
+  }
+#else
+  cudaError_t flag = cudaMemcpy(device, host.data(),
+                               host.size() * sizeof(sunrealtype),
+                               cudaMemcpyHostToDevice);
+  if (flag != cudaSuccess)
+  {
+    cerr << "cudaMemcpy host to device failed: " << cudaGetErrorString(flag)
+         << endl;
+    return -1;
+  }
+#endif
+  return 0;
+}
+} // namespace
+
 // Pack exchange buffers kernel
 __global__ void pack_buffers_kernel(const sunindextype nx_loc,
                                     const sunindextype ny_loc,
@@ -73,6 +130,26 @@ int UserData::pack_buffers(const N_Vector u)
   pack_buffers_kernel<<<grid, block>>>(nx_loc, ny_loc, uarray, Wsend, Esend,
                                        Ssend, Nsend);
 
+  return 0;
+}
+
+int UserData::stage_send_buffers()
+{
+  if (copy_to_host(Wsend_host, Wsend) || copy_to_host(Esend_host, Esend) ||
+      copy_to_host(Ssend_host, Ssend) || copy_to_host(Nsend_host, Nsend))
+  {
+    return -1;
+  }
+  return 0;
+}
+
+int UserData::stage_recv_buffers()
+{
+  if (copy_to_device(Wrecv, Wrecv_host) || copy_to_device(Erecv, Erecv_host) ||
+      copy_to_device(Srecv, Srecv_host) || copy_to_device(Nrecv, Nrecv_host))
+  {
+    return -1;
+  }
   return 0;
 }
 
@@ -129,6 +206,30 @@ int UserData::allocate_buffers()
 #else
 #error Define USE_CUDA or USE_HIP
 #endif
+  }
+
+  if (host_staging)
+  {
+    if (HaveNbrW)
+    {
+      Wrecv_host.resize(ny_loc);
+      Wsend_host.resize(ny_loc);
+    }
+    if (HaveNbrE)
+    {
+      Erecv_host.resize(ny_loc);
+      Esend_host.resize(ny_loc);
+    }
+    if (HaveNbrS)
+    {
+      Srecv_host.resize(nx_loc);
+      Ssend_host.resize(nx_loc);
+    }
+    if (HaveNbrN)
+    {
+      Nrecv_host.resize(nx_loc);
+      Nsend_host.resize(nx_loc);
+    }
   }
 
   return 0;

@@ -23,6 +23,10 @@
 #include "sunadaptcontroller/sunadaptcontroller_imexgus.h"
 #include "sunadaptcontroller/sunadaptcontroller_soderlind.h"
 
+#if defined(USE_CUDA)
+#include <cuda_runtime.h>
+#endif
+
 struct UserOptions
 {
   // Integrator settings
@@ -391,13 +395,27 @@ int main(int argc, char* argv[])
     flag = uout.write(t, u, &udata);
     if (check_flag(&flag, "UserOutput::write", 1)) { return 1; }
 
+    MPI_Barrier(udata.comm_c);
+    double solve_seconds = 0.0;
     for (int iout = 0; iout < uout.nout; iout++)
     {
       SUNDIALS_MARK_BEGIN(prof, "Evolve");
 
       // Evolve in time
-      flag = ARKodeEvolve(arkode_mem, tout, u, &t, stepmode);
+      double evolve_start = MPI_Wtime();
+      flag                = ARKodeEvolve(arkode_mem, tout, u, &t, stepmode);
       if (check_flag(&flag, "ARKodeEvolve", 1)) { break; }
+
+#if defined(USE_CUDA)
+      auto cuda_flag = cudaDeviceSynchronize();
+      if (cuda_flag != cudaSuccess)
+      {
+        cerr << "cudaDeviceSynchronize failed: " << cudaGetErrorString(cuda_flag)
+             << endl;
+        return 1;
+      }
+#endif
+      solve_seconds += MPI_Wtime() - evolve_start;
 
       SUNDIALS_MARK_END(prof, "Evolve");
 
@@ -410,9 +428,27 @@ int main(int argc, char* argv[])
       tout = (tout > udata.tf) ? udata.tf : tout;
     }
 
-    // Close output
+    double max_solve_seconds = 0.0;
+    MPI_Allreduce(&solve_seconds, &max_solve_seconds, 1, MPI_DOUBLE, MPI_MAX,
+                  udata.comm_c);
+    sunrealtype final_error = ZERO;
+    if (uout.error)
+    {
+      flag = SolutionError(t, u, uout.error, &udata);
+      if (check_flag(&flag, "SolutionError", 1)) { return 1; }
+      final_error = N_VMaxNorm(uout.error);
+    }
+
+    // Close output after computing the final error; close frees the error vector.
     flag = uout.close(&udata);
     if (check_flag(&flag, "UserOutput::close", 1)) { return 1; }
+
+    if (outproc)
+    {
+      cout << fixed << setprecision(6) << "SOLVE_SECONDS=" << max_solve_seconds
+           << endl;
+      cout << scientific << "FINAL_ERROR=" << final_error << endl;
+    }
 
     // --------------
     // Final outputs

@@ -91,6 +91,55 @@ installation guide for more details on configuring, building, and installing.
 
 ## Running
 
+### Matrix: paired Python/C++ CUDA weak scaling
+
+`scripts/matrix/run_diffusion_2d_python_cpp_weak_scaling.sbatch` runs the
+ARKODE MPI + CUDA benchmark alongside a `sundials4py`/PyTorch port on 1, 2,
+4, and 8 GPUs (at most four nodes). Each repeat runs C++ once and Python with
+both the `inplace` and `triton` RHS modes. All use the same manufactured solution,
+five-point diffusion stencil, forcing, diffusion coefficients, time interval,
+20 output times, third-order implicit ARKStep method, tolerances, PCG solver,
+and Jacobi preconditioner. The grid is `nx=321`, `ny=320*ranks+1`, with
+`xu=1`, `yu=ranks`, and one rank per GPU. This keeps `dx=dy=1/320` and assigns
+103,041 values to rank 0 and 102,720 to each other rank.
+
+Build the standalone C++ benchmark with Python bindings disabled, then install
+the MPI/CUDA Python bindings:
+
+```bash
+source scripts/matrix/mpi_cuda_torch.profile
+export PATH=/usr/tce/packages/ninja/ninja-1.11.1/bin:$PATH
+cmake -S . -B build_diffusion_2d_mpicuda -G Ninja \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSUNDIALS_ENABLE_MPI=ON \
+  -DSUNDIALS_ENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=90 \
+  -DSUNDIALS_ENABLE_BENCHMARKS=ON -DSUNDIALS_ENABLE_PYTHON=OFF \
+  -DSUNDIALS_ENABLE_C_EXAMPLES=OFF -DSUNDIALS_ENABLE_CXX_EXAMPLES=OFF \
+  -DSUNDIALS_ENABLE_CUDA_EXAMPLES=OFF -DBUILD_TESTING=OFF
+cmake --build build_diffusion_2d_mpicuda --target arkode_diffusion_2D_mpicuda
+bash scripts/matrix/setup_sundials4py_mpi_cuda_torch.sh
+sbatch scripts/matrix/run_diffusion_2d_python_cpp_weak_scaling.sbatch
+```
+
+Set `REPEATS` (default 5) and `TF` (default 1) in the sbatch environment if
+needed. The script writes paired logs, `timings.csv`, `integrator_stats.csv`,
+and `summary.csv` to `diffusion_2d_compare_<job-id>/`. CSV rows identify the
+Python RHS mode. The summary reports medians and means across repeats;
+performance ratios and weak scaling efficiencies use the medians.
+`SOLVE_SECONDS` is the maximum across ranks of the accumulated `ARKodeEvolve`
+intervals, including a CUDA synchronization
+after each call. Final solution errors are reported separately. The Python
+port stages halo rows through host memory for mpi4py, while the C++ version
+uses `--host-staging` on Matrix. The Python example defaults to
+`--rhs-mode tensor`; it also supports `inplace` and a CUDA-only `triton` mode.
+The Triton mode fuses the stencil and forcing into one kernel on a single rank,
+or interior and boundary kernels with MPI. Compilation completes before the
+solve timer starts. Select a mode with `--rhs-mode` when comparing RHS
+implementations. The paired scaling script uses `inplace` and `triton`.
+Pass `--time-rhs` to print `RHS_SECONDS`, `NON_RHS_SECONDS`, and `RHS_CALLS`
+for the rank with the longest solve time. This diagnostic synchronizes after
+each CUDA RHS call to include GPU execution, so its timings should be compared
+only with other runs using `--time-rhs`.
+
 Based on the configuration, executables for each integrator and backend option
 are built and installed in `<SUNDIALS_BENCHMARKS_INSTALL_PATH>/diffusion_2D`. The
 executables follow the naming convention `<package>_diffusion_2D_<parallelism>`
