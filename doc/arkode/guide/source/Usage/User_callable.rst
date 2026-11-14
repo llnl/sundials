@@ -793,6 +793,7 @@ the user has set a stop time (with a call to the optional input function
    :retval ARK_ERR_FAILURE: error test failures occurred either too many
                             times (*ark_maxnef*) during one internal time step
                             or occurred with :math:`|h| = h_{min}`.
+   :retval ARK_CONTROLLER_ERR: the time step adaptivity controller failed.
    :retval ARK_CONV_FAILURE: either convergence test failures occurred too many
                              times (*ark_maxncf*) during one internal time step
                              or occurred with :math:`|h| = h_{min}`.
@@ -1705,6 +1706,8 @@ Reset accumulated error                                     :c:func:`ARKodeReset
       objects.  While all steppers that support temporal adaptivity support controllers with
       :c:type:`SUNAdaptController_Type` type ``SUN_ADAPTCONTROLLER_H``, only MRIStep supports
       inputs with type ``SUN_ADAPTCONTROLLER_MRI_H_TOL``.
+
+      The controller must not return ``NaN`` for the new step size.
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 
