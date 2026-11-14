@@ -31,12 +31,40 @@ fi
 source "$script_dir/mpi_cuda_torch.profile"
 "$python_bin" -c 'import mpi4py.MPI, torch, triton; import sundials4py.arkode; import sundials4py.core as sun; assert hasattr(sun, "N_VMake_MPIPlusX") and hasattr(sun, "N_VMake_Cuda")'
 
-results_dir="$repo_dir/diffusion_2d_compare_${SLURM_JOB_ID}"
-mkdir -p "$results_dir"
+results_dir=${RESUME_DIR:-"$repo_dir/diffusion_2d_compare_${SLURM_JOB_ID}"}
 csv="$results_dir/timings.csv"
-echo 'gpus,nodes,nx,ny,rank0_unknowns,other_rank_unknowns,repeat,rhs_mode,cpp_seconds,python_seconds,cpp_final_error,python_final_error' > "$csv"
 stats_csv="$results_dir/integrator_stats.csv"
-echo 'gpus,repeat,rhs_mode,cpp_steps,python_steps,cpp_step_attempts,python_step_attempts,cpp_nls_iters,python_nls_iters,cpp_ls_iters,python_ls_iters,cpp_prec_setups,python_prec_setups,cpp_prec_solves,python_prec_solves' > "$stats_csv"
+if [[ -n ${RESUME_DIR:-} ]]; then
+  if [[ ! -f $csv || ! -f $stats_csv ]]; then
+    echo "RESUME_DIR must contain timings.csv and integrator_stats.csv" >&2
+    exit 1
+  fi
+  # An interrupted write to just one CSV needs repair before resuming.
+  "$python_bin" - "$csv" "$stats_csv" <<'PY'
+import csv
+import sys
+
+def keys(path):
+    with open(path, newline="") as file:
+        rows = list(csv.DictReader(file))
+    result = [(row["gpus"], row["repeat"], row["rhs_mode"]) for row in rows]
+    if len(result) != len(set(result)):
+        raise RuntimeError(f"Duplicate benchmark rows in {path}")
+    return set(result)
+
+if keys(sys.argv[1]) != keys(sys.argv[2]):
+    raise RuntimeError("Timing and integrator statistics rows differ")
+PY
+else
+  mkdir -p "$results_dir"
+  echo 'gpus,nodes,nx,ny,rank0_unknowns,other_rank_unknowns,repeat,rhs_mode,cpp_seconds,python_seconds,cpp_final_error,python_final_error' > "$csv"
+  echo 'gpus,repeat,rhs_mode,cpp_steps,python_steps,cpp_step_attempts,python_step_attempts,cpp_nls_iters,python_nls_iters,cpp_ls_iters,python_ls_iters,cpp_prec_setups,python_prec_setups,cpp_prec_solves,python_prec_solves' > "$stats_csv"
+fi
+
+completed() {
+  awk -F, -v g="$1" -v r="$2" -v m="$3" \
+    'NR > 1 && $1 == g && $7 == r && $8 == m {found = 1} END {exit !found}' "$csv"
+}
 
 # nx=321 and dy=dx=1/320. Grow the y domain by one unit per rank.
 # Rank 0 owns 321*321=103041 values; every other rank owns 321*320=102720.
@@ -51,15 +79,24 @@ for gpus in 1 2 4 8; do
   echo "${gpus} GPU(s), ${nodes} node(s), grid ${nx}x${ny}, local values 103041/102720"
 
   for (( repeat=1; repeat<=repeats; repeat++ )); do
+    if completed "$gpus" "$repeat" inplace && completed "$gpus" "$repeat" triton; then
+      echo "Reusing completed $gpus GPU repeat $repeat"
+      continue
+    fi
     cpp_log="$results_dir/${gpus}gpu_repeat${repeat}_cpp.log"
 
-    srun --nodes="$nodes" --ntasks="$gpus" --ntasks-per-node=2 \
-      --gres="gpu:$step_gpus" --gpu-bind=single:1 --kill-on-bad-exit=1 \
-      "$cpp_example" --npx 1 --npy "$gpus" --nx "$nx" --ny "$ny" \
-      --xu 1 --yu "$gpus" --kx 1 --ky 1 --tf "$tf" --nout "$nout" \
-      --rtol 1e-5 --atol 1e-10 --order 3 --controller I --ls cg \
-      --liniters 20 --msbp 0 --epslin 0 --output 1 --host-staging \
-      | tee "$cpp_log"
+    if [[ ! -s $cpp_log ]] || ! grep -q '^SOLVE_SECONDS=' "$cpp_log" ||
+       ! grep -q '^FINAL_ERROR=' "$cpp_log" || ! grep -q '^Prec solves[[:space:]]*=' "$cpp_log"; then
+      srun --nodes="$nodes" --ntasks="$gpus" --ntasks-per-node=2 \
+        --gres="gpu:$step_gpus" --gpu-bind=single:1 --kill-on-bad-exit=1 \
+        "$cpp_example" --npx 1 --npy "$gpus" --nx "$nx" --ny "$ny" \
+        --xu 1 --yu "$gpus" --kx 1 --ky 1 --tf "$tf" --nout "$nout" \
+        --rtol 1e-5 --atol 1e-10 --order 3 --controller I --ls cg \
+        --liniters 20 --msbp 0 --epslin 0 --output 1 --host-staging \
+        | tee "$cpp_log"
+    else
+      echo "Reusing completed C++ log: $cpp_log"
+    fi
 
     cpp_seconds=$(awk -F= '/^SOLVE_SECONDS=/{print $2}' "$cpp_log")
     cpp_error=$(awk -F= '/^FINAL_ERROR=/{print $2}' "$cpp_log")
@@ -83,12 +120,25 @@ for gpus in 1 2 4 8; do
     rhs_modes=(inplace triton)
     if (( repeat % 2 == 0 )); then rhs_modes=(triton inplace); fi
     for rhs_mode in "${rhs_modes[@]}"; do
+      if completed "$gpus" "$repeat" "$rhs_mode"; then
+        echo "Reusing completed $gpus GPU repeat $repeat $rhs_mode"
+        continue
+      fi
       python_log="$results_dir/${gpus}gpu_repeat${repeat}_python_${rhs_mode}.log"
-      srun --nodes="$nodes" --ntasks="$gpus" --ntasks-per-node=2 \
-        --gres="gpu:$step_gpus" --gpu-bind=single:1 --kill-on-bad-exit=1 \
-        "$python_bin" "$python_example" --device cuda --nx "$nx" \
-        --rows-per-rank "$rows" --kx 1 --ky 1 --tf "$tf" --nout "$nout" \
-        --rhs-mode "$rhs_mode" | tee "$python_log"
+      if [[ ! -s $python_log ]] || ! grep -q '^SOLVE_SECONDS=' "$python_log" ||
+         ! grep -q '^FINAL_ERROR=' "$python_log" || ! grep -q '^PREC_SOLVES=' "$python_log"; then
+        # Keep Triton's compiled kernels on node-local storage, isolated by rank.
+        # The previous 4-GPU run hit a stale file handle in Triton's cache.
+        # shellcheck disable=SC2016
+        srun --nodes="$nodes" --ntasks="$gpus" --ntasks-per-node=2 \
+          --gres="gpu:$step_gpus" --gpu-bind=single:1 --kill-on-bad-exit=1 \
+          bash -c 'export TRITON_CACHE_DIR="${SLURM_TMPDIR:-/tmp}/triton-${SLURM_JOB_ID}-${SLURM_PROCID}"; mkdir -p "$TRITON_CACHE_DIR"; exec "$@"' bash \
+          "$python_bin" "$python_example" --device cuda --nx "$nx" \
+          --rows-per-rank "$rows" --kx 1 --ky 1 --tf "$tf" --nout "$nout" \
+          --rhs-mode "$rhs_mode" | tee "$python_log"
+      else
+        echo "Reusing completed Python log: $python_log"
+      fi
 
       python_seconds=$(awk -F= '/^SOLVE_SECONDS=/{print $2}' "$python_log")
       python_error=$(awk -F= '/^FINAL_ERROR=/{print $2}' "$python_log")
