@@ -2,8 +2,8 @@
 \section{{\trilinos} example problems}\label{s:ex_trilinos}
 %===============================================================================
 
-\subsection{A nonstiff shared memory parallel example:  idaHeat2D\_kry\_tpetra}
-\label{ss:idaHeat2D_kry_tpetra}
+\subsection{A nonstiff shared memory parallel example:  ida\_heat\_2d\_kry\_tpetra}
+\label{ss:ida_heat_2d_kry_tpetra}
 
 This example is the same as \ref{ss:idaHeat2D}, except it uses the
 Tpetra \cite{hoemmen2015tpetra} vector from the {\trilinos} library \cite{Trilinos-Overview}. The Tpetra vector is built on top of the Kokkos
@@ -70,8 +70,8 @@ OpenMP, Pthread, and {\cuda}. The default node type is selected when building
 the Kokkos package.
 
 
-\subsection{A nonstiff MPI+X parallel example: idaHeat2D\_kry\_p\_tpetra}
-\label{ss:idaHeat2D_kry_p_tpetra}
+\subsection{A nonstiff MPI+X parallel example: ida\_heat\_2d\_kry\_p\_tpetra}
+\label{ss:ida_heat_2d_kry_p_tpetra}
 
 This example is the same as the one in \ref{ss:idaHeat2D_p}, except 
 it uses the Tpetra vector instead of the native {\sundials} parallel vector 
@@ -79,7 +79,7 @@ implementation. The output of the two examples is identical. In the following,
 we describe only the implementation differences between the two. 
 
 The template \verb|N_Vector| is created the same way as in
-\ref{ss:idaHeat2D_kry_tpetra}. All other vectors are created by
+\ref{ss:ida_heat_2d_kry_tpetra}. All other vectors are created by
 cloning the template \verb|N_Vector|. This example is hard-wired to use
 4 MPI partitions, and will return an error if it is not.
 Because of this, the {\sundials} CMake system will build this example only

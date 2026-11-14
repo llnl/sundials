@@ -354,16 +354,6 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         dirname = os.path.join(self.prefix, "examples")
 
         cc_files = [
-            "arkode/C_openmp/Makefile",
-            "arkode/C_parallel/Makefile",
-            "arkode/C_parhyp/Makefile",
-            "arkode/C_petsc/Makefile",
-            "arkode/C_serial/Makefile",
-            "cvode/C_openmp/Makefile",
-            "cvode/parallel/Makefile",
-            "cvode/parhyp/Makefile",
-            "cvode/petsc/Makefile",
-            "cvode/serial/Makefile",
             "cvodes/C_openmp/Makefile",
             "cvodes/parallel/Makefile",
             "cvodes/serial/Makefile",
@@ -405,18 +395,9 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             "sunmatrix/sparse/Makefile",
         ]
 
-        cxx_files = [
-            "arkode/CXX_parallel/Makefile",
-            "arkode/CXX_serial/Makefile",
-            "cvode/cuda/Makefile",
-            "cvode/raja/Makefile",
-            "nvector/cuda/Makefile",
-            "nvector/raja/Makefile",
-        ]
+        cxx_files = ["nvector/cuda/Makefile", "nvector/raja/Makefile"]
 
         f77_files = [
-            "arkode/F77_parallel/Makefile",
-            "arkode/F77_serial/Makefile",
             "cvode/fcmix_parallel/Makefile",
             "cvode/fcmix_serial/Makefile",
             "ida/fcmix_openmp/Makefile",
@@ -427,11 +408,9 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             "kinsol/fcmix_serial/Makefile",
         ]
 
-        f90_files = ["arkode/F90_parallel/Makefile", "arkode/F90_serial/Makefile"]
+        f90_files = []
 
         f2003_files = [
-            "arkode/F2003_serial/Makefile",
-            "cvode/F2003_serial/Makefile",
             "cvodes/F2003_serial/Makefike",
             "ida/F2003_serial/Makefile",
             "idas/F2003_serial/Makefile",
@@ -512,24 +491,39 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
         # smoke_tests tuple: exe, args, purpose, use cmake (true/false)
         smoke_tests = []
         if "+CVODE" in self.spec:
-            smoke_tests.append(("cvode/serial/cvAdvDiff_bnd", [], "Test CVODE", True))
+            smoke_tests.append(("cvode/cv_adv_diff/c/cv_adv_diff_bnd", [], "Test CVODE", True))
 
         if "+cuda" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/cuda/cvAdvDiff_kry_cuda", [], "Test CVODE with CUDA", True)
+                    (
+                        "cvode/cv_adv_diff/cuda_kry/cv_adv_diff_kry_cuda",
+                        [],
+                        "Test CVODE with CUDA",
+                        True,
+                    )
                 )
 
         if "+hip" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/hip/cvAdvDiff_kry_hip", [], "Test CVODE with HIP", True)
+                    (
+                        "cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip",
+                        [],
+                        "Test CVODE with HIP",
+                        True,
+                    )
                 )
 
         if "+sycl" in self.spec:
             if "+CVODE" in self.spec:
                 smoke_tests.append(
-                    ("cvode/sycl/cvAdvDiff_kry_sycl", [], "Test CVODE with SYCL", True)
+                    (
+                        "cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl",
+                        [],
+                        "Test CVODE with SYCL",
+                        True,
+                    )
                 )
 
         return smoke_tests
@@ -605,12 +599,19 @@ class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
             work_dir=self._extra_tests_path,
         )
         if "+cuda" in self.spec:
-            self.run_test("examples/cvode/cuda/cvAdvDiff_ky_cuda", work_dir=self._extra_tests_path)
+            self.run_test(
+                "examples/cvode/cv_adv_diff/cuda_kry/cv_adv_diff_kry_cuda",
+                work_dir=self._extra_tests_path,
+            )
         if "+rocm" in self.spec:
-            self.run_test("examples/cvode/hip/cvAdvDiff_kry_hip", work_dir=self._extra_tests_path)
+            self.run_test(
+                "examples/cvode/cv_adv_diff/hip_kry/cv_adv_diff_kry_hip",
+                work_dir=self._extra_tests_path,
+            )
         if "+sycl" in self.spec:
             self.run_test(
-                "examples/cvode/CXX_sycl/cvAdvDiff_kry_sycl", work_dir=self._extra_tests_path
+                "examples/cvode/cv_adv_diff/sycl/cv_adv_diff_kry_sycl",
+                work_dir=self._extra_tests_path,
             )
         return
 
