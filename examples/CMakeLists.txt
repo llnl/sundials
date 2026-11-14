@@ -54,6 +54,8 @@ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
 
+  install(FILES README.md DESTINATION ${SUNDIALS_EXAMPLES_INSTALL_PATH})
+
   set(SHELL "sh")
   set(prefix "${CMAKE_INSTALL_PREFIX}")
   set(exec_prefix "${CMAKE_INSTALL_PREFIX}")
@@ -143,4 +145,24 @@ endif()
 # Add KINSOL examples
 if(SUNDIALS_ENABLE_KINSOL)
   add_subdirectory(kinsol)
+endif()
+
+# Custom Fortran module examples do not depend on an integrator.
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
+  add_subdirectory(nvector/fortran_complex)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+    sundials_add_test_install(nvector fortran_complex)
+  endif()
+  add_subdirectory(nvector/fortran)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+    sundials_add_test_install(nvector fortran)
+  endif()
+  add_subdirectory(sunmatrix/fortran)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+    sundials_add_test_install(sunmatrix fortran)
+  endif()
+  add_subdirectory(sunlinsol/fortran)
+  if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+    sundials_add_test_install(sunlinsol fortran)
+  endif()
 endif()

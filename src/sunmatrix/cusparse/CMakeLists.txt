@@ -27,7 +27,7 @@ sundials_add_library(
   INCLUDE_SUBDIR sunmatrix
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES sundials_sunmemcuda_obj
-  LINK_LIBRARIES PUBLIC CUDA::cusparse CUDA::cusolver
+  LINK_LIBRARIES PUBLIC CUDA::cudart CUDA::cusparse CUDA::cusolver
   OUTPUT_NAME sundials_sunmatrixcusparse
   VERSION ${sunmatrixlib_VERSION}
   SOVERSION ${sunmatrixlib_SOVERSION})
