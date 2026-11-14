@@ -29,6 +29,8 @@ set(ARKODE_unit_tests
     "ark_test_arkstepsetforcing\;1 3 2.0 10.0"
     "ark_test_arkstepsetforcing\;1 3 2.0 10.0 2.0 8.0"
     "ark_test_arkstepsetforcing\;1 3 2.0 10.0 1.0 5.0"
+    "ark_test_extsts_stserror\;0"
+    "ark_test_extsts_stserror\;1"
     "ark_test_forcingstep\;"
     "ark_test_getuserdata\;"
     "ark_test_innerstepper\;"
@@ -78,6 +80,7 @@ foreach(test_tuple ${ARKODE_unit_tests})
               sundials_sunnonlinsolnewton_obj
               sundials_sunnonlinsolfixedpoint_obj
               sundials_sunadaptcontrollerimexgus_obj
+              sundials_sunadaptcontrollermrihtol_obj
               sundials_sunadaptcontrollersoderlind_obj
               sundials_adjointcheckpointscheme_fixed_obj
               ${EXE_EXTRA_LINK_LIBS})
