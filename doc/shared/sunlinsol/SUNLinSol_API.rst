@@ -1025,7 +1025,7 @@ self-identify as having* ``SUNLINEARSOLVER_MATRIX_ITERATIVE`` *type*.
 At present, SUNDIALS has one example problem that uses this approach for
 wrapping a structured-grid matrix, linear solver, and preconditioner from the
 *hypre* library; this may be used as a template for other customized
-implementations (see ``examples/arkode/CXX_parhyp/ark_heat2D_hypre.cpp``).
+implementations (see ``examples/arkode/ark_heat_2d/cpp_mpi_hypre_ls/ark_heat_2d_hypre_ls.cpp``).
 
 
 Matrix-based iterative linear solvers (current :math:`A`)
@@ -1096,5 +1096,5 @@ SUNDIALS package ``SetLinearSolver`` routine, the input :c:type:`SUNMatrix`
 ``A`` should be set to ``NULL``.
 
 For templates of such user-provided "matrix-embedded" SUNLinSol implementations,
-see the SUNDIALS examples ``ark_analytic_mels.c``, ``cvAnalytic_mels.c``,
-``cvsAnalytic_mels.c``, ``idaAnalytic_mels.c``, and ``idasAnalytic_mels.c``.
+see the SUNDIALS examples ``ark_analytic_mels.c``, ``cv_analytic_mels.c``,
+``cvs_analytic_mels.c``, ``ida_analytic_mels.c``, and ``idas_analytic_mels.c``.

@@ -105,6 +105,6 @@ ark_bruss1D_FEM_klu
 ===================================================
 
 This problem is mathematically identical to the C example problem
-:ref:`ark_brusselator1D_FEM_slu`, but is written in Fortran 90, stores
+:ref:`ark_brusselator_1d_fem_slu`, but is written in Fortran 90, stores
 the sparse Jacobian and mass matrices in compressed-sparse-row format,
 and uses the KLU sparse-direct linear solver.
