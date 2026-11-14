@@ -81,6 +81,7 @@ endfunction()
 
 # Macros from other files
 include(SundialsAddExamplesGinkgo)
+include(SundialsAddExample)
 include(SundialsAddExecutable)
 include(SundialsAddLibrary)
 include(SundialsAddTest)

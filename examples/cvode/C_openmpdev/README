@@ -1,3 +1,0 @@
-List of OpenMP device offloading CVODE examples
-
-  cvAdvDiff_kry_ompdev  : 2-D advection-diffusion (nonstiff)

@@ -30,6 +30,7 @@ sundials_add_library(
   LINK_LIBRARIES
     PUBLIC
     sundials_sunmatrixcusparse
+    CUDA::cudart
     CUDA::cusolver
     PRIVATE
     CUDA::cusparse
