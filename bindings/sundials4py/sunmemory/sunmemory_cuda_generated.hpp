@@ -4,8 +4,8 @@
 // #endif
 //
 
-m.def(
-  "SUNMemoryHelper_Cuda",
+sundials4py::scoped_def(
+  m, "SUNMemoryHelper_Cuda",
   [](SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMemoryHelper>>
   {
     auto SUNMemoryHelper_Cuda_adapt_return_type_to_shared_ptr =

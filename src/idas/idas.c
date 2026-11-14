@@ -1060,7 +1060,12 @@ int IDAQuadInit(void* ida_mem, IDAQuadRhsFn rhsQ, N_Vector yQ0)
   SUNDIALS_MARK_FUNCTION_BEGIN(IDA_PROFILER);
 
   /* Set space requirements for one N_Vector */
-  N_VSpace(yQ0, &lrw1Q, &liw1Q);
+  if (yQ0->ops->nvspace) { N_VSpace(yQ0, &lrw1Q, &liw1Q); }
+  else
+  {
+    lrw1Q = 0;
+    liw1Q = 0;
+  }
   IDA_mem->ida_lrw1Q = lrw1Q;
   IDA_mem->ida_liw1Q = liw1Q;
 

@@ -9,8 +9,8 @@ auto pyClass_SUNMatrixContent_Dense =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNDenseMatrix",
+sundials4py::scoped_def(
+  m, "SUNDenseMatrix",
   [](sunindextype M, sunindextype N,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -29,14 +29,17 @@ m.def(
   nb::arg("M"), nb::arg("N"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
 
-m.def("SUNDenseMatrix_Print", SUNDenseMatrix_Print, nb::arg("A"),
-      nb::arg("outfile"));
+sundials4py::scoped_def(m, "SUNDenseMatrix_Print", SUNDenseMatrix_Print,
+                        nb::arg("A"), nb::arg("outfile"));
 
-m.def("SUNDenseMatrix_Rows", SUNDenseMatrix_Rows, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNDenseMatrix_Rows", SUNDenseMatrix_Rows,
+                        nb::arg("A"));
 
-m.def("SUNDenseMatrix_Columns", SUNDenseMatrix_Columns, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNDenseMatrix_Columns", SUNDenseMatrix_Columns,
+                        nb::arg("A"));
 
-m.def("SUNDenseMatrix_LData", SUNDenseMatrix_LData, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNDenseMatrix_LData", SUNDenseMatrix_LData,
+                        nb::arg("A"));
 // #ifdef __cplusplus
 //
 // #endif

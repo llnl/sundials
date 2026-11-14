@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This file is the entrypoint for the Python binding code for the
- * SUNDIALS SUNMemoryHelper class. It contains hand-written code for 
- * functions that require special treatment, and includes the 
+ * SUNDIALS SUNMemoryHelper class. It contains hand-written code for
+ * functions that require special treatment, and includes the
  * generated code produced with the generate.py script.
  * -----------------------------------------------------------------*/
 

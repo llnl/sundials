@@ -662,8 +662,16 @@ SUNErrCode SUNLinSolSpace_PCG(SUNLinearSolver S, long int* lenrwLS,
 {
   SUNFunctionBegin(S->sunctx);
   sunindextype liw1, lrw1;
-  N_VSpace(PCG_CONTENT(S)->r, &lrw1, &liw1);
-  SUNCheckLastErr();
+  if (PCG_CONTENT(S)->r->ops->nvspace)
+  {
+    N_VSpace(PCG_CONTENT(S)->r, &lrw1, &liw1);
+    SUNCheckLastErr();
+  }
+  else
+  {
+    lrw1 = 0;
+    liw1 = 0;
+  }
   *lenrwLS = 1 + lrw1 * 4;
   *leniwLS = 4 + liw1 * 4;
   return SUN_SUCCESS;

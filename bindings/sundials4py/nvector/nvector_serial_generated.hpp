@@ -9,8 +9,8 @@ auto pyClass_N_VectorContent_Serial =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "N_VNewEmpty_Serial",
+sundials4py::scoped_def(
+  m, "N_VNewEmpty_Serial",
   [](sunindextype vec_length,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
   {
@@ -29,8 +29,8 @@ m.def(
   nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
   nb::keep_alive<0, 2>());
 
-m.def(
-  "N_VNew_Serial",
+sundials4py::scoped_def(
+  m, "N_VNew_Serial",
   [](sunindextype vec_length,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<N_Vector>>
   {
@@ -49,38 +49,48 @@ m.def(
   nb::arg("vec_length"), nb::arg("sunctx"), "nb::keep_alive<0, 2>()",
   nb::keep_alive<0, 2>());
 
-m.def("N_VEnableFusedOps_Serial", N_VEnableFusedOps_Serial, nb::arg("v"),
-      nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableFusedOps_Serial", N_VEnableFusedOps_Serial,
+                        nb::arg("v"), nb::arg("tf"));
 
-m.def("N_VEnableLinearCombination_Serial", N_VEnableLinearCombination_Serial,
-      nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableLinearCombination_Serial",
+                        N_VEnableLinearCombination_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableScaleAddMulti_Serial", N_VEnableScaleAddMulti_Serial,
-      nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableScaleAddMulti_Serial",
+                        N_VEnableScaleAddMulti_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableDotProdMulti_Serial", N_VEnableDotProdMulti_Serial,
-      nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableDotProdMulti_Serial",
+                        N_VEnableDotProdMulti_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableLinearSumVectorArray_Serial",
-      N_VEnableLinearSumVectorArray_Serial, nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableLinearSumVectorArray_Serial",
+                        N_VEnableLinearSumVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableScaleVectorArray_Serial", N_VEnableScaleVectorArray_Serial,
-      nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableScaleVectorArray_Serial",
+                        N_VEnableScaleVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableConstVectorArray_Serial", N_VEnableConstVectorArray_Serial,
-      nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableConstVectorArray_Serial",
+                        N_VEnableConstVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableWrmsNormVectorArray_Serial",
-      N_VEnableWrmsNormVectorArray_Serial, nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableWrmsNormVectorArray_Serial",
+                        N_VEnableWrmsNormVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableWrmsNormMaskVectorArray_Serial",
-      N_VEnableWrmsNormMaskVectorArray_Serial, nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableWrmsNormMaskVectorArray_Serial",
+                        N_VEnableWrmsNormMaskVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableScaleAddMultiVectorArray_Serial",
-      N_VEnableScaleAddMultiVectorArray_Serial, nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableScaleAddMultiVectorArray_Serial",
+                        N_VEnableScaleAddMultiVectorArray_Serial, nb::arg("v"),
+                        nb::arg("tf"));
 
-m.def("N_VEnableLinearCombinationVectorArray_Serial",
-      N_VEnableLinearCombinationVectorArray_Serial, nb::arg("v"), nb::arg("tf"));
+sundials4py::scoped_def(m, "N_VEnableLinearCombinationVectorArray_Serial",
+                        N_VEnableLinearCombinationVectorArray_Serial,
+                        nb::arg("v"), nb::arg("tf"));
 // #ifdef __cplusplus
 //
 // #endif

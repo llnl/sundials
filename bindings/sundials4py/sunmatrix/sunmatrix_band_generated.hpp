@@ -9,8 +9,8 @@ auto pyClass_SUNMatrixContent_Band =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNBandMatrix",
+sundials4py::scoped_def(
+  m, "SUNBandMatrix",
   [](sunindextype N, sunindextype mu, sunindextype ml,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -29,8 +29,8 @@ m.def(
   nb::arg("N"), nb::arg("mu"), nb::arg("ml"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def(
-  "SUNBandMatrixStorage",
+sundials4py::scoped_def(
+  m, "SUNBandMatrixStorage",
   [](sunindextype N, sunindextype mu, sunindextype ml, sunindextype smu,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -50,23 +50,29 @@ m.def(
   nb::arg("N"), nb::arg("mu"), nb::arg("ml"), nb::arg("smu"), nb::arg("sunctx"),
   "nb::keep_alive<0, 5>()", nb::keep_alive<0, 5>());
 
-m.def("SUNBandMatrix_Print", SUNBandMatrix_Print, nb::arg("A"),
-      nb::arg("outfile"));
+sundials4py::scoped_def(m, "SUNBandMatrix_Print", SUNBandMatrix_Print,
+                        nb::arg("A"), nb::arg("outfile"));
 
-m.def("SUNBandMatrix_Rows", SUNBandMatrix_Rows, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_Rows", SUNBandMatrix_Rows,
+                        nb::arg("A"));
 
-m.def("SUNBandMatrix_Columns", SUNBandMatrix_Columns, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_Columns", SUNBandMatrix_Columns,
+                        nb::arg("A"));
 
-m.def("SUNBandMatrix_LowerBandwidth", SUNBandMatrix_LowerBandwidth, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_LowerBandwidth",
+                        SUNBandMatrix_LowerBandwidth, nb::arg("A"));
 
-m.def("SUNBandMatrix_UpperBandwidth", SUNBandMatrix_UpperBandwidth, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_UpperBandwidth",
+                        SUNBandMatrix_UpperBandwidth, nb::arg("A"));
 
-m.def("SUNBandMatrix_StoredUpperBandwidth", SUNBandMatrix_StoredUpperBandwidth,
-      nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_StoredUpperBandwidth",
+                        SUNBandMatrix_StoredUpperBandwidth, nb::arg("A"));
 
-m.def("SUNBandMatrix_LDim", SUNBandMatrix_LDim, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_LDim", SUNBandMatrix_LDim,
+                        nb::arg("A"));
 
-m.def("SUNBandMatrix_LData", SUNBandMatrix_LData, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNBandMatrix_LData", SUNBandMatrix_LData,
+                        nb::arg("A"));
 // #ifdef __cplusplus
 //
 // #endif

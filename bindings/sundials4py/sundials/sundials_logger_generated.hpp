@@ -18,8 +18,8 @@ auto pyEnumSUNLogLevel =
 // #endif
 //
 
-m.def(
-  "SUNLogger_Create",
+sundials4py::scoped_def(
+  m, "SUNLogger_Create",
   [](SUNComm comm, int output_rank)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
   {
@@ -50,8 +50,8 @@ m.def(
   },
   nb::arg("comm"), nb::arg("output_rank"), nb::rv_policy::reference);
 
-m.def(
-  "SUNLogger_CreateFromEnv",
+sundials4py::scoped_def(
+  m, "SUNLogger_CreateFromEnv",
   [](SUNComm comm)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNLogger>>>
   {
@@ -80,20 +80,23 @@ m.def(
   },
   nb::arg("comm"), nb::rv_policy::reference);
 
-m.def("SUNLogger_SetErrorFilename", SUNLogger_SetErrorFilename,
-      nb::arg("logger"), nb::arg("error_filename"));
+sundials4py::scoped_def(m, "SUNLogger_SetErrorFilename",
+                        SUNLogger_SetErrorFilename, nb::arg("logger"),
+                        nb::arg("error_filename"));
 
-m.def("SUNLogger_SetWarningFilename", SUNLogger_SetWarningFilename,
-      nb::arg("logger"), nb::arg("warning_filename"));
+sundials4py::scoped_def(m, "SUNLogger_SetWarningFilename",
+                        SUNLogger_SetWarningFilename, nb::arg("logger"),
+                        nb::arg("warning_filename"));
 
-m.def("SUNLogger_SetDebugFilename", SUNLogger_SetDebugFilename,
-      nb::arg("logger"), nb::arg("debug_filename"));
+sundials4py::scoped_def(m, "SUNLogger_SetDebugFilename",
+                        SUNLogger_SetDebugFilename, nb::arg("logger"),
+                        nb::arg("debug_filename"));
 
-m.def("SUNLogger_SetInfoFilename", SUNLogger_SetInfoFilename, nb::arg("logger"),
-      nb::arg("info_filename"));
+sundials4py::scoped_def(m, "SUNLogger_SetInfoFilename", SUNLogger_SetInfoFilename,
+                        nb::arg("logger"), nb::arg("info_filename"));
 
-m.def(
-  "SUNLogger_QueueMsg",
+sundials4py::scoped_def(
+  m, "SUNLogger_QueueMsg",
   [](SUNLogger logger, SUNLogLevel lvl, const char* scope, const char* label,
      const char* msg_txt) -> SUNErrCode
   {
@@ -112,10 +115,11 @@ m.def(
   nb::arg("logger"), nb::arg("lvl"), nb::arg("scope"), nb::arg("label"),
   nb::arg("msg_txt"));
 
-m.def("SUNLogger_Flush", SUNLogger_Flush, nb::arg("logger"), nb::arg("lvl"));
+sundials4py::scoped_def(m, "SUNLogger_Flush", SUNLogger_Flush,
+                        nb::arg("logger"), nb::arg("lvl"));
 
-m.def(
-  "SUNLogger_GetOutputRank",
+sundials4py::scoped_def(
+  m, "SUNLogger_GetOutputRank",
   [](SUNLogger logger) -> std::tuple<SUNErrCode, int>
   {
     auto SUNLogger_GetOutputRank_adapt_modifiable_immutable_to_return =

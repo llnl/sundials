@@ -18,47 +18,52 @@ auto pyEnumARKODE_LSRKMethodType =
 // #endif
 //
 
-m.def("LSRKStepSetSTSMethod", LSRKStepSetSTSMethod, nb::arg("arkode_mem"),
-      nb::arg("method"));
+sundials4py::scoped_def(m, "LSRKStepSetSTSMethod", LSRKStepSetSTSMethod,
+                        nb::arg("arkode_mem"), nb::arg("method"));
 
-m.def("LSRKStepSetSSPMethod", LSRKStepSetSSPMethod, nb::arg("arkode_mem"),
-      nb::arg("method"));
+sundials4py::scoped_def(m, "LSRKStepSetSSPMethod", LSRKStepSetSSPMethod,
+                        nb::arg("arkode_mem"), nb::arg("method"));
 
-m.def("LSRKStepSetSTSMethodByName", LSRKStepSetSTSMethodByName,
-      nb::arg("arkode_mem"), nb::arg("emethod"));
+sundials4py::scoped_def(m, "LSRKStepSetSTSMethodByName",
+                        LSRKStepSetSTSMethodByName, nb::arg("arkode_mem"),
+                        nb::arg("emethod"));
 
-m.def("LSRKStepSetSSPMethodByName", LSRKStepSetSSPMethodByName,
-      nb::arg("arkode_mem"), nb::arg("emethod"));
+sundials4py::scoped_def(m, "LSRKStepSetSSPMethodByName",
+                        LSRKStepSetSSPMethodByName, nb::arg("arkode_mem"),
+                        nb::arg("emethod"));
 
-m.def("LSRKStepSetDomEigEstimator", LSRKStepSetDomEigEstimator,
-      nb::arg("arkode_mem"), nb::arg("DEE"));
+sundials4py::scoped_def(m, "LSRKStepSetDomEigEstimator",
+                        LSRKStepSetDomEigEstimator, nb::arg("arkode_mem"),
+                        nb::arg("DEE"));
 
-m.def("LSRKStepSetDomEigFrequency", LSRKStepSetDomEigFrequency,
-      nb::arg("arkode_mem"), nb::arg("nsteps"));
+sundials4py::scoped_def(m, "LSRKStepSetDomEigFrequency",
+                        LSRKStepSetDomEigFrequency, nb::arg("arkode_mem"),
+                        nb::arg("nsteps"));
 
-m.def("LSRKStepSetMaxNumStages", LSRKStepSetMaxNumStages, nb::arg("arkode_mem"),
-      nb::arg("stage_max_limit"));
+sundials4py::scoped_def(m, "LSRKStepSetMaxNumStages", LSRKStepSetMaxNumStages,
+                        nb::arg("arkode_mem"), nb::arg("stage_max_limit"));
 
-m.def("LSRKStepSetDomEigSafetyFactor", LSRKStepSetDomEigSafetyFactor,
-      nb::arg("arkode_mem"), nb::arg("dom_eig_safety"));
+sundials4py::scoped_def(m, "LSRKStepSetDomEigSafetyFactor",
+                        LSRKStepSetDomEigSafetyFactor, nb::arg("arkode_mem"),
+                        nb::arg("dom_eig_safety"));
 
-m.def("LSRKStepSetUseAnalyticStabilityRegion",
-      LSRKStepSetUseAnalyticStabilityRegion, nb::arg("arkode_mem"),
-      nb::arg("analytic_stab_region"));
+sundials4py::scoped_def(m, "LSRKStepSetUseAnalyticStabilityRegion",
+                        LSRKStepSetUseAnalyticStabilityRegion,
+                        nb::arg("arkode_mem"), nb::arg("analytic_stab_region"));
 
-m.def("LSRKStepSetNumDomEigEstInitPreprocessIters",
-      LSRKStepSetNumDomEigEstInitPreprocessIters, nb::arg("arkode_mem"),
-      nb::arg("num_iters"));
+sundials4py::scoped_def(m, "LSRKStepSetNumDomEigEstInitPreprocessIters",
+                        LSRKStepSetNumDomEigEstInitPreprocessIters,
+                        nb::arg("arkode_mem"), nb::arg("num_iters"));
 
-m.def("LSRKStepSetNumDomEigEstPreprocessIters",
-      LSRKStepSetNumDomEigEstPreprocessIters, nb::arg("arkode_mem"),
-      nb::arg("num_iters"));
+sundials4py::scoped_def(m, "LSRKStepSetNumDomEigEstPreprocessIters",
+                        LSRKStepSetNumDomEigEstPreprocessIters,
+                        nb::arg("arkode_mem"), nb::arg("num_iters"));
 
-m.def("LSRKStepSetNumSSPStages", LSRKStepSetNumSSPStages, nb::arg("arkode_mem"),
-      nb::arg("num_of_stages"));
+sundials4py::scoped_def(m, "LSRKStepSetNumSSPStages", LSRKStepSetNumSSPStages,
+                        nb::arg("arkode_mem"), nb::arg("num_of_stages"));
 
-m.def(
-  "LSRKStepGetNumDomEigUpdates",
+sundials4py::scoped_def(
+  m, "LSRKStepGetNumDomEigUpdates",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
     auto LSRKStepGetNumDomEigUpdates_adapt_modifiable_immutable_to_return =
@@ -76,8 +81,8 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def(
-  "LSRKStepGetMaxNumStages",
+sundials4py::scoped_def(
+  m, "LSRKStepGetMaxNumStages",
   [](void* arkode_mem) -> std::tuple<int, int>
   {
     auto LSRKStepGetMaxNumStages_adapt_modifiable_immutable_to_return =
@@ -94,8 +99,8 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def(
-  "LSRKStepGetNumDomEigEstRhsEvals",
+sundials4py::scoped_def(
+  m, "LSRKStepGetNumDomEigEstRhsEvals",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
     auto LSRKStepGetNumDomEigEstRhsEvals_adapt_modifiable_immutable_to_return =
@@ -113,8 +118,8 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def(
-  "LSRKStepGetNumDomEigEstIters",
+sundials4py::scoped_def(
+  m, "LSRKStepGetNumDomEigEstIters",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
     auto LSRKStepGetNumDomEigEstIters_adapt_modifiable_immutable_to_return =

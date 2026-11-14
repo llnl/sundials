@@ -1,4 +1,7 @@
 /* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -36,6 +39,17 @@ struct SUNLinearSolverFunctionTable
   nb::object PSetupFn;
   nb::object PSolveFn;
 };
+
+/* Matrix and adapt-controller bindings need no equivalent sidecar: unlike the
+   solver APIs, they have no setters that retain Python callback objects. */
+
+/* Return the solver's Python function table, creating it on first use. Core
+   SUNLinSolFree destroys the table before delegating to the implementation. */
+inline SUNLinearSolverFunctionTable* sunlinearsolver_function_table(SUNLinearSolver S)
+{
+  if (S->python == nullptr) { S->python = new SUNLinearSolverFunctionTable; }
+  return static_cast<SUNLinearSolverFunctionTable*>(S->python);
+}
 
 template<typename... Args>
 inline int sunlinearsolver_atimesfn_wrapper(Args... args)

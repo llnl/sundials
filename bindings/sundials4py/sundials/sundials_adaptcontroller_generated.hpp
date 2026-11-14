@@ -28,10 +28,11 @@ auto pyClass_generic_SUNAdaptController =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def("SUNAdaptController_GetType", SUNAdaptController_GetType, nb::arg("C"));
+sundials4py::scoped_def(m, "SUNAdaptController_GetType",
+                        SUNAdaptController_GetType, nb::arg("C"));
 
-m.def(
-  "SUNAdaptController_EstimateStep",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_EstimateStep",
   [](SUNAdaptController C, sunrealtype h, int p,
      sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype>
   {
@@ -53,8 +54,8 @@ m.def(
   },
   nb::arg("C"), nb::arg("h"), nb::arg("p"), nb::arg("dsm"));
 
-m.def(
-  "SUNAdaptController_EstimateStepTol",
+sundials4py::scoped_def(
+  m, "SUNAdaptController_EstimateStepTol",
   [](SUNAdaptController C, sunrealtype H, sunrealtype tolfac, int P,
      sunrealtype DSM,
      sunrealtype dsm) -> std::tuple<SUNErrCode, sunrealtype, sunrealtype>
@@ -85,23 +86,27 @@ m.def(
   nb::arg("C"), nb::arg("H"), nb::arg("tolfac"), nb::arg("P"), nb::arg("DSM"),
   nb::arg("dsm"));
 
-m.def("SUNAdaptController_Reset", SUNAdaptController_Reset, nb::arg("C"));
+sundials4py::scoped_def(m, "SUNAdaptController_Reset", SUNAdaptController_Reset,
+                        nb::arg("C"));
 
-m.def("SUNAdaptController_SetDefaults", SUNAdaptController_SetDefaults,
-      nb::arg("C"));
+sundials4py::scoped_def(m, "SUNAdaptController_SetDefaults",
+                        SUNAdaptController_SetDefaults, nb::arg("C"));
 
-m.def("SUNAdaptController_Write", SUNAdaptController_Write, nb::arg("C"),
-      nb::arg("fptr"));
+sundials4py::scoped_def(m, "SUNAdaptController_Write", SUNAdaptController_Write,
+                        nb::arg("C"), nb::arg("fptr"));
 
-m.def("SUNAdaptController_SetErrorBias", SUNAdaptController_SetErrorBias,
-      nb::arg("C"), nb::arg("bias"));
+sundials4py::scoped_def(m, "SUNAdaptController_SetErrorBias",
+                        SUNAdaptController_SetErrorBias, nb::arg("C"),
+                        nb::arg("bias"));
 
-m.def("SUNAdaptController_UpdateH", SUNAdaptController_UpdateH, nb::arg("C"),
-      nb::arg("h"), nb::arg("dsm"));
+sundials4py::scoped_def(m, "SUNAdaptController_UpdateH",
+                        SUNAdaptController_UpdateH, nb::arg("C"), nb::arg("h"),
+                        nb::arg("dsm"));
 
-m.def("SUNAdaptController_UpdateMRIHTol", SUNAdaptController_UpdateMRIHTol,
-      nb::arg("C"), nb::arg("H"), nb::arg("tolfac"), nb::arg("DSM"),
-      nb::arg("dsm"));
+sundials4py::scoped_def(m, "SUNAdaptController_UpdateMRIHTol",
+                        SUNAdaptController_UpdateMRIHTol, nb::arg("C"),
+                        nb::arg("H"), nb::arg("tolfac"), nb::arg("DSM"),
+                        nb::arg("dsm"));
 // #ifdef __cplusplus
 //
 // #endif
