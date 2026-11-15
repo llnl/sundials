@@ -881,6 +881,49 @@ STS methods to use based on the combination of user-supplied functions
 these defaults in the MRIStep integrator itself, and they may access the
 internally-constructed LSRKStep object to modify options there as well.
 
+By default, ExtSTS methods estimate the local error of each slow step using
+only the MRI embedding, as with other MRI methods.  Since this measures the
+error from :math:`f^E` and :math:`f^I` but not that of the STS method, users
+may also include the STS methods' own embedded error estimates (see
+:c:func:`MRIStepSetUseExtSTSErrorEstimate`), which is recommended when the
+STS error may dominate, e.g., when :math:`f^E` and :math:`f^I` are small
+relative to :math:`f^D`.  In that case, each fast IVP solve
+:math:`k = 1,\ldots,K` within slow step :math:`n` that contributes to the
+slow step solution (i.e., excluding the solve used only to compute the MRI
+embedding) takes a single RKC or RKL step of size
+:math:`\Delta t_k = |t_{f,k} - t_{0,k}|`, and yields an embedded STS error
+estimate :math:`\varepsilon^D_{n,k}`.  These are measured in the WRMS norm
+:eq:`ARKODE_WRMS_NORM` using the MRIStep error weights, and are combined as a
+time-weighted root-mean-square,
+
+.. math::
+   \varepsilon^D_n = \left( \sum_{k=1}^{K} w_k \|\varepsilon^D_{n,k}\|_{\text{WRMS}}^2 \right)^{1/2},
+   \qquad w_k = \frac{\Delta t_k}{\sum_{j=1}^{K} \Delta t_j}.
+
+Denoting the slow error estimate from the MRI embedding as
+:math:`\varepsilon^S_n = \|y_n - \tilde{y}_n\|_{\text{WRMS}}` (see
+:numref:`ARKODE.Mathematics.MultirateFastError`), the overall error estimate
+for the slow step is then the root-sum-square
+:math:`\left( (\varepsilon^S_n)^2 + (\varepsilon^D_n)^2 \right)^{1/2}`.  This
+takes the place of :math:`\|y_n - \tilde{y}_n\|_{\text{WRMS}}` in both the
+local error test and the slow step size controller, i.e., the error estimate
+of :numref:`ARKODE.Mathematics.Adaptivity` becomes
+
+.. math::
+   \varepsilon_n = \beta \left( (\varepsilon^S_n)^2 + (\varepsilon^D_n)^2 \right)^{1/2}.
+
+When :math:`f^D` contributes negligibly to the error, this reduces to the
+standard MRIStep estimate, and when :math:`f^E` and :math:`f^I` contribute
+negligibly, it approximates the error estimate from LSRKStep applied to
+:math:`f^D` alone.  The same combined estimate is used when accumulating
+temporal error estimates in fixed-step mode (see
+:c:func:`ARKodeSetAccumulatedErrorType`).
+
+Since ExtSTS methods take a single STS step for each fast IVP, there is no
+fast solver tolerance to adapt, and so the :math:`h^S`-:math:`Tol` multirate
+controllers from :numref:`ARKODE.Mathematics.MultirateControllers` are not
+applicable to ExtSTS methods.
+
 
 .. _ARKODE.Mathematics.SplittingStep:
 

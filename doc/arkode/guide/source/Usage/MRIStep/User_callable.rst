@@ -138,8 +138,26 @@ MRIStep initialization and deallocation functions
       interpolated output, nor should they configure options that would
       request the STS solver to stop a time step prematurely (e.g., through
       calls to :c:func:`ARKodeRootInit` or :c:func:`ARKodeSetConstraints`).
-      Similarly, users should not employ "H-Tol" multirate time step
-      controllers on the object returned using :c:func:`MRIStepCreateExtSTS`.
+      Similarly, "H-Tol" multirate time step controllers (e.g.,
+      :c:func:`SUNAdaptController_MRIHTol`) are not supported on the object
+      returned using :c:func:`MRIStepCreateExtSTS`; attaching one will cause
+      the first call to :c:func:`ARKodeEvolve` to return ``ARK_ILL_INPUT``.
+
+   .. note::
+
+      By default, ExtSTS temporal error estimates use only the MRI
+      embedding, and so do not account for the error of the STS method.
+      When that error may dominate, e.g., when :math:`f^E` and
+      :math:`f^I` are small relative to :math:`f^D`, the embedded error
+      estimates from each STS step may be included by calling
+      :c:func:`MRIStepSetUseExtSTSErrorEstimate`.  All of these estimates
+      are measured using the error weights of the ExtSTS object (see
+      :numref:`ARKODE.Mathematics.MRIStep.ExtSTS`), so tolerances should be
+      set only on the object returned by :c:func:`MRIStepCreateExtSTS`, since
+      tolerances set on the inner STS stepper do not affect temporal error
+      estimation.  Since there is no single combined error vector,
+      :c:func:`ARKodeGetEstLocalErrors` returns only the MRI embedding
+      (slow) component of the local error estimate.
 
    .. versionadded:: 7.9.0 (ARKODE 6.9.0)
 
@@ -802,6 +820,41 @@ Optional inputs for MRIStep
 
    :retval ARK_SUCCESS: if successful
    :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
+
+
+
+.. c:function:: int MRIStepSetUseExtSTSErrorEstimate(void* arkode_mem, sunbooleantype onoff)
+
+   Specifies whether an ExtSTS method should include the embedded error estimates
+   from its STS steps in its temporal error estimate, in addition to the MRI
+   embedding (see :numref:`ARKODE.Mathematics.MRIStep.ExtSTS`).  This
+   estimate is used both for time step adaptivity and for error accumulation
+   with fixed time steps (see :c:func:`ARKodeSetAccumulatedErrorType`).
+
+   :param arkode_mem: pointer to the MRIStep memory block, created with
+                      :c:func:`MRIStepCreateExtSTS`.
+   :param onoff: flag to include (``SUNTRUE``) or exclude (``SUNFALSE``) the
+                 STS error estimates.
+
+   :retval ARK_SUCCESS: if successful
+   :retval ARK_MEM_NULL: if the MRIStep memory is ``NULL``
+   :retval ARK_ILL_INPUT: if the MRIStep memory was not created with
+                          :c:func:`MRIStepCreateExtSTS`
+
+   .. note::
+
+      The STS error estimates are excluded by default.  They should be
+      included when the STS error may dominate the temporal error, e.g., when
+      :math:`f^E` and :math:`f^I` are small relative to :math:`f^D`.
+
+      This routine may be called at any time; the new value takes effect at
+      the next step attempt.  It is reset to the default by
+      :c:func:`ARKodeSetDefaults`.
+
+      This routine will be called by :c:func:`ARKodeSetOptions`
+      when using the key "arkid.use_extsts_error_estimate".
+
+   .. versionadded:: x.y.z
 
 
 

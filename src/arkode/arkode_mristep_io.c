@@ -90,6 +90,35 @@ int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC)
 }
 
 /*---------------------------------------------------------------
+  MRIStepSetUseExtSTSErrorEstimate:
+
+  Specifies whether an ExtSTS error estimate should include the
+  STS sub-integrator's embedded error estimates.
+  ---------------------------------------------------------------*/
+int MRIStepSetUseExtSTSErrorEstimate(void* arkode_mem, sunbooleantype onoff)
+{
+  ARKodeMem ark_mem;
+  ARKodeMRIStepMem step_mem;
+  int retval;
+
+  /* access ARKodeMem and ARKodeMRIStepMem structures */
+  retval = mriStep_AccessARKODEStepMem(arkode_mem, __func__, &ark_mem, &step_mem);
+  if (retval != ARK_SUCCESS) { return (retval); }
+
+  /* this option only applies to ExtSTS methods */
+  if (!step_mem->extsts_method)
+  {
+    arkProcessError(ark_mem, ARK_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "This option requires an ExtSTS method");
+    return (ARK_ILL_INPUT);
+  }
+
+  step_mem->extsts_use_err_est = onoff;
+
+  return (ARK_SUCCESS);
+}
+
+/*---------------------------------------------------------------
   MRIStepSetPreInnerFn:
 
   Sets the user-supplied function called BEFORE the inner evolve
@@ -263,9 +292,24 @@ int MRIStepGetNumInnerStepperFails(void* arkode_mem, long int* inner_fails)
 int mriStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
                        size_t offset, sunbooleantype* arg_used)
 {
-  /* The only MRIStep-specific "Set" routine takes a custom MRIStepCoupling
-     table; however, these may be specified by name, so here we'll support
-     a key to specify the MRIStepCoupling table name,
+  /* Set list of integer-valued keys, and the corresponding set routines */
+  static const struct sunKeyIntPair int_pairs[] = {
+    {"use_extsts_error_estimate", MRIStepSetUseExtSTSErrorEstimate}};
+  static const int num_int_keys = sizeof(int_pairs) / sizeof(*int_pairs);
+
+  int j;
+  int retval = sunCheckAndSetIntArgs((void*)ark_mem, argidx, argv, offset,
+                                     int_pairs, num_int_keys, arg_used, &j);
+  if (retval != ARK_SUCCESS)
+  {
+    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
+                    "error setting key: %s", int_pairs[j].key);
+    return retval;
+  }
+  if (*arg_used) { return ARK_SUCCESS; }
+
+  /* MRIStepSetCoupling takes a custom MRIStepCoupling table, so we'll
+     support a key to specify the MRIStepCoupling table name,
      create the table with that name, attach it to MRIStep (who copies its
      values), and then free the table. */
   if (strcmp(argv[*argidx] + offset, "coupling_table_name") == 0)
@@ -279,7 +323,7 @@ int mriStep_SetOptions(ARKodeMem ark_mem, int* argidx, char* argv[],
                       argv[(*argidx) - 1], argv[*argidx]);
       return ARK_ILL_INPUT;
     }
-    int retval = MRIStepSetCoupling(ark_mem, Coupling);
+    retval = MRIStepSetCoupling(ark_mem, Coupling);
     MRIStepCoupling_Free(Coupling);
     if (retval != ARK_SUCCESS)
     {
@@ -390,6 +434,7 @@ int mriStep_SetDefaults(ARKodeMem ark_mem)
   step_mem->jcur           = SUNFALSE;
   step_mem->convfail       = ARK_NO_FAILURES;
   step_mem->stage_predict  = NULL; /* no user-supplied stage predictor */
+  step_mem->extsts_use_err_est = SUNFALSE; /* no ExtSTS STS error estimate */
 
   /* Remove pre-existing nonlinear solver object */
   if (step_mem->NLS && step_mem->ownNLS) { SUNNonlinSolFree(step_mem->NLS); }
@@ -971,6 +1016,11 @@ int mriStep_WriteParameters(ARKodeMem ark_mem, FILE* fp)
     fprintf(fp, "  Gamma factor LSetup tolerance = " SUN_FORMAT_G "\n",
             step_mem->dgmax);
     fprintf(fp, "  Number of steps between LSetup calls = %i\n", step_mem->msbp);
+  }
+  if (step_mem->extsts_method)
+  {
+    fprintf(fp, "  ExtSTS STS error estimate = %s\n",
+            (step_mem->extsts_use_err_est) ? "enabled" : "disabled");
   }
   fprintf(fp, "\n");
 
