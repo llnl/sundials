@@ -302,8 +302,11 @@ int arkStep_NlsInit(ARKodeMem ark_mem)
   step_mem = (ARKodeARKStepMem)ark_mem->step_mem;
 
   /* reset counters */
-  step_mem->nls_iters = 0;
-  step_mem->nls_fails = 0;
+  if (ark_mem->init_type == FIRST_INIT)
+  {
+    step_mem->nls_iters = 0;
+    step_mem->nls_fails = 0;
+  }
 
   /* set the linear solver setup wrapper function */
   if (step_mem->lsetup)
