@@ -33,6 +33,10 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 ### Bug Fixes
 
+Fixed intermittent failures in the ARKODE, CVODE, CVODES, IDA, IDAS, and
+KINSOL error-handling unit tests when run in parallel by using separate output
+files for warning and error messages.
+
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
 
