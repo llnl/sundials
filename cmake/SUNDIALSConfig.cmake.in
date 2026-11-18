@@ -23,6 +23,11 @@ include(CMakeFindDependencyMacro)
 
 set(SUNDIALS_INDEX_SIZE "@SUNDIALS_INDEX_SIZE@")
 set(SUNDIALS_PRECISION "@SUNDIALS_PRECISION@")
+if("@SUNDIALS_ENABLE_LAPACK@" AND "@BLA_SIZEOF_INTEGER@" MATCHES "^(4|8)$")
+  set(SUNDIALS_LAPACK_INTEGER_SIZE "@BLA_SIZEOF_INTEGER@")
+else()
+  set(SUNDIALS_LAPACK_INTEGER_SIZE "")
+endif()
 set(SUNDIALS_GINKGO_BACKENDS "@SUNDIALS_GINKGO_BACKENDS@")
 set(SUNDIALS_MAGMA_BACKENDS "@SUNDIALS_MAGMA_BACKENDS@")
 set(SUNDIALS_RAJA_BACKENDS "@SUNDIALS_RAJA_BACKENDS@")
@@ -147,6 +152,13 @@ if("@SUNDIALS_ENABLE_KOKKOS_KERNELS@" AND NOT TARGET Kokkos::kokkoskernels)
   find_dependency(KokkosKernels PATHS "@KokkosKernels_DIR@")
 endif()
 
+if(SUNDIALS_LAPACK_INTEGER_SIZE AND BLA_SIZEOF_INTEGER MATCHES "^(4|8)$"
+   AND NOT BLA_SIZEOF_INTEGER STREQUAL SUNDIALS_LAPACK_INTEGER_SIZE)
+  set(SUNDIALS_FOUND FALSE)
+  set(SUNDIALS_NOT_FOUND_MESSAGE "SUNDIALS requires ${SUNDIALS_LAPACK_INTEGER_SIZE}-byte LAPACK integers")
+  return()
+endif()
+
 if("@SUNDIALS_ENABLE_LAPACK@" AND NOT TARGET LAPACK::LAPACK)
   # For some reason find_dependency does not find the libraries if the variables
   # below are internal rather than CACHE variables
@@ -162,7 +174,17 @@ if("@SUNDIALS_ENABLE_LAPACK@" AND NOT TARGET LAPACK::LAPACK)
   set(LAPACK_LINKER_FLAGS
       "@LAPACK_LINKER_FLAGS@"
       CACHE "STRING" "LAPACK linker flags")
+  set(_sundials_bla_size "${BLA_SIZEOF_INTEGER}")
+  if(SUNDIALS_LAPACK_INTEGER_SIZE)
+    set(BLA_SIZEOF_INTEGER "${SUNDIALS_LAPACK_INTEGER_SIZE}")
+  endif()
   find_dependency(LAPACK)
+  if(_sundials_bla_size STREQUAL "")
+    unset(BLA_SIZEOF_INTEGER)
+  else()
+    set(BLA_SIZEOF_INTEGER "${_sundials_bla_size}")
+  endif()
+  unset(_sundials_bla_size)
 endif()
 
 if("@SUNDIALS_ENABLE_PETSC@" AND NOT TARGET SUNDIALS::PETSC)

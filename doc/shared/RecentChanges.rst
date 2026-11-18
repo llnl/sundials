@@ -5,6 +5,11 @@
 
 **New Features and Enhancements**
 
+SUNDIALS can use a LAPACK integer width different from its own index width
+when configured with ``BLA_SIZEOF_INTEGER``. The installed CMake package
+reports the configured LAPACK integer width as ``SUNDIALS_LAPACK_INTEGER_SIZE``
+in bytes.
+
 Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
 subdirectories for each problem variant. The subdirectories contain the example
 source, input files, scripts, and reference output. The old example Makefiles

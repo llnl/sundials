@@ -19,6 +19,7 @@
  * implementation of the SUNLINSOL package.
  * -----------------------------------------------------------------*/
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -51,6 +52,17 @@
 #define PIVOTS(S)             (LAPACKBAND_CONTENT(S)->pivots)
 #define LASTFLAG(S)           (LAPACKBAND_CONTENT(S)->last_flag)
 
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+typedef struct
+{
+  struct _SUNLinearSolverContent_LapackBand content;
+  sunlapackinttype* pivots;
+} SunLapackBandStorage;
+#define LAPACK_PIVOTS(S) (((SunLapackBandStorage*)(S->content))->pivots)
+#else
+#define LAPACK_PIVOTS(S) PIVOTS(S)
+#endif
+
 /*
  * -----------------------------------------------------------------
  * exported functions
@@ -82,6 +94,13 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
   MatrixRows = SUNBandMatrix_Rows(A);
   if (MatrixRows != N_VGetLength(y)) { return (NULL); }
 
+  if (!sunLapackIndexInRange(MatrixRows) ||
+      (uintmax_t)MatrixRows > SIZE_MAX / sizeof(sunindextype))
+  {
+    return NULL;
+  }
+  if (!sunLapackIndexInRange(SUNBandMatrix_LDim(A))) { return NULL; }
+
   /* Create an empty linear solver */
   S = NULL;
   S = SUNLinSolNewEmpty(sunctx);
@@ -99,7 +118,16 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
   /* Create content */
   content = NULL;
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+  SunLapackBandStorage* storage = malloc(sizeof *storage);
+  if (storage != NULL)
+  {
+    storage->pivots = NULL;
+    content = &storage->content;
+  }
+#else
   content = (SUNLinearSolverContent_LapackBand)malloc(sizeof *content);
+#endif
   if (content == NULL)
   {
     SUNLinSolFree(S);
@@ -115,12 +143,24 @@ SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
   content->pivots    = NULL;
 
   /* Allocate content */
-  content->pivots = (sunindextype*)malloc(MatrixRows * sizeof(sunindextype));
+  content->pivots = calloc((size_t)MatrixRows, sizeof(*content->pivots));
   if (content->pivots == NULL)
   {
     SUNLinSolFree(S);
     return (NULL);
   }
+
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+  if ((uintmax_t)MatrixRows <= SIZE_MAX / sizeof(sunlapackinttype))
+  {
+    LAPACK_PIVOTS(S) = malloc(MatrixRows * sizeof(sunlapackinttype));
+  }
+  if (LAPACK_PIVOTS(S) == NULL)
+  {
+    SUNLinSolFree(S);
+    return NULL;
+  }
+#endif
 
   return (S);
 }
@@ -151,7 +191,7 @@ SUNErrCode SUNLinSolInitialize_LapackBand(SUNLinearSolver S)
 
 int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
 {
-  sunindextype n, ml, mu, ldim, ier;
+  sunlapackinttype ier;
 
   /* check for valid inputs */
   if ((A == NULL) || (S == NULL)) { return SUN_ERR_ARG_CORRUPT; }
@@ -165,12 +205,32 @@ int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
 
   /* Call LAPACK to do LU factorization of A */
   ier  = 0;
-  n    = SUNBandMatrix_Rows(A);
-  ml   = SUNBandMatrix_LowerBandwidth(A);
-  mu   = SUNBandMatrix_UpperBandwidth(A);
-  ldim = SUNBandMatrix_LDim(A);
-  xgbtrf_f77(&n, &n, &ml, &mu, SUNBandMatrix_Data(A), &ldim, PIVOTS(S), &ier);
+  sunindextype rows = SUNBandMatrix_Rows(A);
+  sunindextype lower = SUNBandMatrix_LowerBandwidth(A);
+  sunindextype upper = SUNBandMatrix_UpperBandwidth(A);
+  sunindextype leading_dim = SUNBandMatrix_LDim(A);
+  if (rows != LAPACKBAND_CONTENT(S)->N || !sunLapackIndexInRange(rows) ||
+      !sunLapackIndexInRange(lower) || !sunLapackIndexInRange(upper) ||
+      !sunLapackIndexInRange(leading_dim))
+  {
+    LASTFLAG(S) = SUN_ERR_ARG_INCOMPATIBLE;
+    return SUN_ERR_ARG_INCOMPATIBLE;
+  }
+  sunlapackinttype n = (sunlapackinttype)rows;
+  sunlapackinttype ml = (sunlapackinttype)lower;
+  sunlapackinttype mu = (sunlapackinttype)upper;
+  sunlapackinttype ldim = (sunlapackinttype)leading_dim;
+  xgbtrf_f77(&n, &n, &ml, &mu, SUNBandMatrix_Data(A), &ldim, LAPACK_PIVOTS(S), &ier);
 
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+  if (ier >= 0)
+  {
+    for (sunindextype i = 0; i < rows; i++)
+    {
+      PIVOTS(S)[i] = (sunindextype)LAPACK_PIVOTS(S)[i];
+    }
+  }
+#endif
   LASTFLAG(S) = ier;
   if (ier > 0) { return (SUNLS_LUFACT_FAIL); }
   if (ier < 0) { return SUN_ERR_EXT_FAIL; }
@@ -180,7 +240,7 @@ int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A)
 int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
                               N_Vector b, SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
-  sunindextype n, ml, mu, ldim, one, ier;
+  sunlapackinttype one, ier;
   sunrealtype* xdata;
 
   /* check for valid inputs */
@@ -189,6 +249,26 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
     return SUN_ERR_ARG_CORRUPT;
   }
 
+  if (SUNMatGetID(A) != SUNMATRIX_BAND)
+  {
+    LASTFLAG(S) = SUN_ERR_ARG_INCOMPATIBLE;
+    return SUN_ERR_ARG_INCOMPATIBLE;
+  }
+
+  /* Call LAPACK to solve the linear system */
+  ier  = 0;
+  sunindextype rows = SUNBandMatrix_Rows(A);
+  sunindextype lower = SUNBandMatrix_LowerBandwidth(A);
+  sunindextype upper = SUNBandMatrix_UpperBandwidth(A);
+  sunindextype leading_dim = SUNBandMatrix_LDim(A);
+  if (rows != LAPACKBAND_CONTENT(S)->N || N_VGetLength(x) != rows ||
+      N_VGetLength(b) != rows || !sunLapackIndexInRange(rows) ||
+      !sunLapackIndexInRange(lower) || !sunLapackIndexInRange(upper) ||
+      !sunLapackIndexInRange(leading_dim))
+  {
+    LASTFLAG(S) = SUN_ERR_ARG_INCOMPATIBLE;
+    return SUN_ERR_ARG_INCOMPATIBLE;
+  }
   /* copy b into x */
   N_VScale(ONE, b, x);
 
@@ -200,14 +280,24 @@ int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A, N_Vector x,
     return SUN_ERR_MEM_FAIL;
   }
 
-  /* Call LAPACK to solve the linear system */
-  ier  = 0;
-  n    = SUNBandMatrix_Rows(A);
-  ml   = SUNBandMatrix_LowerBandwidth(A);
-  mu   = SUNBandMatrix_UpperBandwidth(A);
-  ldim = SUNBandMatrix_LDim(A);
+  sunlapackinttype n = (sunlapackinttype)rows;
+  sunlapackinttype ml = (sunlapackinttype)lower;
+  sunlapackinttype mu = (sunlapackinttype)upper;
+  sunlapackinttype ldim = (sunlapackinttype)leading_dim;
   one  = 1;
-  xgbtrs_f77("N", &n, &ml, &mu, &one, SUNBandMatrix_Data(A), &ldim, PIVOTS(S),
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+  for (sunindextype i = 0; i < rows; i++)
+  {
+    sunindextype pivot = PIVOTS(S)[i];
+    if (pivot < 1 || pivot > rows)
+    {
+      LASTFLAG(S) = SUN_ERR_ARG_OUTOFRANGE;
+      return SUN_ERR_ARG_OUTOFRANGE;
+    }
+    LAPACK_PIVOTS(S)[i] = (sunlapackinttype)pivot;
+  }
+#endif
+  xgbtrs_f77("N", &n, &ml, &mu, &one, SUNBandMatrix_Data(A), &ldim, LAPACK_PIVOTS(S),
              xdata, &n, &ier);
   LASTFLAG(S) = ier;
   if (ier < 0) { return SUN_ERR_EXT_FAIL; }
@@ -224,8 +314,14 @@ sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S)
 SUNErrCode SUNLinSolSpace_LapackBand(SUNLinearSolver S, long int* lenrwLS,
                                      long int* leniwLS)
 {
+  const long int arrays = 1 + SUNDIALS_LAPACK_CONVERT_PIVOTS;
+  const sunindextype n = LAPACKBAND_CONTENT(S)->N;
+  if ((uintmax_t)n > (uintmax_t)((LONG_MAX - 2) / arrays))
+  {
+    return SUN_ERR_OUTOFRANGE;
+  }
   *lenrwLS = 0;
-  *leniwLS = 2 + LAPACKBAND_CONTENT(S)->N;
+  *leniwLS = 2 + arrays * (long int)n;
   return SUN_SUCCESS;
 }
 
@@ -242,6 +338,9 @@ SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S)
       free(PIVOTS(S));
       PIVOTS(S) = NULL;
     }
+#if SUNDIALS_LAPACK_CONVERT_PIVOTS
+    free(LAPACK_PIVOTS(S));
+#endif
     free(S->content);
     S->content = NULL;
   }

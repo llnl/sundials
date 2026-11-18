@@ -1527,6 +1527,19 @@ the :cmakeop:`LAPACK_ROOT` CMake variable to the path of a desired LAPACK
 installation, and/or set the option :cmakeop:`BLA_VENDOR` to tell CMake to only
 look for LAPACK from a specified vendor (see the `CMake documentation
 <https://cmake.org/cmake/help/latest/module/FindLAPACK.html#input-variables>`__).
+
+With CMake 3.22 or newer, set ``BLA_SIZEOF_INTEGER`` to ``4`` for
+32-bit LAPACK integers or ``8`` for
+64-bit LAPACK integers. This selects the LAPACK integer ABI independently of
+:cmakeop:`SUNDIALS_INDEX_SIZE`. For example, set ``BLA_SIZEOF_INTEGER=4``
+when building SUNDIALS with 64-bit indices against an LP64 LAPACK library.
+If ``BLA_SIZEOF_INTEGER`` is omitted or set to ``ANY``, SUNDIALS assumes
+the LAPACK integer width matches its index width.
+
+The installed CMake package exports ``SUNDIALS_LAPACK_INTEGER_SIZE`` as
+the explicitly selected integer size in bytes (``4`` or ``8``).
+The value is empty for an implicit selection or when LAPACK is disabled.
+
 If necessary, to explicitly override the LAPACK library to build with, manually
 set the aforementioned variables to the desired values when configuring the
 build. For example, this is sometimes needed when using OpenBLAS:
