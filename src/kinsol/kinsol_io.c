@@ -245,6 +245,19 @@ int KINSetDampingAA(void* kinmem, sunrealtype beta)
   return (KIN_SUCCESS);
 }
 
+int KINSetIterationFn(void* kinmem, KINIterationFn iteration_fn)
+{
+  if (kinmem == NULL)
+  {
+    KINProcessError(NULL, KIN_MEM_NULL, __LINE__, __func__, __FILE__, MSG_NO_MEM);
+    return KIN_MEM_NULL;
+  }
+
+  KINMem kin_mem            = (KINMem)kinmem;
+  kin_mem->kin_iteration_fn = iteration_fn;
+  return KIN_SUCCESS;
+}
+
 /*
  * -----------------------------------------------------------------
  * Function : KINSetDampingFn
@@ -1191,6 +1204,8 @@ const char* KINGetReturnFlagName(long int flag)
   case KIN_SUCCESS: return "KIN_SUCCESS";
   case KIN_INITIAL_GUESS_OK: return "KIN_INITIAL_GUESS_OK";
   case KIN_STEP_LT_STPTOL: return "KIN_STEP_LT_STPTOL";
+  case KIN_USER_STOP: return "KIN_USER_STOP";
+  case KIN_ITERATION_FN_FAIL: return "KIN_ITERATION_FN_FAIL";
   case KIN_WARNING: return "KIN_WARNING";
   case KIN_MEM_NULL: return "KIN_MEM_NULL";
   case KIN_ILL_INPUT: return "KIN_ILL_INPUT";

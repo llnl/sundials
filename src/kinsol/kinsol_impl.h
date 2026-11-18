@@ -187,6 +187,7 @@ typedef struct KINMemRec
   long int kin_m_aa_alloc; /* depth (m) used for AA memory allocations */
   long int kin_delay_aa;   /* number of iterations to delay AA */
   long int kin_current_depth;  /* current Anderson acceleration space size */
+  KINIterationFn kin_iteration_fn; /* accepted iteration callback */
   KINDampingFn kin_damping_fn; /* function to determine the damping factor */
   KINDepthFn kin_depth_fn;     /* function to determine the depth with AA */
   int kin_orth_aa;             /* parameter for AA determining orthogonalization

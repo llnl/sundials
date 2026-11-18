@@ -173,6 +173,12 @@ KINSOL output constants
   | ``KIN_DEPTH_FN_ERR``         | -19   | The depth function returned a       |
   |                              |       | non-zero value.                     |
   +------------------------------+-------+-------------------------------------+
+  | ``KIN_USER_STOP``            | 3     | The iteration callback requested a |
+  |                              |       | stop.                               |
+  +------------------------------+-------+-------------------------------------+
+  | ``KIN_ITERATION_FN_FAIL``    | -20   | The iteration callback returned a   |
+  |                              |       | negative value.                     |
+  +------------------------------+-------+-------------------------------------+
 
 .. tabularcolumns:: |\Y{0.3}|\Y{0.1}|\Y{0.6}|
 

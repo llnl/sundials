@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added `KINSetIterationFn` for observing accepted KINSOL iterates and stopping
+a solve from an iteration callback.
+
 Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
 subdirectories for each problem variant. The subdirectories contain the example
 source, input files, scripts, and reference output. The old example Makefiles
