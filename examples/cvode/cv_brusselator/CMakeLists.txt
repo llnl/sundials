@@ -1,0 +1,36 @@
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
+  # Ginkgo's batched CSR and ELL matrices require 32-bit indices.
+  if(SUNDIALS_ENABLE_GINKGO AND SUNDIALS_INDEX_SIZE STREQUAL "32")
+    if(SUNDIALS_GINKGO_BACKENDS MATCHES "REF|OMP")
+      add_subdirectory(cpp_ginkgo)
+    endif()
+    if(SUNDIALS_GINKGO_BACKENDS MATCHES "CUDA|HIP")
+      add_subdirectory(cpp_ginkgo_gpu)
+    endif()
+  endif()
+  if(SUNDIALS_ENABLE_SUNLINSOL_KOKKOSDENSE)
+    add_subdirectory(cpp_kokkos)
+    add_subdirectory(cpp_kokkos_2d)
+  endif()
+  if(SUNDIALS_ENABLE_MAGMA)
+    add_subdirectory(cpp_magma)
+  endif()
+endif()
+
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES AND SUNDIALS_INDEX_SIZE MATCHES "64")
+  add_subdirectory(fortran)
+endif()

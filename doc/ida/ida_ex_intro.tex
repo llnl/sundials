@@ -29,32 +29,33 @@ where
 The following lists summarize all examples distributed with {\ida}.
 
 \vspace{0.2in}\noindent
-The {\ida} distribution contains, in the {\em srcdir}\id{/examples/ida/serial}
-directory, the following nine serial examples (using the {\nvecs} module):
+The {\ida} distribution contains, in the \id{c} variant directories under
+{\em srcdir}\id{/examples/ida}, the following serial examples (using the
+{\nvecs} module):
 %%
 \begin{itemize}
 
-\item \id{idaRoberts\_dns}
+\item \id{ida\_roberts\_dns}
   solves the Robertson chemical kinetics problem~\cite{Rob:66}, which consists
   of two differential equations and one algebraic constraint.  It also uses
   the rootfinding feature of {\ida}.
   The problem is solved with the {\sunlinsoldense} linear solver using
   a user-supplied Jacobian.
 
-\item \id{idaRoberts\_klu}
-  is the same as \id{idaRoberts\_dns} but uses the KLU sparse direct linear solver.
+\item \id{ida\_roberts\_klu}
+  is the same as \id{ida\_roberts\_dns} but uses the KLU sparse direct linear solver.
 
-\item \id{idaRoberts\_sps}
-  is the same as \id{idaRoberts\_dns} but uses the SuperLUMT sparse direct linear
+\item \id{ida\_roberts\_sps}
+  is the same as \id{ida\_roberts\_dns} but uses the SuperLUMT sparse direct linear
   solver (with one thread).
 
-\item \id{idaSlCrank\_dns}
+\item \id{ida\_sl\_crank\_dns}
   solves a system of index-2 DAEs, modeling a planar slider-crank mechanism.
   The problem is obtained through a stabilized index reduction (Gear-Gupta-Leimkuhler)
   starting from the index-3 DAE equations of motion derived using three generalized
   coordinates and two algebraic position constraints.
 
-\item \id{idaHeat2D\_bnd}
+\item \id{ida\_heat\_2d\_bnd}
   solves a 2-D heat equation, semidiscretized to a DAE on the unit square.
   This program solves the problem with the {\sunlinsolband} linear solver and
   the default difference-quotient Jacobian approximation. For purposes of
@@ -62,89 +63,90 @@ directory, the following nine serial examples (using the {\nvecs} module):
   boundary, given incorrect values as input initial guesses. The constraint
   $u > 0.0$ is imposed for all components.
 
-\item \id{idaHeat2D\_kry}
-  solves the same 2-D heat equation problem as \id{idaHeat2D\_bnd}, with the Krylov
+\item \id{ida\_heat\_2d\_kry}
+  solves the same 2-D heat equation problem as \id{ida\_heat\_2d\_bnd}, with the Krylov
   linear solver {\sunlinsolspgmr}. The preconditioner uses only the diagonal elements
   of the Jacobian.
 
-\item \id{idaHeat2D\_klu}
-  solves the same 2-D heat equation problem as \id{idaHeat2D\_bnd}, with
+\item \id{ida\_heat\_2d\_klu}
+  solves the same 2-D heat equation problem as \id{ida\_heat\_2d\_bnd}, with
   sparse linear solver {\sunlinsolklu}.
 
-\item \id{idaFoodWeb\_bnd}
+\item \id{ida\_food\_web\_bnd}
   solves a system of PDEs modelling a food web problem, with predator-prey
   interaction and diffusion, on the unit square in 2-D, using the band
   linear solver.
 
-\item \id{idaFoodWeb\_kry}
-  solves the same problem as \id{idaFoodWeb\_bnd}, but with {\sunlinsolspgmr}
+\item \id{ida\_food\_web\_kry}
+  solves the same problem as \id{ida\_food\_web\_bnd}, but with {\sunlinsolspgmr}
   and a user-supplied preconditioner.
   The PDEs are discretized in space to a system of DAEs which are solved
   using the {\sunlinsolband} linear solver with the default difference-quotient 
   Jacobian approximation.
 
-\item \id{idaKrylovDemo\_ls}
-  solves the same problem as \id{idaHeat2D\_kry}, with three Krylov linear solvers
+\item \id{ida\_krylov\_demo\_ls}
+  solves the same problem as \id{ida\_heat\_2d\_kry}, with three Krylov linear solvers
   {\sunlinsolspgmr}, {\sunlinsolspbcgs}, and {\sunlinsolsptfqmr}.  The
   preconditioner uses only the diagonal elements of the Jacobian.
 
-\item \id{idaAnalytic\_mels} solves a problem having a simple analytic
+\item \id{ida\_analytic\_mels} solves a problem having a simple analytic
   solution, using a custom matrix-embedded linear solver.
 
 
 \end{itemize}
 
 \vspace{0.2in}\noindent
-In the {\em srcdir}\id{/examples/ida/parallel} directory, the {\ida} 
-distribution contains the following parallel examples 
+In the \id{c-mpi} variant directories under
+{\em srcdir}\id{/examples/ida}, the {\ida} distribution contains the
+following parallel examples
 (using the {\nvecp} module):
 %%
 \begin{itemize}
 
-\item \id{idaHeat2D\_kry\_p}
-  solves the same 2-D heat equation problem as \id{idaHeat2D\_kry}, with
+\item \id{ida\_heat\_2d\_kry\_p}
+  solves the same 2-D heat equation problem as \id{ida\_heat\_2d\_kry}, with
   {\sunlinsolspgmr} in parallel, and with a user-supplied diagonal preconditioner.
   
-\item \id{idaHeat2D\_kry\_bbd\_p}
-  solves the same problem as \id{idaHeat2D\_kry\_p}.
+\item \id{ida\_heat\_2d\_kry\_bbd\_p}
+  solves the same problem as \id{ida\_heat\_2d\_kry\_p}.
   This program  uses the Krylov linear solver {\sunlinsolspgmr} in parallel, and the
   band-block-diagonal preconditioner {\idabbdpre} with half-bandwidths equal to $1$.
 
-\item \id{idaFoodWeb\_kry\_p}
-  solves the same food web problem as \id{idaFoodWeb\_bnd}, but with {\sunlinsolspgmr}
+\item \id{ida\_food\_web\_kry\_p}
+  solves the same food web problem as \id{ida\_food\_web\_bnd}, but with {\sunlinsolspgmr}
   and a user-supplied preconditioner.
   The preconditioner supplied to {\sunlinsolspgmr} is the block-diagonal part of 
   the Jacobian with $n_s \times n_s$ blocks arising from the reaction terms only
   ($n_s =$ number of species).
 
-\item \id{idaFoodWeb\_kry\_bbd\_p}
-  solves the same food web problem as \id{idaFoodWeb\_kry\_p}.
+\item \id{ida\_food\_web\_kry\_bbd\_p}
+  solves the same food web problem as \id{ida\_food\_web\_kry\_p}.
   This program solves the problem using {\sunlinsolspgmr} in parallel and the
   {\idabbdpre} preconditioner.
 
 \end{itemize}
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/C\_openmp} directory contains the
-two examples \id{idaFoodWeb\_bnd\_omp} and \id{idaFoodWeb\_kry\_omp},
+The {\em srcdir}\id{/examples/ida/ida\_food\_web/c\_openmp} directory contains the
+two examples \id{ida\_food\_web\_bnd\_omp} and \id{ida\_food\_web\_kry\_omp},
 which are based on the FoodWeb examples listed above.  Both use the
 OpenMP {\nvector} module.
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/cuda} directory contains the
-example \id{idaHeat2D\_kry\_cuda}, based on \id{idaHeat2D\_kry\_p},
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cuda} directory contains the
+example \id{ida\_heat\_2d\_kry\_cuda}, based on \id{ida\_heat\_2d\_kry\_p},
 but using the \id{cuda} {\nvector} module.
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/mpicuda} directory contains the
-example \id{idaHeat2D\_kry\_p\_mpicuda}, based on \id{idaHeat2D\_kry\_p},
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cuda\_mpi} directory contains the
+example \id{ida\_heat\_2d\_kry\_p\_mpicuda}, based on \id{ida\_heat\_2d\_kry\_p},
 but using the \id{cuda} {\nvector} module and MPI.
 
 
 \vspace{0.2in}\noindent
-The {\em srcdir}\id{/examples/ida/petsc} directory contains the
-examples \id{idaHeat2D\_petsc\_spgmr} and \id{idaHeat2D\_petsc\_snes},
-based on \id{idaHeat2D\_kry\_p}, but using the Petsc linear and
+The {\em srcdir}\id{/examples/ida/ida\_heat\_2d/c\_mpi\_petsc} directory contains the
+examples \id{ida\_heat\_2d\_petsc\_spgmr} and \id{ida\_heat\_2d\_petsc\_snes},
+based on \id{ida\_heat\_2d\_kry\_p}, but using the Petsc linear and
 nonlinear solvers.
 
 \vspace{0.2in}\noindent
@@ -153,15 +155,15 @@ Fortran interface modules, and based on examples listed earlier:
 
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_serial}
-contains the two examples \id{idaRoberts\_dns\_f2003} and
-\id{idaHeat2D\_kry\_f2003}.
+\item The \id{fortran} variant directories contain the two examples
+\id{ida\_roberts\_dns\_f2003} and
+\id{ida\_heat\_2d\_kry\_f2003}.
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_parallel}
-contains the example \id{idaHeat2D\_kry\_bbd\_f2003}.
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/fortran\_mpi}
+contains the example \id{ida\_heat\_2d\_kry\_bbd\_f2003}.
 
-\item The directory {\em srcdir}\id{/examples/ida/F2003\_openmp}
-contains the example \id{idaHeat2D\_kry\_omp\_f2003}.
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/fortran\_openmp}
+contains the example \id{ida\_heat\_2d\_kry\_omp\_f2003}.
 
 \end{itemize}
 
@@ -171,14 +173,14 @@ listed earlier:
 
 \begin{itemize}
 
-\item The directory {\em srcdir}\id{/examples/ida/\_raja} contains
-the example \id{idaHeat2D\_kry\_raja}.
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp\_raja} contains
+the example \id{ida\_heat\_2d\_kry\_raja}.
 
-\item The directory {\em srcdir}\id{/examples/ida/\_mpiraja} contains
-the example \id{idaHeat2D\_kry\_p\_mpiraja}.
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp\_mpi\_raja} contains
+the example \id{ida\_heat\_2d\_kry\_p\_mpiraja}.
 
-\item The directory {\em srcdir}\id{/examples/ida/\_trilinos} contains
-two examples \id{idaHeat2D\_kry\_tpetra} and \id{idaHeat2D\_kry\_p\_tpetra}.
+\item The directory {\em srcdir}\id{/examples/ida/ida\_heat\_2d/cpp\_trilinos} contains
+two examples \id{ida\_heat\_2d\_kry\_tpetra} and \id{ida\_heat\_2d\_kry\_p\_tpetra}.
 
 \end{itemize}
 
