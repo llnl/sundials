@@ -513,6 +513,14 @@ SUNDIALS_EXPORT int ARKodeGetNumRelaxSolveIters(void* arkode_mem,
 /* SUNStepper functions */
 SUNDIALS_EXPORT int ARKodeCreateSUNStepper(void* arkode_mem, SUNStepper* stepper);
 
+/* Attach stack of workspace vectors */
+SUNDIALS_EXPORT
+int ARKodeSetVecStack(void* arkode_mem, SUNVecStack stack);
+
+/* Retrieve stack of workspace vectors */
+SUNDIALS_EXPORT
+int ARKodeGetVecStack(void* arkode_mem, SUNVecStack* stack);
+
 #ifdef __cplusplus
 }
 #endif
