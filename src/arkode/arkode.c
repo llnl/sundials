@@ -2749,6 +2749,8 @@ int arkHin(ARKodeMem ark_mem, sunrealtype tout)
   ---------------------------------------------------------------*/
 sunrealtype arkUpperBoundH0(ARKodeMem ark_mem, sunrealtype tdist)
 {
+  SUNFunctionBegin(ark_mem->sunctx);
+
   sunrealtype hub_inv, hub;
   N_Vector temp1, temp2;
 
