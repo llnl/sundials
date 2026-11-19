@@ -97,6 +97,7 @@ SUNErrCode SUNVecStack_Create(N_Vector tmpl, int init_size, SUNContext sunctx,
 SUNErrCode SUNVecStack_Destroy(SUNVecStack* stack_in)
 {
   if (stack_in == NULL || *stack_in == NULL) { return SUN_SUCCESS; }
+  SUNFunctionBegin((*stack_in)->sunctx);
 
   SUNVecStack stack = *stack_in;
   if (stack->num_checked_out < 0 || stack->num_owned < 0)
