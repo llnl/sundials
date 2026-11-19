@@ -1,5 +1,0 @@
-List of OpenMP device offloading ARKODE C examples
-
-  ark_analytic_nonlin_ompdev       : simple nonstiff, nonlinear ODE      (ERK)
-  ark_heat1D_ompdev                : stiff 1D heat PDE example           (DIRK/PCG)
-  ark_heat1D_adapt_ompdev          : stiff 1D heat PDE, adaptive mesh    (DIRK/PCG/ARKodeResize)

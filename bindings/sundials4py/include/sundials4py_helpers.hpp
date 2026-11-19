@@ -15,10 +15,11 @@
  * SUNDIALS Copyright End
  *----------------------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_HELPERS_HPP
-#define _SUNDIALS4PY_HELPERS_HPP
+#ifndef SUNDIALS_SUNDIALS4PY_HELPERS_HPP
+#define SUNDIALS_SUNDIALS4PY_HELPERS_HPP
 
 #include "sundials4py.hpp"
+#include "sundials4py_types.hpp"
 
 namespace nb = nanobind;
 
@@ -146,8 +147,13 @@ struct returns_references_to
       throw sundials4py::error_returned("return value should be a sequence");
     }
 
-    // Directly apply keep_alive for each IN using a fold expression
+    // Directly apply keep_alive for each IN using a fold expression. The
+    // nanobind 3 backend moved this hook out of the public detail namespace.
+#if NB_VERSION_MAJOR >= 3
+    (NB_CALL(keep_alive_py)(NB_CTX, ret[IN].ptr(), args[IP - 1]), ...);
+#else
     (nb::detail::keep_alive(ret[IN].ptr(), args[IP - 1]), ...);
+#endif
   }
 };
 

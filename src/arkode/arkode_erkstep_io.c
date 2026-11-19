@@ -776,7 +776,7 @@ int ERKStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt)
   return (ARKodePrintAllStats(arkode_mem, outfile, fmt));
 }
 
-char* ERKStepGetReturnFlagName(long int flag)
+const char* ERKStepGetReturnFlagName(long int flag)
 {
   return (ARKodeGetReturnFlagName(flag));
 }

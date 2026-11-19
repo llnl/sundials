@@ -1,4 +1,4 @@
-// #ifndef _ARKODE_SPRKSTEP_H
+// #ifndef SUNDIALS_ARKODE_SPRKSTEP_H
 //
 // #ifdef __cplusplus
 // #endif

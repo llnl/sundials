@@ -72,7 +72,6 @@
  *       IDARootfind
  *   IDA Error message handling functions
  *       IDAProcessError
- *       IDAErrHandler
  * -----------------------------------------------------------------
  */
 

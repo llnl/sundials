@@ -13,8 +13,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS4PY_LOGGER_USERSUPPLIED_HPP
-#define _SUNDIALS4PY_LOGGER_USERSUPPLIED_HPP
+#ifndef SUNDIALS_SUNDIALS_LOGGER_USERSUPPLIED_HPP
+#define SUNDIALS_SUNDIALS_LOGGER_USERSUPPLIED_HPP
 
 #include <cstdlib>
 #include <cstring>
@@ -49,4 +49,4 @@ inline SUNErrCode sunlogger_flush_msg_wrapper(Args... args)
     SUNLogger>(&SUNLoggerFunctionTable::flush_msg, std::forward<Args>(args)...);
 }
 
-#endif // _SUNDIALS4PY_LOGGER_USERSUPPLIED_HPP
+#endif // SUNDIALS_SUNDIALS_LOGGER_USERSUPPLIED_HPP

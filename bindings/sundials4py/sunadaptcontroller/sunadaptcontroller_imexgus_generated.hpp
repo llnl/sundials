@@ -1,4 +1,4 @@
-// #ifndef _SUNADAPTCONTROLLER_IMEXGUS_H
+// #ifndef SUNDIALS_SUNADAPTCONTROLLER_IMEXGUS_H
 //
 // #ifdef __cplusplus
 // #endif

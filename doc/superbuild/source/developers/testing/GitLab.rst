@@ -35,6 +35,53 @@ projects. The `docs <https://radiuss-shared-ci.readthedocs.io/en/latest/>`__ for
 the shared project should be reviewed before reading the docs below.
 
 
+University of Oregon GitLab CI
+------------------------------
+
+SUNDIALS also runs an independent CI pipeline on the University of Oregon
+GitLab runners. This pipeline complements the GitHub Actions and LLNL GitLab
+pipelines by testing GPU and accelerator configurations that are not available
+in the other CI systems. The pipeline can be viewed in the
+`SUNDIALS GitLab project <https://gitlab.spack.io/SUNDIALS/sundials/-/pipelines>`__.
+
+The pipeline is defined in ``.gitlab/gitlab-ci-uoregon.yml``. It runs for
+commits pushed to ``develop`` and for pull-request branches mirrored to GitLab
+as ``pr<number>`` or ``pr<number>_<branch>``. GitLab merge-request and external
+pull-request pipelines targeting ``develop`` are also supported. Jobs are
+interruptible, so a newer commit can cancel work for an older commit.
+
+The GitHub Actions workflow ``.github/workflows/uoregon-gitlab-status.yml``
+bridges the GitLab result back to GitHub. For a pull request targeting
+``develop``, it locates the GitLab pipeline for the pull request's commit,
+waits for it to finish, and posts the ``gitlab/uoregon`` commit status. The
+status is currently informational while the reliability of the Oregon runners
+is being established; a failure should be investigated, but it does not block
+merging by itself. A pipeline can take up to two hours before the bridge times
+out.
+
+All jobs use ``double`` precision and 64-bit indices. The regular test jobs
+invoke ``test/test_driver.sh`` with ``test/env/uoregon.sh``. That environment
+file sets ``RelWithDebInfo`` for pull requests, ``Release`` for ``develop``,
+disables compiler warnings as errors for compiler-version-specific warnings,
+and disables third-party libraries by default. The GPU jobs enable CUDA, HIP,
+or SYCL as appropriate. The ``sundials4py`` job runs the Python test suite
+directly.
+
+Oregon runners do not currently have platform-specific answer files. The
+environment setup therefore leaves ``SUNDIALS_TEST_ANSWER_DIR`` unset, and
+answer-file changes should not be based solely on an Oregon CI result. Failed
+test jobs retain their ``test/build_*/`` directories as GitLab artifacts for
+debugging.
+
+When modifying this CI, update the following files together when applicable:
+
+* ``.gitlab/gitlab-ci-uoregon.yml`` for runner tags, container images, job
+  commands, and trigger rules.
+* ``test/env/uoregon.sh`` for common CMake and SUNDIALS test configuration.
+* ``.github/workflows/uoregon-gitlab-status.yml`` for GitHub triggers, the
+  GitLab project lookup, or the status-bridge behavior.
+
+
 CI Pipelines and Jobs
 ---------------------
 

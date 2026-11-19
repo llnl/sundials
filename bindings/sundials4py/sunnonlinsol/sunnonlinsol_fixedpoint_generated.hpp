@@ -1,4 +1,4 @@
-// #ifndef _SUNNONLINSOL_FIXEDPOINT_H
+// #ifndef SUNDIALS_SUNNONLINSOL_FIXEDPOINT_H
 //
 // #ifdef __cplusplus
 // #endif

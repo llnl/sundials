@@ -16,8 +16,8 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------------------*/
 
-#ifndef ADVECTION_REACTION_3D_RHS_HPP
-#define ADVECTION_REACTION_3D_RHS_HPP
+#ifndef SUNDIALS_RHS3D_HPP
+#define SUNDIALS_RHS3D_HPP
 
 #include "advection_reaction_3D.hpp"
 

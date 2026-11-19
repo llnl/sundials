@@ -1,4 +1,4 @@
-// #ifndef ARKODE_FORCINGINGSTEP_H_
+// #ifndef SUNDIALS_ARKODE_FORCINGSTEP_H
 //
 // #ifdef __cplusplus
 // #endif

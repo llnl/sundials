@@ -1,4 +1,4 @@
-// #ifndef ARKODE_SPLITTINGSTEP_H_
+// #ifndef SUNDIALS_ARKODE_SPLITTINGSTEP_H
 //
 // #ifdef __cplusplus
 // #endif

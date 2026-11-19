@@ -18,8 +18,8 @@
  * automatically switches between Newton and fixed-point iterations.
  * ---------------------------------------------------------------------------*/
 
-#ifndef SUNDIALS_NONLINSOLAUTO_H_
-#define SUNDIALS_NONLINSOLAUTO_H_
+#ifndef SUNDIALS_SUNNONLINSOL_AUTO_H
+#define SUNDIALS_SUNNONLINSOL_AUTO_H
 
 #include <sundials/sundials_context.h>
 #include <sundials/sundials_nonlinearsolver.h>
@@ -171,4 +171,4 @@ SUNErrCode SUNNonlinSolGetTotalNumConvFailsByType_Auto(SUNNonlinearSolver NLS,
 }
 #endif
 
-#endif /* SUNDIALS_NONLINSOLAUTO_H_ */
+#endif /* SUNDIALS_SUNNONLINSOL_AUTO_H */

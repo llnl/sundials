@@ -479,9 +479,9 @@ function ``g()``.
 
 
 
-.. _ark_brusselator1D:
+.. _ark_brusselator_1d:
 
-ark_brusselator1D
+ark_brusselator_1d
 ============================================
 
 We now investigate a time-dependent system of partial differential
@@ -565,13 +565,13 @@ center is at time :math:`t=2.9`, right is at time :math:`t=8.8`.
 
 
 
-.. _ark_brusselator1D_klu:
+.. _ark_brusselator_1d_klu:
 
-ark_brusselator1D_klu
+ark_brusselator_1d_klu
 ============================================
 
 This problem is mathematically identical to the preceding problem,
-:ref:`ark_brusselator1D`, but instead of using the SUNMATRIX_BAND
+:ref:`ark_brusselator_1d`, but instead of using the SUNMATRIX_BAND
 banded matrix module and SUNLINSOL_BAND linear solver module, it uses
 the SUNMATRIX_SPARSE sparse matrix module with the SUNLINSOL_KLU
 linear solver module.  These are still provided to ARKODE using the
@@ -583,13 +583,13 @@ Additionally, the solution is only output 10 times instead of 100.
 
 
 
-.. _ark_brusselator1D_FEM_slu:
+.. _ark_brusselator_1d_fem_slu:
 
-ark_brusselator1D_FEM_slu
+ark_brusselator_1d_fem_slu
 ============================================
 
 This problem is mathematically identical to the preceding problems,
-:ref:`ark_brusselator1D` and :ref:`ark_brusselator1D_klu`, but
+:ref:`ark_brusselator_1d` and :ref:`ark_brusselator_1d_klu`, but
 utilizes a different set of numerical methods.
 
 
@@ -618,7 +618,7 @@ After this spatial semi-discretization, the system of three PDEs is
 passed to ARKODE as a system of :math:`3N` coupled ODEs, as with the
 preceding problem.
 
-As with the preceding problem :ref:`ark_brusselator1D_klu`, this
+As with the preceding problem :ref:`ark_brusselator_1d_klu`, this
 example solves the problem with a DIRK method, using a Newton
 iteration, and the SUNMATRIX_SPARSE module.  However, this example
 uses the SUNLINSOL_SUPERLUMT linear solver module, both for the Newton
@@ -643,7 +643,7 @@ Solutions
    :width: 30 %
 
 Finite-element Brusselator PDE solution snapshots (created using the
-supplied Python script, ``plot_brusselator1D_FEM.py``): left is at time
+supplied Python script, ``plot_brusselator_1d_fem.py``): left is at time
 :math:`t=0`, center is at time :math:`t=2.9`, right is at time
 :math:`t=8.8`.
 
@@ -651,9 +651,9 @@ supplied Python script, ``plot_brusselator1D_FEM.py``): left is at time
 
 
 
-.. _ark_heat1D:
+.. _ark_heat_1d:
 
-ark_heat1D
+ark_heat_1d
 ============================================================
 
 As with the previous brusselator problem, this example simulates a
@@ -664,28 +664,40 @@ consider the heat equation,
 
    \frac{\partial u}{\partial t} = k \frac{\partial^2 u}{\partial x^2} + f,
 
-for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with initial
+for :math:`t \in [0, 1]`, and :math:`x \in [0, 1]`, with initial
 condition :math:`u(0,x) = 0`, stationary boundary conditions,
 
 .. math::
 
    \frac{\partial u}{\partial t}(t,0) = \frac{\partial u}{\partial t}(t,1) = 0,
 
-and a point-source heating term,
+and a point-source heating term of total strength :math:`0.01`,
+located at the midpoint of the domain,
 
 .. math::
 
-   f(t,x) = \begin{cases} 1 & \text{if}\;\; x=1/2, \\
-                          0 & \text{otherwise}. \end{cases}
+   f(t,x) = 0.01\, \delta(x - 1/2),
+
+where :math:`\delta` denotes the Dirac delta distribution.
 
 
 
 Numerical method
 ----------------
 
-As with the :ref:`ark_brusselator1D` test problem, this test computes
+As with the :ref:`ark_brusselator_1d` test problem, this test computes
 spatial derivatives using second-order centered differences, with the
 data distributed over :math:`N` points on a uniform spatial grid.
+
+Since a Dirac delta cannot be represented pointwise on a grid, the
+heating term is applied using its finite-volume approximation, wherein
+the total source strength is spread over the grid cell of width
+:math:`\Delta x` surrounding :math:`x=1/2`, giving the nodal value
+:math:`0.01/\Delta x` at that single node.  This division by
+:math:`\Delta x` is what keeps the discrete integral of :math:`f` equal
+to :math:`0.01` under mesh refinement; without it the effective source
+strength would be :math:`0.01\,\Delta x`, and would vanish as
+:math:`\Delta x \to 0`.
 
 In this example, we use :math:`N=201` spatial points, with heat
 conductivity parameter :math:`k=0.5`, and discretize the equation
@@ -718,33 +730,34 @@ center is at time :math:`t=0.13`, right is at time :math:`t=1.0`.
 
 
 
-.. _ark_heat1D_adapt:
+.. _ark_heat_1d_adapt:
 
-ark_heat1D_adapt
+ark_heat_1d_adapt
 ===================================================
 
-This problem is mathematically identical to the :ref:`ark_heat1D` test
-problem.  However, instead of using a uniform spatial grid, this test
-problem utilizes a dynamically-evolving spatial mesh.  The PDE under
-consideration is a simple one-dimensional heat equation,
+This problem is closely related to the :ref:`ark_heat_1d` test problem,
+differing in two respects: instead of using a uniform spatial grid, this
+test problem utilizes a dynamically-evolving spatial mesh, and instead
+of a point source it employs a smooth, spatially-varying heating term.
+The PDE under consideration is a simple one-dimensional heat equation,
 
 .. math::
 
    \frac{\partial u}{\partial t} = k \frac{\partial^2 u}{\partial x^2} + f,
 
-for :math:`t \in [0, 10]`, and :math:`x \in [0, 1]`, with initial
+for :math:`t \in [0, 1]`, and :math:`x \in [0, 1]`, with initial
 condition :math:`u(0,x) = 0`, stationary boundary conditions,
 
 .. math::
 
    \frac{\partial u}{\partial t}(t,0) = \frac{\partial u}{\partial t}(t,1) = 0,
 
-and a point-source heating term,
+and a heating term given by a smooth sum of Gaussians,
 
 .. math::
 
-   f(t,x) = \begin{cases} 1 & \text{if}\;\; x=1/2, \\
-                          0 & \text{otherwise}. \end{cases}
+   f(t,x) &= 2 e^{-200(x-0.25)^2} - e^{-400(x-0.7)^2} \\
+          &\quad + e^{-500(x-0.4)^2} - 2 e^{-600(x-0.55)^2}.
 
 
 
@@ -776,9 +789,9 @@ major ARKODE data structures across vector length changes.
 
 
 
-.. _ark_KrylovDemo_prec:
+.. _ark_krylov_demo_prec:
 
-ark_KrylovDemo_prec
+ark_krylov_demo_prec
 ============================================
 
 This problem is an ARKODE clone of the CVODE problem,
@@ -875,9 +888,9 @@ be no such messages.
 
 
 
-.. _ark_onewaycouple_mri:
+.. _ark_one_way_couple_mri:
 
-ark_onewaycouple_mri
+ark_one_way_couple_mri
 ================================================
 
 This example simulates a linear system of 3 dependent variables :math:`u`,
@@ -919,9 +932,9 @@ This system has the analytic solution,
 
 
 
-.. _ark_twowaycouple_mri:
+.. _ark_two_way_couple_mri:
 
-ark_twowaycouple_mri
+ark_two_way_couple_mri
 ================================================
 
 This example simulates a linear system of 3 dependent variables :math:`u`,

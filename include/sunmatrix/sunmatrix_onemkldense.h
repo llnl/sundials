@@ -18,8 +18,8 @@
  * class using the Intel oneAPI Math Kernel Library (oneMKL).
  * ---------------------------------------------------------------------------*/
 
-#ifndef _SUNMATRIX_ONEMKLDENSE_H
-#define _SUNMATRIX_ONEMKLDENSE_H
+#ifndef SUNDIALS_SUNMATRIX_ONEMKLDENSE_H
+#define SUNDIALS_SUNMATRIX_ONEMKLDENSE_H
 
 #include <stdio.h>
 #include <sundials/sundials_matrix.h>
@@ -161,9 +161,6 @@ SUNErrCode SUNMatScaleAdd_OneMklDense(sunrealtype c, SUNMatrix A, SUNMatrix B);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNMatScaleAddI_OneMklDense(sunrealtype c, SUNMatrix A);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNMatMatvecSetup_OneMklDense(SUNMatrix A);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNMatMatvec_OneMklDense(SUNMatrix A, N_Vector x, N_Vector y);

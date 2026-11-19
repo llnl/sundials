@@ -18,8 +18,8 @@
  * utilities.
  *--------------------------------------------------------------*/
 
-#ifndef _ARKODE_INTERP_IMPL_H
-#define _ARKODE_INTERP_IMPL_H
+#ifndef SUNDIALS_ARKODE_INTERP_IMPL_H
+#define SUNDIALS_ARKODE_INTERP_IMPL_H
 
 #include <arkode/arkode.h>
 #include <stdarg.h>
