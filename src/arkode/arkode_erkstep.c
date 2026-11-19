@@ -300,9 +300,8 @@ void erkStep_Free(ARKodeMem ark_mem)
     /* free the RHS vectors */
     if (step_mem->F)
     {
-      arkFreeVecArray(step_mem->stages, &(step_mem->F), ark_mem->lrw1,
-                      &(ark_mem->lrw), ark_mem->liw1, &(ark_mem->liw));
-      step_mem->F = NULL;
+      SUNVecStack_PushArray(ark_mem->temp_vec_stack, step_mem->stages,
+                            &(step_mem->F));
     }
 
     /* free the reusable arrays for fused vector interface */
@@ -462,9 +461,7 @@ int erkStep_Init(ARKodeMem ark_mem, int init_type)
 
   /* Allocate RHS vector memory, update storage requirements */
   /*   Allocate F[0] ... F[stages-1] if needed */
-  if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F),
-                        ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                        &(ark_mem->liw)))
+  if (SUNVecStack_PopArray(ark_mem->temp_vec_stack, step_mem->stages, &(step_mem->F)))
   {
     return (ARK_MEM_FAIL);
   }
