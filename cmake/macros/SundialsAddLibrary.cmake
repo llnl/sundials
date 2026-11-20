@@ -240,6 +240,12 @@ macro(sundials_add_library target)
                                  ${sundials_add_library_COMPILE_DEFINITIONS})
     endif()
 
+    # add debugging definitions (PRIVATE so they are not exported)
+    if(_SUNDIALS_ENABLED_DEBUG_DEFINITIONS)
+      target_compile_definitions(${obj_target}
+                                 PRIVATE ${_SUNDIALS_ENABLED_DEBUG_DEFINITIONS})
+    endif()
+
     # add compile options to object library
     if(sundials_add_library_COMPILE_OPTIONS)
       target_compile_options(${obj_target}
@@ -349,6 +355,12 @@ macro(sundials_add_library target)
       if(sundials_add_library_COMPILE_DEFINITIONS)
         target_compile_definitions(${_actual_target_name}
                                    ${sundials_add_library_COMPILE_DEFINITIONS})
+      endif()
+
+      # add debugging definitions (PRIVATE so they are not exported)
+      if(_SUNDIALS_ENABLED_DEBUG_DEFINITIONS)
+        target_compile_definitions(
+          ${_actual_target_name} PRIVATE ${_SUNDIALS_ENABLED_DEBUG_DEFINITIONS})
       endif()
 
       # add all compile options

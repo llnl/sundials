@@ -204,9 +204,12 @@ endif()
 if(SUNDIALS_DEBUG)
   message(STATUS "Adding debugging preprocessor directives")
 
+  # Collect the enabled debugging definitions. These are applied PRIVATE to
+  # library targets in sundials_add_library
+  set(_SUNDIALS_ENABLED_DEBUG_DEFINITIONS "")
   foreach(debug ${_SUNDIALS_DEBUG_OPTIONS})
     if(${${debug}})
-      add_compile_definitions(${debug})
+      list(APPEND _SUNDIALS_ENABLED_DEBUG_DEFINITIONS ${debug})
     endif()
   endforeach()
 endif()
