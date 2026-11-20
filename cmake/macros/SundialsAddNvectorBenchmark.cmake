@@ -30,6 +30,7 @@ function(sundials_add_nvector_benchmark NAME)
 
   add_executable(${NAME} ${BENCHMARKS_DIR}/nvector/test_nvector_performance.c
                          ${arg_SOURCES})
+  sundials_add_platform_definitions(${NAME})
 
   set_target_properties(${NAME} PROPERTIES FOLDER "Benchmarks")
 

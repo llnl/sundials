@@ -27,6 +27,7 @@ add_subdirectory(serial)
 
 # Build the nvector test utilities
 add_library(test_nvector_obj OBJECT test_nvector.c)
+sundials_add_platform_definitions(test_nvector_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
@@ -43,6 +44,7 @@ if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(mpiplusx)
   # Build the mpi nvector test utilities
   add_library(test_nvectormpi_obj OBJECT test_mpinvector.c)
+  sundials_add_platform_definitions(test_nvectormpi_obj)
   if(BUILD_SHARED_LIBS)
     set_property(TARGET test_nvectormpi_obj PROPERTY POSITION_INDEPENDENT_CODE
                                                      TRUE)

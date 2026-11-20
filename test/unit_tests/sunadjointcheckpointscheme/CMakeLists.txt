@@ -24,6 +24,7 @@ if(TARGET GTest::gtest_main AND TARGET GTest::gmock)
     list(GET test_tuple 1 test_args)
 
     add_executable(${test} ${test}.cpp)
+    sundials_add_platform_definitions(${test})
     target_link_libraries(
       ${test}
       PRIVATE sundials_adjointcheckpointscheme_fixed_obj

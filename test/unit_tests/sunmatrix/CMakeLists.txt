@@ -29,6 +29,7 @@ add_subdirectory(sparse)
 
 # Build the sunmatrix test utilities
 add_library(test_sunmatrix_obj OBJECT test_sunmatrix.c test_sunmatrix.h)
+sundials_add_platform_definitions(test_sunmatrix_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib

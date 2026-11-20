@@ -24,6 +24,7 @@ endif()
 # Build the sundials_sundomeigest test utilities
 add_library(test_sundomeigest_obj OBJECT test_sundomeigest.c
                                          test_sundomeigest.h)
+sundials_add_platform_definitions(test_sundomeigest_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
