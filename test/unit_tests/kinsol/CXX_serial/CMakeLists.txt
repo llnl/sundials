@@ -17,8 +17,9 @@
 # KINSOL C++ serial unit_tests
 # ---------------------------------------------------------------
 
-# List of test tuples of the form "name\;args"
-set(unit_tests "kin_test_getjac.cpp\;" "kin_test_dq_restore.cpp\;")
+# List of test tuples of the form "name\;args\;options"
+set(unit_tests "kin_test_getjac.cpp\;\;"
+               "kin_test_dq_restore.cpp\;\;NODIFF")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -26,6 +27,7 @@ foreach(test_tuple ${unit_tests})
   # Parse the test tuple
   list(GET test_tuple 0 test)
   list(GET test_tuple 1 test_args)
+  list(GET test_tuple 2 test_options)
 
   # Extract the file name without extension
   get_filename_component(test_target ${test} NAME_WE)
@@ -57,13 +59,6 @@ foreach(test_tuple ${unit_tests})
     set(test_name ${test_target})
   else()
     string(REPLACE " " "_" test_name "${test_target}_${test_args}")
-  endif()
-
-  # This test checks its results internally and reports failure via its exit
-  # code.
-  set(test_options)
-  if(test_target STREQUAL "kin_test_dq_restore")
-    list(APPEND test_options NODIFF)
   endif()
 
   # add test to regression tests
