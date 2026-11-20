@@ -167,8 +167,8 @@ if(SUNDIALS_TEST_ENABLE_GTEST)
   # find_package(GTest)
   if(NOT (TARGET GTest::gtest_main OR TARGET GTest::Main))
     # GoogleTest's own CMakeLists call include_directories, which triggers the
-    # CMD_NON_TARGET_DIRECTIVE diagnostic and fails the configure under
-    # -W error=dev in CMake 4.5. Demote author diagnostics to warnings while
+    # CMD_NON_TARGET_DIRECTIVE diagnostic and fails the configure under -W
+    # error=dev in CMake 4.5. Demote author diagnostics to warnings while
     # GoogleTest is processed. FetchContent keeps the diagnostic state from the
     # time it was included, so the push must come before include(FetchContent).
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.4)
