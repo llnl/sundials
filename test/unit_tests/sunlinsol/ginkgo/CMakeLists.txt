@@ -35,9 +35,6 @@ if(SUNDIALS_INDEX_SIZE STREQUAL "32")
        "test_sunlinsol_ginkgo_batch.cpp\;bicgstab csr 50 10 2 500 0\;")
 endif()
 
-# Add source directory to include directories
-include_directories(..)
-
 sundials_add_examples_ginkgo(
   examples
   TARGETS test_sunlinsol_obj

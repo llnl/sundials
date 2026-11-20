@@ -18,7 +18,6 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
@@ -32,6 +31,8 @@ if(BUILD_SHARED_LIBS)
                                                      TRUE)
 endif()
 target_link_libraries(test_sundomeigest_obj PRIVATE sundials_sundomeigestpower)
+target_include_directories(test_sundomeigest_obj
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Always add the power iteration examples
 add_subdirectory(Power)

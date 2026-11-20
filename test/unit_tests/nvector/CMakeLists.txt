@@ -19,7 +19,6 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
@@ -34,6 +33,7 @@ if(BUILD_SHARED_LIBS)
   set_property(TARGET test_nvector_obj PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif()
 target_link_libraries(test_nvector_obj PRIVATE sundials_nvecserial)
+target_include_directories(test_nvector_obj PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(parallel)
@@ -49,6 +49,8 @@ if(SUNDIALS_ENABLE_MPI)
   endif()
   target_link_libraries(test_nvectormpi_obj PRIVATE MPI::MPI_C
                                                     sundials_nvecparallel)
+  target_include_directories(test_nvectormpi_obj
+                             PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
   add_subdirectory(manyvector)
