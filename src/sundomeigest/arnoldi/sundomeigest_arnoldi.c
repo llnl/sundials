@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -89,6 +90,7 @@ SUNDomEigEstimator SUNDomEigEstimator_Arnoldi(N_Vector q, int kry_dim,
 
   /* Check if kry_dim >= 2 */
   if (kry_dim < 3) { kry_dim = DEE_KRYLOV_DIM_DEFAULT; }
+  SUNAssertNull(kry_dim < INT_MAX, SUN_ERR_ARG_OUTOFRANGE);
 
   /* Input vector must be non-NULL */
   SUNAssertNull(q, SUN_ERR_ARG_CORRUPT);
@@ -248,11 +250,16 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   SUNAssert(Arnoldi_CONTENT(DEE)->V, SUN_ERR_ARG_CORRUPT);
 
   const int kry_dim = Arnoldi_CONTENT(DEE)->kry_dim;
+  const size_t dim  = (size_t)kry_dim;
+  if (dim == 0 || dim > SIZE_MAX / sizeof(sunrealtype) / dim)
+  {
+    return SUN_ERR_OUTOFRANGE;
+  }
 
   if (Arnoldi_CONTENT(DEE)->LAPACK_A == NULL)
   {
     Arnoldi_CONTENT(DEE)->LAPACK_A =
-      (sunrealtype*)malloc((kry_dim * kry_dim) * sizeof(sunrealtype));
+      (sunrealtype*)malloc(dim * dim * sizeof(sunrealtype));
     SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_A, SUN_ERR_MALLOC_FAIL);
   }
   if (Arnoldi_CONTENT(DEE)->LAPACK_wr == NULL)
@@ -267,28 +274,38 @@ SUNErrCode SUNDomEigEstimator_Initialize_Arnoldi(SUNDomEigEstimator DEE)
   }
 
   /* query the workspace size (call with lwork = -1) */
-  char jobvl         = 'N';
-  char jobvr         = 'N';
-  sunindextype N     = kry_dim;
-  sunindextype lda   = kry_dim;
-  sunindextype ldvl  = 1;
-  sunindextype ldvr  = 1;
-  sunindextype info  = 0;
-  sunindextype lwork = -1;
-  sunrealtype work   = SUN_RCONST(0.0);
-  sunrealtype* A     = Arnoldi_CONTENT(DEE)->LAPACK_A;
-  sunrealtype* wr    = Arnoldi_CONTENT(DEE)->LAPACK_wr;
-  sunrealtype* wi    = Arnoldi_CONTENT(DEE)->LAPACK_wi;
+  char jobvl            = 'N';
+  char jobvr            = 'N';
+  sunlapackinttype n     = kry_dim;
+  sunlapackinttype lda   = kry_dim;
+  sunlapackinttype ldvl  = 1;
+  sunlapackinttype ldvr  = 1;
+  sunlapackinttype info  = 0;
+  sunlapackinttype lwork = -1;
+  sunrealtype work       = SUN_RCONST(0.0);
+  sunrealtype* A         = Arnoldi_CONTENT(DEE)->LAPACK_A;
+  sunrealtype* wr        = Arnoldi_CONTENT(DEE)->LAPACK_wr;
+  sunrealtype* wi        = Arnoldi_CONTENT(DEE)->LAPACK_wi;
 
-  xgeev_f77(&jobvl, &jobvr, &N, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
+  xgeev_f77(&jobvl, &jobvr, &n, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
             &work, &lwork, &info);
 
-  /* The workspace size is returned as the first entry of the work array */
-  lwork                              = (sunindextype)work;
-  Arnoldi_CONTENT(DEE)->LAPACK_lwork = lwork;
+  if (info != 0) { return SUN_ERR_EXT_FAIL; }
+
+  /* A successful query returns the recommended workspace size in work. */
+  if (!(work >= SUN_RCONST(1.0) && work < SUNDIALS_LAPACK_LWORK_LIMIT))
+  {
+    return SUN_ERR_OUTOFRANGE;
+  }
+  lwork = (sunlapackinttype)work;
+  if ((uintmax_t)lwork > SIZE_MAX / sizeof(sunrealtype))
+  {
+    return SUN_ERR_OUTOFRANGE;
+  }
+  Arnoldi_CONTENT(DEE)->LAPACK_lwork = (sunindextype)lwork;
 
   Arnoldi_CONTENT(DEE)->LAPACK_work =
-    (sunrealtype*)malloc(lwork * sizeof(sunrealtype));
+    (sunrealtype*)malloc((size_t)lwork * sizeof(sunrealtype));
   SUNAssert(Arnoldi_CONTENT(DEE)->LAPACK_work, SUN_ERR_MALLOC_FAIL);
 
   /* LAPACK array */
@@ -472,7 +489,7 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
   }
 
   /* Pack the Hessenberg matrix in column-major order for LAPACK dgeev_ call */
-  int k = 0;
+  size_t k = 0;
   for (int j = 0; j < n; j++)
   {
     for (int i = 0; i < n; i++)
@@ -494,12 +511,15 @@ SUNErrCode SUNDomEigEstimator_Estimate_Arnoldi(SUNDomEigEstimator DEE,
           elements i+1:N of LAPACK_wr and LAPACK_wi contain
           eigenvalues which have converged.
   */
-  sunindextype lda  = n;
-  sunindextype ldvl = n;
-  sunindextype ldvr = n;
-  sunindextype info;
-  sunindextype lwork = Arnoldi_CONTENT(DEE)->LAPACK_lwork;
-  xgeev_f77(&jobvl, &jobvr, &n, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
+  const sunindextype workspace = Arnoldi_CONTENT(DEE)->LAPACK_lwork;
+  if (!sunLapackIndexInRange(workspace)) { return SUN_ERR_OUTOFRANGE; }
+  sunlapackinttype lapack_n = (sunlapackinttype)n;
+  sunlapackinttype lda      = lapack_n;
+  sunlapackinttype ldvl     = lapack_n;
+  sunlapackinttype ldvr     = lapack_n;
+  sunlapackinttype info;
+  sunlapackinttype lwork = (sunlapackinttype)workspace;
+  xgeev_f77(&jobvl, &jobvr, &lapack_n, A, &lda, wr, wi, NULL, &ldvl, NULL, &ldvr,
             Arnoldi_CONTENT(DEE)->LAPACK_work, &lwork, &info);
 
   if (info != 0) { return SUN_ERR_EXT_FAIL; }
