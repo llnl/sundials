@@ -104,7 +104,7 @@ the matrix implementation compatible with the linear solver. (see Chapter
 :numref:`SUNMatrix` for more information).
 
 Other headers may be needed, according to the choice of preconditioner, etc. For
-example, in the example ``idasFoodWeb_kry_p`` (see :cite:p:`ida_ex`),
+example, in the example ``idas_food_web_kry_p`` (see :cite:p:`ida_ex`),
 preconditioning is done with a block-diagonal matrix. For this, even though the
 ``SUNLINSOL_SPGMR`` linear solver is used, the header
 ``sundials/sundials_dense.h`` is included for access to the underlying generic
@@ -452,7 +452,7 @@ For many users, the appropriate choices for tolerance values in ``reltol`` and
    after ``y[i]`` is below some noise level. Then ``abstol`` (if a scalar) or
    ``abstol[i]`` (if a vector) needs to be set to that noise level. If the
    different components have different noise levels, then ``abstol`` should be a
-   vector. See the example ``idaRoberts_dns`` in the IDAS package, and the
+   vector. See the example ``ida_roberts_dns`` in the IDAS package, and the
    discussion of it in the IDAS Examples document :cite:p:`ida_ex`. In that
    problem, the three components vary between 0 and 1, and have different noise
    levels; hence the ``abstol`` vector. It is impossible to give any general
@@ -2879,7 +2879,7 @@ described next.
 
    .. versionadded:: 6.2.0 (IDAS 5.2.0)
 
-.. c:function:: char* IDAGetReturnFlagName(long int flag)
+.. c:function:: const char* IDAGetReturnFlagName(long int flag)
 
    The function :c:func:`IDAGetReturnFlagName` returns the name of the IDAS constant
    corresponding to ``flag``.
@@ -2888,11 +2888,12 @@ described next.
       * ``flag`` -- the flag returned by a call to an IDAS function.
 
    **Return value:**
-      * ``char*`` -- the flag name string.
+      * ``const char*`` -- a string literal containing the flag name. The
+        returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _IDAS.Usage.SIM.user_callable.optional_output.iccalc:

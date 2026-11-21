@@ -1,4 +1,4 @@
-// #ifndef _SUNLINSOL_DENSE_H
+// #ifndef SUNDIALS_SUNLINSOL_DENSE_H
 //
 // #ifdef __cplusplus
 // #endif

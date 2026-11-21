@@ -44,8 +44,8 @@
  *     is legal.
  * -----------------------------------------------------------------*/
 
-#ifndef _NVECTOR_TRILINOS_H
-#define _NVECTOR_TRILINOS_H
+#ifndef SUNDIALS_NVECTOR_TRILINOS_H
+#define SUNDIALS_NVECTOR_TRILINOS_H
 
 #include <sundials/sundials_nvector.h>
 
@@ -145,4 +145,4 @@ SUNDIALS_EXPORT sunrealtype N_VMinQuotientLocal_Trilinos(N_Vector num,
 }
 #endif
 
-#endif /* _NVECTOR_TRILINOS_H */
+#endif /* SUNDIALS_NVECTOR_TRILINOS_H */

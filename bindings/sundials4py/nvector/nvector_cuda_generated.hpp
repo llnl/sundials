@@ -1,4 +1,4 @@
-// #ifndef _NVECTOR_CUDA_H
+// #ifndef SUNDIALS_NVECTOR_CUDA_H
 //
 // #ifdef __cplusplus
 // #endif

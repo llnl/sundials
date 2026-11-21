@@ -1,4 +1,4 @@
-// #ifndef _SUNLINSOL_PCG_H
+// #ifndef SUNDIALS_SUNLINSOL_PCG_H
 //
 // #ifdef __cplusplus
 // #endif

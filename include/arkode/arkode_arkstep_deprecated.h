@@ -15,8 +15,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef _ARKSTEP_DEPRECATED_H
-#define _ARKSTEP_DEPRECATED_H
+#ifndef SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
+#define SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H
 
 #include <arkode/arkode.h>
 #include <arkode/arkode_ls.h>
@@ -248,7 +248,7 @@ int ARKStepGetUserData(void* arkode_mem, void** user_data);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodePrintAllStats instead")
 int ARKStepPrintAllStats(void* arkode_mem, FILE* outfile, SUNOutputFormat fmt);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeGetReturnFlagName instead")
-char* ARKStepGetReturnFlagName(long int flag);
+const char* ARKStepGetReturnFlagName(long int flag);
 SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKodeWriteParameters instead")
 int ARKStepWriteParameters(void* arkode_mem, FILE* fp);
 SUNDIALS_DEPRECATED_EXPORT_MSG(
@@ -371,4 +371,4 @@ int ARKStepGetNumRhsEvals(void* arkode_mem, long int* nfe_evals,
 }
 #endif
 
-#endif /* _ARKSTEP_DEPRECATED_H */
+#endif /* SUNDIALS_ARKODE_ARKSTEP_DEPRECATED_H */

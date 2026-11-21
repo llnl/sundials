@@ -17,8 +17,8 @@
  * This is the header file for the ARKODE LSRKStep module.
  * -----------------------------------------------------------------*/
 
-#ifndef _LSRKSTEP_H
-#define _LSRKSTEP_H
+#ifndef SUNDIALS_ARKODE_LSRKSTEP_H
+#define SUNDIALS_ARKODE_LSRKSTEP_H
 
 #include <arkode/arkode.h>
 

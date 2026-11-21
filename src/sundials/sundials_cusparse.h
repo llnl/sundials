@@ -26,8 +26,8 @@
 #include <stdio.h>
 #include <sundials/sundials_types.h>
 
-#ifndef _SUNDIALS_CUSPARSE_H
-#define _SUNDIALS_CUSPARSE_H
+#ifndef SUNDIALS_SUNDIALS_CUSPARSE_H
+#define SUNDIALS_SUNDIALS_CUSPARSE_H
 
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 extern "C" {
@@ -65,4 +65,4 @@ inline sunbooleantype SUNDIALS_CUSPARSE_Assert(cusparseStatus_t status,
 }
 #endif
 
-#endif /* _SUNDIALS_CUSPARSE_H */
+#endif /* SUNDIALS_SUNDIALS_CUSPARSE_H */

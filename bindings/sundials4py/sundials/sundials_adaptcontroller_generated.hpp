@@ -1,4 +1,4 @@
-// #ifndef _SUNDIALS_ADAPTCONTROLLER_H
+// #ifndef SUNDIALS_SUNDIALS_ADAPTCONTROLLER_H
 //
 // #ifdef __cplusplus
 // #endif

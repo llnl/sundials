@@ -16,8 +16,8 @@
  * SUNDIALS Copyright End
  * ---------------------------------------------------------------------------*/
 
-#ifndef ADVECTION_REACTION_3D_HPP
-#define ADVECTION_REACTION_3D_HPP
+#ifndef SUNDIALS_ADVECTION_REACTION_3D_HPP
+#define SUNDIALS_ADVECTION_REACTION_3D_HPP
 
 #include <RAJA/RAJA.hpp>
 #include <cmath>

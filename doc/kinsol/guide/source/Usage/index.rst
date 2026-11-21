@@ -100,7 +100,7 @@ the matrix implementation compatible with the linear solver. (see Chapter
 :numref:`SUNMatrix` for more information).
 
 Other headers may be needed, according to the choice of preconditioner, etc. For
-example, in the example ``kinFoodWeb_kry_p`` (see :cite:p:`kinsol_ex`),
+example, in the example ``kin_food_web_kry_p`` (see :cite:p:`kinsol_ex`),
 preconditioning is done with a block-diagonal matrix. For this, even though the
 ``SUNLINSOL_SPGMR`` linear solver is used, the header
 ``sundials/sundials_dense.h`` is included for access to the underlying generic
@@ -1245,7 +1245,7 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
 
    **Examples codes:**
 
-   * ``examples/kinsol/serial/kinAnalytic_fp.c``
+   * ``examples/kinsol/kin_analytic/c/kin_analytic_fp.c``
 
    .. versionchanged:: 7.5.0
 
@@ -1674,7 +1674,7 @@ functions are described next.
    .. versionadded:: 6.2.0
 
 
-.. c:function:: char* KINGetReturnFlagName(int flag)
+.. c:function:: const char* KINGetReturnFlagName(int flag)
 
    The function :c:func:`KINGetReturnFlagName` returns the name of the KINSOL
    constant corresponding to ``flag``.
@@ -1683,11 +1683,12 @@ functions are described next.
      * ``flag`` -- return flag from a KINSOL function.
 
    **Return value:**
-     * A string containing the name of the corresponding constant
+     * A string literal containing the name of the corresponding constant. The
+       returned string must not be modified or freed by the user.
 
-   .. warning::
+   .. versionchanged:: x.y.z
 
-      The user is responsible for freeing the returned string.
+      The return value is now a ``const`` string literal and must not be freed.
 
 
 .. _KINSOL.Usage.CC.optional_output.optout_ls:

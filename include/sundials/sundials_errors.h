@@ -16,8 +16,8 @@
  * not depend on MPI.
  * -----------------------------------------------------------------*/
 
-#ifndef _SUNDIALS_ERRORS_H
-#define _SUNDIALS_ERRORS_H
+#ifndef SUNDIALS_SUNDIALS_ERRORS_H
+#define SUNDIALS_SUNDIALS_ERRORS_H
 
 #include <assert.h>
 #include <stdarg.h>
@@ -42,6 +42,7 @@
   ENTRY(SUN_ERR_CORRUPT, "value is NULL or corrupt")                           \
   ENTRY(SUN_ERR_OUTOFRANGE, "Value is out of the expected range")              \
   ENTRY(SUN_ERR_FILE_OPEN, "Unable to open file")                              \
+  ENTRY(SUN_ERR_FILE_FLUSH, "Unable to flush file")                            \
   ENTRY(SUN_ERR_OP_FAIL, "an operation failed")                                \
   ENTRY(SUN_ERR_MEM_FAIL, "a memory operation failed")                         \
   ENTRY(SUN_ERR_MALLOC_FAIL, "malloc returned NULL")                           \
@@ -130,4 +131,4 @@ const char* SUNGetErrMsg(SUNErrCode code);
 #ifdef __cplusplus /* wrapper to enable C++ usage */
 } /* extern "C" */
 #endif
-#endif /* _SUNDIALS_ERRORS_H */
+#endif /* SUNDIALS_SUNDIALS_ERRORS_H */

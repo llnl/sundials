@@ -461,7 +461,7 @@ int SPRKStepGetDky(void* arkode_mem, sunrealtype t, int k, N_Vector dky)
   return (ARKodeGetDky(arkode_mem, t, k, dky));
 }
 
-char* SPRKStepGetReturnFlagName(long int flag)
+const char* SPRKStepGetReturnFlagName(long int flag)
 {
   return (ARKodeGetReturnFlagName(flag));
 }
