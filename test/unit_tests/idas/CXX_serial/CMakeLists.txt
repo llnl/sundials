@@ -78,3 +78,14 @@ foreach(test_tuple ${unit_tests})
 endforeach()
 
 message(STATUS "Added IDAS CXX serial units tests")
+
+# Check sensitivity error control with assertions in the executable.
+sundials_add_executable(idas_test_simultaneous_error idas_test_simultaneous_error.cpp)
+target_include_directories(
+  idas_test_simultaneous_error
+  PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+          ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(idas_test_simultaneous_error sundials_idas
+                      sundials_nvecserial ${EXE_EXTRA_LINK_LIBS})
+sundials_add_test(idas_test_simultaneous_error idas_test_simultaneous_error
+                  NODIFF EXAMPLE_TYPE "develop")
