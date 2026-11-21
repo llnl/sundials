@@ -6,6 +6,8 @@
 
 ### New Features and Enhancements
 
+Added SuperLU_MT linear solver support in sundials4py.
+
 Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
 subdirectories for each problem variant. The subdirectories contain the example
 source, input files, scripts, and reference output. The old example Makefiles
