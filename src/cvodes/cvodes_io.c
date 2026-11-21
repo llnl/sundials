@@ -2742,63 +2742,57 @@ int CVodeGetUserData(void* cvode_mem, void** user_data)
 
 /*-----------------------------------------------------------------*/
 
-char* CVodeGetReturnFlagName(long int flag)
+const char* CVodeGetReturnFlagName(long int flag)
 {
-  char* name;
-
-  name = (char*)malloc(24 * sizeof(char));
-
   switch (flag)
   {
-  case CV_SUCCESS: sprintf(name, "CV_SUCCESS"); break;
-  case CV_TSTOP_RETURN: sprintf(name, "CV_TSTOP_RETURN"); break;
-  case CV_ROOT_RETURN: sprintf(name, "CV_ROOT_RETURN"); break;
-  case CV_TOO_MUCH_WORK: sprintf(name, "CV_TOO_MUCH_WORK"); break;
-  case CV_TOO_MUCH_ACC: sprintf(name, "CV_TOO_MUCH_ACC"); break;
-  case CV_ERR_FAILURE: sprintf(name, "CV_ERR_FAILURE"); break;
-  case CV_CONV_FAILURE: sprintf(name, "CV_CONV_FAILURE"); break;
-  case CV_LINIT_FAIL: sprintf(name, "CV_LINIT_FAIL"); break;
-  case CV_LSETUP_FAIL: sprintf(name, "CV_LSETUP_FAIL"); break;
-  case CV_LSOLVE_FAIL: sprintf(name, "CV_LSOLVE_FAIL"); break;
-  case CV_RHSFUNC_FAIL: sprintf(name, "CV_RHSFUNC_FAIL"); break;
-  case CV_FIRST_RHSFUNC_ERR: sprintf(name, "CV_FIRST_RHSFUNC_ERR"); break;
-  case CV_REPTD_RHSFUNC_ERR: sprintf(name, "CV_REPTD_RHSFUNC_ERR"); break;
-  case CV_UNREC_RHSFUNC_ERR: sprintf(name, "CV_UNREC_RHSFUNC_ERR"); break;
-  case CV_RTFUNC_FAIL: sprintf(name, "CV_RTFUNC_FAIL"); break;
-  case CV_MEM_FAIL: sprintf(name, "CV_MEM_FAIL"); break;
-  case CV_MEM_NULL: sprintf(name, "CV_MEM_NULL"); break;
-  case CV_ILL_INPUT: sprintf(name, "CV_ILL_INPUT"); break;
-  case CV_NO_MALLOC: sprintf(name, "CV_NO_MALLOC"); break;
-  case CV_BAD_K: sprintf(name, "CV_BAD_K"); break;
-  case CV_BAD_T: sprintf(name, "CV_BAD_T"); break;
-  case CV_BAD_DKY: sprintf(name, "CV_BAD_DKY"); break;
-  case CV_NO_QUAD: sprintf(name, "CV_NO_QUAD"); break;
-  case CV_QRHSFUNC_FAIL: sprintf(name, "CV_QRHSFUNC_FAIL"); break;
-  case CV_FIRST_QRHSFUNC_ERR: sprintf(name, "CV_FIRST_QRHSFUNC_ERR"); break;
-  case CV_REPTD_QRHSFUNC_ERR: sprintf(name, "CV_REPTD_QRHSFUNC_ERR"); break;
-  case CV_UNREC_QRHSFUNC_ERR: sprintf(name, "CV_UNREC_QRHSFUNC_ERR"); break;
-  case CV_BAD_IS: sprintf(name, "CV_BAD_IS"); break;
-  case CV_NO_SENS: sprintf(name, "CV_NO_SENS"); break;
-  case CV_SRHSFUNC_FAIL: sprintf(name, "CV_SRHSFUNC_FAIL"); break;
-  case CV_FIRST_SRHSFUNC_ERR: sprintf(name, "CV_FIRST_SRHSFUNC_ERR"); break;
-  case CV_REPTD_SRHSFUNC_ERR: sprintf(name, "CV_REPTD_SRHSFUNC_ERR"); break;
-  case CV_UNREC_SRHSFUNC_ERR: sprintf(name, "CV_UNREC_SRHSFUNC_ERR"); break;
-  case CV_TOO_CLOSE: sprintf(name, "CV_TOO_CLOSE"); break;
-  case CV_NLS_INIT_FAIL: sprintf(name, "CV_NLS_INIT_FAIL"); break;
-  case CV_NLS_SETUP_FAIL: sprintf(name, "CV_NLS_SETUPT_FAIL"); break;
-  case CV_NO_ADJ: sprintf(name, "CV_NO_ADJ"); break;
-  case CV_NO_FWD: sprintf(name, "CV_NO_FWD"); break;
-  case CV_NO_BCK: sprintf(name, "CV_NO_BCK"); break;
-  case CV_BAD_TB0: sprintf(name, "CV_BAD_TB0"); break;
-  case CV_REIFWD_FAIL: sprintf(name, "CV_REIFWD_FAIL"); break;
-  case CV_FWD_FAIL: sprintf(name, "CV_FWD_FAIL"); break;
-  case CV_GETY_BADT: sprintf(name, "CV_GETY_BADT"); break;
-  case CV_NLS_FAIL: sprintf(name, "CV_NLS_FAIL"); break;
-  case CV_PROJ_MEM_NULL: sprintf(name, "CV_PROJ_MEM_NULL"); break;
-  case CV_PROJFUNC_FAIL: sprintf(name, "CV_PROJFUNC_FAIL"); break;
-  case CV_REPTD_PROJFUNC_ERR: sprintf(name, "CV_REPTD_PROJFUNC_ERR"); break;
-  default: sprintf(name, "NONE");
+  case CV_SUCCESS: return "CV_SUCCESS";
+  case CV_TSTOP_RETURN: return "CV_TSTOP_RETURN";
+  case CV_ROOT_RETURN: return "CV_ROOT_RETURN";
+  case CV_TOO_MUCH_WORK: return "CV_TOO_MUCH_WORK";
+  case CV_TOO_MUCH_ACC: return "CV_TOO_MUCH_ACC";
+  case CV_ERR_FAILURE: return "CV_ERR_FAILURE";
+  case CV_CONV_FAILURE: return "CV_CONV_FAILURE";
+  case CV_LINIT_FAIL: return "CV_LINIT_FAIL";
+  case CV_LSETUP_FAIL: return "CV_LSETUP_FAIL";
+  case CV_LSOLVE_FAIL: return "CV_LSOLVE_FAIL";
+  case CV_RHSFUNC_FAIL: return "CV_RHSFUNC_FAIL";
+  case CV_FIRST_RHSFUNC_ERR: return "CV_FIRST_RHSFUNC_ERR";
+  case CV_REPTD_RHSFUNC_ERR: return "CV_REPTD_RHSFUNC_ERR";
+  case CV_UNREC_RHSFUNC_ERR: return "CV_UNREC_RHSFUNC_ERR";
+  case CV_RTFUNC_FAIL: return "CV_RTFUNC_FAIL";
+  case CV_MEM_FAIL: return "CV_MEM_FAIL";
+  case CV_MEM_NULL: return "CV_MEM_NULL";
+  case CV_ILL_INPUT: return "CV_ILL_INPUT";
+  case CV_NO_MALLOC: return "CV_NO_MALLOC";
+  case CV_BAD_K: return "CV_BAD_K";
+  case CV_BAD_T: return "CV_BAD_T";
+  case CV_BAD_DKY: return "CV_BAD_DKY";
+  case CV_NO_QUAD: return "CV_NO_QUAD";
+  case CV_QRHSFUNC_FAIL: return "CV_QRHSFUNC_FAIL";
+  case CV_FIRST_QRHSFUNC_ERR: return "CV_FIRST_QRHSFUNC_ERR";
+  case CV_REPTD_QRHSFUNC_ERR: return "CV_REPTD_QRHSFUNC_ERR";
+  case CV_UNREC_QRHSFUNC_ERR: return "CV_UNREC_QRHSFUNC_ERR";
+  case CV_BAD_IS: return "CV_BAD_IS";
+  case CV_NO_SENS: return "CV_NO_SENS";
+  case CV_SRHSFUNC_FAIL: return "CV_SRHSFUNC_FAIL";
+  case CV_FIRST_SRHSFUNC_ERR: return "CV_FIRST_SRHSFUNC_ERR";
+  case CV_REPTD_SRHSFUNC_ERR: return "CV_REPTD_SRHSFUNC_ERR";
+  case CV_UNREC_SRHSFUNC_ERR: return "CV_UNREC_SRHSFUNC_ERR";
+  case CV_TOO_CLOSE: return "CV_TOO_CLOSE";
+  case CV_NLS_INIT_FAIL: return "CV_NLS_INIT_FAIL";
+  case CV_NLS_SETUP_FAIL: return "CV_NLS_SETUPT_FAIL";
+  case CV_NO_ADJ: return "CV_NO_ADJ";
+  case CV_NO_FWD: return "CV_NO_FWD";
+  case CV_NO_BCK: return "CV_NO_BCK";
+  case CV_BAD_TB0: return "CV_BAD_TB0";
+  case CV_REIFWD_FAIL: return "CV_REIFWD_FAIL";
+  case CV_FWD_FAIL: return "CV_FWD_FAIL";
+  case CV_GETY_BADT: return "CV_GETY_BADT";
+  case CV_NLS_FAIL: return "CV_NLS_FAIL";
+  case CV_PROJ_MEM_NULL: return "CV_PROJ_MEM_NULL";
+  case CV_PROJFUNC_FAIL: return "CV_PROJFUNC_FAIL";
+  case CV_REPTD_PROJFUNC_ERR: return "CV_REPTD_PROJFUNC_ERR";
+  default: return "NONE";
   }
-
-  return (name);
 }

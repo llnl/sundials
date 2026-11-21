@@ -25,13 +25,13 @@ Parallel Fortran 90 example problems
 ====================================
 
 
-.. _fark_heat2D:
+.. _fark_heat_2d:
 
-fark_heat2D
+fark_heat_2d
 ===================================================
 
 This test problem is a Fortran-90 version of the same two-dimensional
-heat equation problem as in C++, :ref:`ark_heat2D`.  This models a
+heat equation problem as in C++, :ref:`ark_heat_2d`.  This models a
 simple two-dimenaional heat equation,
 
 .. math::

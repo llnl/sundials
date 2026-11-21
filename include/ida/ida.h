@@ -248,7 +248,7 @@ SUNDIALS_EXPORT int IDAGetNumStepSolveFails(void* ida_mem, long int* nncfails);
 SUNDIALS_EXPORT int IDAGetUserData(void* ida_mem, void** user_data);
 SUNDIALS_EXPORT int IDAPrintAllStats(void* ida_mem, FILE* outfile,
                                      SUNOutputFormat fmt);
-SUNDIALS_EXPORT char* IDAGetReturnFlagName(long int flag);
+SUNDIALS_EXPORT const char* IDAGetReturnFlagName(long int flag);
 
 /* Free function */
 SUNDIALS_EXPORT void IDAFree(void** ida_mem);
