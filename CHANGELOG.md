@@ -6,6 +6,9 @@
 
 ### New Features and Enhancements
 
+Added `IDACalcICWithOutput` to IDA and IDAS to retrieve the final state
+candidate even if consistent initial-condition calculation fails.
+
 Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
 subdirectories for each problem variant. The subdirectories contain the example
 source, input files, scripts, and reference output. The old example Makefiles
