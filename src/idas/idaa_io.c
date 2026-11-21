@@ -93,91 +93,28 @@ int IDAAdjSetNoSensi(void* ida_mem)
 
 int IDASetNonlinearSolverB(void* ida_mem, int which, SUNNonlinearSolver NLS)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Check if ida_mem exists */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return (IDA_MEM_NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
-  /* Was ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which' */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-
-  ida_memB = (void*)(IDAB_mem->IDA_mem);
-
-  return (IDASetNonlinearSolver(ida_memB, NLS));
+  return IDASetNonlinearSolver(ida_memB, NLS);
 }
 
 int IDASetUserDataB(void* ida_mem, int which, void* user_dataB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   /* Set user data for this backward problem. */
   IDAB_mem->ida_user_data = user_dataB;
@@ -187,322 +124,98 @@ int IDASetUserDataB(void* ida_mem, int which, void* user_dataB)
 
 int IDASetMaxOrdB(void* ida_mem, int which, int maxordB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetMaxOrd(ida_memB, maxordB);
 }
 
 int IDASetMaxNumStepsB(void* ida_mem, int which, long int mxstepsB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetMaxNumSteps(ida_memB, mxstepsB);
 }
 
 int IDASetInitStepB(void* ida_mem, int which, sunrealtype hinB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetInitStep(ida_memB, hinB);
 }
 
 int IDASetMaxStepB(void* ida_mem, int which, sunrealtype hmaxB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetMaxStep(ida_memB, hmaxB);
 }
 
 int IDASetSuppressAlgB(void* ida_mem, int which, sunbooleantype suppressalgB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetSuppressAlg(ida_memB, suppressalgB);
 }
 
 int IDASetIdB(void* ida_mem, int which, N_Vector idB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetId(ida_memB, idB);
 }
 
 int IDASetConstraintsB(void* ida_mem, int which, N_Vector constraintsB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetConstraints(ida_memB, constraintsB);
 }
@@ -515,46 +228,14 @@ int IDASetConstraintsB(void* ida_mem, int which, N_Vector constraintsB)
 
 int IDASetQuadErrConB(void* ida_mem, int which, int errconQB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   return IDASetQuadErrCon(ida_memB, errconQB);
 }
@@ -576,45 +257,13 @@ int IDASetQuadErrConB(void* ida_mem, int which, int errconQB)
 
 void* IDAGetAdjIDABmem(void* ida_mem, int which)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, 0, __LINE__, __func__, __FILE__, MSGAM_NULL_IDAMEM);
-    return (NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, 0, __LINE__, __func__, __FILE__, MSGAM_NO_ADJ);
-    return (NULL);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, 0, __LINE__, __func__, __FILE__, MSGAM_BAD_WHICH);
-    return (NULL);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
-
-  return (ida_memB);
+  (void)idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem, &ida_memB);
+  return ida_memB;
 }
 
 /*
@@ -682,94 +331,30 @@ int IDAGetAdjCheckPointsInfo(void* ida_mem, IDAadjCheckPointRec* ckpnt)
 int IDAGetConsistentICB(void* ida_mem, int which, N_Vector yyB0_mod,
                         N_Vector ypB0_mod)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
-  int flag;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Is ida_mem valid? */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return IDA_MEM_NULL;
-  }
-  IDA_mem = (IDAMem)ida_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  ida_memB = (void*)IDAB_mem->IDA_mem;
-
-  flag = IDAGetConsistentIC(ida_memB, yyB0_mod, ypB0_mod);
-
-  return (flag);
+  return IDAGetConsistentIC(ida_memB, yyB0_mod, ypB0_mod);
 }
 
 /*-----------------------------------------------------------------*/
 
 int IDAGetUserDataB(void* ida_mem, int which, void** user_dataB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAa_mem;
-  IDABMem IDAB_mem;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Check if IDA_mem exists */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSGAM_NULL_IDAMEM);
-    return (IDA_MEM_NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Was ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDA_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSGAM_NO_ADJ);
-    return (IDA_NO_ADJ);
-  }
-  IDAa_mem = IDA_mem->ida_adj_mem;
-
-  /* Check which */
-  if (which >= IDAa_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSGAM_BAD_WHICH);
-    return (IDA_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to which */
-  IDAB_mem = IDAa_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    IDAB_mem = IDAB_mem->ida_next;
-  }
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   *user_dataB = IDAB_mem->ida_user_data;
 

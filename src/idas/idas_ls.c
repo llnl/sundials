@@ -2597,51 +2597,29 @@ int idaLsFreeB(IDABMem IDAB_mem)
    If any are missing it returns IDALS_MEM_NULL, IDALS_NO_ADJ,
    IDAS_ILL_INPUT, or IDALS_LMEMB_NULL. */
 int idaLs_AccessLMemB(void* ida_mem, int which, const char* fname,
-                      IDAMem* IDA_mem, IDAadjMem* IDAADJ_mem, IDABMem* IDAB_mem,
-                      IDALsMemB* idalsB_mem)
+                      IDAMem* IDA_mem_out, IDAadjMem* IDAADJ_mem_out,
+                      IDABMem* IDAB_mem_out, IDALsMemB* idalsB_mem_out)
 {
-  /* access IDAMem structure */
-  if (ida_mem == NULL)
+  /* access integrator memory structures */
+  void* ida_memB_out = NULL;
+  int flag           = idaaGetMem(ida_mem, which, IDA_mem_out, IDAADJ_mem_out,
+                                  IDAB_mem_out, ida_memB_out);
+  if (flag != IDA_SUCCESS)
   {
-    IDAProcessError(NULL, IDALS_MEM_NULL, __LINE__, fname, __FILE__,
-                    MSG_LS_IDAMEM_NULL);
-    return (IDALS_MEM_NULL);
-  }
-  *IDA_mem = (IDAMem)ida_mem;
-
-  /* access IDAadjMem structure */
-  if ((*IDA_mem)->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(*IDA_mem, IDALS_NO_ADJ, __LINE__, fname, __FILE__,
-                    MSG_LS_NO_ADJ);
-    return (IDALS_NO_ADJ);
-  }
-  *IDAADJ_mem = (*IDA_mem)->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= (*IDAADJ_mem)->ia_nbckpbs)
-  {
-    IDAProcessError(*IDA_mem, IDALS_ILL_INPUT, __LINE__, fname, __FILE__,
-                    MSG_LS_BAD_WHICH);
-    return (IDALS_ILL_INPUT);
+    IDAProcessError(NULL, IDA_MEM_NULL, __LINE__, fname, __FILE__,
+                    MSGAM_NULL_IDAMEM);
+    return flag;
   }
 
-  /* Find the IDABMem entry in the linked list corresponding to which */
-  *IDAB_mem = (*IDAADJ_mem)->IDAB_mem;
-  while ((*IDAB_mem) != NULL)
+  /* access linear solver memory structure */
+  *idalsB_mem_out = NULL;
+  if ((*IDAB_mem_out)->ida_lmem == NULL)
   {
-    if (which == (*IDAB_mem)->ida_index) { break; }
-    *IDAB_mem = (*IDAB_mem)->ida_next;
-  }
-
-  /* access IDALsMemB structure */
-  if ((*IDAB_mem)->ida_lmem == NULL)
-  {
-    IDAProcessError(*IDA_mem, IDALS_LMEMB_NULL, __LINE__, __func__, __FILE__,
-                    MSG_LS_LMEMB_NULL);
+    IDAProcessError(*IDA_mem_out, IDALS_LMEMB_NULL, __LINE__, __func__,
+                    __FILE__, MSG_LS_LMEMB_NULL);
     return (IDALS_LMEMB_NULL);
   }
-  *idalsB_mem = (IDALsMemB)((*IDAB_mem)->ida_lmem);
+  *idalsB_mem_out = (IDALsMemB)((*IDAB_mem_out)->ida_lmem);
 
   return (IDALS_SUCCESS);
 }

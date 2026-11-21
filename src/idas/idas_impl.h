@@ -969,6 +969,11 @@ int IDASensResDQ(int Ns, sunrealtype t, N_Vector yy, N_Vector yp,
                  N_Vector* resvalS, void* user_dataS, N_Vector ytemp,
                  N_Vector yptemp, N_Vector restemp);
 
+/* Helper to extract IDA memory structures */
+int idaaGetMem(void* ida_mem, int which, IDAMem* IDA_mem_out,
+               IDAadjMem* IDAADJ_mem_out, IDABMem* IDAB_mem_out,
+               void** idaB_mem_out);
+
 /* Function to destroy function table allocated by the Python binding code */
 
 #if defined(SUNDIALS_ENABLE_PYTHON)
