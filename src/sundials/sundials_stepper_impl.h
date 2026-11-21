@@ -37,6 +37,9 @@ struct SUNStepper_Ops_
   SUNStepperSetStepDirectionFn setstepdirection;
   SUNStepperSetForcingFn setforcing;
   SUNStepperGetNumStepsFn getnumsteps;
+  SUNStepperGetAccumulatedErrorFn getaccumulatederror;
+  SUNStepperResetAccumulatedErrorFn resetaccumulatederror;
+  SUNStepperSetRTolFn setrtol;
   SUNStepperDestroyFn destroy;
 };
 

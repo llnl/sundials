@@ -71,7 +71,11 @@ SUNErrCode SUNAdjointStepper_Evolve(SUNAdjointStepper self, sunrealtype tout,
 
 {
   SUNFunctionBegin(self->sunctx);
-  SUNCheckCall(SUNStepper_Evolve(self->adj_sunstepper, tout, sens, tret));
+  // TODO(SBR): Should this and similar adjoint functions return int?
+  if (SUNStepper_Evolve(self->adj_sunstepper, tout, sens, tret) != 0)
+  {
+    return SUN_ERR_OP_FAIL;
+  }
   return SUN_SUCCESS;
 }
 
@@ -104,7 +108,10 @@ SUNErrCode SUNAdjointStepper_RecomputeFwd(SUNAdjointStepper self,
 
   suncountertype nst_before, nst_after;
   SUNCheckCall(SUNStepper_GetNumSteps(fwd_stepper, &nst_before));
-  SUNCheckCall(SUNStepper_Evolve(fwd_stepper, tf, y0, &fwd_t));
+  if (SUNStepper_Evolve(fwd_stepper, tf, y0, &fwd_t) != 0)
+  {
+    return SUN_ERR_OP_FAIL;
+  }
   SUNCheckCall(SUNStepper_GetNumSteps(fwd_stepper, &nst_after));
   self->nrecompute += nst_after - nst_before;
 
