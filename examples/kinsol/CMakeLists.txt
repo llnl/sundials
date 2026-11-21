@@ -18,40 +18,44 @@
 # examples/kinsol level CMakeLists.txt for SUNDIALS
 # ---------------------------------------------------------------
 
-# C examples
-if(SUNDIALS_ENABLE_C_EXAMPLES)
-  add_subdirectory(serial)
-  if(SUNDIALS_ENABLE_OPENMP)
-    # the only example here need special handling from testrunner (not yet
-    # implemented)
-    add_subdirectory(C_openmp)
-  endif()
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(parallel)
-  endif()
-endif()
+set(KINSOL_C_LIBS sundials_kinsol)
 
-# C++ examples
-if(SUNDIALS_ENABLE_CXX_EXAMPLES)
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(CXX_parallel)
-  endif()
-  if(SUNDIALS_ENABLE_MPI AND SUNDIALS_ENABLE_HYPRE)
-    add_subdirectory(CXX_parhyp)
-  endif()
-endif()
+# Examples are grouped by problem. Each problem directory contains variants
+# grouped by implementation language and optional TPLs.
+add_subdirectory(kin_analytic)
+add_subdirectory(kin_bratu_2d)
+add_subdirectory(kin_diagonal)
+add_subdirectory(kin_em)
+add_subdirectory(kin_ferraris_tronconi)
+add_subdirectory(kin_food_web)
+add_subdirectory(kin_heat_2d)
+add_subdirectory(kin_krylov_demo)
+add_subdirectory(kin_laplace)
+add_subdirectory(kin_roberts)
+add_subdirectory(kin_robot_kinematics)
 
-# CUDA examples
-if(SUNDIALS_ENABLE_CUDA_EXAMPLES)
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(CUDA_mpi)
-  endif()
-endif()
+if(SUNDIALS_ENABLE_EXAMPLES_INSTALL)
+  get_property(
+    _kinsol_problem_directories
+    DIRECTORY
+    PROPERTY SUBDIRECTORIES)
+  set(_kinsol_example_directories)
+  foreach(_problem_dir ${_kinsol_problem_directories})
+    get_property(
+      _variant_dirs
+      DIRECTORY ${_problem_dir}
+      PROPERTY SUBDIRECTORIES)
+    list(APPEND _kinsol_example_directories ${_variant_dirs})
+  endforeach()
 
-# Fortran examples
-if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
-  add_subdirectory(F2003_serial)
-  if(SUNDIALS_ENABLE_MPI)
-    add_subdirectory(F2003_parallel)
-  endif()
+  foreach(_example_dir ${_kinsol_example_directories})
+    file(RELATIVE_PATH _example_rel_dir ${CMAKE_CURRENT_SOURCE_DIR}
+         ${_example_dir})
+    if(_example_rel_dir STREQUAL "kin_analytic/c")
+      sundials_add_test_install(kinsol ${_example_rel_dir}
+                                EXECUTABLE kin_analytic_fp)
+    else()
+      sundials_add_test_install(kinsol ${_example_rel_dir})
+    endif()
+  endforeach()
 endif()
