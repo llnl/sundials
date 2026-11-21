@@ -19,7 +19,7 @@
 
 # List of test tuples of the form "name\;args"
 set(unit_tests "kin_test_getuserdata\;" "kin_test_reuse_fp\;0"
-               "kin_test_reuse_fp\;1")
+               "kin_test_reuse_fp\;1" "kin_test_iteration_callback\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -44,6 +44,7 @@ foreach(test_tuple ${unit_tests})
 
     # libraries to link against
     target_link_libraries(${test} sundials_kinsol sundials_nvecserial
+                          sundials_sunlinsoldense sundials_sunmatrixdense
                           ${EXE_EXTRA_LINK_LIBS})
 
   endif()

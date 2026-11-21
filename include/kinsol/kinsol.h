@@ -38,6 +38,7 @@ extern "C" {
 #define KIN_SUCCESS          0
 #define KIN_INITIAL_GUESS_OK 1
 #define KIN_STEP_LT_STPTOL   2
+#define KIN_USER_STOP        3
 
 #define KIN_WARNING 99
 
@@ -60,6 +61,7 @@ extern "C" {
 #define KIN_CONTEXT_ERR         -17
 #define KIN_DAMPING_FN_ERR      -18
 #define KIN_DEPTH_FN_ERR        -19
+#define KIN_ITERATION_FN_FAIL   -20
 
 /* Anderson Acceleration Orthogonalization Choice */
 #define KIN_ORTH_MGS   0
@@ -83,6 +85,8 @@ extern "C" {
  * ------------------------------ */
 
 typedef int (*KINSysFn)(N_Vector uu, N_Vector fval, void* user_data);
+typedef int (*KINIterationFn)(long int iteration, N_Vector u, N_Vector value,
+                              void* user_data);
 
 typedef int (*KINDampingFn)(long int iter, N_Vector u_val, N_Vector g_val,
                             sunrealtype* qt_fn_1d, long int depth,
@@ -112,6 +116,7 @@ SUNDIALS_EXPORT int KINSol(void* kinmem, N_Vector uu, int strategy,
 SUNDIALS_EXPORT int KINSetOptions(void* kinmem, const char* kinid,
                                   const char* file_name, int argc, char* argv[]);
 SUNDIALS_EXPORT int KINSetUserData(void* kinmem, void* user_data);
+SUNDIALS_EXPORT int KINSetIterationFn(void* kinmem, KINIterationFn iteration_fn);
 SUNDIALS_EXPORT int KINSetDamping(void* kinmem, sunrealtype beta);
 SUNDIALS_EXPORT int KINSetMAA(void* kinmem, long int maa);
 SUNDIALS_EXPORT int KINSetOrthAA(void* kinmem, int orthaa);
