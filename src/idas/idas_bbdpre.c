@@ -763,7 +763,7 @@ int IDABBDPrecInitB(void* ida_mem, int which, sunindextype NlocalB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_WHICH);
@@ -837,7 +837,7 @@ int IDABBDPrecReInitB(void* ida_mem, int which, sunindextype mudqB,
   IDAADJ_mem = IDA_mem->ida_adj_mem;
 
   /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
+  if (which < 0 || which >= IDAADJ_mem->ia_nbckpbs)
   {
     IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
                     MSG_LS_BAD_WHICH);

@@ -148,12 +148,10 @@ static SUNErrCode setFromCommandLine_ImExGus(SUNAdaptController C,
 
   /* Prefix for options to set */
   const char* default_id = "sunadaptcontroller";
-  size_t offset          = strlen(default_id) + 1;
-  if (Cid != NULL && strlen(Cid) > 0) { offset = strlen(Cid) + 1; }
-  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
-  if (Cid != NULL && strlen(Cid) > 0) { strcpy(prefix, Cid); }
-  else { strcpy(prefix, default_id); }
-  strcat(prefix, ".");
+  const char* id         = (Cid != NULL && Cid[0] != '\0') ? Cid : default_id;
+  size_t offset          = strlen(id) + 1;
+  char* prefix           = (char*)malloc(sizeof(char) * (offset + 1));
+  snprintf(prefix, offset + 1, "%s.", id);
 
   int retval;
   sunbooleantype write_parameters = SUNFALSE;

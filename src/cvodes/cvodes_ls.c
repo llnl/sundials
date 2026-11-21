@@ -2106,7 +2106,7 @@ int CVodeSetLinearSolverB(void* cvode_mem, int which, SUNLinearSolver LS,
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSG_LS_BAD_WHICH);
@@ -2897,7 +2897,7 @@ int cvLs_AccessLMemB(void* cvode_mem, int which, const char* fname,
   *ca_mem = (*cv_mem)->cv_adj_mem;
 
   /* Check which */
-  if (which >= (*ca_mem)->ca_nbckpbs)
+  if (which < 0 || which >= (*ca_mem)->ca_nbckpbs)
   {
     cvProcessError(*cv_mem, CVLS_ILL_INPUT, __LINE__, fname, __FILE__,
                    MSG_LS_BAD_WHICH);

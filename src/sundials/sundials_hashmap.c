@@ -280,7 +280,7 @@ int64_t SUNHashMap_Insert(SUNHashMap map, const char* key, void* value)
     free(kvp);
     return SUNHASHMAP_ERROR;
   }
-  strcpy(key_copy, key);
+  memcpy(key_copy, key, len);
 
   kvp->key   = key_copy;
   kvp->value = value;

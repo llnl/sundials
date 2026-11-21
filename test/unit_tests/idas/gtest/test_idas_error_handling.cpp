@@ -16,6 +16,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <idas/idas.h>
+#include <nvector/nvector_serial.h>
 #include <sundials/sundials_core.hpp>
 
 #include "../../utilities/dumpstderr.hpp"
@@ -23,6 +24,11 @@
 #include "sundials/sundials_context.hpp"
 
 static const std::string errfile{"test_error_handling.err"};
+
+static int residual(sunrealtype, N_Vector, N_Vector, N_Vector, void*)
+{
+  return 0;
+}
 
 class IDAErrConditionTest : public testing::Test
 {
@@ -75,4 +81,19 @@ TEST_F(IDAErrConditionTest, ErrorIsPrinted)
 #else
   EXPECT_EQ(output, "");
 #endif
+}
+
+TEST_F(IDAErrConditionTest, NegativeBackwardProblemIndex)
+{
+  N_Vector yy = N_VNew_Serial(1, sunctx);
+  N_Vector yp = N_VNew_Serial(1, sunctx);
+  ASSERT_NE(yy, nullptr);
+  ASSERT_NE(yp, nullptr);
+
+  ASSERT_EQ(IDAInit(IDA_mem, residual, 0.0, yy, yp), IDA_SUCCESS);
+  ASSERT_EQ(IDAAdjInit(IDA_mem, 10, IDA_HERMITE), IDA_SUCCESS);
+  EXPECT_EQ(IDAInitB(IDA_mem, -1, nullptr, 0.0, nullptr, nullptr), IDA_ILL_INPUT);
+
+  N_VDestroy(yp);
+  N_VDestroy(yy);
 }

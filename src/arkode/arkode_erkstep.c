@@ -1298,9 +1298,6 @@ int erkStep_SetButcherTable(ARKodeMem ark_mem)
   /* if table has already been specified, just return */
   if (step_mem->B != NULL) { return (ARK_SUCCESS); }
 
-  /* initialize table number to illegal values */
-  etable = -1;
-
   /* select method based on order */
   switch (step_mem->q)
   {

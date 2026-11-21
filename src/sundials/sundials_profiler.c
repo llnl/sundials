@@ -161,8 +161,9 @@ SUNErrCode SUNProfiler_Create(SUNComm comm, const char* title, SUNProfiler* p)
 
   /* Copy the title of the profiler (note strlen does not include terminating
      null character hence the +1) */
-  profiler->title = malloc((strlen(title) + 1) * sizeof(char));
-  strcpy(profiler->title, title);
+  size_t title_len = strlen(title) + 1;
+  profiler->title  = malloc(title_len * sizeof(char));
+  memcpy(profiler->title, title, title_len);
 
   /* Initialize the overall timer to 0. */
   profiler->sundials_time = 0.0;
