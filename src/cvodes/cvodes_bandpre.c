@@ -542,53 +542,17 @@ static int cvBandPrecDQJac(CVBandPrecData pdata, sunrealtype t, N_Vector y,
 int CVBandPrecInitB(void* cvode_mem, int which, sunindextype nB,
                     sunindextype muB, sunindextype mlB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVLS_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBP_MEM_NULL);
-    return (CVLS_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CVLS_NO_ADJ, __LINE__, __func__, __FILE__,
-                   MSGBP_NO_ADJ);
-    return (CVLS_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGBP_BAD_WHICH);
-    return (CVLS_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    /* advance */
-    cvB_mem = cvB_mem->cv_next;
-  }
-  /* cv_mem corresponding to 'which' problem. */
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS) { return flag; }
 
   /* Set pfree */
   cvB_mem->cv_pfree = NULL;
 
   /* Initialize the band preconditioner for this backward problem. */
-  flag = CVBandPrecInit(cvodeB_mem, nB, muB, mlB);
-  return (flag);
+  return CVBandPrecInit(cvodeB_mem, nB, muB, mlB);
 }

@@ -426,49 +426,13 @@ static int CVDiagFree(CVodeMem cv_mem)
 
 int CVDiagB(void* cvode_mem, int which)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVDIAG_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGDG_CVMEM_NULL);
-    return (CVDIAG_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS) { return flag; }
 
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CVDIAG_NO_ADJ, __LINE__, __func__, __FILE__,
-                   MSGDG_NO_ADJ);
-    return (CVDIAG_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CVDIAG_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGDG_BAD_WHICH);
-    return (CVDIAG_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
-
-  flag = CVDiag(cvodeB_mem);
-
-  return (flag);
+  return CVDiag(cvodeB_mem);
 }
