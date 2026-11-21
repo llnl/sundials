@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <nvector/nvector_petsc.h>
+#include <nvector/nvector_petsc_deprecated.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
 
@@ -102,11 +102,80 @@
 
 #define NV_COMM_PTC(v) (NV_CONTENT_PTC(v)->comm)
 
+/* Functions attached to the N_Vector */
+static void nvAbs_Petsc(N_Vector x, N_Vector z);
+static void nvAddConst_Petsc(N_Vector x, sunrealtype b, N_Vector z);
+static SUNErrCode nvBufPack_Petsc(N_Vector x, void* buf);
+static SUNErrCode nvBufSize_Petsc(N_Vector x, sunindextype* size);
+static SUNErrCode nvBufUnpack_Petsc(N_Vector x, void* buf);
+static N_Vector nvCloneEmpty_Petsc(N_Vector w);
+static N_Vector nvClone_Petsc(N_Vector w);
+static void nvCompare_Petsc(sunrealtype c, N_Vector x, N_Vector z);
+static SUNErrCode nvConstVectorArray_Petsc(int nvecs, sunrealtype c, N_Vector* Z);
+static void nvConst_Petsc(sunrealtype c, N_Vector z);
+static sunbooleantype nvConstrMaskLocal_Petsc(N_Vector c, N_Vector x, N_Vector m);
+static sunbooleantype nvConstrMask_Petsc(N_Vector c, N_Vector x, N_Vector m);
+static void nvDestroy_Petsc(N_Vector v);
+static void nvDiv_Petsc(N_Vector x, N_Vector y, N_Vector z);
+static sunrealtype nvDotProdLocal_Petsc(N_Vector x, N_Vector y);
+static SUNErrCode nvDotProdMultiAllReduce_Petsc(int nvec, N_Vector x,
+                                                sunrealtype* sum);
+static SUNErrCode nvDotProdMultiLocal_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                            sunrealtype* dotprods);
+static SUNErrCode nvDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                       sunrealtype* dotprods);
+static sunrealtype nvDotProd_Petsc(N_Vector x, N_Vector y);
+static MPI_Comm nvGetCommunicator_Petsc(N_Vector v);
+static sunindextype nvGetLength_Petsc(N_Vector v);
+static N_Vector_ID nvGetVectorID_Petsc(N_Vector v);
+static sunbooleantype nvInvTestLocal_Petsc(N_Vector x, N_Vector z);
+static sunbooleantype nvInvTest_Petsc(N_Vector x, N_Vector z);
+static void nvInv_Petsc(N_Vector x, N_Vector z);
+static sunrealtype nvL1NormLocal_Petsc(N_Vector x);
+static sunrealtype nvL1Norm_Petsc(N_Vector x);
+static SUNErrCode nvLinearCombinationVectorArray_Petsc(int nvec, int nsum,
+                                                       sunrealtype* c,
+                                                       N_Vector** X, N_Vector* Z);
+static SUNErrCode nvLinearCombination_Petsc(int nvec, sunrealtype* c,
+                                            N_Vector* X, N_Vector z);
+static SUNErrCode nvLinearSumVectorArray_Petsc(int nvec, sunrealtype a,
+                                               N_Vector* X, sunrealtype b,
+                                               N_Vector* Y, N_Vector* Z);
+static void nvLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b,
+                              N_Vector y, N_Vector z);
+static sunrealtype nvMaxNormLocal_Petsc(N_Vector x);
+static sunrealtype nvMaxNorm_Petsc(N_Vector x);
+static sunrealtype nvMinLocal_Petsc(N_Vector x);
+static sunrealtype nvMinQuotientLocal_Petsc(N_Vector num, N_Vector denom);
+static sunrealtype nvMinQuotient_Petsc(N_Vector num, N_Vector denom);
+static sunrealtype nvMin_Petsc(N_Vector x);
+static void nvPrintFile_Petsc(N_Vector x, const char fname[]);
+static void nvPrint_Petsc(N_Vector x);
+static void nvProd_Petsc(N_Vector x, N_Vector y, N_Vector z);
+static SUNErrCode nvScaleAddMultiVectorArray_Petsc(int nvec, int nsum,
+                                                   sunrealtype* a, N_Vector* X,
+                                                   N_Vector** Y, N_Vector** Z);
+static SUNErrCode nvScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
+                                        N_Vector* Y, N_Vector* Z);
+static SUNErrCode nvScaleVectorArray_Petsc(int nvec, sunrealtype* c,
+                                           N_Vector* X, N_Vector* Z);
+static void nvScale_Petsc(sunrealtype c, N_Vector x, N_Vector z);
+static sunrealtype nvWL2Norm_Petsc(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumLocal_Petsc(N_Vector x, N_Vector w);
+static sunrealtype nvWSqrSumMaskLocal_Petsc(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode nvWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X,
+                                                  N_Vector* W, N_Vector id,
+                                                  sunrealtype* nrm);
+static sunrealtype nvWrmsNormMask_Petsc(N_Vector x, N_Vector w, N_Vector id);
+static SUNErrCode nvWrmsNormVectorArray_Petsc(int nvecs, N_Vector* X,
+                                              N_Vector* W, sunrealtype* nrm);
+static sunrealtype nvWrmsNorm_Petsc(N_Vector x, N_Vector w);
+
 /* ----------------------------------------------------------------
  * Returns vector type ID. Used to identify vector implementation
  * from abstract N_Vector interface.
  */
-N_Vector_ID N_VGetVectorID_Petsc(SUNDIALS_MAYBE_UNUSED N_Vector v)
+N_Vector_ID nvGetVectorID_Petsc(SUNDIALS_MAYBE_UNUSED N_Vector v)
 {
   return SUNDIALS_NVEC_PETSC;
 }
@@ -142,55 +211,58 @@ N_Vector N_VNewEmpty_Petsc(MPI_Comm comm, sunindextype local_length,
   /* Attach operations */
 
   /* constructors, destructors, and utility operations */
-  v->ops->nvgetvectorid     = N_VGetVectorID_Petsc;
-  v->ops->nvclone           = N_VClone_Petsc;
-  v->ops->nvcloneempty      = N_VCloneEmpty_Petsc;
-  v->ops->nvdestroy         = N_VDestroy_Petsc;
-  v->ops->nvgetcommunicator = N_VGetCommunicator_Petsc;
-  v->ops->nvgetlength       = N_VGetLength_Petsc;
+  v->ops->nvgetvectorid     = nvGetVectorID_Petsc;
+  v->ops->nvclone           = nvClone_Petsc;
+  v->ops->nvcloneempty      = nvCloneEmpty_Petsc;
+  v->ops->nvdestroy         = nvDestroy_Petsc;
+  v->ops->nvgetcommunicator = nvGetCommunicator_Petsc;
+  v->ops->nvgetlength       = nvGetLength_Petsc;
 
   /* standard vector operations */
-  v->ops->nvlinearsum    = N_VLinearSum_Petsc;
-  v->ops->nvconst        = N_VConst_Petsc;
-  v->ops->nvprod         = N_VProd_Petsc;
-  v->ops->nvdiv          = N_VDiv_Petsc;
-  v->ops->nvscale        = N_VScale_Petsc;
-  v->ops->nvabs          = N_VAbs_Petsc;
-  v->ops->nvinv          = N_VInv_Petsc;
-  v->ops->nvaddconst     = N_VAddConst_Petsc;
-  v->ops->nvdotprod      = N_VDotProd_Petsc;
-  v->ops->nvmaxnorm      = N_VMaxNorm_Petsc;
-  v->ops->nvwrmsnormmask = N_VWrmsNormMask_Petsc;
-  v->ops->nvwrmsnorm     = N_VWrmsNorm_Petsc;
-  v->ops->nvmin          = N_VMin_Petsc;
-  v->ops->nvwl2norm      = N_VWL2Norm_Petsc;
-  v->ops->nvl1norm       = N_VL1Norm_Petsc;
-  v->ops->nvcompare      = N_VCompare_Petsc;
-  v->ops->nvinvtest      = N_VInvTest_Petsc;
-  v->ops->nvconstrmask   = N_VConstrMask_Petsc;
-  v->ops->nvminquotient  = N_VMinQuotient_Petsc;
+  v->ops->nvlinearsum    = nvLinearSum_Petsc;
+  v->ops->nvconst        = nvConst_Petsc;
+  v->ops->nvprod         = nvProd_Petsc;
+  v->ops->nvdiv          = nvDiv_Petsc;
+  v->ops->nvscale        = nvScale_Petsc;
+  v->ops->nvabs          = nvAbs_Petsc;
+  v->ops->nvinv          = nvInv_Petsc;
+  v->ops->nvaddconst     = nvAddConst_Petsc;
+  v->ops->nvdotprod      = nvDotProd_Petsc;
+  v->ops->nvmaxnorm      = nvMaxNorm_Petsc;
+  v->ops->nvwrmsnormmask = nvWrmsNormMask_Petsc;
+  v->ops->nvwrmsnorm     = nvWrmsNorm_Petsc;
+  v->ops->nvmin          = nvMin_Petsc;
+  v->ops->nvwl2norm      = nvWL2Norm_Petsc;
+  v->ops->nvl1norm       = nvL1Norm_Petsc;
+  v->ops->nvcompare      = nvCompare_Petsc;
+  v->ops->nvinvtest      = nvInvTest_Petsc;
+  v->ops->nvconstrmask   = nvConstrMask_Petsc;
+  v->ops->nvminquotient  = nvMinQuotient_Petsc;
 
   /* fused and vector array operations are disabled (NULL) by default */
 
   /* local reduction operations */
-  v->ops->nvdotprodlocal     = N_VDotProdLocal_Petsc;
-  v->ops->nvmaxnormlocal     = N_VMaxNormLocal_Petsc;
-  v->ops->nvminlocal         = N_VMinLocal_Petsc;
-  v->ops->nvl1normlocal      = N_VL1NormLocal_Petsc;
-  v->ops->nvinvtestlocal     = N_VInvTestLocal_Petsc;
-  v->ops->nvconstrmasklocal  = N_VConstrMaskLocal_Petsc;
-  v->ops->nvminquotientlocal = N_VMinQuotientLocal_Petsc;
-  v->ops->nvwsqrsumlocal     = N_VWSqrSumLocal_Petsc;
-  v->ops->nvwsqrsummasklocal = N_VWSqrSumMaskLocal_Petsc;
+  v->ops->nvdotprodlocal     = nvDotProdLocal_Petsc;
+  v->ops->nvmaxnormlocal     = nvMaxNormLocal_Petsc;
+  v->ops->nvminlocal         = nvMinLocal_Petsc;
+  v->ops->nvl1normlocal      = nvL1NormLocal_Petsc;
+  v->ops->nvinvtestlocal     = nvInvTestLocal_Petsc;
+  v->ops->nvconstrmasklocal  = nvConstrMaskLocal_Petsc;
+  v->ops->nvminquotientlocal = nvMinQuotientLocal_Petsc;
+  v->ops->nvwsqrsumlocal     = nvWSqrSumLocal_Petsc;
+  v->ops->nvwsqrsummasklocal = nvWSqrSumMaskLocal_Petsc;
 
   /* single buffer reduction operations */
-  v->ops->nvdotprodmultilocal     = N_VDotProdMultiLocal_Petsc;
-  v->ops->nvdotprodmultiallreduce = N_VDotProdMultiAllReduce_Petsc;
+  v->ops->nvdotprodmultilocal     = nvDotProdMultiLocal_Petsc;
+  v->ops->nvdotprodmultiallreduce = nvDotProdMultiAllReduce_Petsc;
 
   /* XBraid interface operations */
-  v->ops->nvbufsize   = N_VBufSize_Petsc;
-  v->ops->nvbufpack   = N_VBufPack_Petsc;
-  v->ops->nvbufunpack = N_VBufUnpack_Petsc;
+  v->ops->nvbufsize   = nvBufSize_Petsc;
+  v->ops->nvbufpack   = nvBufPack_Petsc;
+  v->ops->nvbufunpack = nvBufUnpack_Petsc;
+
+  /* debugging functions */
+  v->ops->nvprint = nvPrint_Petsc;
 
   /* Create content */
   content = NULL;
@@ -255,7 +327,7 @@ void N_VSetVector_Petsc(N_Vector v, Vec p) { NV_PVEC_PTC(v) = p; }
  * Function to print the global data in a PETSc vector to stdout
  */
 
-void N_VPrint_Petsc(N_Vector x)
+void nvPrint_Petsc(N_Vector x)
 {
   Vec xv        = NV_PVEC_PTC(x);
   MPI_Comm comm = NV_COMM_PTC(x);
@@ -269,7 +341,7 @@ void N_VPrint_Petsc(N_Vector x)
  * Function to print the global data in a PETSc vector to fname
  */
 
-void N_VPrintFile_Petsc(N_Vector x, const char fname[])
+void nvPrintFile_Petsc(N_Vector x, const char fname[])
 {
   Vec xv        = NV_PVEC_PTC(x);
   MPI_Comm comm = NV_COMM_PTC(x);
@@ -290,7 +362,7 @@ void N_VPrintFile_Petsc(N_Vector x, const char fname[])
  * -----------------------------------------------------------------
  */
 
-N_Vector N_VCloneEmpty_Petsc(N_Vector w)
+N_Vector nvCloneEmpty_Petsc(N_Vector w)
 {
   N_Vector v;
   N_VectorContent_Petsc content;
@@ -331,7 +403,7 @@ N_Vector N_VCloneEmpty_Petsc(N_Vector w)
   return (v);
 }
 
-N_Vector N_VClone_Petsc(N_Vector w)
+N_Vector nvClone_Petsc(N_Vector w)
 {
   N_Vector v = NULL;
   Vec pvec   = NULL;
@@ -339,14 +411,14 @@ N_Vector N_VClone_Petsc(N_Vector w)
 
   /* PetscErrorCode ierr; */
 
-  v = N_VCloneEmpty_Petsc(w);
+  v = nvCloneEmpty_Petsc(w);
   if (v == NULL) { return (NULL); }
 
   /* Duplicate vector */
   VecDuplicate(wvec, &pvec);
   if (pvec == NULL)
   {
-    N_VDestroy_Petsc(v);
+    nvDestroy_Petsc(v);
     return (NULL);
   }
 
@@ -357,7 +429,7 @@ N_Vector N_VClone_Petsc(N_Vector w)
   return (v);
 }
 
-void N_VDestroy_Petsc(N_Vector v)
+void nvDestroy_Petsc(N_Vector v)
 {
   if (v == NULL) { return; }
 
@@ -385,12 +457,12 @@ void N_VDestroy_Petsc(N_Vector v)
   return;
 }
 
-MPI_Comm N_VGetCommunicator_Petsc(N_Vector v) { return (NV_COMM_PTC(v)); }
+MPI_Comm nvGetCommunicator_Petsc(N_Vector v) { return (NV_COMM_PTC(v)); }
 
-sunindextype N_VGetLength_Petsc(N_Vector v) { return (NV_GLOBLENGTH_PTC(v)); }
+sunindextype nvGetLength_Petsc(N_Vector v) { return (NV_GLOBLENGTH_PTC(v)); }
 
-void N_VLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
-                        N_Vector z)
+void nvLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                       N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec yv = NV_PVEC_PTC(y);
@@ -398,7 +470,7 @@ void N_VLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
 
   if (x == y)
   {
-    N_VScale_Petsc(a + b, x, z); /* z <~ ax+bx */
+    nvScale_Petsc(a + b, x, z); /* z <~ ax+bx */
     return;
   }
 
@@ -434,7 +506,7 @@ void N_VLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
   return;
 }
 
-void N_VConst_Petsc(sunrealtype c, N_Vector z)
+void nvConst_Petsc(sunrealtype c, N_Vector z)
 {
   Vec zv = NV_PVEC_PTC(z);
 
@@ -443,7 +515,7 @@ void N_VConst_Petsc(sunrealtype c, N_Vector z)
   return;
 }
 
-void N_VProd_Petsc(N_Vector x, N_Vector y, N_Vector z)
+void nvProd_Petsc(N_Vector x, N_Vector y, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec yv = NV_PVEC_PTC(y);
@@ -454,7 +526,7 @@ void N_VProd_Petsc(N_Vector x, N_Vector y, N_Vector z)
   return;
 }
 
-void N_VDiv_Petsc(N_Vector x, N_Vector y, N_Vector z)
+void nvDiv_Petsc(N_Vector x, N_Vector y, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec yv = NV_PVEC_PTC(y);
@@ -465,7 +537,7 @@ void N_VDiv_Petsc(N_Vector x, N_Vector y, N_Vector z)
   return;
 }
 
-void N_VScale_Petsc(sunrealtype c, N_Vector x, N_Vector z)
+void nvScale_Petsc(sunrealtype c, N_Vector x, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec zv = NV_PVEC_PTC(z);
@@ -481,7 +553,7 @@ void N_VScale_Petsc(sunrealtype c, N_Vector x, N_Vector z)
   return;
 }
 
-void N_VAbs_Petsc(N_Vector x, N_Vector z)
+void nvAbs_Petsc(N_Vector x, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec zv = NV_PVEC_PTC(z);
@@ -492,7 +564,7 @@ void N_VAbs_Petsc(N_Vector x, N_Vector z)
   return;
 }
 
-void N_VInv_Petsc(N_Vector x, N_Vector z)
+void nvInv_Petsc(N_Vector x, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec zv = NV_PVEC_PTC(z);
@@ -503,7 +575,7 @@ void N_VInv_Petsc(N_Vector x, N_Vector z)
   return;
 }
 
-void N_VAddConst_Petsc(N_Vector x, sunrealtype b, N_Vector z)
+void nvAddConst_Petsc(N_Vector x, sunrealtype b, N_Vector z)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec zv = NV_PVEC_PTC(z);
@@ -514,7 +586,7 @@ void N_VAddConst_Petsc(N_Vector x, sunrealtype b, N_Vector z)
   return;
 }
 
-sunrealtype N_VDotProdLocal_Petsc(N_Vector x, N_Vector y)
+sunrealtype nvDotProdLocal_Petsc(N_Vector x, N_Vector y)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -532,7 +604,7 @@ sunrealtype N_VDotProdLocal_Petsc(N_Vector x, N_Vector y)
   return ((sunrealtype)sum);
 }
 
-sunrealtype N_VDotProd_Petsc(N_Vector x, N_Vector y)
+sunrealtype nvDotProd_Petsc(N_Vector x, N_Vector y)
 {
   Vec xv = NV_PVEC_PTC(x);
   Vec yv = NV_PVEC_PTC(y);
@@ -542,7 +614,7 @@ sunrealtype N_VDotProd_Petsc(N_Vector x, N_Vector y)
   return dotprod;
 }
 
-sunrealtype N_VMaxNormLocal_Petsc(N_Vector x)
+sunrealtype nvMaxNormLocal_Petsc(N_Vector x)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -559,7 +631,7 @@ sunrealtype N_VMaxNormLocal_Petsc(N_Vector x)
   return ((sunrealtype)max);
 }
 
-sunrealtype N_VMaxNorm_Petsc(N_Vector x)
+sunrealtype nvMaxNorm_Petsc(N_Vector x)
 {
   Vec xv = NV_PVEC_PTC(x);
   PetscReal norm;
@@ -568,7 +640,7 @@ sunrealtype N_VMaxNorm_Petsc(N_Vector x)
   return norm;
 }
 
-sunrealtype N_VWSqrSumLocal_Petsc(N_Vector x, N_Vector w)
+sunrealtype nvWSqrSumLocal_Petsc(N_Vector x, N_Vector w)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -586,17 +658,17 @@ sunrealtype N_VWSqrSumLocal_Petsc(N_Vector x, N_Vector w)
   return ((sunrealtype)sum);
 }
 
-sunrealtype N_VWrmsNorm_Petsc(N_Vector x, N_Vector w)
+sunrealtype nvWrmsNorm_Petsc(N_Vector x, N_Vector w)
 {
   sunrealtype global_sum;
   sunindextype N_global = NV_GLOBLENGTH_PTC(x);
-  sunrealtype sum       = N_VWSqrSumLocal_Petsc(x, w);
+  sunrealtype sum       = nvWSqrSumLocal_Petsc(x, w);
   (void)MPI_Allreduce(&sum, &global_sum, 1, MPI_SUNREALTYPE, MPI_SUM,
                       NV_COMM_PTC(x));
   return (SUNRsqrt(global_sum / N_global));
 }
 
-sunrealtype N_VWSqrSumMaskLocal_Petsc(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWSqrSumMaskLocal_Petsc(N_Vector x, N_Vector w, N_Vector id)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -622,17 +694,17 @@ sunrealtype N_VWSqrSumMaskLocal_Petsc(N_Vector x, N_Vector w, N_Vector id)
   return sum;
 }
 
-sunrealtype N_VWrmsNormMask_Petsc(N_Vector x, N_Vector w, N_Vector id)
+sunrealtype nvWrmsNormMask_Petsc(N_Vector x, N_Vector w, N_Vector id)
 {
   sunrealtype global_sum;
   sunindextype N_global = NV_GLOBLENGTH_PTC(x);
-  sunrealtype sum       = N_VWSqrSumMaskLocal_Petsc(x, w, id);
+  sunrealtype sum       = nvWSqrSumMaskLocal_Petsc(x, w, id);
   (void)MPI_Allreduce(&sum, &global_sum, 1, MPI_SUNREALTYPE, MPI_SUM,
                       NV_COMM_PTC(x));
   return (SUNRsqrt(global_sum / N_global));
 }
 
-sunrealtype N_VMinLocal_Petsc(N_Vector x)
+sunrealtype nvMinLocal_Petsc(N_Vector x)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -649,7 +721,7 @@ sunrealtype N_VMinLocal_Petsc(N_Vector x)
   return ((sunrealtype)min);
 }
 
-sunrealtype N_VMin_Petsc(N_Vector x)
+sunrealtype nvMin_Petsc(N_Vector x)
 {
   Vec xv = NV_PVEC_PTC(x);
   PetscReal minval;
@@ -659,16 +731,16 @@ sunrealtype N_VMin_Petsc(N_Vector x)
   return minval;
 }
 
-sunrealtype N_VWL2Norm_Petsc(N_Vector x, N_Vector w)
+sunrealtype nvWL2Norm_Petsc(N_Vector x, N_Vector w)
 {
   sunrealtype global_sum;
-  sunrealtype sum = N_VWSqrSumLocal_Petsc(x, w);
+  sunrealtype sum = nvWSqrSumLocal_Petsc(x, w);
   (void)MPI_Allreduce(&sum, &global_sum, 1, MPI_SUNREALTYPE, MPI_SUM,
                       NV_COMM_PTC(x));
   return (SUNRsqrt(global_sum));
 }
 
-sunrealtype N_VL1NormLocal_Petsc(N_Vector x)
+sunrealtype nvL1NormLocal_Petsc(N_Vector x)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -682,7 +754,7 @@ sunrealtype N_VL1NormLocal_Petsc(N_Vector x)
   return ((sunrealtype)sum);
 }
 
-sunrealtype N_VL1Norm_Petsc(N_Vector x)
+sunrealtype nvL1Norm_Petsc(N_Vector x)
 {
   Vec xv = NV_PVEC_PTC(x);
   PetscReal norm;
@@ -691,7 +763,7 @@ sunrealtype N_VL1Norm_Petsc(N_Vector x)
   return norm;
 }
 
-void N_VCompare_Petsc(sunrealtype c, N_Vector x, N_Vector z)
+void nvCompare_Petsc(sunrealtype c, N_Vector x, N_Vector z)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -713,7 +785,7 @@ void N_VCompare_Petsc(sunrealtype c, N_Vector x, N_Vector z)
   return;
 }
 
-sunbooleantype N_VInvTestLocal_Petsc(N_Vector x, N_Vector z)
+sunbooleantype nvInvTestLocal_Petsc(N_Vector x, N_Vector z)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -737,16 +809,16 @@ sunbooleantype N_VInvTestLocal_Petsc(N_Vector x, N_Vector z)
   else { return (SUNTRUE); }
 }
 
-sunbooleantype N_VInvTest_Petsc(N_Vector x, N_Vector z)
+sunbooleantype nvInvTest_Petsc(N_Vector x, N_Vector z)
 {
   sunrealtype val2;
-  sunrealtype val = (N_VInvTestLocal_Petsc(x, z)) ? ONE : ZERO;
+  sunrealtype val = (nvInvTestLocal_Petsc(x, z)) ? ONE : ZERO;
   (void)MPI_Allreduce(&val, &val2, 1, MPI_SUNREALTYPE, MPI_MIN, NV_COMM_PTC(x));
   if (val2 == ZERO) { return (SUNFALSE); }
   else { return (SUNTRUE); }
 }
 
-sunbooleantype N_VConstrMaskLocal_Petsc(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMaskLocal_Petsc(N_Vector c, N_Vector x, N_Vector m)
 {
   sunindextype i;
   sunindextype N = NV_LOCLENGTH_PTC(x);
@@ -786,15 +858,15 @@ sunbooleantype N_VConstrMaskLocal_Petsc(N_Vector c, N_Vector x, N_Vector m)
   return (temp == ONE) ? SUNFALSE : SUNTRUE;
 }
 
-sunbooleantype N_VConstrMask_Petsc(N_Vector c, N_Vector x, N_Vector m)
+sunbooleantype nvConstrMask_Petsc(N_Vector c, N_Vector x, N_Vector m)
 {
   sunrealtype temp2;
-  sunrealtype temp = (N_VConstrMaskLocal_Petsc(c, x, m)) ? ZERO : ONE;
+  sunrealtype temp = (nvConstrMaskLocal_Petsc(c, x, m)) ? ZERO : ONE;
   (void)MPI_Allreduce(&temp, &temp2, 1, MPI_SUNREALTYPE, MPI_MAX, NV_COMM_PTC(x));
   return (temp2 == ONE) ? SUNFALSE : SUNTRUE;
 }
 
-sunrealtype N_VMinQuotientLocal_Petsc(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotientLocal_Petsc(N_Vector num, N_Vector denom)
 {
   sunbooleantype notEvenOnce = SUNTRUE;
   sunindextype i;
@@ -828,10 +900,10 @@ sunrealtype N_VMinQuotientLocal_Petsc(N_Vector num, N_Vector denom)
   return ((sunrealtype)minval);
 }
 
-sunrealtype N_VMinQuotient_Petsc(N_Vector num, N_Vector denom)
+sunrealtype nvMinQuotient_Petsc(N_Vector num, N_Vector denom)
 {
   PetscReal gmin;
-  sunrealtype minval = N_VMinQuotientLocal_Petsc(num, denom);
+  sunrealtype minval = nvMinQuotientLocal_Petsc(num, denom);
   (void)MPI_Allreduce(&minval, &gmin, 1, MPI_SUNREALTYPE, MPI_MIN,
                       NV_COMM_PTC(num));
   return (gmin);
@@ -843,8 +915,8 @@ sunrealtype N_VMinQuotient_Petsc(N_Vector num, N_Vector denom)
  * -----------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearCombination_Petsc(int nvec, sunrealtype* c, N_Vector* X,
-                                      N_Vector z)
+SUNErrCode nvLinearCombination_Petsc(int nvec, sunrealtype* c, N_Vector* X,
+                                     N_Vector z)
 {
   int i;
   Vec* xv;
@@ -856,14 +928,14 @@ SUNErrCode N_VLinearCombination_Petsc(int nvec, sunrealtype* c, N_Vector* X,
   /* should have called N_VScale */
   if (nvec == 1)
   {
-    N_VScale_Petsc(c[0], X[0], z);
+    nvScale_Petsc(c[0], X[0], z);
     return SUN_SUCCESS;
   }
 
   /* should have called N_VLinearSum */
   if (nvec == 2)
   {
-    N_VLinearSum_Petsc(c[0], X[0], c[1], X[1], z);
+    nvLinearSum_Petsc(c[0], X[0], c[1], X[1], z);
     return SUN_SUCCESS;
   }
 
@@ -904,8 +976,8 @@ SUNErrCode N_VLinearCombination_Petsc(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
-                                  N_Vector* Y, N_Vector* Z)
+SUNErrCode nvScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
+                                 N_Vector* Y, N_Vector* Z)
 {
   int i;
   sunindextype j, N;
@@ -917,7 +989,7 @@ SUNErrCode N_VScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
   /* should have called N_VLinearSum */
   if (nvec == 1)
   {
-    N_VLinearSum_Petsc(a[0], x, ONE, Y[0], Z[0]);
+    nvLinearSum_Petsc(a[0], x, ONE, Y[0], Z[0]);
     return SUN_SUCCESS;
   }
 
@@ -953,8 +1025,8 @@ SUNErrCode N_VScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
-                                 sunrealtype* dotprods)
+SUNErrCode nvDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                sunrealtype* dotprods)
 {
   int i;
   Vec* yv;
@@ -966,7 +1038,7 @@ SUNErrCode N_VDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
   /* should have called N_VDotProd */
   if (nvec == 1)
   {
-    dotprods[0] = N_VDotProd_Petsc(x, Y[0]);
+    dotprods[0] = nvDotProd_Petsc(x, Y[0]);
     return SUN_SUCCESS;
   }
 
@@ -988,8 +1060,8 @@ SUNErrCode N_VDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
  * -----------------------------------------------------------------------------
  */
 
-SUNErrCode N_VDotProdMultiLocal_Petsc(int nvec, N_Vector x, N_Vector* Y,
-                                      sunrealtype* dotprods)
+SUNErrCode nvDotProdMultiLocal_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                     sunrealtype* dotprods)
 {
   int j;
   sunindextype i;
@@ -1013,8 +1085,8 @@ SUNErrCode N_VDotProdMultiLocal_Petsc(int nvec, N_Vector x, N_Vector* Y,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VDotProdMultiAllReduce_Petsc(int nvec, N_Vector x,
-                                          sunrealtype* dotprods)
+SUNErrCode nvDotProdMultiAllReduce_Petsc(int nvec, N_Vector x,
+                                         sunrealtype* dotprods)
 {
   int retval;
   retval = MPI_Allreduce(MPI_IN_PLACE, dotprods, nvec, MPI_SUNREALTYPE, MPI_SUM,
@@ -1028,8 +1100,8 @@ SUNErrCode N_VDotProdMultiAllReduce_Petsc(int nvec, N_Vector x,
  * -----------------------------------------------------------------------------
  */
 
-SUNErrCode N_VLinearSumVectorArray_Petsc(int nvec, sunrealtype a, N_Vector* X,
-                                         sunrealtype b, N_Vector* Y, N_Vector* Z)
+SUNErrCode nvLinearSumVectorArray_Petsc(int nvec, sunrealtype a, N_Vector* X,
+                                        sunrealtype b, N_Vector* Y, N_Vector* Z)
 {
   int i;
   sunindextype j, N;
@@ -1041,7 +1113,7 @@ SUNErrCode N_VLinearSumVectorArray_Petsc(int nvec, sunrealtype a, N_Vector* X,
   /* should have called N_VLinearSum */
   if (nvec == 1)
   {
-    N_VLinearSum_Petsc(a, X[0], b, Y[0], Z[0]);
+    nvLinearSum_Petsc(a, X[0], b, Y[0], Z[0]);
     return SUN_SUCCESS;
   }
 
@@ -1063,8 +1135,8 @@ SUNErrCode N_VLinearSumVectorArray_Petsc(int nvec, sunrealtype a, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VScaleVectorArray_Petsc(int nvec, sunrealtype* c, N_Vector* X,
-                                     N_Vector* Z)
+SUNErrCode nvScaleVectorArray_Petsc(int nvec, sunrealtype* c, N_Vector* X,
+                                    N_Vector* Z)
 {
   int i;
   sunindextype j, N;
@@ -1076,7 +1148,7 @@ SUNErrCode N_VScaleVectorArray_Petsc(int nvec, sunrealtype* c, N_Vector* X,
   /* should have called N_VScale */
   if (nvec == 1)
   {
-    N_VScale_Petsc(c[0], X[0], Z[0]);
+    nvScale_Petsc(c[0], X[0], Z[0]);
     return SUN_SUCCESS;
   }
 
@@ -1111,7 +1183,7 @@ SUNErrCode N_VScaleVectorArray_Petsc(int nvec, sunrealtype* c, N_Vector* X,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VConstVectorArray_Petsc(int nvec, sunrealtype c, N_Vector* Z)
+SUNErrCode nvConstVectorArray_Petsc(int nvec, sunrealtype c, N_Vector* Z)
 {
   int i;
   sunindextype j, N;
@@ -1123,7 +1195,7 @@ SUNErrCode N_VConstVectorArray_Petsc(int nvec, sunrealtype c, N_Vector* Z)
   /* should have called N_VConst */
   if (nvec == 1)
   {
-    N_VConst_Petsc(c, Z[0]);
+    nvConst_Petsc(c, Z[0]);
     return SUN_SUCCESS;
   }
 
@@ -1141,8 +1213,8 @@ SUNErrCode N_VConstVectorArray_Petsc(int nvec, sunrealtype c, N_Vector* Z)
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VWrmsNormVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
-                                        sunrealtype* nrm)
+SUNErrCode nvWrmsNormVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
+                                       sunrealtype* nrm)
 {
   int i, retval;
   sunindextype j, Nl, Ng;
@@ -1156,7 +1228,7 @@ SUNErrCode N_VWrmsNormVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
   /* should have called N_VWrmsNorm */
   if (nvec == 1)
   {
-    nrm[0] = N_VWrmsNorm_Petsc(X[0], W[0]);
+    nrm[0] = nvWrmsNorm_Petsc(X[0], W[0]);
     return SUN_SUCCESS;
   }
 
@@ -1185,8 +1257,8 @@ SUNErrCode N_VWrmsNormVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
   return retval == MPI_SUCCESS ? SUN_SUCCESS : SUN_ERR_GENERIC;
 }
 
-SUNErrCode N_VWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
-                                            N_Vector id, sunrealtype* nrm)
+SUNErrCode nvWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
+                                           N_Vector id, sunrealtype* nrm)
 {
   int i, retval;
   sunindextype j, Nl, Ng;
@@ -1199,7 +1271,7 @@ SUNErrCode N_VWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
   /* should have called N_VWrmsNorm */
   if (nvec == 1)
   {
-    nrm[0] = N_VWrmsNormMask_Petsc(X[0], W[0], id);
+    nrm[0] = nvWrmsNormMask_Petsc(X[0], W[0], id);
     return SUN_SUCCESS;
   }
 
@@ -1231,9 +1303,9 @@ SUNErrCode N_VWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
   return retval == MPI_SUCCESS ? SUN_SUCCESS : SUN_ERR_GENERIC;
 }
 
-SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
-                                             N_Vector* X, N_Vector** Y,
-                                             N_Vector** Z)
+SUNErrCode nvScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
+                                            N_Vector* X, N_Vector** Y,
+                                            N_Vector** Z)
 {
   int i, j;
   sunindextype k, N;
@@ -1256,7 +1328,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
     /* should have called N_VLinearSum */
     if (nsum == 1)
     {
-      N_VLinearSum_Petsc(a[0], X[0], ONE, Y[0][0], Z[0][0]);
+      nvLinearSum_Petsc(a[0], X[0], ONE, Y[0][0], Z[0][0]);
       return SUN_SUCCESS;
     }
 
@@ -1270,7 +1342,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
       ZZ[j] = Z[j][0];
     }
 
-    retval = N_VScaleAddMulti_Petsc(nsum, a, X[0], YY, ZZ);
+    retval = nvScaleAddMulti_Petsc(nsum, a, X[0], YY, ZZ);
 
     free(YY);
     free(ZZ);
@@ -1284,7 +1356,7 @@ SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
   /* should have called N_VLinearSumVectorArray */
   if (nsum == 1)
   {
-    retval = N_VLinearSumVectorArray_Petsc(nvec, a[0], X, ONE, Y[0], Z[0]);
+    retval = nvLinearSumVectorArray_Petsc(nvec, a[0], X, ONE, Y[0], Z[0]);
     return (retval);
   }
 
@@ -1334,9 +1406,9 @@ SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
-                                                 sunrealtype* c, N_Vector** X,
-                                                 N_Vector* Z)
+SUNErrCode nvLinearCombinationVectorArray_Petsc(int nvec, int nsum,
+                                                sunrealtype* c, N_Vector** X,
+                                                N_Vector* Z)
 {
   int i;          /* vector arrays index in summation [0,nsum) */
   int j;          /* vector index in vector array     [0,nvec) */
@@ -1360,14 +1432,14 @@ SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
     /* should have called N_VScale */
     if (nsum == 1)
     {
-      N_VScale_Petsc(c[0], X[0][0], Z[0]);
+      nvScale_Petsc(c[0], X[0][0], Z[0]);
       return SUN_SUCCESS;
     }
 
     /* should have called N_VLinearSum */
     if (nsum == 2)
     {
-      N_VLinearSum_Petsc(c[0], X[0][0], c[1], X[1][0], Z[0]);
+      nvLinearSum_Petsc(c[0], X[0][0], c[1], X[1][0], Z[0]);
       return SUN_SUCCESS;
     }
 
@@ -1376,7 +1448,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
 
     for (i = 0; i < nsum; i++) { Y[i] = X[i][0]; }
 
-    N_VLinearCombination_Petsc(nsum, c, Y, Z[0]);
+    nvLinearCombination_Petsc(nsum, c, Y, Z[0]);
 
     free(Y);
     return SUN_SUCCESS;
@@ -1393,7 +1465,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
 
     for (j = 0; j < nvec; j++) { ctmp[j] = c[0]; }
 
-    N_VScaleVectorArray_Petsc(nvec, ctmp, X[0], Z);
+    nvScaleVectorArray_Petsc(nvec, ctmp, X[0], Z);
 
     free(ctmp);
     return SUN_SUCCESS;
@@ -1402,7 +1474,7 @@ SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
   /* should have called N_VLinearSumVectorArray */
   if (nsum == 2)
   {
-    N_VLinearSumVectorArray_Petsc(nvec, c[0], X[0], c[1], X[1], Z);
+    nvLinearSumVectorArray_Petsc(nvec, c[0], X[0], c[1], X[1], Z);
     return SUN_SUCCESS;
   }
 
@@ -1478,14 +1550,14 @@ SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
  * -----------------------------------------------------------------
  */
 
-SUNErrCode N_VBufSize_Petsc(N_Vector x, sunindextype* size)
+SUNErrCode nvBufSize_Petsc(N_Vector x, sunindextype* size)
 {
   if (x == NULL) { return SUN_ERR_GENERIC; }
   *size = NV_LOCLENGTH_PTC(x) * ((sunindextype)sizeof(PetscScalar));
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VBufPack_Petsc(N_Vector x, void* buf)
+SUNErrCode nvBufPack_Petsc(N_Vector x, void* buf)
 {
   Vec xv;
   sunindextype i, N;
@@ -1505,7 +1577,7 @@ SUNErrCode N_VBufPack_Petsc(N_Vector x, void* buf)
   return SUN_SUCCESS;
 }
 
-SUNErrCode N_VBufUnpack_Petsc(N_Vector x, void* buf)
+SUNErrCode nvBufUnpack_Petsc(N_Vector x, void* buf)
 {
   Vec xv;
   sunindextype i, N;
@@ -1542,19 +1614,19 @@ SUNErrCode N_VEnableFusedOps_Petsc(N_Vector v, sunbooleantype tf)
   if (tf)
   {
     /* enable all fused vector operations */
-    v->ops->nvlinearcombination = N_VLinearCombination_Petsc;
-    v->ops->nvscaleaddmulti     = N_VScaleAddMulti_Petsc;
-    v->ops->nvdotprodmulti      = N_VDotProdMulti_Petsc;
+    v->ops->nvlinearcombination = nvLinearCombination_Petsc;
+    v->ops->nvscaleaddmulti     = nvScaleAddMulti_Petsc;
+    v->ops->nvdotprodmulti      = nvDotProdMulti_Petsc;
     /* enable all vector array operations */
-    v->ops->nvlinearsumvectorarray     = N_VLinearSumVectorArray_Petsc;
-    v->ops->nvscalevectorarray         = N_VScaleVectorArray_Petsc;
-    v->ops->nvconstvectorarray         = N_VConstVectorArray_Petsc;
-    v->ops->nvwrmsnormvectorarray      = N_VWrmsNormVectorArray_Petsc;
-    v->ops->nvwrmsnormmaskvectorarray  = N_VWrmsNormMaskVectorArray_Petsc;
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Petsc;
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Petsc;
+    v->ops->nvlinearsumvectorarray     = nvLinearSumVectorArray_Petsc;
+    v->ops->nvscalevectorarray         = nvScaleVectorArray_Petsc;
+    v->ops->nvconstvectorarray         = nvConstVectorArray_Petsc;
+    v->ops->nvwrmsnormvectorarray      = nvWrmsNormVectorArray_Petsc;
+    v->ops->nvwrmsnormmaskvectorarray  = nvWrmsNormMaskVectorArray_Petsc;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Petsc;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Petsc;
     /* enable single buffer reduction operations */
-    v->ops->nvdotprodmultilocal = N_VDotProdMultiLocal_Petsc;
+    v->ops->nvdotprodmultilocal = nvDotProdMultiLocal_Petsc;
   }
   else
   {
@@ -1587,7 +1659,7 @@ SUNErrCode N_VEnableLinearCombination_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearcombination = N_VLinearCombination_Petsc; }
+  if (tf) { v->ops->nvlinearcombination = nvLinearCombination_Petsc; }
   else { v->ops->nvlinearcombination = NULL; }
 
   /* return success */
@@ -1603,7 +1675,7 @@ SUNErrCode N_VEnableScaleAddMulti_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscaleaddmulti = N_VScaleAddMulti_Petsc; }
+  if (tf) { v->ops->nvscaleaddmulti = nvScaleAddMulti_Petsc; }
   else { v->ops->nvscaleaddmulti = NULL; }
 
   /* return success */
@@ -1619,7 +1691,7 @@ SUNErrCode N_VEnableDotProdMulti_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvdotprodmulti = N_VDotProdMulti_Petsc; }
+  if (tf) { v->ops->nvdotprodmulti = nvDotProdMulti_Petsc; }
   else { v->ops->nvdotprodmulti = NULL; }
 
   /* return success */
@@ -1635,7 +1707,7 @@ SUNErrCode N_VEnableLinearSumVectorArray_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvlinearsumvectorarray = N_VLinearSumVectorArray_Petsc; }
+  if (tf) { v->ops->nvlinearsumvectorarray = nvLinearSumVectorArray_Petsc; }
   else { v->ops->nvlinearsumvectorarray = NULL; }
 
   /* return success */
@@ -1651,7 +1723,7 @@ SUNErrCode N_VEnableScaleVectorArray_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvscalevectorarray = N_VScaleVectorArray_Petsc; }
+  if (tf) { v->ops->nvscalevectorarray = nvScaleVectorArray_Petsc; }
   else { v->ops->nvscalevectorarray = NULL; }
 
   /* return success */
@@ -1667,7 +1739,7 @@ SUNErrCode N_VEnableConstVectorArray_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvconstvectorarray = N_VConstVectorArray_Petsc; }
+  if (tf) { v->ops->nvconstvectorarray = nvConstVectorArray_Petsc; }
   else { v->ops->nvconstvectorarray = NULL; }
 
   /* return success */
@@ -1683,7 +1755,7 @@ SUNErrCode N_VEnableWrmsNormVectorArray_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvwrmsnormvectorarray = N_VWrmsNormVectorArray_Petsc; }
+  if (tf) { v->ops->nvwrmsnormvectorarray = nvWrmsNormVectorArray_Petsc; }
   else { v->ops->nvwrmsnormvectorarray = NULL; }
 
   /* return success */
@@ -1701,7 +1773,7 @@ SUNErrCode N_VEnableWrmsNormMaskVectorArray_Petsc(N_Vector v, sunbooleantype tf)
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvwrmsnormmaskvectorarray = N_VWrmsNormMaskVectorArray_Petsc;
+    v->ops->nvwrmsnormmaskvectorarray = nvWrmsNormMaskVectorArray_Petsc;
   }
   else { v->ops->nvwrmsnormmaskvectorarray = NULL; }
 
@@ -1720,7 +1792,7 @@ SUNErrCode N_VEnableScaleAddMultiVectorArray_Petsc(N_Vector v, sunbooleantype tf
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvscaleaddmultivectorarray = N_VScaleAddMultiVectorArray_Petsc;
+    v->ops->nvscaleaddmultivectorarray = nvScaleAddMultiVectorArray_Petsc;
   }
   else { v->ops->nvscaleaddmultivectorarray = NULL; }
 
@@ -1740,7 +1812,7 @@ SUNErrCode N_VEnableLinearCombinationVectorArray_Petsc(N_Vector v,
   /* enable/disable operation */
   if (tf)
   {
-    v->ops->nvlinearcombinationvectorarray = N_VLinearCombinationVectorArray_Petsc;
+    v->ops->nvlinearcombinationvectorarray = nvLinearCombinationVectorArray_Petsc;
   }
   else { v->ops->nvlinearcombinationvectorarray = NULL; }
 
@@ -1757,9 +1829,234 @@ SUNErrCode N_VEnableDotProdMultiLocal_Petsc(N_Vector v, sunbooleantype tf)
   if (v->ops == NULL) { return SUN_ERR_GENERIC; }
 
   /* enable/disable operation */
-  if (tf) { v->ops->nvdotprodmultilocal = N_VDotProdMultiLocal_Petsc; }
+  if (tf) { v->ops->nvdotprodmultilocal = nvDotProdMultiLocal_Petsc; }
   else { v->ops->nvdotprodmultilocal = NULL; }
 
   /* return success */
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+void N_VAbs_Petsc(N_Vector x, N_Vector z) { nvAbs_Petsc(x, z); }
+
+void N_VAddConst_Petsc(N_Vector x, sunrealtype b, N_Vector z)
+{
+  nvAddConst_Petsc(x, b, z);
+}
+
+SUNErrCode N_VBufPack_Petsc(N_Vector x, void* buf)
+{
+  return nvBufPack_Petsc(x, buf);
+}
+
+SUNErrCode N_VBufSize_Petsc(N_Vector x, sunindextype* size)
+{
+  return nvBufSize_Petsc(x, size);
+}
+
+SUNErrCode N_VBufUnpack_Petsc(N_Vector x, void* buf)
+{
+  return nvBufUnpack_Petsc(x, buf);
+}
+
+N_Vector N_VCloneEmpty_Petsc(N_Vector w) { return nvCloneEmpty_Petsc(w); }
+
+N_Vector N_VClone_Petsc(N_Vector w) { return nvClone_Petsc(w); }
+
+void N_VCompare_Petsc(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvCompare_Petsc(c, x, z);
+}
+
+SUNErrCode N_VConstVectorArray_Petsc(int nvecs, sunrealtype c, N_Vector* Z)
+{
+  return nvConstVectorArray_Petsc(nvecs, c, Z);
+}
+
+void N_VConst_Petsc(sunrealtype c, N_Vector z) { nvConst_Petsc(c, z); }
+
+sunbooleantype N_VConstrMaskLocal_Petsc(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMaskLocal_Petsc(c, x, m);
+}
+
+sunbooleantype N_VConstrMask_Petsc(N_Vector c, N_Vector x, N_Vector m)
+{
+  return nvConstrMask_Petsc(c, x, m);
+}
+
+void N_VDestroy_Petsc(N_Vector v) { nvDestroy_Petsc(v); }
+
+void N_VDiv_Petsc(N_Vector x, N_Vector y, N_Vector z) { nvDiv_Petsc(x, y, z); }
+
+sunrealtype N_VDotProdLocal_Petsc(N_Vector x, N_Vector y)
+{
+  return nvDotProdLocal_Petsc(x, y);
+}
+
+SUNErrCode N_VDotProdMultiAllReduce_Petsc(int nvec, N_Vector x, sunrealtype* sum)
+{
+  return nvDotProdMultiAllReduce_Petsc(nvec, x, sum);
+}
+
+SUNErrCode N_VDotProdMultiLocal_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                      sunrealtype* dotprods)
+{
+  return nvDotProdMultiLocal_Petsc(nvec, x, Y, dotprods);
+}
+
+SUNErrCode N_VDotProdMulti_Petsc(int nvec, N_Vector x, N_Vector* Y,
+                                 sunrealtype* dotprods)
+{
+  return nvDotProdMulti_Petsc(nvec, x, Y, dotprods);
+}
+
+sunrealtype N_VDotProd_Petsc(N_Vector x, N_Vector y)
+{
+  return nvDotProd_Petsc(x, y);
+}
+
+MPI_Comm N_VGetCommunicator_Petsc(N_Vector v)
+{
+  return nvGetCommunicator_Petsc(v);
+}
+
+sunindextype N_VGetLength_Petsc(N_Vector v) { return nvGetLength_Petsc(v); }
+
+N_Vector_ID N_VGetVectorID_Petsc(N_Vector v) { return nvGetVectorID_Petsc(v); }
+
+sunbooleantype N_VInvTestLocal_Petsc(N_Vector x, N_Vector z)
+{
+  return nvInvTestLocal_Petsc(x, z);
+}
+
+sunbooleantype N_VInvTest_Petsc(N_Vector x, N_Vector z)
+{
+  return nvInvTest_Petsc(x, z);
+}
+
+void N_VInv_Petsc(N_Vector x, N_Vector z) { nvInv_Petsc(x, z); }
+
+sunrealtype N_VL1NormLocal_Petsc(N_Vector x) { return nvL1NormLocal_Petsc(x); }
+
+sunrealtype N_VL1Norm_Petsc(N_Vector x) { return nvL1Norm_Petsc(x); }
+
+SUNErrCode N_VLinearCombinationVectorArray_Petsc(int nvec, int nsum,
+                                                 sunrealtype* c, N_Vector** X,
+                                                 N_Vector* Z)
+{
+  return nvLinearCombinationVectorArray_Petsc(nvec, nsum, c, X, Z);
+}
+
+SUNErrCode N_VLinearCombination_Petsc(int nvec, sunrealtype* c, N_Vector* X,
+                                      N_Vector z)
+{
+  return nvLinearCombination_Petsc(nvec, c, X, z);
+}
+
+SUNErrCode N_VLinearSumVectorArray_Petsc(int nvec, sunrealtype a, N_Vector* X,
+                                         sunrealtype b, N_Vector* Y, N_Vector* Z)
+{
+  return nvLinearSumVectorArray_Petsc(nvec, a, X, b, Y, Z);
+}
+
+void N_VLinearSum_Petsc(sunrealtype a, N_Vector x, sunrealtype b, N_Vector y,
+                        N_Vector z)
+{
+  nvLinearSum_Petsc(a, x, b, y, z);
+}
+
+sunrealtype N_VMaxNormLocal_Petsc(N_Vector x)
+{
+  return nvMaxNormLocal_Petsc(x);
+}
+
+sunrealtype N_VMaxNorm_Petsc(N_Vector x) { return nvMaxNorm_Petsc(x); }
+
+sunrealtype N_VMinLocal_Petsc(N_Vector x) { return nvMinLocal_Petsc(x); }
+
+sunrealtype N_VMinQuotientLocal_Petsc(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotientLocal_Petsc(num, denom);
+}
+
+sunrealtype N_VMinQuotient_Petsc(N_Vector num, N_Vector denom)
+{
+  return nvMinQuotient_Petsc(num, denom);
+}
+
+sunrealtype N_VMin_Petsc(N_Vector x) { return nvMin_Petsc(x); }
+
+void N_VProd_Petsc(N_Vector x, N_Vector y, N_Vector z)
+{
+  nvProd_Petsc(x, y, z);
+}
+
+SUNErrCode N_VScaleAddMultiVectorArray_Petsc(int nvec, int nsum, sunrealtype* a,
+                                             N_Vector* X, N_Vector** Y,
+                                             N_Vector** Z)
+{
+  return nvScaleAddMultiVectorArray_Petsc(nvec, nsum, a, X, Y, Z);
+}
+
+SUNErrCode N_VScaleAddMulti_Petsc(int nvec, sunrealtype* a, N_Vector x,
+                                  N_Vector* Y, N_Vector* Z)
+{
+  return nvScaleAddMulti_Petsc(nvec, a, x, Y, Z);
+}
+
+SUNErrCode N_VScaleVectorArray_Petsc(int nvec, sunrealtype* c, N_Vector* X,
+                                     N_Vector* Z)
+{
+  return nvScaleVectorArray_Petsc(nvec, c, X, Z);
+}
+
+void N_VScale_Petsc(sunrealtype c, N_Vector x, N_Vector z)
+{
+  nvScale_Petsc(c, x, z);
+}
+
+sunrealtype N_VWL2Norm_Petsc(N_Vector x, N_Vector w)
+{
+  return nvWL2Norm_Petsc(x, w);
+}
+
+sunrealtype N_VWSqrSumLocal_Petsc(N_Vector x, N_Vector w)
+{
+  return nvWSqrSumLocal_Petsc(x, w);
+}
+
+sunrealtype N_VWSqrSumMaskLocal_Petsc(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWSqrSumMaskLocal_Petsc(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormMaskVectorArray_Petsc(int nvec, N_Vector* X, N_Vector* W,
+                                            N_Vector id, sunrealtype* nrm)
+{
+  return nvWrmsNormMaskVectorArray_Petsc(nvec, X, W, id, nrm);
+}
+
+sunrealtype N_VWrmsNormMask_Petsc(N_Vector x, N_Vector w, N_Vector id)
+{
+  return nvWrmsNormMask_Petsc(x, w, id);
+}
+
+SUNErrCode N_VWrmsNormVectorArray_Petsc(int nvecs, N_Vector* X, N_Vector* W,
+                                        sunrealtype* nrm)
+{
+  return nvWrmsNormVectorArray_Petsc(nvecs, X, W, nrm);
+}
+
+sunrealtype N_VWrmsNorm_Petsc(N_Vector x, N_Vector w)
+{
+  return nvWrmsNorm_Petsc(x, w);
+}
+
+void N_VPrint_Petsc(N_Vector v) { nvPrint_Petsc(v); }
+
+void N_VPrintFile_Petsc(N_Vector v, const char fname[])
+{
+  nvPrintFile_Petsc(v, fname);
 }

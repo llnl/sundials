@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
   {
     MPI_Abort(comm, 1);
   }
-  N_VDestroy_Petsc(constraints);
+  N_VDestroy(constraints);
 
   retval = IDAInit(ida_mem, resHeat, t0, uu, up);
   if (check_retval(&retval, "IDAInit", 1, thispe)) { MPI_Abort(comm, 1); }
@@ -330,12 +330,12 @@ int main(int argc, char* argv[])
   IDAFree(&ida_mem);
   SUNLinSolFree(LS);
 
-  N_VDestroy_Petsc(id);
-  N_VDestroy_Petsc(res);
-  N_VDestroy_Petsc(up);
-  N_VDestroy_Petsc(uu);
+  N_VDestroy(id);
+  N_VDestroy(res);
+  N_VDestroy(up);
+  N_VDestroy(uu);
 
-  N_VDestroy_Petsc(data->pp);
+  N_VDestroy(data->pp);
   ierr = DMDestroy(&data->da);
   CHKERRQ(ierr);
   free(data);

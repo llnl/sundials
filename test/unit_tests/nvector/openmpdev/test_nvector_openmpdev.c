@@ -252,8 +252,8 @@ int Test_N_VMake_OpenMPDEV(N_Vector X, sunindextype length, int myid)
   N_VConst(NEG_HALF, X);
   N_VCopyFromDevice_OpenMPDEV(X);
 
-  h_data = N_VGetHostArrayPointer_OpenMPDEV(X);
-  d_data = N_VGetDeviceArrayPointer_OpenMPDEV(X);
+  h_data = N_VGetArrayPointer(X);
+  d_data = N_VGetDeviceArrayPointer(X);
 
   /* Case 1: h_data and d_data are not null */
   Y = N_VMake_OpenMPDEV(length, h_data, d_data);
@@ -264,7 +264,7 @@ int Test_N_VMake_OpenMPDEV(N_Vector X, sunindextype length, int myid)
     return (1);
   }
 
-  if (N_VGetHostArrayPointer_OpenMPDEV(Y) == NULL)
+  if (N_VGetArrayPointer(Y) == NULL)
   {
     printf(">>> FAILED test -- N_VMake_OpenMPDEV, Proc %d \n", myid);
     printf("    Vector host data == NULL \n \n");
@@ -272,7 +272,7 @@ int Test_N_VMake_OpenMPDEV(N_Vector X, sunindextype length, int myid)
     return (1);
   }
 
-  if (N_VGetDeviceArrayPointer_OpenMPDEV(Y) == NULL)
+  if (N_VGetDeviceArrayPointer(Y) == NULL)
   {
     printf(">>> FAILED test -- N_VMake_OpenMPDEV, Proc %d \n", myid);
     printf("    Vector device data -= NULL \n \n");
@@ -320,7 +320,7 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
   sunrealtype* Xdata;
 
   N_VCopyFromDevice_OpenMPDEV(X);
-  Xdata = N_VGetHostArrayPointer_OpenMPDEV(X);
+  Xdata = N_VGetArrayPointer(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++) { failure += SUNRCompare(Xdata[i], ans); }
@@ -330,7 +330,7 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
 
 sunbooleantype has_data(N_Vector X)
 {
-  sunrealtype* Xdata = N_VGetHostArrayPointer_OpenMPDEV(X);
+  sunrealtype* Xdata = N_VGetArrayPointer(X);
   if (Xdata == NULL) { return SUNFALSE; }
   else { return SUNTRUE; }
 }
@@ -347,7 +347,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
   int dev;
   sunindextype i;
 
-  xdev = N_VGetDeviceArrayPointer_OpenMPDEV(X);
+  xdev = N_VGetDeviceArrayPointer(X);
   dev  = omp_get_default_device();
 
   /* set elements [is,ie] of the data array */
@@ -363,7 +363,7 @@ sunrealtype get_element(N_Vector X, sunindextype i)
   sunrealtype* data;
 
   N_VCopyFromDevice_OpenMPDEV(X);
-  data = N_VGetHostArrayPointer_OpenMPDEV(X);
+  data = N_VGetArrayPointer(X);
 
   return data[i];
 }

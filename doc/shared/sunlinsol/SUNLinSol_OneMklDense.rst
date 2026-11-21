@@ -40,16 +40,8 @@ SUNLinearSolver_OneMklDense Functions
 -------------------------------------
 
 The SUNLinearSolver_OneMklDense class defines implementations of all "direct"
-linear solver operations listed in :numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_OneMklDense`` -- returns ``SUNLINEARSOLVER_ONEMKLDENSE``
-* ``SUNLinSolInitialize_OneMklDense``
-* ``SUNLinSolSetup_OneMklDense``
-* ``SUNLinSolSolve_OneMklDense``
-* ``SUNLinSolLastFlag_OneMklDense``
-* ``SUNLinSolFree_OneMklDense``
-
-In addition, the class provides the following user-callable routines:
+linear solver operations listed in :numref:`SUNLinSol.API`. In addition, the
+class provides the following user-callable routines:
 
 
 .. c:function:: SUNLinearSolver SUNLinSol_OneMklDense(N_Vector y, SUNMatrix A, SUNContext sunctx)

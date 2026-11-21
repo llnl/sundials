@@ -55,15 +55,6 @@ typedef struct SUNLinearSolverContent_LapackBand_* SUNLinearSolverContent_Lapack
 
 SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A,
                                                      SUNContext sunctx);
-SUNDIALS_EXPORT SUNLinearSolver_Type SUNLinSolGetType_LapackBand(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNLinearSolver_ID SUNLinSolGetID_LapackBand(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolInitialize_LapackBand(SUNLinearSolver S);
-SUNDIALS_EXPORT int SUNLinSolSetup_LapackBand(SUNLinearSolver S, SUNMatrix A);
-SUNDIALS_EXPORT int SUNLinSolSolve_LapackBand(SUNLinearSolver S, SUNMatrix A,
-                                              N_Vector x, N_Vector b,
-                                              sunrealtype tol);
-SUNDIALS_EXPORT sunindextype SUNLinSolLastFlag_LapackBand(SUNLinearSolver S);
-SUNDIALS_EXPORT SUNErrCode SUNLinSolFree_LapackBand(SUNLinearSolver S);
 
 #ifdef __cplusplus
 }

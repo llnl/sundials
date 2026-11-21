@@ -21,6 +21,7 @@ sundials_add_library(
   SOURCES sunadaptcontroller_imexgus.c
   HEADERS
     ${SUNDIALS_SOURCE_DIR}/include/sunadaptcontroller/sunadaptcontroller_imexgus.h
+    ${SUNDIALS_SOURCE_DIR}/include/sunadaptcontroller/sunadaptcontroller_imexgus_deprecated.h
   LINK_LIBRARIES PUBLIC sundials_core
   INCLUDE_SUBDIR sunadaptcontroller
   OBJECT_LIB_ONLY)

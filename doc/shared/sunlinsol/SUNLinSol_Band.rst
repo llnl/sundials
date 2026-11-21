@@ -110,18 +110,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_Band module defines band implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_Band``
-
-* ``SUNLinSolInitialize_Band`` -- this does nothing, since all
-  consistency checks are performed at solver creation.
-
-* ``SUNLinSolSetup_Band`` -- this performs the :math:`LU` factorization.
-
-* ``SUNLinSolSolve_Band`` -- this uses the :math:`LU` factors
-  and ``pivots`` array to perform the solve.
-
-* ``SUNLinSolLastFlag_Band``
-
-* ``SUNLinSolFree_Band``
+:numref:`SUNLinSol.API`.

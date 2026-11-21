@@ -24,7 +24,7 @@
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_band.h>
+#include <sunlinsol/sunlinsol_band_deprecated.h>
 
 #include "sundials_macros.h"
 
@@ -39,6 +39,27 @@
 #define BAND_CONTENT(S) ((SUNLinearSolverContent_Band)(S->content))
 #define PIVOTS(S)       (BAND_CONTENT(S)->pivots)
 #define LASTFLAG(S)     (BAND_CONTENT(S)->last_flag)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_Band(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_Band(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_Band(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_Band(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_Band(SUNLinearSolver S);
+
+static int sunLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                               N_Vector b, sunrealtype tol);
 
 /*
  * -----------------------------------------------------------------
@@ -77,13 +98,13 @@ SUNLinearSolver SUNLinSol_Band(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
   SUNCheckLastErrNull();
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_Band;
-  S->ops->getid      = SUNLinSolGetID_Band;
-  S->ops->initialize = SUNLinSolInitialize_Band;
-  S->ops->setup      = SUNLinSolSetup_Band;
-  S->ops->solve      = SUNLinSolSolve_Band;
-  S->ops->lastflag   = SUNLinSolLastFlag_Band;
-  S->ops->free       = SUNLinSolFree_Band;
+  S->ops->gettype    = sunLinSolGetType_Band;
+  S->ops->getid      = sunLinSolGetID_Band;
+  S->ops->initialize = sunLinSolInitialize_Band;
+  S->ops->setup      = sunLinSolSetup_Band;
+  S->ops->solve      = sunLinSolSolve_Band;
+  S->ops->lastflag   = sunLinSolLastFlag_Band;
+  S->ops->free       = sunLinSolFree_Band;
 
   /* Create content */
   content = NULL;
@@ -111,24 +132,24 @@ SUNLinearSolver SUNLinSol_Band(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_Band(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_BAND);
 }
 
-SUNErrCode SUNLinSolInitialize_Band(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_Band(SUNLinearSolver S)
 {
   /* all solver-specific memory has already been allocated */
   LASTFLAG(S) = SUN_SUCCESS;
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A)
 {
   SUNFunctionBegin(S->sunctx);
   sunrealtype** A_cols;
@@ -159,7 +180,7 @@ int SUNLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A)
   return SUN_SUCCESS;
 }
 
-int SUNLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+int sunLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
                         SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   SUNFunctionBegin(S->sunctx);
@@ -188,13 +209,13 @@ int SUNLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
   return SUN_SUCCESS;
 }
 
-sunindextype SUNLinSolLastFlag_Band(SUNLinearSolver S)
+sunindextype sunLinSolLastFlag_Band(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return LASTFLAG(S);
 }
 
-SUNErrCode SUNLinSolFree_Band(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_Band(SUNLinearSolver S)
 {
   /* return if S is already free */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -218,4 +239,42 @@ SUNErrCode SUNLinSolFree_Band(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_Band(SUNLinearSolver S)
+{
+  return sunLinSolFree_Band(S);
+}
+
+SUNLinearSolver_ID SUNLinSolGetID_Band(SUNLinearSolver S)
+{
+  return sunLinSolGetID_Band(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_Band(SUNLinearSolver S)
+{
+  return sunLinSolGetType_Band(S);
+}
+
+SUNErrCode SUNLinSolInitialize_Band(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_Band(S);
+}
+
+sunindextype SUNLinSolLastFlag_Band(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_Band(S);
+}
+
+int SUNLinSolSetup_Band(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_Band(S, A);
+}
+
+int SUNLinSolSolve_Band(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+                        sunrealtype tol)
+{
+  return sunLinSolSolve_Band(S, A, x, b, tol);
 }

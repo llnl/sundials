@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sunadaptcontroller/sunadaptcontroller_soderlind.h>
+#include <sunadaptcontroller/sunadaptcontroller_soderlind_deprecated.h>
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_core.h>
 #include <sundials/sundials_errors.h>
@@ -75,6 +75,28 @@
  * ----------------------------------------------------------------------------
  */
 
+static SUNErrCode sunAdaptControllerEstimateStep_Soderlind(SUNAdaptController C,
+                                                           sunrealtype h, int p,
+                                                           sunrealtype dsm,
+                                                           sunrealtype* hnew);
+
+static SUNAdaptController_Type sunAdaptControllerGetType_Soderlind(
+  SUNAdaptController C);
+
+static SUNErrCode sunAdaptControllerReset_Soderlind(SUNAdaptController C);
+
+static SUNErrCode sunAdaptControllerSetDefaults_Soderlind(SUNAdaptController C);
+
+static SUNErrCode sunAdaptControllerSetErrorBias_Soderlind(SUNAdaptController C,
+                                                           sunrealtype bias);
+
+static SUNErrCode sunAdaptControllerUpdateH_Soderlind(SUNAdaptController C,
+                                                      sunrealtype h,
+                                                      sunrealtype dsm);
+
+static SUNErrCode sunAdaptControllerWrite_Soderlind(SUNAdaptController C,
+                                                    FILE* fptr);
+
 static SUNErrCode setFromCommandLine_Soderlind(SUNAdaptController C,
                                                const char* Cid, int argc,
                                                char* argv[]);
@@ -102,22 +124,22 @@ SUNAdaptController SUNAdaptController_Soderlind(SUNContext sunctx)
   SUNAdaptControllerContent_Soderlind content = NULL;
 
   /* Attach operations */
-  C->ops->gettype      = SUNAdaptController_GetType_Soderlind;
-  C->ops->estimatestep = SUNAdaptController_EstimateStep_Soderlind;
-  C->ops->reset        = SUNAdaptController_Reset_Soderlind;
+  C->ops->gettype      = sunAdaptControllerGetType_Soderlind;
+  C->ops->estimatestep = sunAdaptControllerEstimateStep_Soderlind;
+  C->ops->reset        = sunAdaptControllerReset_Soderlind;
   C->ops->setoptions   = SUNAdaptController_SetOptions_Soderlind;
-  C->ops->setdefaults  = SUNAdaptController_SetDefaults_Soderlind;
-  C->ops->write        = SUNAdaptController_Write_Soderlind;
-  C->ops->seterrorbias = SUNAdaptController_SetErrorBias_Soderlind;
-  C->ops->updateh      = SUNAdaptController_UpdateH_Soderlind;
+  C->ops->setdefaults  = sunAdaptControllerSetDefaults_Soderlind;
+  C->ops->write        = sunAdaptControllerWrite_Soderlind;
+  C->ops->seterrorbias = sunAdaptControllerSetErrorBias_Soderlind;
+  C->ops->updateh      = sunAdaptControllerUpdateH_Soderlind;
   /* Create content */
   content = (SUNAdaptControllerContent_Soderlind)malloc(sizeof(*content));
   SUNAssertNull(content, SUN_ERR_MALLOC_FAIL);
   C->content = content;
 
   /* Fill content with default/reset values */
-  SUNCheckCallNull(SUNAdaptController_SetDefaults_Soderlind(C));
-  SUNCheckCallNull(SUNAdaptController_Reset_Soderlind(C));
+  SUNCheckCallNull(sunAdaptControllerSetDefaults_Soderlind(C));
+  SUNCheckCallNull(sunAdaptControllerReset_Soderlind(C));
 
   return (C);
 }
@@ -555,16 +577,16 @@ SUNAdaptController SUNAdaptController_H312(SUNContext sunctx)
  * implementation of controller operations
  * ----------------------------------------------------------------- */
 
-SUNAdaptController_Type SUNAdaptController_GetType_Soderlind(
+SUNAdaptController_Type sunAdaptControllerGetType_Soderlind(
   SUNDIALS_MAYBE_UNUSED SUNAdaptController C)
 {
   return SUN_ADAPTCONTROLLER_H;
 }
 
-SUNErrCode SUNAdaptController_EstimateStep_Soderlind(SUNAdaptController C,
-                                                     sunrealtype h, int p,
-                                                     sunrealtype dsm,
-                                                     sunrealtype* hnew)
+SUNErrCode sunAdaptControllerEstimateStep_Soderlind(SUNAdaptController C,
+                                                    sunrealtype h, int p,
+                                                    sunrealtype dsm,
+                                                    sunrealtype* hnew)
 {
   SUNFunctionBegin(C->sunctx);
 
@@ -606,7 +628,7 @@ SUNErrCode SUNAdaptController_EstimateStep_Soderlind(SUNAdaptController C,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_Reset_Soderlind(SUNAdaptController C)
+SUNErrCode sunAdaptControllerReset_Soderlind(SUNAdaptController C)
 {
   SUNFunctionBegin(C->sunctx);
   SODERLIND_EP(C)         = SUN_RCONST(1.0);
@@ -617,7 +639,7 @@ SUNErrCode SUNAdaptController_Reset_Soderlind(SUNAdaptController C)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_SetDefaults_Soderlind(SUNAdaptController C)
+SUNErrCode sunAdaptControllerSetDefaults_Soderlind(SUNAdaptController C)
 {
   SUNFunctionBegin(C->sunctx);
   SODERLIND_BIAS(C) = DEFAULT_BIAS;
@@ -626,7 +648,7 @@ SUNErrCode SUNAdaptController_SetDefaults_Soderlind(SUNAdaptController C)
                                                 DEFAULT_K5);
 }
 
-SUNErrCode SUNAdaptController_Write_Soderlind(SUNAdaptController C, FILE* fptr)
+SUNErrCode sunAdaptControllerWrite_Soderlind(SUNAdaptController C, FILE* fptr)
 {
   SUNFunctionBegin(C->sunctx);
   SUNAssert(fptr, SUN_ERR_ARG_CORRUPT);
@@ -648,8 +670,8 @@ SUNErrCode SUNAdaptController_Write_Soderlind(SUNAdaptController C, FILE* fptr)
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController C,
-                                                     sunrealtype bias)
+SUNErrCode sunAdaptControllerSetErrorBias_Soderlind(SUNAdaptController C,
+                                                    sunrealtype bias)
 {
   SUNFunctionBegin(C->sunctx);
 
@@ -660,8 +682,8 @@ SUNErrCode SUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController C,
   return SUN_SUCCESS;
 }
 
-SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
-                                                sunrealtype h, sunrealtype dsm)
+SUNErrCode sunAdaptControllerUpdateH_Soderlind(SUNAdaptController C,
+                                               sunrealtype h, sunrealtype dsm)
 {
   SUNFunctionBegin(C->sunctx);
   SODERLIND_EPP(C) = SODERLIND_EP(C);
@@ -673,4 +695,46 @@ SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
     SODERLIND_FIRSTSTEPS(C) += 1;
   }
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNAdaptController_EstimateStep_Soderlind(SUNAdaptController C,
+                                                     sunrealtype h, int p,
+                                                     sunrealtype dsm,
+                                                     sunrealtype* hnew)
+{
+  return sunAdaptControllerEstimateStep_Soderlind(C, h, p, dsm, hnew);
+}
+
+SUNAdaptController_Type SUNAdaptController_GetType_Soderlind(SUNAdaptController C)
+{
+  return sunAdaptControllerGetType_Soderlind(C);
+}
+
+SUNErrCode SUNAdaptController_Reset_Soderlind(SUNAdaptController C)
+{
+  return sunAdaptControllerReset_Soderlind(C);
+}
+
+SUNErrCode SUNAdaptController_SetDefaults_Soderlind(SUNAdaptController C)
+{
+  return sunAdaptControllerSetDefaults_Soderlind(C);
+}
+
+SUNErrCode SUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController C,
+                                                     sunrealtype bias)
+{
+  return sunAdaptControllerSetErrorBias_Soderlind(C, bias);
+}
+
+SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
+                                                sunrealtype h, sunrealtype dsm)
+{
+  return sunAdaptControllerUpdateH_Soderlind(C, h, dsm);
+}
+
+SUNErrCode SUNAdaptController_Write_Soderlind(SUNAdaptController C, FILE* fptr)
+{
+  return sunAdaptControllerWrite_Soderlind(C, fptr);
 }

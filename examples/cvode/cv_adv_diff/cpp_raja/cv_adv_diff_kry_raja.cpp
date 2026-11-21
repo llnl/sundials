@@ -252,7 +252,7 @@ static void SetIC(N_Vector u, UserData data)
   const sunindextype NEQ = data->NEQ;
 
   /* Extract pointer to solution vector data on the host */
-  sunrealtype* udata = N_VGetHostArrayPointer_Raja(u);
+  sunrealtype* udata = N_VGetArrayPointer(u);
 
   sunindextype i, j, tid;
   sunrealtype x, y;
@@ -293,8 +293,8 @@ static int f(sunrealtype t, N_Vector u, N_Vector udot, void* user_data)
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* udata = N_VGetDeviceArrayPointer_Raja(u);
-  sunrealtype* dudata      = N_VGetDeviceArrayPointer_Raja(udot);
+  const sunrealtype* udata = N_VGetDeviceArrayPointer(u);
+  sunrealtype* dudata      = N_VGetDeviceArrayPointer(udot);
 
   const sunindextype zero = 0;
 
@@ -341,8 +341,8 @@ static int jtv(N_Vector v, N_Vector Jv, sunrealtype t, N_Vector u, N_Vector fu,
   const sunrealtype verdc = data->vdcoef;
 
   /* Extract pointers to vector data */
-  const sunrealtype* vdata = N_VGetDeviceArrayPointer_Raja(v);
-  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer_Raja(Jv);
+  const sunrealtype* vdata = N_VGetDeviceArrayPointer(v);
+  sunrealtype* Jvdata      = N_VGetDeviceArrayPointer(Jv);
 
   const sunindextype zero = 0;
 

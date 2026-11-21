@@ -390,7 +390,7 @@ int PsetupHeat(sunrealtype tt, N_Vector yy, N_Vector yp, N_Vector rr,
   const sunindextype mxsub = data->mxsub;
   const sunindextype mysub = data->mysub;
   sunrealtype* ppv =
-    N_VGetDeviceArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(data->pp));
+    N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(data->pp));
 
   /* Calculate the value for the inverse element of the diagonal preconditioner */
   const sunrealtype pelinv = ONE / (c_j + data->coeffxy);
@@ -468,7 +468,7 @@ static int rescomm(N_Vector uu, N_Vector up, void* user_data)
 
   /* Get solution vector data. */
   const sunrealtype* uarray =
-    N_VGetDeviceArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(uu));
+    N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(uu));
 
   /* Set array of MPI requests */
   MPI_Request request[4];
@@ -513,11 +513,10 @@ static int reslocal(sunrealtype tt, N_Vector uu, N_Vector up, N_Vector rr,
 
   /* Vector data arrays, extended work array uext. */
   const sunrealtype* uuv =
-    N_VGetDeviceArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(uu));
+    N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(uu));
   const sunrealtype* upv =
-    N_VGetDeviceArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(up));
-  sunrealtype* resv =
-    N_VGetDeviceArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(rr));
+    N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(up));
+  sunrealtype* resv = N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(rr));
   sunrealtype* uext = data->uext;
 
   const sunindextype zero = 0;
@@ -979,10 +978,8 @@ static int SetInitialProfile(N_Vector uu, N_Vector up, N_Vector id,
   /* Initialize uu. */
 
   // Get host pointer
-  sunrealtype* uudata =
-    N_VGetHostArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(uu));
-  sunrealtype* iddata =
-    N_VGetHostArrayPointer_Raja(N_VGetLocalVector_MPIPlusX(id));
+  sunrealtype* uudata = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(uu));
+  sunrealtype* iddata = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(id));
 
   /* Set mesh spacings and subgrid indices for this PE. */
   const sunrealtype dx = data->dx;

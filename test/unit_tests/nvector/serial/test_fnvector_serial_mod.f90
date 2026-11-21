@@ -44,9 +44,9 @@ contains
     !===== Setup ====
     x => FN_VMake_Serial(N, xdata, sunctx)
     call FN_VConst(ONE, x)
-    y => FN_VClone_Serial(x)
+    y => FN_VClone(x)
     call FN_VConst(ONE, y)
-    z => FN_VClone_Serial(x)
+    z => FN_VClone(x)
     call FN_VConst(ONE, z)
 
     xvecs = FN_VCloneVectorArray(nv, x)
@@ -57,58 +57,58 @@ contains
 
     ! test constructors
     tmp => FN_VNewEmpty_Serial(N, sunctx)
-    call FN_VDestroy_Serial(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VMake_Serial(N, xdata, sunctx)
-    call FN_VDestroy_Serial(tmp)
+    call FN_VDestroy(tmp)
     tmp => FN_VNew_Serial(N, sunctx)
-    call FN_VDestroy_Serial(tmp)
-    tmp => FN_VCloneEmpty_Serial(x)
-    call FN_VDestroy_Serial(tmp)
+    call FN_VDestroy(tmp)
+    tmp => FN_VCloneEmpty(x)
+    call FN_VDestroy(tmp)
 
     ! test generic vector functions
-    ival = FN_VGetVectorID_Serial(x)
-    xptr => FN_VGetArrayPointer_Serial(x)
-    call FN_VSetArrayPointer_Serial(xdata, x)
+    ival = FN_VGetVectorID(x)
+    xptr => FN_VGetArrayPointer(x)
+    call FN_VSetArrayPointer(xdata, x)
     ival = FN_VGetCommunicator(x)
-    ival = FN_VGetLength_Serial(x)
+    ival = FN_VGetLength(x)
 
     ! test standard vector operations
-    call FN_VLinearSum_Serial(ONE, x, ONE, y, z)
-    call FN_VConst_Serial(ONE, z)
-    call FN_VProd_Serial(x, y, z)
-    call FN_VDiv_Serial(x, y, z)
-    call FN_VScale_Serial(ONE, x, y)
-    call FN_VAbs_Serial(x, y)
-    call FN_VInv_Serial(x, z)
-    call FN_VAddConst_Serial(x, ONE, z)
-    rval = FN_VDotProd_Serial(x, y)
-    rval = FN_VMaxNorm_Serial(x)
-    rval = FN_VWrmsNorm_Serial(x, y)
-    rval = FN_VWrmsNormMask_Serial(x, y, z)
-    rval = FN_VMin_Serial(x)
-    rval = FN_VWL2Norm_Serial(x, y)
-    rval = FN_VL1Norm_Serial(x)
-    call FN_VCompare_Serial(ONE, x, y)
-    ival = FN_VInvTest_Serial(x, y)
-    ival = FN_VConstrMask_Serial(z, x, y)
-    rval = FN_VMinQuotient_Serial(x, y)
+    call FN_VLinearSum(ONE, x, ONE, y, z)
+    call FN_VConst(ONE, z)
+    call FN_VProd(x, y, z)
+    call FN_VDiv(x, y, z)
+    call FN_VScale(ONE, x, y)
+    call FN_VAbs(x, y)
+    call FN_VInv(x, z)
+    call FN_VAddConst(x, ONE, z)
+    rval = FN_VDotProd(x, y)
+    rval = FN_VMaxNorm(x)
+    rval = FN_VWrmsNorm(x, y)
+    rval = FN_VWrmsNormMask(x, y, z)
+    rval = FN_VMin(x)
+    rval = FN_VWL2Norm(x, y)
+    rval = FN_VL1Norm(x)
+    call FN_VCompare(ONE, x, y)
+    ival = FN_VInvTest(x, y)
+    ival = FN_VConstrMask(z, x, y)
+    rval = FN_VMinQuotient(x, y)
 
     ! test fused vector operations
-    ival = FN_VLinearCombination_Serial(nv, nvarr, xvecs, x)
-    ival = FN_VScaleAddMulti_Serial(nv, nvarr, x, xvecs, zvecs)
-    ival = FN_VDotProdMulti_Serial(nv, x, xvecs, nvarr)
+    ival = FN_VLinearCombination(nv, nvarr, xvecs, x)
+    ival = FN_VScaleAddMulti(nv, nvarr, x, xvecs, zvecs)
+    ival = FN_VDotProdMulti(nv, x, xvecs, nvarr)
 
     ! test vector array operations
-    ival = FN_VLinearSumVectorArray_Serial(nv, ONE, xvecs, ONE, xvecs, zvecs)
-    ival = FN_VScaleVectorArray_Serial(nv, nvarr, xvecs, zvecs)
-    ival = FN_VConstVectorArray_Serial(nv, ONE, xvecs)
-    ival = FN_VWrmsNormVectorArray_Serial(nv, xvecs, xvecs, nvarr)
-    ival = FN_VWrmsNormMaskVectorArray_Serial(nv, xvecs, xvecs, x, nvarr)
+    ival = FN_VLinearSumVectorArray(nv, ONE, xvecs, ONE, xvecs, zvecs)
+    ival = FN_VScaleVectorArray(nv, nvarr, xvecs, zvecs)
+    ival = FN_VConstVectorArray(nv, ONE, xvecs)
+    ival = FN_VWrmsNormVectorArray(nv, xvecs, xvecs, nvarr)
+    ival = FN_VWrmsNormMaskVectorArray(nv, xvecs, xvecs, x, nvarr)
 
     !==== Cleanup =====
-    call FN_VDestroy_Serial(x)
-    call FN_VDestroy_Serial(y)
-    call FN_VDestroy_Serial(z)
+    call FN_VDestroy(x)
+    call FN_VDestroy(y)
+    call FN_VDestroy(z)
     call FN_VDestroyVectorArray(xvecs, nv)
     call FN_VDestroyVectorArray(zvecs, nv)
 
@@ -135,7 +135,7 @@ contains
     fails = Test_FN_VLinearCombination(x, N, 0)
 
     !=== cleanup ====
-    call FN_VDestroy_Serial(x)
+    call FN_VDestroy(x)
 
   end function unit_tests
 

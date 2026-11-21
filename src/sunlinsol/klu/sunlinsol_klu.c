@@ -27,7 +27,7 @@
 #include <sundials/priv/sundials_errors_impl.h>
 #include <sundials/sundials_errors.h>
 #include <sundials/sundials_math.h>
-#include <sunlinsol/sunlinsol_klu.h>
+#include <sunlinsol/sunlinsol_klu_deprecated.h>
 
 #include "sundials_cli.h"
 #include "sundials_macros.h"
@@ -60,6 +60,27 @@ static SUNErrCode setFromCommandLine_KLU(SUNLinearSolver S, const char* LSid,
 
 SUNErrCode SUNLinSolSetOptions_KLU(SUNLinearSolver S, const char* LSid,
                                    const char* file_name, int argc, char* argv[]);
+
+/*
+ * ----------------------------------------------------------------------------
+ * Un-exported implementation specific routines
+ * ----------------------------------------------------------------------------
+ */
+
+static SUNErrCode sunLinSolFree_KLU(SUNLinearSolver S);
+
+static SUNLinearSolver_ID sunLinSolGetID_KLU(SUNLinearSolver S);
+
+static SUNLinearSolver_Type sunLinSolGetType_KLU(SUNLinearSolver S);
+
+static SUNErrCode sunLinSolInitialize_KLU(SUNLinearSolver S);
+
+static sunindextype sunLinSolLastFlag_KLU(SUNLinearSolver S);
+
+static int sunLinSolSetup_KLU(SUNLinearSolver S, SUNMatrix A);
+
+static int sunLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x,
+                              N_Vector b, sunrealtype tol);
 
 /*
  * -----------------------------------------------------------------
@@ -97,14 +118,14 @@ SUNLinearSolver SUNLinSol_KLU(N_Vector y, SUNMatrix A, SUNContext sunctx)
   if (S == NULL) { return (NULL); }
 
   /* Attach operations */
-  S->ops->gettype    = SUNLinSolGetType_KLU;
-  S->ops->getid      = SUNLinSolGetID_KLU;
+  S->ops->gettype    = sunLinSolGetType_KLU;
+  S->ops->getid      = sunLinSolGetID_KLU;
   S->ops->setoptions = SUNLinSolSetOptions_KLU;
-  S->ops->initialize = SUNLinSolInitialize_KLU;
-  S->ops->setup      = SUNLinSolSetup_KLU;
-  S->ops->solve      = SUNLinSolSolve_KLU;
-  S->ops->lastflag   = SUNLinSolLastFlag_KLU;
-  S->ops->free       = SUNLinSolFree_KLU;
+  S->ops->initialize = sunLinSolInitialize_KLU;
+  S->ops->setup      = sunLinSolSetup_KLU;
+  S->ops->solve      = sunLinSolSolve_KLU;
+  S->ops->lastflag   = sunLinSolLastFlag_KLU;
+  S->ops->free       = sunLinSolFree_KLU;
 
   /* Create content */
   content = NULL;
@@ -298,17 +319,17 @@ sun_klu_common* SUNLinSol_KLUGetCommon(SUNLinearSolver S)
  * -----------------------------------------------------------------
  */
 
-SUNLinearSolver_Type SUNLinSolGetType_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_Type sunLinSolGetType_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_DIRECT);
 }
 
-SUNLinearSolver_ID SUNLinSolGetID_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
+SUNLinearSolver_ID sunLinSolGetID_KLU(SUNDIALS_MAYBE_UNUSED SUNLinearSolver S)
 {
   return (SUNLINEARSOLVER_KLU);
 }
 
-SUNErrCode SUNLinSolInitialize_KLU(SUNLinearSolver S)
+SUNErrCode sunLinSolInitialize_KLU(SUNLinearSolver S)
 {
   /* Force factorization */
   FIRSTFACTORIZE(S) = 1;
@@ -317,7 +338,7 @@ SUNErrCode SUNLinSolInitialize_KLU(SUNLinearSolver S)
   return (LASTFLAG(S));
 }
 
-int SUNLinSolSetup_KLU(SUNLinearSolver S, SUNMatrix A)
+int sunLinSolSetup_KLU(SUNLinearSolver S, SUNMatrix A)
 {
   int retval;
   sunrealtype uround_twothirds;
@@ -421,7 +442,7 @@ int SUNLinSolSetup_KLU(SUNLinearSolver S, SUNMatrix A)
   return (LASTFLAG(S));
 }
 
-int SUNLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+int sunLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
                        SUNDIALS_MAYBE_UNUSED sunrealtype tol)
 {
   int flag;
@@ -457,9 +478,9 @@ int SUNLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
   return (LASTFLAG(S));
 }
 
-sunindextype SUNLinSolLastFlag_KLU(SUNLinearSolver S) { return (LASTFLAG(S)); }
+sunindextype sunLinSolLastFlag_KLU(SUNLinearSolver S) { return (LASTFLAG(S)); }
 
-SUNErrCode SUNLinSolFree_KLU(SUNLinearSolver S)
+SUNErrCode sunLinSolFree_KLU(SUNLinearSolver S)
 {
   /* return with success if already freed */
   if (S == NULL) { return SUN_SUCCESS; }
@@ -482,4 +503,39 @@ SUNErrCode SUNLinSolFree_KLU(SUNLinearSolver S)
   free(S);
   S = NULL;
   return SUN_SUCCESS;
+}
+
+/* Deprecated concrete operation wrappers */
+
+SUNErrCode SUNLinSolFree_KLU(SUNLinearSolver S) { return sunLinSolFree_KLU(S); }
+
+SUNLinearSolver_ID SUNLinSolGetID_KLU(SUNLinearSolver S)
+{
+  return sunLinSolGetID_KLU(S);
+}
+
+SUNLinearSolver_Type SUNLinSolGetType_KLU(SUNLinearSolver S)
+{
+  return sunLinSolGetType_KLU(S);
+}
+
+SUNErrCode SUNLinSolInitialize_KLU(SUNLinearSolver S)
+{
+  return sunLinSolInitialize_KLU(S);
+}
+
+sunindextype SUNLinSolLastFlag_KLU(SUNLinearSolver S)
+{
+  return sunLinSolLastFlag_KLU(S);
+}
+
+int SUNLinSolSetup_KLU(SUNLinearSolver S, SUNMatrix A)
+{
+  return sunLinSolSetup_KLU(S, A);
+}
+
+int SUNLinSolSolve_KLU(SUNLinearSolver S, SUNMatrix A, N_Vector x, N_Vector b,
+                       sunrealtype tol)
+{
+  return sunLinSolSolve_KLU(S, A, x, b, tol);
 }

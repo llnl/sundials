@@ -108,10 +108,9 @@ Instead, the NVECTOR_MANYVECTOR module provides functions to access
 subvectors, whose data may in turn be accessed according to their
 NVECTOR implementations.
 
-The names of vector operations are obtained from those in
-:numref:`NVectors.Ops` by appending the suffix ``_ManyVector`` (e.g.
-``N_VDestroy_ManyVector``).  The module NVECTOR_MANYVECTOR provides
-the following additional user-callable routines:
+These operations are invoked through the generic functions listed in
+:numref:`NVectors.Ops`. The module NVECTOR_MANYVECTOR provides the following
+additional user-callable routines:
 
 .. c:function:: N_Vector N_VNew_ManyVector(sunindextype num_subvectors, N_Vector *vec_array, SUNContext sunctx)
 

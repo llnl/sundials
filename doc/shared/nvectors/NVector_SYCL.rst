@@ -76,10 +76,9 @@ The NVECTOR_SYCL module implementations of all vector operations listed in
 :numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`, except for
 :c:func:`N_VDotProdMulti()`, :c:func:`N_VWrmsNormVectorArray()`,
 :c:func:`N_VWrmsNormMaskVectorArray()` as support for arrays of reduction
-vectors is not yet supported.  These functions will be added to the NVECTOR_SYCL
-implementation in the future. The names of vector operations are obtained from
-those in the aforementioned sections by appending the suffix ``_Sycl`` (e.g.,
-``N_VDestroy_Sycl``).
+vectors is not yet supported. These functions will be added to the NVECTOR_SYCL
+implementation in the future. The supported operations are invoked through the
+generic functions in the aforementioned sections.
 
 Additionally, the NVECTOR_SYCL module provides the following user-callable
 constructors for creating a new NVECTOR_SYCL:
@@ -136,27 +135,6 @@ functions given below. To ensure memory coherency, a user will need to call the
 host and device, unless managed (shared) memory is used.
 
 
-.. cpp:function:: sunrealtype* N_VGetHostArrayPointer_Sycl(N_Vector v)
-
-   This function returns a pointer to the vector host data array.
-
-
-.. cpp:function:: sunrealtype* N_VGetDeviceArrayPointer_Sycl(N_Vector v)
-
-   This function returns a pointer to the vector device data array.
-
-
-.. cpp:function:: void N_VSetHostArrayPointer_Sycl(sunrealtype* h_vdata, N_Vector v)
-
-   This function sets the host array pointer in the vector ``v``.
-
-
-.. cpp:function:: void N_VSetDeviceArrayPointer_Sycl(sunrealtype* d_vdata, N_Vector v)
-
-   This function sets the vector data pointer on the device. It does not free
-   the existing pointer.
-
-
 .. cpp:function:: void N_VCopyToDevice_Sycl(N_Vector v)
 
    This function copies host vector data to the device.
@@ -203,16 +181,6 @@ The following user-callable functions are provided to print the host vector data
 array. Unless managed memory is used, a user may need to call
 :cpp:func:`N_VCopyFromDevice_Sycl()` to ensure consistency between the host and
 device array.
-
-
-.. cpp:function:: void N_VPrint_Sycl(N_Vector v)
-
-   This function prints the host data array to ``stdout``.
-
-
-.. cpp:function:: void N_VPrintFile_Sycl(N_Vector v, FILE *outfile)
-
-   This function prints the host data array to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the
