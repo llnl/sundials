@@ -30,6 +30,9 @@ target_link_libraries(
   PRIVATE $<TARGET_OBJECTS:sundials_cvodes_obj>
           sundials_sunmemsys_obj
           sundials_nvecserial_obj
+          sundials_sunmatrixband_obj
+          sundials_sunmatrixdense_obj
+          sundials_sunmatrixsparse_obj
           sundials_sunlinsolband_obj
           sundials_sunlinsoldense_obj
           # Use only the auto object files directly here since the auto object
@@ -39,8 +42,8 @@ target_link_libraries(
           sundials_sunnonlinsolfixedpoint_obj
           ${EXE_EXTRA_LINK_LIBS})
 
-# Tell CMake that we depend on the CVODE library since it does not pick that up
-# from $<TARGET_OBJECTS:sundials_cvode_obj>.
+# Tell CMake that we depend on the CVODES library since it does not pick that up
+# from $<TARGET_OBJECTS:sundials_cvodes_obj>.
 add_dependencies(test_cvodes_error_handling sundials_cvodes_obj)
 
 target_link_libraries(test_cvodes_error_handling PRIVATE GTest::gtest_main

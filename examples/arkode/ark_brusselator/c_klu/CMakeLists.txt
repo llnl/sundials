@@ -18,3 +18,9 @@ sundials_add_example(
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  ark_brusselator_1d_sparse_dq_klu
+  SOURCES ark_brusselator_1d_sparse_dq_klu.c
+  EXAMPLE_TYPE develop
+  LINK_LIBRARIES PRIVATE sundials_arkode sundials_nvecserial
+                 sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})

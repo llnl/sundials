@@ -37,6 +37,7 @@ set(ARKODE_unit_tests
     "ark_test_interp\;-1000000"
     "ark_test_mass\;"
     "ark_test_reset\;"
+    "ark_test_sparse_dq_jac\;"
     "ark_test_splittingstep_coefficients\;"
     "ark_test_tstop\;")
 
@@ -70,6 +71,7 @@ foreach(test_tuple ${ARKODE_unit_tests})
               sundials_sunmemsys_obj
               sundials_nvecserial_obj
               sundials_nvecmanyvector_obj
+              sundials_sunmatrixsparse_obj
               sundials_sunlinsolband_obj
               sundials_sunlinsoldense_obj
               # Use only the auto object files directly here since the auto
