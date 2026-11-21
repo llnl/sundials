@@ -179,11 +179,11 @@ SUNErrCode SUNNonlinSolInitialize_Newton(SUNNonlinearSolver NLS)
   if (!(NEWTON_CONTENT(NLS)->Sys && NEWTON_CONTENT(NLS)->CTest &&
         NEWTON_CONTENT(NLS)->LSolve))
   {
-    SUNHandleErrWithMsg(
-      __LINE__, __func__, __FILE__,
-      "Newton nonlinear solver requires system, convergence test, and linear "
-      "solve functions",
-      SUN_ERR_ARG_CORRUPT, SUNCTX_);
+    SUNHandleErrWithMsg(__LINE__, __func__, __FILE__,
+                        "Newton nonlinear solver requires system, convergence "
+                        "test, and linear "
+                        "solve functions",
+                        SUN_ERR_ARG_CORRUPT, SUNCTX_);
     return SUN_ERR_ARG_CORRUPT;
   }
 

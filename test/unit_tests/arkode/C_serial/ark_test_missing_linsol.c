@@ -73,13 +73,13 @@ static int check_case(N_Vector y, SUNContext sunctx, int use_explicit_method,
                       int custom_nls_type, int attach_linear_solver,
                       int expected_init_flag, const char* description)
 {
-  SUNMatrix A               = NULL;
-  SUNLinearSolver LS        = NULL;
-  SUNNonlinearSolver NLS    = NULL;
-  void* arkode_mem          = NULL;
-  sunrealtype tret          = ZERO;
-  int flag                  = 0;
-  int test_result           = 0;
+  SUNMatrix A            = NULL;
+  SUNLinearSolver LS     = NULL;
+  SUNNonlinearSolver NLS = NULL;
+  void* arkode_mem       = NULL;
+  sunrealtype tret       = ZERO;
+  int flag               = 0;
+  int test_result        = 0;
 
   N_VConst(ZERO, y);
 
