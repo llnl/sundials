@@ -1,4 +1,0 @@
-List of PETSc IDA examples
-
-  idaHeat2D_petsc_spgmr : 2D heat equation with Newton, SPGMR and PETSc vector
-  idaHeat2D_petsc_snes  : 2D heat equation with PETSc SNES/KSP/PC
