@@ -103,7 +103,6 @@ N_Vector N_VNewEmpty_OpenMPDEV(sunindextype length, SUNContext sunctx)
   v->ops->nvclone                 = N_VClone_OpenMPDEV;
   v->ops->nvcloneempty            = N_VCloneEmpty_OpenMPDEV;
   v->ops->nvdestroy               = N_VDestroy_OpenMPDEV;
-  v->ops->nvspace                 = N_VSpace_OpenMPDEV;
   v->ops->nvgetlength             = N_VGetLength_OpenMPDEV;
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_OpenMPDEV;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_OpenMPDEV;
@@ -493,14 +492,6 @@ void N_VDestroy_OpenMPDEV(N_Vector v)
 /* ----------------------------------------------------------------------------
  * Get storage requirement for N_Vector
  */
-
-void N_VSpace_OpenMPDEV(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = NV_LENGTH_OMPDEV(v);
-  *liw = 1;
-
-  return;
-}
 
 /* ----------------------------------------------------------------------------
  * Compute linear combination z[i] = a*x[i]+b*y[i]

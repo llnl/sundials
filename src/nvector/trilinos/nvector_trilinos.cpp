@@ -84,7 +84,6 @@ N_Vector N_VNewEmpty_Trilinos(SUNContext sunctx)
   v->ops->nvclone           = N_VClone_Trilinos;
   v->ops->nvcloneempty      = N_VCloneEmpty_Trilinos;
   v->ops->nvdestroy         = N_VDestroy_Trilinos;
-  v->ops->nvspace           = N_VSpace_Trilinos;
   v->ops->nvgetcommunicator = N_VGetCommunicator_Trilinos;
   v->ops->nvgetlength       = N_VGetLength_Trilinos;
 
@@ -224,16 +223,6 @@ void N_VDestroy_Trilinos(N_Vector v)
   v = NULL;
 
   return;
-}
-
-void N_VSpace_Trilinos(N_Vector x, sunindextype* lrw, sunindextype* liw)
-{
-  Teuchos::RCP<const vector_type> xv                 = N_VGetVector_Trilinos(x);
-  const Teuchos::RCP<const Teuchos::Comm<int>>& comm = xv->getMap()->getComm();
-  int npes                                           = comm->getSize();
-
-  *lrw = (sunindextype)(xv->getGlobalLength());
-  *liw = 2 * npes;
 }
 
 /*

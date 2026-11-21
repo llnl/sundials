@@ -1390,22 +1390,6 @@ SWIGEXPORT int _wrap_FARKodeGetNumStepAttempts(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)ARKodeGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FARKodeGetNumSteps(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -1921,22 +1905,6 @@ SWIGEXPORT int _wrap_FARKodeGetJacNumSteps(void *farg1, long *farg2) {
 }
 
 
-SWIGEXPORT int _wrap_FARKodeGetLinWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)ARKodeGetLinWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FARKodeGetNumJacEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -2099,22 +2067,6 @@ SWIGEXPORT int _wrap_FARKodeGetResWeights(void *farg1, N_Vector farg2) {
   arg1 = (void *)(farg1);
   arg2 = (N_Vector)(farg2);
   result = (int)ARKodeGetResWeights(arg1,arg2);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FARKodeGetMassWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)ARKodeGetMassWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
@@ -2524,22 +2476,6 @@ SWIGEXPORT int _wrap_FARKBandPrecInit(void *farg1, int32_t const *farg2, int32_t
 }
 
 
-SWIGEXPORT int _wrap_FARKBandPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)ARKBandPrecGetWorkSpace(arg1,arg2,arg3);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
 SWIGEXPORT int _wrap_FARKBandPrecGetNumRhsEvals(void *farg1, long *farg2) {
   int fresult ;
   void *arg1 = (void *) 0 ;
@@ -2595,22 +2531,6 @@ SWIGEXPORT int _wrap_FARKBBDPrecReInit(void *farg1, int32_t const *farg2, int32_
   arg3 = (sunindextype)(*farg3);
   arg4 = (sunrealtype)(*farg4);
   result = (int)ARKBBDPrecReInit(arg1,arg2,arg3,arg4);
-  fresult = (int)(result);
-  return fresult;
-}
-
-
-SWIGEXPORT int _wrap_FARKBBDPrecGetWorkSpace(void *farg1, long *farg2, long *farg3) {
-  int fresult ;
-  void *arg1 = (void *) 0 ;
-  long *arg2 = (long *) 0 ;
-  long *arg3 = (long *) 0 ;
-  int result;
-  
-  arg1 = (void *)(farg1);
-  arg2 = (long *)(farg2);
-  arg3 = (long *)(farg3);
-  result = (int)ARKBBDPrecGetWorkSpace(arg1,arg2,arg3);
   fresult = (int)(result);
   return fresult;
 }
@@ -2876,18 +2796,6 @@ SWIGEXPORT void * _wrap_FARKodeButcherTable_Copy(void *farg1) {
   result = (ARKodeButcherTable)ARKodeButcherTable_Copy(arg1);
   fresult = result;
   return fresult;
-}
-
-
-SWIGEXPORT void _wrap_FARKodeButcherTable_Space(void *farg1, int32_t *farg2, int32_t *farg3) {
-  ARKodeButcherTable arg1 = (ARKodeButcherTable) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (ARKodeButcherTable)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  ARKodeButcherTable_Space(arg1,arg2,arg3);
 }
 
 
@@ -3233,18 +3141,6 @@ SWIGEXPORT void _wrap_FARKodeSPRKTable_Write(void *farg1, void *farg2) {
   arg1 = (ARKodeSPRKTable)(farg1);
   arg2 = (FILE *)(farg2);
   ARKodeSPRKTable_Write(arg1,arg2);
-}
-
-
-SWIGEXPORT void _wrap_FARKodeSPRKTable_Space(void *farg1, int32_t *farg2, int32_t *farg3) {
-  ARKodeSPRKTable arg1 = (ARKodeSPRKTable) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (ARKodeSPRKTable)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  ARKodeSPRKTable_Space(arg1,arg2,arg3);
 }
 
 

@@ -39,7 +39,6 @@ module fnvector_mpimanyvector_mod
  public :: FN_VCloneEmpty_MPIManyVector
  public :: FN_VClone_MPIManyVector
  public :: FN_VDestroy_MPIManyVector
- public :: FN_VSpace_MPIManyVector
  public :: FN_VGetCommunicator_MPIManyVector
  public :: FN_VGetLength_MPIManyVector
  public :: FN_VGetSubvectorLocalLength_MPIManyVector
@@ -189,14 +188,6 @@ subroutine swigc_FN_VDestroy_MPIManyVector(farg1) &
 bind(C, name="_wrap_FN_VDestroy_MPIManyVector")
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
-end subroutine
-
-subroutine swigc_FN_VSpace_MPIManyVector(farg1, farg2, farg3) &
-bind(C, name="_wrap_FN_VSpace_MPIManyVector")
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
 end subroutine
 
 function swigc_FN_VGetCommunicator_MPIManyVector(farg1) &
@@ -868,21 +859,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 call swigc_FN_VDestroy_MPIManyVector(farg1)
-end subroutine
-
-subroutine FN_VSpace_MPIManyVector(v, lrw, liw)
-use, intrinsic :: ISO_C_BINDING
-type(N_Vector), target, intent(inout) :: v
-integer(C_INT64_T), dimension(*), target, intent(inout) :: lrw
-integer(C_INT64_T), dimension(*), target, intent(inout) :: liw
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(v)
-farg2 = c_loc(lrw(1))
-farg3 = c_loc(liw(1))
-call swigc_FN_VSpace_MPIManyVector(farg1, farg2, farg3)
 end subroutine
 
 function FN_VGetCommunicator_MPIManyVector(v) &

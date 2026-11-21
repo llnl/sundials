@@ -378,9 +378,6 @@ SUNDIALS_EXPORT int ARKodeGetNumRhsEvals(void* arkode_mem, int partition_index,
 SUNDIALS_EXPORT int ARKodeGetNumStepAttempts(void* arkode_mem,
                                              long int* step_attempts);
 
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int ARKodeGetWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw);
 SUNDIALS_EXPORT int ARKodeGetNumSteps(void* arkode_mem, long int* nsteps);
 SUNDIALS_EXPORT int ARKodeGetLastStep(void* arkode_mem, sunrealtype* hlast);
 SUNDIALS_EXPORT int ARKodeGetCurrentStep(void* arkode_mem, sunrealtype* hcur);
@@ -440,9 +437,6 @@ SUNDIALS_EXPORT int ARKodeGetJac(void* arkode_mem,
                                  SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetJacTime(void* arkode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int ARKodeGetJacNumSteps(void* arkode_mem, long int* nst_J);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int ARKodeGetLinWorkSpace(void* arkode_mem, long int* lenrwLS, long int* leniwLS);
 SUNDIALS_EXPORT int ARKodeGetNumJacEvals(void* arkode_mem, long int* njevals);
 SUNDIALS_EXPORT int ARKodeGetNumPrecEvals(void* arkode_mem, long int* npevals);
 SUNDIALS_EXPORT int ARKodeGetNumPrecSolves(void* arkode_mem, long int* npsolves);
@@ -461,10 +455,6 @@ SUNDIALS_EXPORT char* ARKodeGetLinReturnFlagName(long int flag);
 SUNDIALS_EXPORT int ARKodeGetCurrentMassMatrix(void* arkode_mem,
                                                SUNMatrix* M); // nb::rv_policy::reference
 SUNDIALS_EXPORT int ARKodeGetResWeights(void* arkode_mem, N_Vector rweight);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int ARKodeGetMassWorkSpace(void* arkode_mem, long int* lenrwMLS,
-                           long int* leniwMLS);
 SUNDIALS_EXPORT int ARKodeGetNumMassSetups(void* arkode_mem, long int* nmsetups);
 SUNDIALS_EXPORT int ARKodeGetNumMassMultSetups(void* arkode_mem,
                                                long int* nmvsetups);

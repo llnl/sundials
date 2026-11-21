@@ -36,7 +36,7 @@ A. *Heterogeneous computational architectures*:
 
 B. *Structure of arrays (SOA) data layouts*: for problems that require
    separate subvectors for each solution component.  For example, in an
-   incompressible Navier-Stokes simulation, separate subvectors may be
+   incompressible Navier--Stokes simulation, separate subvectors may be
    used for velocities and pressure, which are combined together into a
    single NVECTOR_MANYVECTOR for the overall "solution".
 

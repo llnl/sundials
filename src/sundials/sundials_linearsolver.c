@@ -29,7 +29,7 @@
 #include <sundials/sundials_errors.h>
 #include "sundials_logger_impl.h"
 
-#if defined(SUNDIALS_ENABLE_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
 static SUNProfiler getSUNProfiler(SUNLinearSolver S)
 {
   return (S->sunctx->profiler);
@@ -83,7 +83,6 @@ SUNLinearSolver SUNLinSolNewEmpty(SUNContext sunctx)
   ops->resnorm           = NULL;
   ops->resid             = NULL;
   ops->lastflag          = NULL;
-  ops->space             = NULL;
   ops->free              = NULL;
 
   /* attach ops and initialize content and context to NULL */
@@ -302,17 +301,6 @@ sunindextype SUNLinSolLastFlag(SUNLinearSolver S)
 {
   if (S->ops->lastflag) { return ((sunindextype)S->ops->lastflag(S)); }
   else { return 0; }
-}
-
-SUNErrCode SUNLinSolSpace(SUNLinearSolver S, long int* lenrwLS, long int* leniwLS)
-{
-  if (S->ops->space) { return (S->ops->space(S, lenrwLS, leniwLS)); }
-  else
-  {
-    *lenrwLS = 0;
-    *leniwLS = 0;
-    return SUN_SUCCESS;
-  }
 }
 
 SUNErrCode SUNLinSolFree(SUNLinearSolver S)

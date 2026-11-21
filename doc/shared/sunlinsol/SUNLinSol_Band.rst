@@ -26,7 +26,6 @@ is designed to be used with the corresponding
 serial or shared-memory ``N_Vector`` implementations
 (NVECTOR_SERIAL, NVECTOR_OPENMP or NVECTOR_PTHREADS).
 
-
 .. _SUNLinSol_Band.Usage:
 
 SUNLinSol_Band Usage
@@ -64,12 +63,10 @@ The SUNLinSol_Band module provides the following user-callable constructor routi
       is allocated with appropriate upper bandwidth storage for the :math:`LU`
       factorization.
 
-
 .. _SUNLinSol_Band.Description:
 
 SUNLinSol_Band Description
 ---------------------------
-
 
 The SUNLinSol_Band module defines the *content*
 field of a ``SUNLinearSolver`` to be the following structure:
@@ -91,7 +88,6 @@ information:
 
 * ``last_flag`` - last error return flag from internal function evaluations.
 
-
 This solver is constructed to perform the following operations:
 
 * The "setup" call performs an :math:`LU` factorization with
@@ -112,7 +108,6 @@ This solver is constructed to perform the following operations:
   bandwidth as big as ``smu = MIN(N-1,mu+ml)``. The lower triangular
   factor :math:`L` has lower bandwidth ``ml``.
 
-
 The SUNLinSol_Band module defines band implementations of all
 "direct" linear solver operations listed in
 :numref:`SUNLinSol.API`:
@@ -128,9 +123,5 @@ The SUNLinSol_Band module defines band implementations of all
   and ``pivots`` array to perform the solve.
 
 * ``SUNLinSolLastFlag_Band``
-
-* ``SUNLinSolSpace_Band`` -- this only returns information for
-  the storage *within* the solver object, i.e. storage
-  for ``N``, ``last_flag``, and ``pivots``.
 
 * ``SUNLinSolFree_Band``

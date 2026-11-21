@@ -67,7 +67,6 @@ SUNAdaptController ARKUserControl(SUNContext sunctx, void* arkode_mem,
   C->ops->reset        = SUNAdaptController_Reset_ARKUserControl;
   C->ops->write        = SUNAdaptController_Write_ARKUserControl;
   C->ops->updateh      = SUNAdaptController_UpdateH_ARKUserControl;
-  C->ops->space        = SUNAdaptController_Space_ARKUserControl;
 
   /* Create content */
   content = NULL;
@@ -147,13 +146,5 @@ SUNErrCode SUNAdaptController_UpdateH_ARKUserControl(SUNAdaptController C,
   SC_HP(C)  = h;
   SC_EPP(C) = SC_EP(C);
   SC_EP(C)  = dsm;
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNAdaptController_Space_ARKUserControl(
-  SUNDIALS_MAYBE_UNUSED SUNAdaptController C, long int* lenrw, long int* leniw)
-{
-  *lenrw = 4;
-  *leniw = 2;
   return SUN_SUCCESS;
 }

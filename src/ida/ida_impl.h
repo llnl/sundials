@@ -232,15 +232,6 @@ typedef struct IDAMemRec
   long int ida_nnf;     /* number of Newton convergence failures             */
   long int ida_nsetups; /* number of lsetup calls                            */
 
-  /*------------------
-    Space requirements
-    ------------------*/
-
-  sunindextype ida_lrw1; /* no. of sunrealtype words in 1 N_Vector               */
-  sunindextype ida_liw1; /* no. of integer words in 1 N_Vector                */
-  long int ida_lrw; /* number of sunrealtype words in IDA work vectors      */
-  long int ida_liw; /* no. of integer words in IDA work vectors          */
-
   sunrealtype ida_tolsf; /* tolerance scale factor (saved value)              */
 
   /* Flags to verify correct calling sequence */

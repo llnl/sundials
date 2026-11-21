@@ -106,12 +106,6 @@ void bind_arkode_mristep(nb::module_& m)
   m.attr("MRISTEP_DEFAULT_IMEX_SD_4_AD") =
     static_cast<int>(MRISTEP_DEFAULT_IMEX_SD_4_AD);
 
-  // deprecated constants. These should be removed in a future release.
-  m.attr("ARKODE_IMEX_MRI_GARK_ARK2") =
-    static_cast<int>(ARKODE_IMEX_MRI_GARK_ARK2);
-  m.attr("ARKODE_IMEX_MRI_GARK_ASCHER_ARK2") =
-    static_cast<int>(ARKODE_IMEX_MRI_GARK_ASCHER_ARK2);
-
   /////////////////////////////////////////////////////////////////////////////
   // MRIStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////

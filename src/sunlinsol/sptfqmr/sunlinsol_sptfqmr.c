@@ -107,7 +107,6 @@ SUNLinearSolver SUNLinSol_SPTFQMR(N_Vector y, int pretype, int maxl,
   S->ops->resnorm           = SUNLinSolResNorm_SPTFQMR;
   S->ops->resid             = SUNLinSolResid_SPTFQMR;
   S->ops->lastflag          = SUNLinSolLastFlag_SPTFQMR;
-  S->ops->space             = SUNLinSolSpace_SPTFQMR;
   S->ops->free              = SUNLinSolFree_SPTFQMR;
 
   /* Create content */
@@ -1146,22 +1145,6 @@ N_Vector SUNLinSolResid_SPTFQMR(SUNLinearSolver S)
 sunindextype SUNLinSolLastFlag_SPTFQMR(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_SPTFQMR(SUNLinearSolver S, long int* lenrwLS,
-                                  long int* leniwLS)
-{
-  SUNFunctionBegin(S->sunctx);
-  sunindextype liw1, lrw1;
-  if (SPTFQMR_CONTENT(S)->vtemp1->ops->nvspace)
-  {
-    N_VSpace(SPTFQMR_CONTENT(S)->vtemp1, &lrw1, &liw1);
-    SUNCheckLastErr();
-  }
-  else { lrw1 = liw1 = 0; }
-  *lenrwLS = lrw1 * 11;
-  *leniwLS = liw1 * 11;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_SPTFQMR(SUNLinearSolver S)

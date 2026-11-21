@@ -331,18 +331,6 @@ SWIGEXPORT void _wrap_FN_VDestroy_ManyVector(N_Vector farg1) {
 }
 
 
-SWIGEXPORT void _wrap_FN_VSpace_ManyVector(N_Vector farg1, int64_t *farg2, int64_t *farg3) {
-  N_Vector arg1 = (N_Vector) 0 ;
-  sunindextype *arg2 = (sunindextype *) 0 ;
-  sunindextype *arg3 = (sunindextype *) 0 ;
-  
-  arg1 = (N_Vector)(farg1);
-  arg2 = (sunindextype *)(farg2);
-  arg3 = (sunindextype *)(farg3);
-  N_VSpace_ManyVector(arg1,arg2,arg3);
-}
-
-
 SWIGEXPORT int64_t _wrap_FN_VGetLength_ManyVector(N_Vector farg1) {
   int64_t fresult ;
   N_Vector arg1 = (N_Vector) 0 ;

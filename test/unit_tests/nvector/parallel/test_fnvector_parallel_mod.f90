@@ -38,7 +38,6 @@ contains
   integer function smoke_tests() result(ret)
     implicit none
 
-    integer(kind=myindextype) :: lenrw(1), leniw(1)  ! real and int work space size
     integer(c_long)           :: ival                ! integer work value
     real(c_double)            :: rval                ! real work value
     real(c_double)            :: xdata(local_length) ! vector data array
@@ -73,7 +72,6 @@ contains
 
     ! test generic vector functions
     ival = FN_VGetVectorID_Parallel(x)
-    call FN_VSpace_Parallel(x, lenrw, leniw)
     xptr => FN_VGetArrayPointer_Parallel(x)
     call FN_VSetArrayPointer_Parallel(xdata, x)
     ival = FN_VGetCommunicator_Parallel(x)

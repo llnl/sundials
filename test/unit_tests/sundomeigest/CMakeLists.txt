@@ -18,13 +18,13 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
 # Build the sundials_sundomeigest test utilities
 add_library(test_sundomeigest_obj OBJECT test_sundomeigest.c
                                          test_sundomeigest.h)
+sundials_add_platform_definitions(test_sundomeigest_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
@@ -32,6 +32,8 @@ if(BUILD_SHARED_LIBS)
                                                      TRUE)
 endif()
 target_link_libraries(test_sundomeigest_obj PRIVATE sundials_sundomeigestpower)
+target_include_directories(test_sundomeigest_obj
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Always add the power iteration examples
 add_subdirectory(Power)

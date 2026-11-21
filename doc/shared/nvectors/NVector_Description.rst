@@ -73,10 +73,6 @@ The virtual table structure is defined as
 
       The function implementing :c:func:`N_VDestroy`
 
-   .. c:member:: void (*nvspace)(N_Vector, sunindextype*, sunindextype*)
-
-      The function implementing :c:func:`N_VSpace`
-
    .. c:member:: sunrealtype* (*nvgetarraypointer)(N_Vector)
 
       The function implementing :c:func:`N_VGetArrayPointer`
@@ -341,7 +337,6 @@ only for use with the XBraid library
 for parallel-in-time integration (accessible from ARKODE)
 and are otherwise unused by SUNDIALS packages.
 
-
 .. _NVectors.Description.utilities:
 
 NVECTOR Utility Functions
@@ -369,7 +364,6 @@ variables of type :c:type:`N_Vector`, each of the same type as an existing
       * pointer to a new ``N_Vector`` array on success.
       * ``NULL`` pointer on failure.
 
-
 .. c:function:: N_Vector *N_VCloneVectorArrayEmpty(int count, N_Vector w)
 
    Clones an array of ``count``  ``N_Vector`` objects, leaving their data arrays unallocated (similar to :c:func:`N_VCloneEmpty`).
@@ -382,10 +376,8 @@ variables of type :c:type:`N_Vector`, each of the same type as an existing
       * pointer to a new ``N_Vector`` array on success.
       * ``NULL`` pointer on failure.
 
-
 An array of variables of type :c:type:`N_Vector` can be destroyed
 by calling :c:func:`N_VDestroyVectorArray`:
-
 
 .. c:function:: void N_VDestroyVectorArray(N_Vector *vs, int count)
 
@@ -405,7 +397,6 @@ by calling :c:func:`N_VDestroyVectorArray`:
       it is the user's responsibility to free the data for each ``N_Vector``
       object.
 
-
 Finally, we note that users of the Fortran 2003 interface may be interested in
 the additional utility functions :c:func:`N_VNewVectorArray`,
 :c:func:`N_VGetVecAtIndexVectorArray`, and :c:func:`N_VSetVecAtIndexVectorArray`,
@@ -413,7 +404,6 @@ that are wrapped as ``FN_NewVectorArray``, ``FN_VGetVecAtIndexVectorArray``, and
 ``FN_VSetVecAtIndexVectorArray``, respectively.  These functions allow a Fortran
 2003 user to create an empty vector array, access a vector from this array, and
 set a vector within this array:
-
 
 .. c:function:: N_Vector *N_VNewVectorArray(int count, SUNContext sunctx)
 
@@ -432,7 +422,6 @@ set a vector within this array:
 
       The function signature was updated to add the ``SUNContext`` argument.
 
-
 .. c:function:: N_Vector *N_VGetVecAtIndexVectorArray(N_Vector* vs, int index)
 
    Accesses the ``N_Vector`` at the location ``index`` within the ``N_Vector`` array ``vs``.
@@ -450,7 +439,6 @@ set a vector within this array:
       ``vs``, since ``vs`` is a simple ``N_Vector`` array that does not
       internally store its allocated length.
 
-
 .. c:function:: void N_VSetVecAtIndexVectorArray(N_Vector* vs, int index, N_Vector w)
 
    Sets a pointer to ``w`` at the location ``index`` within the vector array ``vs``.
@@ -464,8 +452,6 @@ set a vector within this array:
       This routine does not verify that ``index`` is within the extent of
       ``vs``, since ``vs`` is a simple ``N_Vector`` array that does not
       internally store its allocated length.
-
-
 
 .. _NVectors.Description.custom_implementation:
 
@@ -531,14 +517,12 @@ to be set, and that all operations are copied when cloning a vector.
 
    **Return value:**  Returns a :c:type:`SUNErrCode`.
 
-
 .. c:enum:: N_Vector_ID
 
    Each :c:type:`N_Vector` implementation included in SUNDIALS has a unique
    identifier specified in enumeration and shown in
    :numref:`NVectors.Description.vectorIDs`. It is recommended that a user
    supplied NVECTOR implementation use the ``SUNDIALS_NVEC_CUSTOM`` identifier.
-
 
 .. _NVectors.Description.vectorIDs:
 
@@ -564,7 +548,6 @@ to be set, and that all operations are copied when cloning a vector.
    SUNDIALS_NVEC_MPIPLUSX       MPI+X vector                          14
    SUNDIALS_NVEC_CUSTOM         User-provided custom vector           15
    ===========================  ====================================  ========
-
 
 .. _NVectors.Description.complex:
 
@@ -607,7 +590,6 @@ provide the following guidance:
   are ill-defined due to the lack of a clear ordering in the
   complex plane.  These routines should be set to ``NULL``
   in the custom NVECTOR implementation.
-
 
 While many SUNDIALS solver modules may be utilized on complex-valued data,
 others cannot.  Specifically, although each package's linear solver

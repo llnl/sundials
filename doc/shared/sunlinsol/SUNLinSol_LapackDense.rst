@@ -25,7 +25,6 @@ is designed to be used with the corresponding SUNMATRIX_DENSE matrix type,
 and one of the serial or shared-memory ``N_Vector`` implementations
 (NVECTOR_SERIAL, NVECTOR_OPENMP, or NVECTOR_PTHREADS).
 
-
 .. _SUNLinSol_LapackDense.Usage:
 
 SUNLinSol_LapackDense Usage
@@ -39,7 +38,6 @@ where *.lib* is typically ``.so`` for shared libraries and
 
 The module SUNLinSol_LapackDense provides the following additional
 user-callable constructor routine:
-
 
 .. c:function:: SUNLinearSolver SUNLinSol_LapackDense(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
@@ -64,12 +62,10 @@ user-callable constructor routine:
       are added to SUNDIALS, these will be included within this
       compatibility check.
 
-
 .. _SUNLinSol_LapackDense.Description:
 
 SUNLinSol_LapackDense Description
 ------------------------------------
-
 
 The SUNLinSol_LapackDense module defines the
 *content* field of a ``SUNLinearSolver`` to be the following
@@ -93,7 +89,6 @@ information:
 
 * ``last_flag`` - last error return flag from internal function
   evaluations.
-
 
 The SUNLinSol_LapackDense module is a ``SUNLinearSolver`` wrapper for
 the LAPACK dense matrix factorization and solve routines, ``*GETRF``
@@ -145,9 +140,5 @@ The SUNLinSol_LapackDense module defines dense implementations of all
   ``pivots`` array to perform the solve.
 
 * ``SUNLinSolLastFlag_LapackDense``
-
-* ``SUNLinSolSpace_LapackDense`` -- this only returns information for
-  the storage *within* the solver object, i.e. storage
-  for ``N``, ``last_flag``, and ``pivots``.
 
 * ``SUNLinSolFree_LapackDense``

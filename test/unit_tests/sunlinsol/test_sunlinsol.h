@@ -42,7 +42,6 @@ int Test_SUNLinSolGetType(SUNLinearSolver S, SUNLinearSolver_Type suntype,
                           int myid);
 int Test_SUNLinSolGetID(SUNLinearSolver S, SUNLinearSolver_ID sunid, int myid);
 int Test_SUNLinSolLastFlag(SUNLinearSolver S, int myid);
-int Test_SUNLinSolSpace(SUNLinearSolver S, int myid);
 int Test_SUNLinSolNumIters(SUNLinearSolver S, int myid);
 int Test_SUNLinSolResNorm(SUNLinearSolver S, int myid);
 int Test_SUNLinSolResid(SUNLinearSolver S, int myid);

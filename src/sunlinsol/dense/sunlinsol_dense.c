@@ -79,7 +79,6 @@ SUNLinearSolver SUNLinSol_Dense(SUNDIALS_MAYBE_UNUSED N_Vector y, SUNMatrix A,
   S->ops->setup      = SUNLinSolSetup_Dense;
   S->ops->solve      = SUNLinSolSolve_Dense;
   S->ops->lastflag   = SUNLinSolLastFlag_Dense;
-  S->ops->space      = SUNLinSolSpace_Dense;
   S->ops->free       = SUNLinSolFree_Dense;
 
   /* Create content */
@@ -186,16 +185,6 @@ sunindextype SUNLinSolLastFlag_Dense(SUNLinearSolver S)
 {
   /* return the stored 'last_flag' value */
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_Dense(SUNLinearSolver S, long int* lenrwLS,
-                                long int* leniwLS)
-{
-  SUNFunctionBegin(S->sunctx);
-  SUNAssert(SUNLinSolGetID(S) == SUNLINEARSOLVER_DENSE, SUN_ERR_ARG_WRONGTYPE);
-  *leniwLS = 2 + DENSE_CONTENT(S)->N;
-  *lenrwLS = 0;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_Dense(SUNLinearSolver S)

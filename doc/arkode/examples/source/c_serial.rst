@@ -54,7 +54,7 @@ Numerical method
 ----------------
 
 The example routine solves this problem using a diagonally-implicit
-Runge-Kutta method.  Each stage is solved using the built-in modified
+Runge--Kutta method.  Each stage is solved using the built-in modified
 Newton iteration, but since the ODE is linear in :math:`y` these
 should only require a single iteration per stage.  Internally, Newton
 will use the SUNLINSOL_DENSE linear solver via the ARKDLS interface,
@@ -863,7 +863,7 @@ solver module, and ARKSPILS interface.  The preconditioner matrix used
 is the product of two matrices:
 
 1. A matrix, only defined implicitly, based on a fixed number of
-   Gauss-Seidel iterations using the diffusion terms only.
+   Gauss--Seidel iterations using the diffusion terms only.
 
 2. A block-diagonal matrix based on the partial derivatives of the
    interaction terms :math:`f` only, using block-grouping (computing
@@ -871,7 +871,7 @@ is the product of two matrices:
 
 Four different runs are made for this problem.  The product
 preconditioner is applied on the left and on the right.  In each case,
-both the modified and classical Gram-Schmidt orthogonalization options
+both the modified and classical Gram--Schmidt orthogonalization options
 are tested.  In the series of runs, ``ARKodeInit``, ``SUNSPGMR``,
 ``ARKSpilsSetLinearSolver``, ``SUNSPGMRSetGSType``,
 ``ARKSpilsSetEpsLin`` and ``ARKSpilsSetPreconditioner`` are called

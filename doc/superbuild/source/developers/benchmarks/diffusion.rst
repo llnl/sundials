@@ -67,7 +67,7 @@ Under this setup, the problem has the analytical solution
 
 Spatial derivatives are computed using second-order centered differences on a
 uniform spatial grid. The problem can be evolved in time with ARKODE, CVODE, or
-IDA. With ARKODE, an adaptive step diagonally implicit Runge-Kutta (DIRK) method
+IDA. With ARKODE, an adaptive step diagonally implicit Runge--Kutta (DIRK) method
 is applied. When using CVODE or IDA, adaptive order and step BDF methods are
 used.
 

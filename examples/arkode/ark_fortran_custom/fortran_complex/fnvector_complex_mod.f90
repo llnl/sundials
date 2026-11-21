@@ -63,7 +63,6 @@ contains
     ops%nvgetlength = c_funloc(FN_VGetLength_Complex)
     ops%nvconst = c_funloc(FN_VConst_Complex)
     ops%nvclone = c_funloc(FN_VClone_Complex)
-    ops%nvspace = c_funloc(FN_VSpace_Complex)
     ops%nvlinearsum = c_funloc(FN_VLinearSum_Complex)
     ops%nvprod = c_funloc(FN_VProd_Complex)
     ops%nvdiv = c_funloc(FN_VDiv_Complex)
@@ -117,7 +116,6 @@ contains
     ops%nvgetlength = c_funloc(FN_VGetLength_Complex)
     ops%nvconst = c_funloc(FN_VConst_Complex)
     ops%nvclone = c_funloc(FN_VClone_Complex)
-    ops%nvspace = c_funloc(FN_VSpace_Complex)
     ops%nvlinearsum = c_funloc(FN_VLinearSum_Complex)
     ops%nvprod = c_funloc(FN_VProd_Complex)
     ops%nvdiv = c_funloc(FN_VDiv_Complex)
@@ -258,26 +256,6 @@ contains
 
   end function FN_VClone_Complex
 
-  ! ----------------------------------------------------------------
-  subroutine FN_VSpace_Complex(sunvec_x, lrw, liw) bind(C)
-
-    implicit none
-    type(N_Vector)      :: sunvec_x
-    integer(c_int64_t)  :: lrw(1)
-    integer(c_int64_t)  :: liw(1)
-    type(FVec), pointer :: x
-
-    ! extract Fortran vector structure to work with
-    x => FN_VGetFVec(sunvec_x)
-
-    ! set output arguments and return (multiply lrw by 2 since complex)
-    lrw(1) = 2*x%len
-    liw(1) = 3
-    return
-
-  end subroutine FN_VSpace_Complex
-
-  ! ----------------------------------------------------------------
   subroutine FN_VLinearSum_Complex(a, sunvec_x, b, sunvec_y, sunvec_z) &
     bind(C)
 

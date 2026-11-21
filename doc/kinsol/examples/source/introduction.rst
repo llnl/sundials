@@ -63,7 +63,7 @@ following serial examples (using the :ref:`serial vector
 - ``kin_roberts_fp`` solves the backward Euler time step for a three-species
   chemical kinetics system, using the fixed point strategy.
 
-- ``kin_fer_tron_dns`` solves the Ferraris-Tronconi problem.
+- ``kin_fer_tron_dns`` solves the Ferraris--Tronconi problem.
 
   This program solves the problem with the :ref:`dense linear solver
   <SUNLinSol_Dense>` and uses different combinations of globalization and
