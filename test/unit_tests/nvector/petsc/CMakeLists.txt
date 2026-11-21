@@ -100,6 +100,6 @@ foreach(example_tuple ${nvector_petsc_examples})
     TEST_ARGS ${example_args}
     MPI_NPROCS ${number_of_tasks}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_petsc_examples})

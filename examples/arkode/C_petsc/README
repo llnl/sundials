@@ -1,3 +1,0 @@
-List of PETSc ARKode examples
-
-  ark_petsc_ex25   : 1-D Brusselator based on PETSc TS ex25.c
