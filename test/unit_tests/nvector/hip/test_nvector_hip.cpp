@@ -40,7 +40,11 @@ enum pol_type
   DEFAULT_POL,
   DEFAULT_POL_W_STREAM,
   GRID_STRIDE,
-  LDS_REDUCTIONS
+  LDS_REDUCTIONS,
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+  THRUST_REDUCTIONS,
+#endif
+  LAST_POL
 };
 
 /* ----------------------------------------------------------------------
@@ -99,7 +103,7 @@ int main(int argc, char* argv[])
   SetTiming(print_timing, 0);
 
   /* test with all policy variants */
-  for (policy = DEFAULT_POL; policy <= LDS_REDUCTIONS; ++policy)
+  for (policy = DEFAULT_POL; policy < LAST_POL; ++policy)
   {
     int actualThreadsPerBlock = threadsPerBlock ? threadsPerBlock : 512;
     SUNHipExecPolicy* stream_exec_policy = NULL;
@@ -125,6 +129,14 @@ int main(int argc, char* argv[])
       stream_exec_policy = new SUNHipThreadDirectExecPolicy(actualThreadsPerBlock);
       reduce_exec_policy = new SUNHipBlockReduceExecPolicy(actualThreadsPerBlock);
     }
+#ifdef SUNDIALS_ENABLE_THRUST_REDUCTIONS
+    else if (policy == THRUST_REDUCTIONS)
+    {
+      stream_exec_policy =
+        new SUNHipThreadDirectExecPolicy(actualThreadsPerBlock, stream);
+      reduce_exec_policy = new SUNHipThrustExecPolicy(stream);
+    }
+#endif
 
     /* test with all memory variants */
     for (memtype = UNMANAGED; memtype <= SUNMEMORY; ++memtype)
