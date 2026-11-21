@@ -149,7 +149,7 @@ SUNErrCode SUNHashMap_Destroy(SUNHashMap* map)
                      this should return SUNHASHMAP_ERROR to continue the iteration, or [0, SUNHASHMAP_KEYNOTFOUND]
                      to stop; the first argument is the current index, the second argument
                      is the current key-value pair, and the final argument is the same
-                    pointer ``ctx`` as the final argument  to SUNHashMapIterate.
+                     pointer ``ctx`` as the final argument to SUNHashMapIterate.
     * ``ctx`` -- a pointer to pass on to ``yieldfn``
 
   **Returns:**
@@ -167,8 +167,9 @@ int64_t SUNHashMap_Iterate(SUNHashMap map, int64_t start,
   for (int64_t i = start;
        i < SUNStlVector_SUNHashMapKeyValue_Size(map->buckets); i++)
   {
-    int64_t retval =
-      yieldfn(i, *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i), ctx);
+    SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    if (!kvp_ptr) { return SUNHASHMAP_ERROR; } /* out of bounds index */
+    int64_t retval = yieldfn(i, *kvp_ptr, ctx);
     if (retval == SUNHASHMAP_ERROR) { continue; /* keep looking */ }
     else { return (retval); /* yieldfn indicates the loop should break */ }
   }
@@ -206,7 +207,10 @@ static SUNErrCode sunHashMapResize(SUNHashMap map)
   /* Rehash and reinsert */
   for (int64_t i = old_capacity - 1; i >= 0; i--)
   {
-    SUNHashMapKeyValue kvp = *SUNStlVector_SUNHashMapKeyValue_At(old_buckets, i);
+    SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(old_buckets, i);
+    if (!kvp_ptr) { return SUN_ERR_OUTOFRANGE; } /* out of bounds index */
+
+    SUNHashMapKeyValue kvp = *kvp_ptr;
     if (kvp)
     {
       SUNHashMap_Insert(map, kvp->key, kvp->value);
@@ -236,23 +240,22 @@ static SUNErrCode sunHashMapResize(SUNHashMap map)
  */
 int64_t SUNHashMap_Insert(SUNHashMap map, const char* key, void* value)
 {
-  int64_t idx;
-  int64_t retval;
-  SUNHashMapKeyValue kvp;
-
   if (map == NULL || key == NULL || value == NULL) { return SUNHASHMAP_ERROR; }
 
-  idx = sunHashMapIdxFromKey(map, key);
+  int64_t idx = sunHashMapIdxFromKey(map, key);
 
   /* Check if the bucket is already filled (i.e., we might have had a collision) */
-  kvp = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  if (!kvp_ptr) { return SUNHASHMAP_ERROR; } /* out of bounds index */
+
+  SUNHashMapKeyValue kvp = *kvp_ptr;
   if (kvp != NULL)
   {
     /* Determine if key is actually a duplicate (not allowed) */
     if (!strcmp(key, kvp->key)) { return SUNHASHMAP_DUPLICATE; }
 
     /* OK, it was a real collision, so find the next open spot */
-    retval = SUNHashMap_Iterate(map, idx + 1, sunHashMapLinearProbeInsert, NULL);
+    int64_t retval = SUNHashMap_Iterate(map, idx + 1, sunHashMapLinearProbeInsert, NULL);
     if (retval == SUNHASHMAP_ERROR)
     {
       /* an error occurred */
@@ -330,7 +333,9 @@ int64_t SUNHashMap_GetValue(SUNHashMap map, const char* key, void** value)
 
   idx = sunHashMapIdxFromKey(map, key);
 
-  SUNHashMapKeyValue kvp = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  if (!kvp_ptr) { return SUNHASHMAP_ERROR; } /* out of bounds index */
+  SUNHashMapKeyValue kvp = *kvp_ptr;
 
   /* Check for a collision (NULL kvp means there was a collision at one point, but
      the colliding key has since been removed)*/
@@ -349,8 +354,7 @@ int64_t SUNHashMap_GetValue(SUNHashMap map, const char* key, void** value)
   }
 
   /* Return a reference to the value only */
-  SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets,
-                                                                   idx);
+  kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
   if (kvp_ptr) { *value = (*kvp_ptr)->value; }
   else { return SUNHASHMAP_KEYNOTFOUND; }
 
@@ -380,7 +384,9 @@ int64_t SUNHashMap_Remove(SUNHashMap map, const char* key, void** value)
 
   idx = sunHashMapIdxFromKey(map, key);
 
-  SUNHashMapKeyValue kvp = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  if (!kvp_ptr) { return SUNHASHMAP_ERROR; } /* out of bounds index */
+  SUNHashMapKeyValue kvp = *kvp_ptr;
 
   /* Check for a collision (NULL kvp means there was a collision at one point, but
      the colliding key has since been removed)*/
@@ -401,7 +407,9 @@ int64_t SUNHashMap_Remove(SUNHashMap map, const char* key, void** value)
   }
 
   /* Return a reference to the value only */
-  kvp    = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, idx);
+  if (!kvp_ptr) { return SUNHASHMAP_KEYNOTFOUND; }
+  kvp    = *kvp_ptr;
   *value = kvp->value;
 
   /* Since we are returning the value only, we must free the key and the kvp itself. */
@@ -439,7 +447,9 @@ SUNErrCode SUNHashMap_Sort(SUNHashMap map, SUNHashMapKeyValue** sorted,
   /* Copy the buckets into a new array */
   for (int64_t i = 0; i < SUNHashMap_Capacity(map); i++)
   {
-    (*sorted)[i] = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    if (!kvp_ptr) { return SUN_ERR_ARG_OUTOFRANGE; }
+    (*sorted)[i] = *kvp_ptr;
   }
 
   qsort(*sorted, SUNHashMap_Capacity(map), sizeof(SUNHashMapKeyValue), compar);
@@ -471,7 +481,9 @@ SUNErrCode SUNHashMap_Values(SUNHashMap map, void*** values, int64_t value_size)
   /* Copy the values into a new array */
   for (int64_t i = 0; i < SUNHashMap_Capacity(map); i++)
   {
-    SUNHashMapKeyValue kvp = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    if (!kvp_ptr) { return SUN_ERR_ARG_OUTOFRANGE; }
+    SUNHashMapKeyValue kvp = *kvp_ptr;
     if (kvp) { (*values)[count++] = kvp->value; }
   }
 
@@ -486,7 +498,9 @@ SUNErrCode SUNHashMap_PrintKeys(SUNHashMap map, FILE* file)
   fprintf(file, "[");
   for (int64_t i = 0; i < SUNHashMap_Capacity(map); i++)
   {
-    SUNHashMapKeyValue kvp = *SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    SUNHashMapKeyValue* kvp_ptr = SUNStlVector_SUNHashMapKeyValue_At(map->buckets, i);
+    if (!kvp_ptr) { return SUN_ERR_ARG_OUTOFRANGE; }
+    SUNHashMapKeyValue kvp = *kvp_ptr;
     if (kvp) { fprintf(file, "%s, ", kvp->key); }
   }
   fprintf(file, "]\n");

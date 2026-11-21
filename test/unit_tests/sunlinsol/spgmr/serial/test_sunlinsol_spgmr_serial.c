@@ -62,7 +62,7 @@ static int check_flag(void* flagvalue, const char* funcname, int opt);
 static sunrealtype urand(void);
 
 /* global copy of the problem size (for check_vector routine) */
-sunindextype problem_size;
+static sunindextype problem_size;
 
 /* ----------------------------------------------------------------------
  * SUNLinSol_SPGMR Linear Solver Testing Routine
