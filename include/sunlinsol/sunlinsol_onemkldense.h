@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-struct _SUNLinearSolverContent_OneMklDense
+struct SUNLinearSolverContent_OneMklDense_
 {
   int last_flag;               /* last error code returned */
   sunindextype rows;           /* number of rows in A      */
@@ -45,7 +45,7 @@ struct _SUNLinearSolverContent_OneMklDense
   ::sycl::queue* queue;        /* operation queue          */
 };
 
-typedef struct _SUNLinearSolverContent_OneMklDense* SUNLinearSolverContent_OneMklDense;
+typedef struct SUNLinearSolverContent_OneMklDense_* SUNLinearSolverContent_OneMklDense;
 
 /* ---------------------------------------------------------------------------
  * Implementation specific functions

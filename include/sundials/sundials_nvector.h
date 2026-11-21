@@ -15,7 +15,7 @@
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the header file for a generic NVECTOR package.
- * It defines the N_Vector structure (_generic_N_Vector) which
+ * It defines the N_Vector structure (N_Vector_) which
  * contains the following fields:
  *   - an implementation-dependent 'content' field which contains
  *     the description and actual data of the vector
@@ -25,8 +25,8 @@
  * This header file contains:
  *   - enumeration constants for all SUNDIALS-defined vector types,
  *     as well as a generic type for user-supplied vector types,
- *   - type declarations for the _generic_N_Vector and
- *     _generic_N_Vector_Ops structures, as well as references to
+ *   - type declarations for the N_Vector_ and
+ *     N_Vector_Ops_ structures, as well as references to
  *     pointers to such structures (N_Vector), and
  *   - prototypes for the vector functions which operate on
  *     N_Vector objects.
@@ -93,17 +93,17 @@ typedef enum N_Vector_ID N_Vector_ID;
  * ----------------------------------------------------------------- */
 
 /* Forward reference for pointer to N_Vector_Ops object */
-typedef _SUNDIALS_STRUCT_ _generic_N_Vector_Ops* N_Vector_Ops;
+typedef SUNDIALS_STRUCT N_Vector_Ops_* N_Vector_Ops;
 
 /* Forward reference for pointer to N_Vector object */
-typedef _SUNDIALS_STRUCT_ _generic_N_Vector* N_Vector;
+typedef SUNDIALS_STRUCT N_Vector_* N_Vector;
 
 /* Define array of N_Vectors */
 /* DEPRECATION NOTICE: N_Vector_S will be removed in the next major release */
 typedef N_Vector* N_Vector_S;
 
 /* Structure containing function pointers to vector operations  */
-struct _generic_N_Vector_Ops
+struct N_Vector_Ops_
 {
   /*
    * REQUIRED operations.
@@ -202,7 +202,7 @@ struct _generic_N_Vector_Ops
 /* A vector is a structure with an implementation-dependent
    'content' field, and a pointer to a structure of vector
    operations corresponding to that implementation. */
-struct _generic_N_Vector
+struct N_Vector_
 {
   void* content;
   N_Vector_Ops ops;

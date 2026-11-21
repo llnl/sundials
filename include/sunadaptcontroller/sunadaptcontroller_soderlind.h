@@ -32,7 +32,7 @@ extern "C" {
  * Soderlind implementation of SUNAdaptController
  * ---------------------------------------------------- */
 
-struct _SUNAdaptControllerContent_Soderlind
+struct SUNAdaptControllerContent_Soderlind_
 {
   sunrealtype k1; /* internal controller parameters */
   sunrealtype k2;
@@ -50,7 +50,7 @@ struct _SUNAdaptControllerContent_Soderlind
   int historysize; /* number of past step sizes or errors needed */
 };
 
-typedef struct _SUNAdaptControllerContent_Soderlind* SUNAdaptControllerContent_Soderlind;
+typedef struct SUNAdaptControllerContent_Soderlind_* SUNAdaptControllerContent_Soderlind;
 
 /* ------------------
  * Exported Functions

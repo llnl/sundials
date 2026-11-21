@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_N_VectorContent_ManyVector =
-  nb::class_<_N_VectorContent_ManyVector>(m, "_N_VectorContent_ManyVector", "")
+auto pyClassN_VectorContent_ManyVector_ =
+  nb::class_<N_VectorContent_ManyVector_>(m, "N_VectorContent_ManyVector_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

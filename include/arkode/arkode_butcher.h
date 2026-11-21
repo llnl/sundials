@@ -42,7 +42,7 @@ struct ARKodeButcherTableMem
   sunrealtype* d;  /* embedding coefficients         */
 };
 
-typedef _SUNDIALS_STRUCT_ ARKodeButcherTableMem* ARKodeButcherTable;
+typedef SUNDIALS_STRUCT ARKodeButcherTableMem* ARKodeButcherTable;
 
 /* Utility routines to allocate/free/output Butcher table structures */
 

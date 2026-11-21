@@ -25,7 +25,7 @@ defines the *content* field of ``SUNMatrix`` to be the following structure:
 
 .. code-block:: c
 
-   struct _SUNMatrixContent_Dense {
+   struct SUNMatrixContent_Dense_ {
      sunindextype M;
      sunindextype N;
      sunrealtype *data;

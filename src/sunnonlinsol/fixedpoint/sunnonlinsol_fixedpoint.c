@@ -114,7 +114,7 @@ SUNNonlinearSolver SUNNonlinSol_FixedPoint(N_Vector y, int m, SUNContext sunctx)
   SUNAssertNull(content, SUN_ERR_MALLOC_FAIL);
 
   /* Initialize all components of content to 0/NULL */
-  memset(content, 0, sizeof(struct _SUNNonlinearSolverContent_FixedPoint));
+  memset(content, 0, sizeof(struct SUNNonlinearSolverContent_FixedPoint_));
 
   /* Attach content */
   NLS->content = content;
