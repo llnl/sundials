@@ -24,8 +24,6 @@
 #include "nvector/nvector_serial.h"
 #include "sundials/sundials_context.hpp"
 
-static const std::string errfile{"test_arkode_error_handling.err"};
-
 static int f(sunrealtype t, N_Vector y, N_Vector ydot, void* user_data)
 {
   return 0;
@@ -57,6 +55,7 @@ protected:
 
 TEST_F(ARKodeErrConditionTest, WarningIsPrinted)
 {
+  const std::string errfile{"test_arkode_warning.err"};
   SUNErrCode err = SUNLogger_SetWarningFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   ARKodeMemRec* ark_mem = (ARKodeMemRec*)arkode_mem;
@@ -75,6 +74,7 @@ TEST_F(ARKodeErrConditionTest, WarningIsPrinted)
 
 TEST_F(ARKodeErrConditionTest, ErrorIsPrinted)
 {
+  const std::string errfile{"test_arkode_error.err"};
   SUNErrCode err = SUNLogger_SetErrorFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   // negative reltol is illegal

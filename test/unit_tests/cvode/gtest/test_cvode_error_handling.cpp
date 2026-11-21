@@ -22,8 +22,6 @@
 #include "cvode/cvode_impl.h"
 #include "sundials/sundials_context.hpp"
 
-static const std::string errfile{"test_error_handling.err"};
-
 class CVodeErrConditionTest : public testing::Test
 {
 protected:
@@ -44,6 +42,7 @@ protected:
 
 TEST_F(CVodeErrConditionTest, WarningIsPrinted)
 {
+  const std::string errfile{"test_cvode_warning.err"};
   SUNErrCode err = SUNLogger_SetWarningFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   CVodeMemRec* ark_mem = (CVodeMemRec*)cvode_mem;
@@ -62,6 +61,7 @@ TEST_F(CVodeErrConditionTest, WarningIsPrinted)
 
 TEST_F(CVodeErrConditionTest, ErrorIsPrinted)
 {
+  const std::string errfile{"test_cvode_error.err"};
   SUNErrCode err = SUNLogger_SetErrorFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   // attempting to call CVodeSStolerances before CVodeInit is illegal
