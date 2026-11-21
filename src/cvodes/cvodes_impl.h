@@ -1170,6 +1170,11 @@ int cvSensRhs1InternalDQ(int Ns, sunrealtype t, N_Vector y, N_Vector ydot,
                          int is, N_Vector yS, N_Vector ySdot, void* fS_data,
                          N_Vector tempv, N_Vector ftemp);
 
+/* Helper to extract CVODE memory structures */
+int cvaGetMem(void* cvode_mem, int which, CVodeMem* cv_mem_out,
+              CVadjMem* ca_mem_out, CVodeBMem* cvB_mem_out,
+              void** cvodeB_mem_out);
+
 /* Function to destroy function table allocated by the Python binding code */
 
 #if defined(SUNDIALS_ENABLE_PYTHON)

@@ -88,6 +88,95 @@ static int CVArhs(sunrealtype t, N_Vector yB, N_Vector yBdot, void* cvode_mem);
 
 static int CVArhsQ(sunrealtype t, N_Vector yB, N_Vector qBdot, void* cvode_mem);
 
+/* Helper to extract CVODE memory structures */
+int cvaGetMem(void* cvode_mem, int which, CVodeMem* cv_mem_out,
+              CVadjMem* ca_mem_out, CVodeBMem* cvB_mem_out,
+              void** cvodeB_mem_out)
+{
+  if (cv_mem_out == NULL || ca_mem_out == NULL || cvB_mem_out == NULL ||
+      cvodeB_mem_out == NULL)
+  {
+    cvProcessError(NULL, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   "An internal memory pointer was NULL");
+    return (CV_ILL_INPUT);
+  }
+
+  /* Initialize outputs */
+
+  *cv_mem_out     = NULL;
+  *ca_mem_out     = NULL;
+  *cvB_mem_out    = NULL;
+  *cvodeB_mem_out = NULL;
+
+  /* Check if cvode_mem exists */
+
+  if (cvode_mem == NULL)
+  {
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+  CVodeMem cv_mem = (CVodeMem)cvode_mem;
+
+  /* Was ASA initialized? */
+
+  if (cv_mem->cv_adjMallocDone == SUNFALSE)
+  {
+    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
+    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
+    return (CV_NO_ADJ);
+  }
+  CVadjMem ca_mem = cv_mem->cv_adj_mem;
+
+  /* Check the value of which */
+
+  if (which >= ca_mem->ca_nbckpbs)
+  {
+    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
+                   MSGCV_BAD_WHICH);
+    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
+    return (CV_ILL_INPUT);
+  }
+
+  /* Find the CVodeBMem entry in the linked list corresponding to which */
+
+  CVodeBMem cvB_mem = ca_mem->cvB_mem;
+  if (cvB_mem == NULL)
+  {
+    cvProcessError(cv_mem, CV_MEM_NULL, __LINE__, __func__, __FILE__,
+                   MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+
+  while (cvB_mem != NULL)
+  {
+    if (which == cvB_mem->cv_index) { break; }
+    cvB_mem = cvB_mem->cv_next;
+  }
+
+  if (cvB_mem == NULL)
+  {
+    cvProcessError(cv_mem, CV_MEM_NULL, __LINE__, __func__, __FILE__,
+                   MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+
+  if (cvB_mem->cv_mem == NULL)
+  {
+    cvProcessError(cv_mem, CV_MEM_NULL, __LINE__, __func__, __FILE__,
+                   MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
+
+  /* Set outputs */
+
+  *cv_mem_out     = cv_mem;
+  *ca_mem_out     = ca_mem;
+  *cvB_mem_out    = cvB_mem;
+  *cvodeB_mem_out = (void*)(cvB_mem->cv_mem);
+
+  return CV_SUCCESS;
+}
+
 /*
  * =================================================================
  * EXPORTED FUNCTIONS IMPLEMENTATION
@@ -765,53 +854,17 @@ int CVodeCreateB(void* cvode_mem, int lmmB, int* which)
 int CVodeInitB(void* cvode_mem, int which, CVRhsFnB fB, sunrealtype tB0,
                N_Vector yB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* Allocate and set the CVODES object */
 
@@ -841,53 +894,17 @@ int CVodeInitB(void* cvode_mem, int which, CVRhsFnB fB, sunrealtype tB0,
 int CVodeInitBS(void* cvode_mem, int which, CVRhsFnBS fBs, sunrealtype tB0,
                 N_Vector yB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* Allocate and set the CVODES object */
 
@@ -916,49 +933,17 @@ int CVodeInitBS(void* cvode_mem, int which, CVRhsFnBS fBs, sunrealtype tB0,
 
 int CVodeReInitB(void* cvode_mem, int which, sunrealtype tB0, N_Vector yB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* Reinitialize CVODES object */
 
@@ -971,49 +956,16 @@ int CVodeReInitB(void* cvode_mem, int which, sunrealtype tB0, N_Vector yB0)
 int CVodeSStolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
                        sunrealtype abstolB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* Set tolerances */
 
@@ -1025,49 +977,17 @@ int CVodeSStolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
 int CVodeSVtolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
                        N_Vector abstolB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
 
-  if (cvode_mem == NULL)
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* Set tolerances */
 
@@ -1078,49 +998,17 @@ int CVodeSVtolerancesB(void* cvode_mem, int which, sunrealtype reltolB,
 
 int CVodeQuadInitB(void* cvode_mem, int which, CVQuadRhsFnB fQB, N_Vector yQB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   flag = CVodeQuadInit(cvodeB_mem, CVArhsQ, yQB0);
   if (flag != CV_SUCCESS)
@@ -1138,49 +1026,17 @@ int CVodeQuadInitB(void* cvode_mem, int which, CVQuadRhsFnB fQB, N_Vector yQB0)
 
 int CVodeQuadInitBS(void* cvode_mem, int which, CVQuadRhsFnBS fQBs, N_Vector yQB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   flag = CVodeQuadInit(cvodeB_mem, CVArhsQ, yQB0);
   if (flag != CV_SUCCESS)
@@ -1198,49 +1054,17 @@ int CVodeQuadInitBS(void* cvode_mem, int which, CVQuadRhsFnBS fQBs, N_Vector yQB
 
 int CVodeQuadReInitB(void* cvode_mem, int which, N_Vector yQB0)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   flag = CVodeQuadReInit(cvodeB_mem, yQB0);
   if (flag != CV_SUCCESS)
@@ -1256,49 +1080,17 @@ int CVodeQuadReInitB(void* cvode_mem, int which, N_Vector yQB0)
 int CVodeQuadSStolerancesB(void* cvode_mem, int which, sunrealtype reltolQB,
                            sunrealtype abstolQB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
   SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   flag = CVodeQuadSStolerances(cvodeB_mem, reltolQB, abstolQB);
 
@@ -1309,48 +1101,21 @@ int CVodeQuadSStolerancesB(void* cvode_mem, int which, sunrealtype reltolQB,
 int CVodeQuadSVtolerancesB(void* cvode_mem, int which, sunrealtype reltolQB,
                            N_Vector abstolQB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    return (CV_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
+  SUNDIALS_MARK_FUNCTION_BEGIN(CV_PROFILER);
 
   flag = CVodeQuadSVtolerances(cvodeB_mem, reltolQB, abstolQB);
 
+  SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
   return (flag);
 }
 
@@ -1413,6 +1178,13 @@ int CVodeB(void* cvode_mem, sunrealtype tBout, int itaskB)
     return (CV_NO_BCK);
   }
   cvB_mem = ca_mem->cvB_mem;
+
+  if (cvB_mem == NULL)
+  {
+    cvProcessError(cv_mem, CV_MEM_NULL, __LINE__, __func__, __FILE__,
+                   MSGCV_NO_MEM);
+    return (CV_MEM_NULL);
+  }
 
   /* Check whether CVodeF has been called */
 
@@ -1594,8 +1366,14 @@ int CVodeB(void* cvode_mem, sunrealtype tBout, int itaskB)
         /* Set the time at which we will report solution and/or quadratures */
         tmp_cvB_mem->cv_tout = tBret;
 
-        /* If an error occurred, exit while loop */
-        if (flag < 0) { break; }
+        /* If an error occurred, return now */
+        if (flag < 0)
+        {
+          cvProcessError(cv_mem, flag, __LINE__, __func__, __FILE__,
+                         MSGCV_BACK_ERROR, tmp_cvB_mem->cv_index);
+          SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
+          return (flag);
+        }
       }
       else
       {
@@ -1606,16 +1384,6 @@ int CVodeB(void* cvode_mem, sunrealtype tBout, int itaskB)
       /* Move to next backward problem */
 
       tmp_cvB_mem = tmp_cvB_mem->cv_next;
-    }
-
-    /* If an error occurred, return now */
-
-    if (flag < 0)
-    {
-      cvProcessError(cv_mem, flag, __LINE__, __func__, __FILE__,
-                     MSGCV_BACK_ERROR, tmp_cvB_mem->cv_index);
-      SUNDIALS_MARK_FUNCTION_END(CV_PROFILER);
-      return (flag);
     }
 
     /* If in CV_ONE_STEP mode, return now (flag = CV_SUCCESS) */
@@ -1650,41 +1418,15 @@ int CVodeB(void* cvode_mem, sunrealtype tBout, int itaskB)
 
 int CVodeGetB(void* cvode_mem, int which, sunrealtype* tret, N_Vector yB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    return (CV_NO_ADJ);
-  }
-
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
+    return flag;
   }
 
   N_VScale(ONE, cvB_mem->cv_y, yB);
@@ -1699,51 +1441,21 @@ int CVodeGetB(void* cvode_mem, int which, sunrealtype* tret, N_Vector yB)
 
 int CVodeGetQuadB(void* cvode_mem, int which, sunrealtype* tret, N_Vector qB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  long int nstB;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CV_MEM_NULL, __LINE__, __func__, __FILE__, MSGCV_NO_MEM);
-    return (CV_MEM_NULL);
+    return flag;
   }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CV_NO_ADJ, __LINE__, __func__, __FILE__, MSGCV_NO_ADJ);
-    return (CV_NO_ADJ);
-  }
-
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGCV_BAD_WHICH);
-    return (CV_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    cvB_mem = cvB_mem->cv_next;
-  }
-
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
 
   /* If the integration for this backward problem has not started yet,
    * simply return the current value of qB (i.e. the final conditions) */
 
+  long int nstB;
   flag = CVodeGetNumSteps(cvodeB_mem, &nstB);
 
   if (nstB == 0)
