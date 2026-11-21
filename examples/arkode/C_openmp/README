@@ -1,4 +1,0 @@
-List of OpenMP ARKODE C examples
-
-  ark_brusselator1D_omp : stiff chemical kinetics PDE system example (DIRK/BAND)
-  ark_heat1D_omp        : stiff 1D heat PDE example                  (DIRK/PCG)

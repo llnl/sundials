@@ -1,1 +1,1 @@
-../../../../../examples/python/cvodes/cvs_lotkavolterra.py
+../../../../../examples/cvodes/cvs_lotka_volterra/python/cvs_lotkavolterra.py
