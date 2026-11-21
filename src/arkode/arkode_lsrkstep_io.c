@@ -244,8 +244,7 @@ int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps)
     step_mem->dom_eig_freq = DOM_EIG_FREQ_DEFAULT;
     step_mem->const_Jac    = SUNFALSE;
   }
-
-  if (nsteps == 0)
+  else if (nsteps == 0)
   {
     step_mem->const_Jac    = SUNTRUE;
     step_mem->dom_eig_freq = 1;

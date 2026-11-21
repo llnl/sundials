@@ -102,7 +102,7 @@ jobs:
           # Check for changes to trigger build and test jobs Updates to
           # CMakeLists.txt or include, src, cmake, examples (except python),
           # benchmarks, or test directories
-          if echo "$CHANGED" | grep -v '^examples/python/' | grep -qE '^(CMakeLists\.txt$|include/|src/|cmake/|examples/|benchmarks/|test/)'; then
+          if echo "$CHANGED" | grep -vE '^examples/(python/|[^/]+/[^/]+/python/)' | grep -qE '^(CMakeLists\.txt$|include/|src/|cmake/|examples/|benchmarks/|test/)'; then
             echo "src=true" >> "$GITHUB_OUTPUT"
           else
             echo "src=false" >> "$GITHUB_OUTPUT"
@@ -110,7 +110,7 @@ jobs:
 
           # Check for changes to trigger python interface checks
           # Updates in include or bindings/sundials4py directories
-          if echo "$CHANGED" | grep -qE '^(pyproject.toml|include/|bindings/sundials4py/|examples/python/)'; then
+          if echo "$CHANGED" | grep -qE '^(pyproject.toml|include/|bindings/sundials4py/|examples/(python/|[^/]+/[^/]+/python/))'; then
             echo "python=true" >> "$GITHUB_OUTPUT"
           else
             echo "python=false" >> "$GITHUB_OUTPUT"

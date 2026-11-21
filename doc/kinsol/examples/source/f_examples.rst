@@ -24,10 +24,10 @@ written using the Fortran 2003 standard, use double precision arithmetic, and
 32- or 64-bit integers for indexing. See the :ref:`Fortran` section in
 the KINSOL User Documentation for details.
 
-A serial example: kinDiagon_kry_f2003
+A serial example: kin_diagonal_kry_f2003
 -------------------------------------
 
-The ``kinDiagon_kry_f2003`` program solves the problem
+The ``kin_diagonal_kry_f2003`` program solves the problem
 
 .. math::
 
@@ -99,16 +99,16 @@ various ``FKINGet`` functions. Finally, the memory allocated for the KINSOL, the
 linear solver, vectors, and context are released by calling ``FKINFree``,
 ``FSUNLinSolFree``, ``FN_VDestroy``, and ``FSUNContext_Free``, respectively.
 
-The following is sample output from ``kinDiagon_kry_f2003``.
+The following is sample output from ``kin_diagonal_kry_f2003``.
 
-.. literalinclude:: ../../../../examples/kinsol/F2003_serial/kinDiagon_kry_f2003.out
+.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran/kin_diagonal_kry_f2003.out
    :language: none
 
-A parallel example: kin_diagon_kry_f2003
+A parallel example: kin_diagonal_kry_p_f2003
 ----------------------------------------
 
-The program ``kin_diagon_kry_f2003`` is a straightforward modification of
-``kinDiagon_kry_f2003`` to use the MPI vector.
+The program ``kin_diagonal_kry_p_f2003`` is a straightforward modification of
+``kin_diagonal_kry_f2003`` to use the MPI vector.
 
 After initialing MPI, the MPI parallel vectors are created using
 ``FN_VNew_Parallel`` with the default MPI communicator and the local and global
@@ -117,7 +117,7 @@ vector sizes as its first three arguments. The rank of the local process,
 the global and local indices to the vector ``u`` are related by ``iglobal =
 ilocal + mype*nlocal``. In other respects, the problem setup (KINSOL
 initialization, linear solver creation and specification, etc.) and solution
-steps are the same as in ``kinDiagon_kry_f2003``. Upon successful return from
+steps are the same as in ``kin_diagonal_kry_f2003``. Upon successful return from
 ``FKINSol``, the solution on all ranks is printed and statistics are output from
 the root processes. Finally, the allocated memory is released and the MPI
 environment is finalized.
@@ -125,9 +125,9 @@ environment is finalized.
 For this simple example, no inter-process communication is required to evaluate
 the nonlinear system function or the preconditioner. As a consequence, the
 user-supplied routines ``func``, ``kpsetup``, and ``kpsolve`` are basically
-identical to those in ``kinDiagon_kry_f2003``.
+identical to those in ``kin_diagonal_kry_f2003``.
 
-The following is sample output from ``kin_diagon_kry_2003`` using 4 MPI ranks.
+The following is sample output from ``kin_diagonal_kry_p_f2003`` using 4 MPI ranks.
 
-.. literalinclude:: ../../../../examples/kinsol/F2003_parallel/kin_diagon_kry_f2003.out
+.. literalinclude:: ../../../../examples/kinsol/kin_diagonal/fortran_mpi/kin_diagonal_kry_p_f2003.out
    :language: none
