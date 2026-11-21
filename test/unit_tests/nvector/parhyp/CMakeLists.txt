@@ -29,12 +29,6 @@ set(nvector_parhyp_examples
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector test_mpinvector)
 
-# Add source directory to include directories
-include_directories(. ..)
-include_directories(${HYPRE_INC_PATH})
-include_directories(${HYPRE_INC_DIR})
-include_directories(${HYPRE_LIB_DIR})
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecparhyp)
 
@@ -46,9 +40,6 @@ list(APPEND SUNDIALS_LIBS)
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 # Add the build and install targets for each example

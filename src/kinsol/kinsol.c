@@ -160,7 +160,7 @@
 /* Shortcuts                                                       */
 /*=================================================================*/
 
-#if defined(SUNDIALS_ENABLE_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
 #define KIN_PROFILER kin_mem->kin_sunctx->profiler
 #endif
 

@@ -27,9 +27,6 @@ set(sunmatrix_onemkldense_examples
     "test_sunmatrix_onemkldense.cpp\;200 10 100 0\;"
     "test_sunmatrix_onemkldense.cpp\;10 200 100 0\;")
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunmatrix_onemkldense_examples})
 

@@ -24,9 +24,6 @@ set(examples_list
     "test_nvector_mpiraja.cpp\;1000 0\;1\;4\;" # run parallel on 4 procs
 )
 
-# Add source directory to include directories
-include_directories(. ..)
-
 if(SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   set(_lang CUDA)
 else()
