@@ -404,11 +404,8 @@ static void splittingStep_Free(ARKodeMem ark_mem)
   ARKodeSplittingStepMem step_mem = (ARKodeSplittingStepMem)ark_mem->step_mem;
   if (step_mem != NULL)
   {
-    if (step_mem->steppers != NULL) { free(step_mem->steppers); }
-    if (step_mem->n_stepper_evolves != NULL)
-    {
-      free(step_mem->n_stepper_evolves);
-    }
+    free(step_mem->steppers);
+    free(step_mem->n_stepper_evolves);
     SplittingStepCoefficients_Destroy(&step_mem->coefficients);
     free(step_mem);
   }
@@ -606,7 +603,7 @@ static int splittingStep_InitStepMem(ARKodeMem ark_mem,
                                      ARKodeSplittingStepMem step_mem,
                                      SUNStepper* steppers, int partitions)
 {
-  if (step_mem->steppers != NULL) { free(step_mem->steppers); }
+  free(step_mem->steppers);
   step_mem->steppers = malloc(partitions * sizeof(*steppers));
   if (step_mem->steppers == NULL)
   {
@@ -616,10 +613,7 @@ static int splittingStep_InitStepMem(ARKodeMem ark_mem,
   }
   memcpy(step_mem->steppers, steppers, partitions * sizeof(*steppers));
 
-  if (step_mem->n_stepper_evolves != NULL)
-  {
-    free(step_mem->n_stepper_evolves);
-  }
+  free(step_mem->n_stepper_evolves);
   step_mem->n_stepper_evolves = calloc(partitions,
                                        sizeof(*step_mem->n_stepper_evolves));
 

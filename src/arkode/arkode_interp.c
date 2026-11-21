@@ -42,10 +42,11 @@ int arkInterpResize(ARKodeMem ark_mem, ARKInterp interp, ARKVecResizeFn resize,
   return ((int)interp->ops->resize(ark_mem, interp, resize, resize_data, tmpl));
 }
 
-void arkInterpFree(ARKInterp interp)
+void arkInterpFree(ARKInterp* interp)
 {
-  if (interp == NULL) { return; }
-  interp->ops->free(interp);
+  if ((interp == NULL) || (*interp == NULL)) { return; }
+  (*interp)->ops->free(*interp);
+  *interp = NULL;
   return;
 }
 
@@ -208,37 +209,18 @@ void arkInterpFree_Hermite(ARKInterp interp)
   /* free content */
   if (interp->content != NULL)
   {
-    if (HINT_FOLD(interp) != NULL)
-    {
-      arkFreeVec(&(HINT_FOLD(interp)));
-      HINT_FOLD(interp) = NULL;
-    }
-    if (HINT_YOLD(interp) != NULL)
-    {
-      arkFreeVec(&(HINT_YOLD(interp)));
-      HINT_YOLD(interp) = NULL;
-    }
-    if (HINT_FA(interp) != NULL)
-    {
-      arkFreeVec(&(HINT_FA(interp)));
-      HINT_FA(interp) = NULL;
-    }
-    if (HINT_FB(interp) != NULL)
-    {
-      arkFreeVec(&(HINT_FB(interp)));
-      HINT_FB(interp) = NULL;
-    }
+    arkFreeVec(&(HINT_FOLD(interp)));
+    arkFreeVec(&(HINT_YOLD(interp)));
+    arkFreeVec(&(HINT_FA(interp)));
+    arkFreeVec(&(HINT_FB(interp)));
 
     free(interp->content);
     interp->content = NULL;
   }
 
   /* free ops and interpolation structures */
-  if (interp->ops)
-  {
-    free(interp->ops);
-    interp->ops = NULL;
-  }
+  free(interp->ops);
+  interp->ops = NULL;
   free(interp);
 
   return;
@@ -323,7 +305,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FOLD(interp))))
     {
-      arkInterpFree(interp);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -331,7 +313,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_YOLD(interp))))
     {
-      arkInterpFree(interp);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -339,7 +321,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FA(interp))))
     {
-      arkInterpFree(interp);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -347,7 +329,7 @@ int arkInterpInit_Hermite(ARKodeMem ark_mem, ARKInterp interp, sunrealtype tnew)
   {
     if (!arkAllocVec(ark_mem, ark_mem->yn, &(HINT_FB(interp))))
     {
-      arkInterpFree(interp);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -889,31 +871,21 @@ void arkInterpFree_Lagrange(ARKInterp I)
     {
       for (i = 0; i < LINT_NMAXALLOC(I); i++)
       {
-        if (LINT_YJ(I, i) != NULL)
-        {
-          arkFreeVec(&(LINT_YJ(I, i)));
-          LINT_YJ(I, i) = NULL;
-        }
+        if (LINT_YJ(I, i) != NULL) { arkFreeVec(&(LINT_YJ(I, i))); }
       }
       free(LINT_YHIST(I));
       LINT_YHIST(I) = NULL;
     }
-    if (LINT_THIST(I) != NULL)
-    {
-      free(LINT_THIST(I));
-      LINT_THIST(I) = NULL;
-    }
+    free(LINT_THIST(I));
+    LINT_THIST(I) = NULL;
 
     free(I->content);
     I->content = NULL;
   }
 
   /* free ops and interpolation structures */
-  if (I->ops)
-  {
-    free(I->ops);
-    I->ops = NULL;
-  }
+  free(I->ops);
+  I->ops = NULL;
   free(I);
 
   return;
@@ -1000,29 +972,24 @@ int arkInterpSetDegree_Lagrange(ARKodeMem ark_mem, ARKInterp I, int degree)
   ---------------------------------------------------------------*/
 int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
 {
-  int i;
+  int i, nmaxalloc;
 
   /* check if storage has increased since the last init */
   if (LINT_NMAX(I) > LINT_NMAXALLOC(I))
   {
-    if (LINT_THIST(I) != NULL)
-    {
-      free(LINT_THIST(I));
-      LINT_THIST(I) = NULL;
-    }
+    nmaxalloc = LINT_NMAXALLOC(I);
+    free(LINT_THIST(I));
+    LINT_THIST(I) = NULL;
     if (LINT_YHIST(I) != NULL)
     {
-      for (i = 0; i < LINT_NMAXALLOC(I); i++)
+      for (i = 0; i < nmaxalloc; i++)
       {
-        if (LINT_YJ(I, i) != NULL)
-        {
-          arkFreeVec(&(LINT_YJ(I, i)));
-          LINT_YJ(I, i) = NULL;
-        }
+        if (LINT_YJ(I, i) != NULL) { arkFreeVec(&(LINT_YJ(I, i))); }
       }
       free(LINT_YHIST(I));
       LINT_YHIST(I) = NULL;
     }
+    LINT_NMAXALLOC(I) = 0;
   }
 
   /* allocate storage for time and solution histories */
@@ -1031,7 +998,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
     LINT_THIST(I) = (sunrealtype*)malloc(LINT_NMAX(I) * sizeof(sunrealtype));
     if (LINT_THIST(I) == NULL)
     {
-      arkInterpFree(I);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
   }
@@ -1042,7 +1009,7 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
     LINT_YHIST(I) = (N_Vector*)malloc(LINT_NMAX(I) * sizeof(N_Vector));
     if (LINT_YHIST(I) == NULL)
     {
-      arkInterpFree(I);
+      arkInterpFree(&ark_mem->interp);
       return (ARK_MEM_FAIL);
     }
     for (i = 0; i < LINT_NMAX(I); i++)
@@ -1050,14 +1017,12 @@ int arkInterpInit_Lagrange(ARKodeMem ark_mem, ARKInterp I, sunrealtype tnew)
       LINT_YJ(I, i) = NULL;
       if (!arkAllocVec(ark_mem, ark_mem->yn, &(LINT_YJ(I, i))))
       {
-        arkInterpFree(I);
+        arkInterpFree(&ark_mem->interp);
         return (ARK_MEM_FAIL);
       }
+      LINT_NMAXALLOC(I) = i + 1;
     }
   }
-
-  /* update allocated size if necessary */
-  if (LINT_NMAX(I) > LINT_NMAXALLOC(I)) { LINT_NMAXALLOC(I) = LINT_NMAX(I); }
 
   /* zero out history (to be safe) */
   for (i = 0; i < LINT_NMAXALLOC(I); i++) { LINT_TJ(I, i) = SUN_RCONST(0.0); }

@@ -138,59 +138,32 @@ int KINInitAA(KINMem kin_mem)
 
 void KINFreeAA(KINMem kin_mem)
 {
-  if (kin_mem->kin_gamma_aa)
-  {
-    free(kin_mem->kin_gamma_aa);
-    kin_mem->kin_gamma_aa = NULL;
-  }
+  free(kin_mem->kin_gamma_aa);
+  kin_mem->kin_gamma_aa = NULL;
 
-  if (kin_mem->kin_R_aa)
-  {
-    free(kin_mem->kin_R_aa);
-    kin_mem->kin_R_aa = NULL;
-  }
+  free(kin_mem->kin_R_aa);
+  kin_mem->kin_R_aa = NULL;
 
-  if (kin_mem->kin_q_aa)
-  {
-    N_VDestroyVectorArray(kin_mem->kin_q_aa, (int)kin_mem->kin_m_aa);
-    kin_mem->kin_q_aa = NULL;
-  }
+  N_VDestroyVectorArray(kin_mem->kin_q_aa, (int)kin_mem->kin_m_aa);
+  kin_mem->kin_q_aa = NULL;
 
-  if (kin_mem->kin_df_aa)
-  {
-    N_VDestroyVectorArray(kin_mem->kin_df_aa, (int)kin_mem->kin_m_aa);
-    kin_mem->kin_df_aa = NULL;
-  }
+  N_VDestroyVectorArray(kin_mem->kin_df_aa, (int)kin_mem->kin_m_aa);
+  kin_mem->kin_df_aa = NULL;
 
-  if (kin_mem->kin_dg_aa)
-  {
-    N_VDestroyVectorArray(kin_mem->kin_dg_aa, (int)kin_mem->kin_m_aa);
-    kin_mem->kin_dg_aa = NULL;
-  }
+  N_VDestroyVectorArray(kin_mem->kin_dg_aa, (int)kin_mem->kin_m_aa);
+  kin_mem->kin_dg_aa = NULL;
 
-  if (kin_mem->kin_fold_aa)
-  {
-    N_VDestroy(kin_mem->kin_fold_aa);
-    kin_mem->kin_fold_aa = NULL;
-  }
+  N_VDestroy(kin_mem->kin_fold_aa);
+  kin_mem->kin_fold_aa = NULL;
 
-  if (kin_mem->kin_gold_aa)
-  {
-    N_VDestroy(kin_mem->kin_gold_aa);
-    kin_mem->kin_gold_aa = NULL;
-  }
+  N_VDestroy(kin_mem->kin_gold_aa);
+  kin_mem->kin_gold_aa = NULL;
 
-  if (kin_mem->kin_cv)
-  {
-    free(kin_mem->kin_cv);
-    kin_mem->kin_cv = NULL;
-  }
+  free(kin_mem->kin_cv);
+  kin_mem->kin_cv = NULL;
 
-  if (kin_mem->kin_Xv)
-  {
-    free(kin_mem->kin_Xv);
-    kin_mem->kin_Xv = NULL;
-  }
+  free(kin_mem->kin_Xv);
+  kin_mem->kin_Xv = NULL;
 
   // Reset AA workspace size
   kin_mem->kin_m_aa_alloc = 0;

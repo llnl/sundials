@@ -59,11 +59,8 @@ int SPRKStepSetMethod(void* arkode_mem, ARKodeSPRKTable sprk_storage)
                                         &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  if (step_mem->method)
-  {
-    ARKodeSPRKTable_Free(step_mem->method);
-    step_mem->method = NULL;
-  }
+  ARKodeSPRKTable_Free(step_mem->method);
+  step_mem->method = NULL;
 
   step_mem->method = ARKodeSPRKTable_Copy(sprk_storage);
 
@@ -86,11 +83,8 @@ int SPRKStepSetMethodName(void* arkode_mem, const char* method)
                                         &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  if (step_mem->method)
-  {
-    ARKodeSPRKTable_Free(step_mem->method);
-    step_mem->method = NULL;
-  }
+  ARKodeSPRKTable_Free(step_mem->method);
+  step_mem->method = NULL;
 
   step_mem->method = ARKodeSPRKTable_LoadByName(method);
 
@@ -229,11 +223,8 @@ int sprkStep_SetOrder(ARKodeMem ark_mem, int ord)
   if (ord <= 0) { step_mem->q = 4; }
   else { step_mem->q = ord; }
 
-  if (step_mem->method)
-  {
-    ARKodeSPRKTable_Free(step_mem->method);
-    step_mem->method = NULL;
-  }
+  ARKodeSPRKTable_Free(step_mem->method);
+  step_mem->method = NULL;
 
   return (ARK_SUCCESS);
 }

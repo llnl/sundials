@@ -2690,16 +2690,10 @@ void lsrkStep_Free(ARKodeMem ark_mem)
     step_mem = (ARKodeLSRKStepMem)ark_mem->step_mem;
 
     /* free the reusable arrays for fused vector interface */
-    if (step_mem->cvals != NULL)
-    {
-      free(step_mem->cvals);
-      step_mem->cvals = NULL;
-    }
-    if (step_mem->Xvecs != NULL)
-    {
-      free(step_mem->Xvecs);
-      step_mem->Xvecs = NULL;
-    }
+    free(step_mem->cvals);
+    step_mem->cvals = NULL;
+    free(step_mem->Xvecs);
+    step_mem->Xvecs = NULL;
 
     /* free the time stepper module itself */
     free(ark_mem->step_mem);
@@ -3425,29 +3419,28 @@ int lsrkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
     step_mem->user_data_wrap = (void*)ark_mem;
 
     /* verify that cvals and Xvecs are long enough to accommodate forcing */
-    if (step_mem->nfusedopvecs < (nvecs + 1))
+    if ((step_mem->cvals == NULL) || (step_mem->Xvecs == NULL) ||
+        (step_mem->nfusedopvecs < (nvecs + 1)))
     {
       /* free current work space */
-      if (step_mem->cvals != NULL)
+      free(step_mem->cvals);
+      step_mem->cvals = NULL;
+      free(step_mem->Xvecs);
+      step_mem->Xvecs        = NULL;
+      step_mem->nfusedopvecs = 0;
+
+      /* allocate reusable arrays for fused vector operations */
+      int nfusedopvecs = nvecs + 1;
+      step_mem->cvals = (sunrealtype*)calloc(nfusedopvecs, sizeof(sunrealtype));
+      if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
+      step_mem->Xvecs = (N_Vector*)calloc(nfusedopvecs, sizeof(N_Vector));
+      if (step_mem->Xvecs == NULL)
       {
         free(step_mem->cvals);
         step_mem->cvals = NULL;
+        return (ARK_MEM_FAIL);
       }
-      if (step_mem->Xvecs != NULL)
-      {
-        free(step_mem->Xvecs);
-        step_mem->Xvecs = NULL;
-      }
-
-      /* allocate reusable arrays for fused vector operations */
-      step_mem->nfusedopvecs = nvecs + 1;
-
-      step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
-                                             sizeof(sunrealtype));
-      if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-      step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
-                                          sizeof(N_Vector));
-      if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
+      step_mem->nfusedopvecs = nfusedopvecs;
     }
   }
   else

@@ -550,7 +550,8 @@ void MRIStepCoupling_Free(MRIStepCoupling MRIC)
      free structure itself */
   if (MRIC)
   {
-    if (MRIC->c) { free(MRIC->c); }
+    free(MRIC->c);
+    MRIC->c = NULL;
 
     if (MRIC->W)
     {
@@ -560,11 +561,8 @@ void MRIStepCoupling_Free(MRIStepCoupling MRIC)
         {
           for (i = 0; i <= MRIC->stages; i++)
           {
-            if (MRIC->W[k][i])
-            {
-              free(MRIC->W[k][i]);
-              MRIC->W[k][i] = NULL;
-            }
+            free(MRIC->W[k][i]);
+            MRIC->W[k][i] = NULL;
           }
           free(MRIC->W[k]);
           MRIC->W[k] = NULL;
@@ -581,11 +579,8 @@ void MRIStepCoupling_Free(MRIStepCoupling MRIC)
         {
           for (i = 0; i <= MRIC->stages; i++)
           {
-            if (MRIC->G[k][i])
-            {
-              free(MRIC->G[k][i]);
-              MRIC->G[k][i] = NULL;
-            }
+            free(MRIC->G[k][i]);
+            MRIC->G[k][i] = NULL;
           }
           free(MRIC->G[k]);
           MRIC->G[k] = NULL;
@@ -598,11 +593,8 @@ void MRIStepCoupling_Free(MRIStepCoupling MRIC)
     {
       for (i = 0; i < MRIC->stages; i++)
       {
-        if (MRIC->group[i])
-        {
-          free(MRIC->group[i]);
-          MRIC->group[i] = NULL;
-        }
+        free(MRIC->group[i]);
+        MRIC->group[i] = NULL;
       }
       free(MRIC->group);
     }
