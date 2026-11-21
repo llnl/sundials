@@ -29,8 +29,8 @@ void bind_sunmatrix_dense(nb::module_& m)
 {
 #include "sunmatrix_dense_generated.hpp"
 
-  m.def(
-    "SUNDenseMatrix_Data",
+  sundials4py::scoped_def(
+    m, "SUNDenseMatrix_Data",
     [](SUNMatrix A)
     {
       auto rows  = static_cast<size_t>(SUNDenseMatrix_Rows(A));

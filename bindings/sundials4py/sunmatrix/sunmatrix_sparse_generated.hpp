@@ -11,8 +11,8 @@ auto pyClass_SUNMatrixContent_Sparse =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNSparseMatrix",
+sundials4py::scoped_def(
+  m, "SUNSparseMatrix",
   [](sunindextype M, sunindextype N, sunindextype NNZ, int sparsetype,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -32,8 +32,8 @@ m.def(
   nb::arg("M"), nb::arg("N"), nb::arg("NNZ"), nb::arg("sparsetype"),
   nb::arg("sunctx"), "nb::keep_alive<0, 5>()", nb::keep_alive<0, 5>());
 
-m.def(
-  "SUNSparseFromDenseMatrix",
+sundials4py::scoped_def(
+  m, "SUNSparseFromDenseMatrix",
   [](SUNMatrix A, sunrealtype droptol,
      int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -52,8 +52,8 @@ m.def(
   },
   nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"));
 
-m.def(
-  "SUNSparseFromBandMatrix",
+sundials4py::scoped_def(
+  m, "SUNSparseFromBandMatrix",
   [](SUNMatrix A, sunrealtype droptol,
      int sparsetype) -> std::shared_ptr<std::remove_pointer_t<SUNMatrix>>
   {
@@ -72,8 +72,8 @@ m.def(
   },
   nb::arg("A"), nb::arg("droptol"), nb::arg("sparsetype"));
 
-m.def(
-  "SUNSparseMatrix_ToCSR",
+sundials4py::scoped_def(
+  m, "SUNSparseMatrix_ToCSR",
   [](const SUNMatrix A)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
@@ -103,8 +103,8 @@ m.def(
   },
   nb::arg("A"), nb::rv_policy::reference);
 
-m.def(
-  "SUNSparseMatrix_ToCSC",
+sundials4py::scoped_def(
+  m, "SUNSparseMatrix_ToCSC",
   [](const SUNMatrix A)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNMatrix>>>
   {
@@ -134,23 +134,29 @@ m.def(
   },
   nb::arg("A"), nb::rv_policy::reference);
 
-m.def("SUNSparseMatrix_Realloc", SUNSparseMatrix_Realloc, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_Realloc", SUNSparseMatrix_Realloc,
+                        nb::arg("A"));
 
-m.def("SUNSparseMatrix_Reallocate", SUNSparseMatrix_Reallocate, nb::arg("A"),
-      nb::arg("NNZ"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_Reallocate",
+                        SUNSparseMatrix_Reallocate, nb::arg("A"), nb::arg("NNZ"));
 
-m.def("SUNSparseMatrix_Print", SUNSparseMatrix_Print, nb::arg("A"),
-      nb::arg("outfile"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_Print", SUNSparseMatrix_Print,
+                        nb::arg("A"), nb::arg("outfile"));
 
-m.def("SUNSparseMatrix_Rows", SUNSparseMatrix_Rows, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_Rows", SUNSparseMatrix_Rows,
+                        nb::arg("A"));
 
-m.def("SUNSparseMatrix_Columns", SUNSparseMatrix_Columns, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_Columns", SUNSparseMatrix_Columns,
+                        nb::arg("A"));
 
-m.def("SUNSparseMatrix_NNZ", SUNSparseMatrix_NNZ, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_NNZ", SUNSparseMatrix_NNZ,
+                        nb::arg("A"));
 
-m.def("SUNSparseMatrix_NP", SUNSparseMatrix_NP, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_NP", SUNSparseMatrix_NP,
+                        nb::arg("A"));
 
-m.def("SUNSparseMatrix_SparseType", SUNSparseMatrix_SparseType, nb::arg("A"));
+sundials4py::scoped_def(m, "SUNSparseMatrix_SparseType",
+                        SUNSparseMatrix_SparseType, nb::arg("A"));
 // #ifdef __cplusplus
 //
 // #endif

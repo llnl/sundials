@@ -74,6 +74,15 @@ def test_set_initial_guess(estimator_type, sunctx):
 
 
 @pytest.mark.parametrize("estimator_type", ["power"])
+def test_set_rhs_linearization_point(estimator_type, sunctx):
+    # The generic binding must expose this setter without confusing it with the
+    # callback-taking SUNDomEigEstimator_SetRhs function.
+    est, nvec = make_estimator(estimator_type, sunctx)
+    status = SUNDomEigEstimator_SetRhsLinearizationPoint(est, 1.25, nvec)
+    assert status == SUN_SUCCESS
+
+
+@pytest.mark.parametrize("estimator_type", ["power"])
 def test_initialize(estimator_type, sunctx):
     est, nvec = make_estimator(estimator_type, sunctx)
     status = SUNDomEigEstimator_Initialize(est)

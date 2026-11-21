@@ -74,8 +74,8 @@ void bind_arkode_arkstep(nb::module_& m)
   // ARKStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "ARKStepCreate",
+  sundials4py::scoped_def(
+    m, "ARKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fe,
        std::function<std::remove_pointer_t<ARKRhsFn>> fi, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)
@@ -111,8 +111,8 @@ void bind_arkode_arkstep(nb::module_& m)
     nb::arg("fe").none(), nb::arg("fi").none(), nb::arg("t0"), nb::arg("y0"),
     nb::arg("sunctx"), nb::keep_alive<0, 5>());
 
-  m.def(
-    "ARKStepCreateAdjointStepper",
+  sundials4py::scoped_def(
+    m, "ARKStepCreateAdjointStepper",
     [](void* arkode_mem, std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_fe,
        std::function<std::remove_pointer_t<SUNAdjRhsFn>> adj_fi, sunrealtype tf,
        N_Vector sf, SUNContext sunctx) -> std::tuple<int, SUNAdjointStepper>

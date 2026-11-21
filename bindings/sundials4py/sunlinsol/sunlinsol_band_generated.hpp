@@ -9,8 +9,8 @@ auto pyClass_SUNLinearSolverContent_Band =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNLinSol_Band",
+sundials4py::scoped_def(
+  m, "SUNLinSol_Band",
   [](N_Vector y, SUNMatrix A,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>>
   {

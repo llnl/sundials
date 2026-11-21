@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * SUNDIALS Copyright End
  * -----------------------------------------------------------------
- * This file defines the sundials4py.core module. 
+ * This file defines the sundials4py.core module.
  * -----------------------------------------------------------------*/
 
 #include "sundials/sundials_types.h"
@@ -53,16 +53,20 @@ void bind_core(nb::module_& m)
 
   // handle opening and closing C files
   nb::class_<FILE>(m, "FILE");
-  m.def("SUNFileOpen",
-        [](const char* filename, const char* modes)
-        {
-          FILE* tmp = nullptr;
-          std::shared_ptr<FILE> fp;
-          SUNErrCode status = SUNFileOpen(filename, modes, &tmp);
-          if (status) { fp = nullptr; }
-          else { fp = std::shared_ptr<FILE>(tmp, std::fclose); }
-          return std::make_tuple(status, fp);
-        });
+  sundials4py::scoped_def(m, "SUNFileOpen",
+                          [](const char* filename, const char* modes)
+                          {
+                            FILE* tmp = nullptr;
+                            std::shared_ptr<FILE> fp;
+                            SUNErrCode status = SUNFileOpen(filename, modes,
+                                                            &tmp);
+                            if (status) { fp = nullptr; }
+                            else
+                            {
+                              fp = std::shared_ptr<FILE>(tmp, std::fclose);
+                            }
+                            return std::make_tuple(status, fp);
+                          });
 
   bind_nvector(m);
   bind_sunadaptcontroller(m);

@@ -49,8 +49,8 @@ void bind_arkode_sprkstep(nb::module_& m)
   // SPRKStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  m.def(
-    "SPRKStepCreate",
+  sundials4py::scoped_def(
+    m, "SPRKStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> f1,
        std::function<std::remove_pointer_t<ARKRhsFn>> f2, sunrealtype t0,
        N_Vector y0, SUNContext sunctx)

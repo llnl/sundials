@@ -35,8 +35,8 @@ void bind_sunadjointcheckpointscheme_fixed(nb::module_& m)
 {
 #include "sunadjointcheckpointscheme_fixed_generated.hpp"
 
-  m.def(
-    "SUNAdjointCheckpointScheme_Create_Fixed",
+  sundials4py::scoped_def(
+    m, "SUNAdjointCheckpointScheme_Create_Fixed",
     [](SUNDataIOMode io_mode, SUNMemoryHelper mem_helper, suncountertype interval,
        suncountertype estimate, sunbooleantype keep, SUNContext sunctx)
       -> std::tuple<SUNErrCode,

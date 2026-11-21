@@ -10,8 +10,8 @@ auto pyClass_SUNLinearSolverContent_SPFGMR =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNLinSol_SPFGMR",
+sundials4py::scoped_def(
+  m, "SUNLinSol_SPFGMR",
   [](N_Vector y, int pretype, int maxl,
      SUNContext sunctx) -> std::shared_ptr<std::remove_pointer_t<SUNLinearSolver>>
   {
@@ -31,14 +31,16 @@ m.def(
   nb::arg("y"), nb::arg("pretype"), nb::arg("maxl"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNLinSol_SPFGMRSetPrecType", SUNLinSol_SPFGMRSetPrecType, nb::arg("S"),
-      nb::arg("pretype"));
+sundials4py::scoped_def(m, "SUNLinSol_SPFGMRSetPrecType",
+                        SUNLinSol_SPFGMRSetPrecType, nb::arg("S"),
+                        nb::arg("pretype"));
 
-m.def("SUNLinSol_SPFGMRSetGSType", SUNLinSol_SPFGMRSetGSType, nb::arg("S"),
-      nb::arg("gstype"));
+sundials4py::scoped_def(m, "SUNLinSol_SPFGMRSetGSType", SUNLinSol_SPFGMRSetGSType,
+                        nb::arg("S"), nb::arg("gstype"));
 
-m.def("SUNLinSol_SPFGMRSetMaxRestarts", SUNLinSol_SPFGMRSetMaxRestarts,
-      nb::arg("S"), nb::arg("maxrs"));
+sundials4py::scoped_def(m, "SUNLinSol_SPFGMRSetMaxRestarts",
+                        SUNLinSol_SPFGMRSetMaxRestarts, nb::arg("S"),
+                        nb::arg("maxrs"));
 // #ifdef __cplusplus
 //
 // #endif

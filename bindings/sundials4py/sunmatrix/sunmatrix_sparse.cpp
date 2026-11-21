@@ -29,8 +29,8 @@ void bind_sunmatrix_sparse(nb::module_& m)
 {
 #include "sunmatrix_sparse_generated.hpp"
 
-  m.def(
-    "SUNSparseMatrix_Data",
+  sundials4py::scoped_def(
+    m, "SUNSparseMatrix_Data",
     [](SUNMatrix A)
     {
       auto nnz   = static_cast<size_t>(SUNSparseMatrix_NNZ(A));
@@ -43,8 +43,8 @@ void bind_sunmatrix_sparse(nb::module_& m)
     },
     nb::arg("A"), nb::rv_policy::reference);
 
-  m.def(
-    "SUNSparseMatrix_IndexValues",
+  sundials4py::scoped_def(
+    m, "SUNSparseMatrix_IndexValues",
     [](SUNMatrix A)
     {
       auto nnz   = static_cast<size_t>(SUNSparseMatrix_NNZ(A));
@@ -56,8 +56,8 @@ void bind_sunmatrix_sparse(nb::module_& m)
     },
     nb::arg("A"), nb::rv_policy::reference);
 
-  m.def(
-    "SUNSparseMatrix_IndexPointers",
+  sundials4py::scoped_def(
+    m, "SUNSparseMatrix_IndexPointers",
     [](SUNMatrix A)
     {
       auto np    = static_cast<size_t>(SUNSparseMatrix_NP(A));

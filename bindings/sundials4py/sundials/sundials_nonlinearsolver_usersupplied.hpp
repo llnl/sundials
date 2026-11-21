@@ -1,4 +1,7 @@
 /* -----------------------------------------------------------------
+ * Programmer(s): Cody J. Balos @ LLNL
+ *                Daniel R. Reynolds @ UMBC
+ * -----------------------------------------------------------------
  * SUNDIALS Copyright Start
  * Copyright (c) 2025-2026, Lawrence Livermore National Security,
  * University of Maryland Baltimore County, and the SUNDIALS contributors.
@@ -41,6 +44,18 @@ struct SUNNonlinearSolverFunctionTable
   nb::object getupdatenormfn;
   nb::object getconvratefn;
 };
+
+/* Return the solver's Python function table, creating it on first use. Core
+   SUNNonlinSolFree destroys it before delegating to the implementation. */
+inline SUNNonlinearSolverFunctionTable* sunnonlinearsolver_function_table(
+  SUNNonlinearSolver NLS)
+{
+  if (NLS->python == nullptr)
+  {
+    NLS->python = new SUNNonlinearSolverFunctionTable;
+  }
+  return static_cast<SUNNonlinearSolverFunctionTable*>(NLS->python);
+}
 
 template<typename... Args>
 inline int sunnonlinearsolver_sysfn_wrapper(Args... args)
