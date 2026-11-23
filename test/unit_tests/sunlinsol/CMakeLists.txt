@@ -18,7 +18,6 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
@@ -35,6 +34,7 @@ add_subdirectory(pcg/serial)
 
 # Build the sunlinsol test utilities
 add_library(test_sunlinsol_obj OBJECT test_sunlinsol.c test_sunlinsol.h)
+sundials_add_platform_definitions(test_sunlinsol_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
@@ -42,6 +42,8 @@ if(BUILD_SHARED_LIBS)
                                                   TRUE)
 endif()
 target_link_libraries(test_sunlinsol_obj PRIVATE sundials_sunlinsoldense)
+target_include_directories(test_sunlinsol_obj
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(pcg/parallel)
