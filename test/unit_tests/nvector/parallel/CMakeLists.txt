@@ -34,24 +34,15 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_parallel_fortran_examples "test_fnvector_parallel_mod\;\;1\;4\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 if(SUNDIALS_ENABLE_FORTRAN)
   if(MPI_Fortran_COMPILER)
     # use MPI wrapper as the compiler
     set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
-  else()
-    # add MPI_INCLUDE_PATH to include directories
-    include_directories(${MPI_INCLUDE_PATH})
   endif()
 endif()
 

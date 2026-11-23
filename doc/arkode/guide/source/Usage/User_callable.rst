@@ -785,6 +785,8 @@ the user has set a stop time (with a call to the optional input function
 
                           (d) The initial condition violates the inequality constraints.
 
+   :retval ARK_TOO_CLOSE: the initial time and the output time *tout* are
+                          too close to each other.
    :retval ARK_TOO_MUCH_WORK: the solver took *mxstep* internal steps
                               but could not reach *tout*.  The default value for
                               *mxstep* is *MXSTEP_DEFAULT = 500*.

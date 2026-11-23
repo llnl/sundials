@@ -33,9 +33,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_klu_fortran_examples "test_fsunlinsol_klu_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunlinsol_klu_examples})
 
@@ -49,6 +46,7 @@ foreach(example_tuple ${sunlinsol_klu_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.c ../test_sunlinsol.c)
+    target_include_directories(${example} PRIVATE ..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
