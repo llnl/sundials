@@ -3040,14 +3040,8 @@ int lsrkStep_ComputeNewDomEig(ARKodeMem ark_mem, ARKodeLSRKStepMem step_mem)
     return ARK_DOMEIG_FAIL;
   }
 
-  if (step_mem->lambdaR * ark_mem->h > SUNRsqrt(SUN_UNIT_ROUNDOFF))
-  {
-    arkProcessError(NULL, ARK_DOMEIG_FAIL, __LINE__, __func__, __FILE__,
-                    "lambdaR*h must be nonpositive");
-    return ARK_DOMEIG_FAIL;
-  }
-  else if (step_mem->lambdaR == SUN_RCONST(0.0) &&
-           SUNRabs(step_mem->lambdaI) > SUN_RCONST(0.0))
+  if (step_mem->lambdaR == SUN_RCONST(0.0) &&
+      SUNRabs(step_mem->lambdaI) > SUN_RCONST(0.0))
   {
     arkProcessError(NULL, ARK_DOMEIG_FAIL, __LINE__, __func__, __FILE__,
                     "DomEig cannot be purely imaginary");
