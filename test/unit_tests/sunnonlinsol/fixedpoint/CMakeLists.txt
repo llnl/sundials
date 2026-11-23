@@ -30,9 +30,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(fortran_examples "test_fsunnonlinsol_fixedpoint_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(.)
-
 # Specify libraries to link against
 set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunnonlinsolfixedpoint)

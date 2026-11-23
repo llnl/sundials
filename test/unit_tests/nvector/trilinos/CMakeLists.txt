@@ -39,9 +39,6 @@ else()
   set(nvector_examples_dependencies test_nvector)
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvectrilinos)
 

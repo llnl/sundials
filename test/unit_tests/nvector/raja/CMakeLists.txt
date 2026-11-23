@@ -21,9 +21,6 @@
 # examples excluded from 'make test' in releases
 set(examples_list "test_nvector_raja.cpp\;1000 0\;")
 
-# Add source directory to include directories
-include_directories(. .. ${SUNDIALS_SOURCE_DIR}/examples/utilities)
-
 if(SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   set(_lang CUDA)
 else()
@@ -57,6 +54,8 @@ foreach(example_tuple ${examples_list})
 
     # add example source files
     sundials_add_executable(${example_target} ${example})
+    target_include_directories(
+      ${example_target} PRIVATE ${SUNDIALS_SOURCE_DIR}/examples/utilities)
 
     set_source_files_properties(${example_target} PROPERTIES LANGUAGE ${_lang})
 

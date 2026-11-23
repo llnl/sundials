@@ -30,6 +30,7 @@ if(TARGET GTest::gtest_main AND TARGET GTest::gmock)
 
     add_executable(
       ${test} ${test}.cpp ${PROJECT_SOURCE_DIR}/src/sundials/sundials_hashmap.c)
+    sundials_add_platform_definitions(${test})
     target_link_libraries(
       ${test} PRIVATE sundials_core sundials_nvecserial sundials_sunmemsys_obj
                       GTest::gtest_main GTest::gmock)
