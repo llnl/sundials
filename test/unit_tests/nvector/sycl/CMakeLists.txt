@@ -25,9 +25,6 @@ set(nvector_sycl_examples
     "test_nvector_sycl.cpp\;7 32 0\;" "test_nvector_sycl.cpp\;500 128 0\;"
     "test_nvector_sycl.cpp\;1000 0 0\;")
 
-# Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${nvector_sycl_examples})
 
@@ -45,6 +42,8 @@ foreach(example_tuple ${nvector_sycl_examples})
 
     # example source files
     sundials_add_executable(${example_target} ${example})
+    target_include_directories(${example_target}
+                               PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
 
     # folder to organize targets in an IDE
     set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
@@ -68,6 +67,6 @@ foreach(example_tuple ${nvector_sycl_examples})
     ${test_name} ${example_target}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach()

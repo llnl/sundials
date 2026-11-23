@@ -448,7 +448,7 @@ pure relative error control is meaningless. For example, if ``y[i]`` starts at s
 nonzero value, but in time decays to zero, then pure relative error control on ``y[i]``
 makes no sense (and is overly costly) after ``y[i]`` is below some noise level. Then
 ``abstol`` (if scalar) or ``abstol[i]`` (if a vector) needs to be set to that noise level. If the different
-components have different noise levels, then ``abstol`` should be a vector. See the example  ``cvsRoberts_dns``
+components have different noise levels, then ``abstol`` should be a vector. See the example  ``cvs_roberts_dns``
 in the CVODES package, and the discussion of it in the CVODES Examples document
 :cite:p:`cvodes_ex`. In that problem, the three components vary between 0 and 1,
 and have different noise levels; hence the ``abstol`` vector. It is impossible to give any
@@ -759,7 +759,7 @@ rootfinding.
 
        (d) A root of one of the root functions was found both at a point :math:`t` and also very near :math:`t`.
 
-     * ``CV_TOO_CLOSE`` -- The initial time :math:`t_0` and the output time :math:`t_{out}` are too close to each other and the user did not specify an initial step size.
+     * ``CV_TOO_CLOSE`` -- The initial time :math:`t_0` and the output time :math:`t_{out}` are too close to each other.
      * ``CV_TOO_MUCH_WORK`` -- The solver took ``mxstep`` internal steps but still could not reach ``tout``. The default value for ``mxstep`` is ``MXSTEP_DEFAULT = 500``.
      * ``CV_TOO_MUCH_ACC`` -- The solver could not satisfy the accuracy demanded by the user for some internal step.
      * ``CV_ERR_FAILURE`` -- Either error test failures occurred too many times (``MXNEF = 7``) during one internal time step, or with :math:`|h| = h_{min}`.

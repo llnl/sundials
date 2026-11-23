@@ -785,6 +785,8 @@ the user has set a stop time (with a call to the optional input function
 
                           (d) The initial condition violates the inequality constraints.
 
+   :retval ARK_TOO_CLOSE: the initial time and the output time *tout* are
+                          too close to each other.
    :retval ARK_TOO_MUCH_WORK: the solver took *mxstep* internal steps
                               but could not reach *tout*.  The default value for
                               *mxstep* is *MXSTEP_DEFAULT = 500*.
@@ -2312,13 +2314,13 @@ Specify if the implicit RHS is deduced after a nonlinear solve  :c:func:`ARKodeS
       residual computation rather than evaluating the implicit RHS function. The
       significance of the difference will depend on how well the deduced RHS
       approximates the RHS evaluated at the trivial predictor. This behavior can
-      be observed in ``examples/arkode/C_serial/ark_brusselator.c`` by comparing
+      be observed in ``examples/arkode/ark_brusselator/c/ark_brusselator.c`` by comparing
       the outputs with :c:func:`ARKodeSetAutonomous` enabled/disabled.
 
       Similarly programs that assume the nonlinear residual will always call the
       implicit RHS function will need to be updated to account for the RHS value
       reuse when using :c:func:`ARKodeSetAutonomous`. For example,
-      ``examples/arkode/C_serial/ark_KrylovDemo_prec.c`` assumes that the
+      ``examples/arkode/ark_krylov_demo_prec/c/ark_krylov_demo_prec.c`` assumes that the
       nonlinear residual will be called and will evaluate the implicit RHS
       function before calling the preconditioner setup function. Based on this
       assumption, this example code saves some computations in the RHS
@@ -5714,7 +5716,7 @@ rescale the upcoming time step by the specified factor.  If a value
 
       **Example codes:**
 
-      * ``examples/arkode/C_serial/ark_heat1D_adapt.c``
+      * ``examples/arkode/ark_heat_1d/c_adapt/ark_heat_1d_adapt.c``
 
    .. versionadded:: 7.1.0 (ARKODE 6.1.0)
 

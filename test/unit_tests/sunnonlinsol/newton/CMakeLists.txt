@@ -27,9 +27,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(fortran_examples "test_fsunnonlinsol_newton_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(.)
-
 # Specify libraries to link against
 set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunmatrixdense)
@@ -78,7 +75,7 @@ foreach(example_tuple ${examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${examples})
 
@@ -121,6 +118,6 @@ foreach(example_tuple ${fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${fortran_examples})

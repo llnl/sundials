@@ -19,8 +19,6 @@
 
 set(examples "test_sunnonlinsol_auto\\;\\;")
 
-include_directories(.)
-
 set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunnonlinsolauto)
 list(APPEND SUNDIALS_LIBS ${EXE_EXTRA_LINK_LIBS})
@@ -46,5 +44,5 @@ foreach(example_tuple ${examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 endforeach()

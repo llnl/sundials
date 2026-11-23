@@ -1,3 +1,0 @@
-List of C_openmp KINSOL examples
-
-  kinFoodWeb_kry_omp: 2-D food web system, block-diagonal preconditioner

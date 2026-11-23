@@ -32,9 +32,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_manyvector_fortran_examples "test_fnvector_manyvector_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecserial sundials_nvecmanyvector)
 if(SUNDIALS_ENABLE_FORTRAN)
@@ -80,7 +77,7 @@ foreach(example_tuple ${nvector_manyvector_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_manyvector_examples})
 
@@ -124,6 +121,6 @@ foreach(example_tuple ${nvector_manyvector_fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_manyvector_fortran_examples})

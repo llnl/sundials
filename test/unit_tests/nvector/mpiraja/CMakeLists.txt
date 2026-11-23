@@ -24,9 +24,6 @@ set(examples_list
     "test_nvector_mpiraja.cpp\;1000 0\;1\;4\;" # run parallel on 4 procs
 )
 
-# Add source directory to include directories
-include_directories(. ..)
-
 if(SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   set(_lang CUDA)
 else()
@@ -97,6 +94,6 @@ foreach(example_tuple ${nvector_raja_examples})
     TEST_ARGS ${example_args}
     MPI_NPROCS ${number_of_tasks}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach()

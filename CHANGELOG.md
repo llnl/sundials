@@ -6,6 +6,15 @@
 
 ### New Features and Enhancements
 
+Reorganized the ARKODE, CVODE(S), IDA(S), and KINSOL examples by problem with
+subdirectories for each problem variant. The subdirectories contain the example
+source, input files, scripts, and reference output. The old example Makefiles
+are no longer installed; use the installed CMakeLists.txt files instead.
+
+The header-only Kokkos and Ginkgo N_Vector, SUNMatrix, and SUNLinearSolver
+targets are now exported by installed SUNDIALS CMake packages. The installed
+Ginkgo targets also propagate their Ginkgo dependency to consumers.
+
 Added the utility function, `SUNFileFlush` for flushing file pointers. This is
 useful when using the Fortran 2003 interfaces.
 

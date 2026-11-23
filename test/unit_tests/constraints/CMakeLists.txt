@@ -76,7 +76,7 @@ foreach(test_tuple ${unit_tests})
   sundials_add_test(
     ${test_target} ${test_target}
     LABELS "constraints"
-    NODIFF)
+    NO_DIFF)
 
 endforeach()
 
