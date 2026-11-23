@@ -1,0 +1,122 @@
+name: Build - Profiling
+
+on:
+  # Allows this workflow to be called by other workflows
+  workflow_call:
+    inputs:
+      container_tag:
+        description: 'Tag of the sundials-ci images to test against'
+        type: string
+        default: 'spack-v1.2.2'
+  # Allows manual triggering
+  workflow_dispatch:
+    inputs:
+      container_tag:
+        description: 'Tag of the sundials-ci images to test against'
+        type: string
+        default: 'spack-v1.2.2'
+
+# Cancel any in-progress workflow runs
+concurrency:
+  group: profiling-${{ inputs.container_tag }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  profiling-native:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        profiling: ['OFF', 'ON']
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Configure CMake
+      run: |
+        cmake \
+        -W error=dev \
+        -B ${{github.workspace}}/build \
+        -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+        -D CMAKE_C_COMPILER="$(which clang)" \
+        -D CMAKE_CXX_COMPILER="$(which clang++)" \
+        -D SUNDIALS_BUILD_WITH_PROFILING=${{matrix.profiling}} \
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON
+
+    - name: Build
+      run: |
+        cmake \
+        --build ${{github.workspace}}/build \
+        --config ${{env.BUILD_TYPE}}
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_profiling_native_${{ matrix.profiling }}
+        path: |
+          ${{ github.workspace }}/build
+          !${{ github.workspace }}/build/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_profiling_native_${{ matrix.profiling }}
+        path: |
+          ${{ github.workspace }}/build/Testing/
+
+  profiling-caliper:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/llnl/sundials-ci-int32-double:${{ inputs.container_tag }}
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Configure CMake
+      # Activate the spack environment first
+      shell: bash
+      run: |
+        eval "$(/opt/spack/bin/spack env activate --sh /opt/spack-environment)"
+        cmake \
+        -W error=dev \
+        -B ${{github.workspace}}/build \
+        -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+        -D SUNDIALS_BUILD_WITH_PROFILING=ON \
+        -D SUNDIALS_ENABLE_CALIPER=ON \
+        -D CALIPER_DIR=/opt/view \
+        -D SUNDIALS_ENABLE_ALL_WARNINGS=ON \
+        -D CMAKE_COMPILE_WARNING_AS_ERROR=ON
+
+    - name: Build
+      shell: bash
+      run: |
+        eval "$(/opt/spack/bin/spack env activate --sh /opt/spack-environment)"
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Archive build files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: build_files_profiling_caliper
+        path: |
+          ${{ github.workspace }}/build
+          !${{ github.workspace }}/build/Testing/output
+
+    - name: Archive output files from failed build
+      uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: output_files_profiling_caliper
+        path: |
+          ${{ github.workspace }}/build/Testing/

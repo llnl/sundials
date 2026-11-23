@@ -48,7 +48,7 @@
 /* Shortcuts                                                       */
 /*=================================================================*/
 
-#if defined(SUNDIALS_ENABLE_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
 #define CV_PROFILER cv_mem->cv_sunctx->profiler
 #endif
 
