@@ -96,14 +96,14 @@ MRIStep initialization and deallocation functions
          outer_arkode_mem = MRIStepCreate(fse, fsi, t0, y0, stepper, sunctx)
 
    **Example codes:**
-      * ``examples/arkode/C_serial/ark_brusselator_mri.c``
-      * ``examples/arkode/C_serial/ark_twowaycouple_mri.c``
-      * ``examples/arkode/C_serial/ark_brusselator_1D_mri.c``
-      * ``examples/arkode/C_serial/ark_onewaycouple_mri.c``
-      * ``examples/arkode/C_serial/ark_reaction_diffusion_mri.c``
-      * ``examples/arkode/C_serial/ark_kpr_mri.c``
-      * ``examples/arkode/CXX_parallel/ark_diffusion_reaction_p.cpp``
-      * ``examples/arkode/CXX_serial/ark_test_kpr_nestedmri.cpp``
+      * ``examples/arkode/ark_brusselator/c_mri/ark_brusselator_mri.c``
+      * ``examples/arkode/ark_two_way_couple/c/ark_two_way_couple_mri.c``
+      * ``examples/arkode/ark_brusselator/c_1d_mri/ark_brusselator_1d_mri.c``
+      * ``examples/arkode/ark_one_way_couple/c/ark_one_way_couple_mri.c``
+      * ``examples/arkode/ark_reaction_diffusion/c/ark_reaction_diffusion_mri.c``
+      * ``examples/arkode/ark_kpr/c/ark_kpr_mri.c``
+      * ``examples/arkode/ark_diffusion_reaction/cpp_mpi/ark_diffusion_reaction_p.cpp``
+      * ``examples/arkode/ark_kpr/cpp_nestedmri/ark_kpr_nestedmri.cpp``
         (uses MRIStep within itself)
 
 
@@ -162,7 +162,7 @@ MRIStep initialization and deallocation functions
          retval = LSRKStepSet*(sts_mem, ...);
 
    **Example codes:**
-      * ``examples/arkode/CXX_serial/ark_adr1d_extsts.cpp``
+      * ``examples/arkode/ark_advection_diffusion_reaction/cpp_extsts/ark_adr_1d_extsts.cpp``
 
 
 .. c:function:: void MRIStepFree(void** arkode_mem)
@@ -1647,7 +1647,7 @@ Main solver optional output functions
       MRIStep and LSRKStep components of the ExtSTS solver, they should first
       call :c:func:`ARKodeSetUserData` on the MRIStep object, and then call
       :c:func:`ARKodeSetUserData` on the LSRKStep object returned from
-      :c:func:`MRIStepCreateExtSTS`.  By default, the LSRKStep object will
+      :c:func:`MRIStepGetSTS`.  By default, the LSRKStep object will
       inherit the ``user_data`` pointer from the MRIStep object.
 
    .. versionadded:: 7.9.0 (ARKODE 6.9.0)
@@ -2604,6 +2604,10 @@ vector.
       All previously set options are retained but may be updated by calling
       the appropriate "Set" functions.
 
+      This function reinitializes both the MRIStep object and the inner
+      LSRKStep object, so the user need not reinitialize the LSRKStep object
+      returned by :c:func:`MRIStepGetSTS()` separately.
+
       If an error occurred, :c:func:`MRIStepReInitExtSTS()` also
       sends an error message to the error handler function.
 
@@ -2713,7 +2717,7 @@ MRIStep system resize function
       **Example codes:**
         For an example showing usage of the similar :c:func:`ARKStepResize()`
         routine, see the supplied serial C example problem,
-        ``ark_heat1D_adapt.c``.
+        ``ark_heat_1d_adapt.c``.
 
    .. deprecated:: 7.1.0 (ARKODE 6.1.0)
 

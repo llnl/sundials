@@ -1,4 +1,0 @@
-List of parallel KINSOL C++ examples
-
-  kin_heat2D_nonlin_p : steady-state 2-D heat equation with added nonlinear term
-  kin_em_p            : expectation-maximization problem for mixture densities
