@@ -26,9 +26,6 @@ set(examples "test_sunnonlinsol_petscsnes\;\;1\;1\;")
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 # Specify libraries to link against

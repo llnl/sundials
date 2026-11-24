@@ -39,9 +39,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
       "test_fsunlinsol_lapackdense_mod\;1000 0 0\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each sunlinsol example
 foreach(example_tuple ${sunlinsol_lapackdense_examples})
 
@@ -55,6 +52,7 @@ foreach(example_tuple ${sunlinsol_lapackdense_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.c ../test_sunlinsol.c)
+    target_include_directories(${example} PRIVATE ..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example} PROPERTIES FOLDER "Examples")

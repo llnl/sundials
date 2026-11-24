@@ -22,9 +22,6 @@
 set(examples_list "test_sunlinsol_cusolversp_batchqr.cu\;100 1 0\;"
                   "test_sunlinsol_cusolversp_batchqr.cu\;10 10 0\;")
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${examples_list})
 
@@ -42,6 +39,7 @@ foreach(example_tuple ${examples_list})
     # example source files
     sundials_add_executable(${example_target} ${example} ../test_sunlinsol.c
                             ../test_sunlinsol.h)
+    target_include_directories(${example_target} PRIVATE ..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example_target} PROPERTIES FOLDER "Examples")

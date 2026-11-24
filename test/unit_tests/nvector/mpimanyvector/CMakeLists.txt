@@ -38,9 +38,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
       "test_fnvector_mpimanyvector_mod\;\;1\;4\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecmpimanyvector sundials_nvecparallel
               sundials_nvecserial)
@@ -55,18 +52,12 @@ set(SUNDIALS_LIBS ${NVECS_LIB} ${EXE_EXTRA_LINK_LIBS})
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 if(SUNDIALS_ENABLE_FORTRAN)
   if(MPI_Fortran_COMPILER)
     # use MPI wrapper as the compiler
     set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
-  else()
-    # add MPI_INCLUDE_PATH to include directories
-    include_directories(${MPI_INCLUDE_PATH})
   endif()
 endif()
 

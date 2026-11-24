@@ -19,7 +19,6 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
@@ -30,6 +29,7 @@ add_subdirectory(sparse)
 
 # Build the sunmatrix test utilities
 add_library(test_sunmatrix_obj OBJECT test_sunmatrix.c test_sunmatrix.h)
+sundials_add_platform_definitions(test_sunmatrix_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
@@ -37,6 +37,8 @@ if(BUILD_SHARED_LIBS)
                                                   TRUE)
 endif()
 target_link_libraries(test_sunmatrix_obj PRIVATE sundials_sunmatrixdense)
+target_include_directories(test_sunmatrix_obj
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(SUNDIALS_ENABLE_SUNMATRIX_CUSPARSE)
   if(SUNDIALS_INDEX_SIZE MATCHES "32")

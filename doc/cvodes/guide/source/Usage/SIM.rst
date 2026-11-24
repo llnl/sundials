@@ -759,7 +759,7 @@ rootfinding.
 
        (d) A root of one of the root functions was found both at a point :math:`t` and also very near :math:`t`.
 
-     * ``CV_TOO_CLOSE`` -- The initial time :math:`t_0` and the output time :math:`t_{out}` are too close to each other and the user did not specify an initial step size.
+     * ``CV_TOO_CLOSE`` -- The initial time :math:`t_0` and the output time :math:`t_{out}` are too close to each other.
      * ``CV_TOO_MUCH_WORK`` -- The solver took ``mxstep`` internal steps but still could not reach ``tout``. The default value for ``mxstep`` is ``MXSTEP_DEFAULT = 500``.
      * ``CV_TOO_MUCH_ACC`` -- The solver could not satisfy the accuracy demanded by the user for some internal step.
      * ``CV_ERR_FAILURE`` -- Either error test failures occurred too many times (``MXNEF = 7``) during one internal time step, or with :math:`|h| = h_{min}`.
