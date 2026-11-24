@@ -19,7 +19,7 @@
 
 # List of test tuples of the form "name\;args\;options"
 set(unit_tests
-    "idas_test_stgr_res_recovery.cpp\;\;NODIFF"
+    "idas_test_stgr_res_recovery.cpp\;\;NO_DIFF"
     "idas_test_kpr.cpp\;\;"
     "idas_test_kpr.cpp\;--eta_min_fx 1.0 --eta_max_fx 2.0\;"
     "idas_test_kpr.cpp\;--eta_min 2\;"
