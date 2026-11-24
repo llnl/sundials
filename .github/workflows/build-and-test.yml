@@ -21,6 +21,9 @@ jobs:
   address-sanitizer:
     uses: ./.github/workflows/test-address-sanitizer.yml
 
+  profiling:
+    uses: ./.github/workflows/test-profiling.yml
+
   ubuntu-latest-clang:
     uses: ./.github/workflows/ubuntu-latest-clang.yml
 

@@ -19,8 +19,6 @@
 
 set(examples "test_sunnonlinsol_auto\\;\\;")
 
-include_directories(.)
-
 set(SUNDIALS_LIBS sundials_nvecserial)
 list(APPEND SUNDIALS_LIBS sundials_sunnonlinsolauto)
 list(APPEND SUNDIALS_LIBS ${EXE_EXTRA_LINK_LIBS})

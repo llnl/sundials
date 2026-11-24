@@ -29,9 +29,6 @@ set(nvector_cuda_examples
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector test_mpinvector)
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecmpiplusx sundials_nveccuda)
 
