@@ -29,10 +29,6 @@ set(nvector_petsc_examples
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector test_mpinvector)
 
-# Add source directory to include directories
-include_directories(. ..)
-include_directories(${PETSC_INCLUDE_DIR})
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecpetsc)
 
@@ -42,9 +38,6 @@ set(SUNDIALS_LIBS ${NVECS_LIB} ${EXE_EXTRA_LINK_LIBS})
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 # Add the build and install targets for each nvector example
@@ -100,6 +93,6 @@ foreach(example_tuple ${nvector_petsc_examples})
     TEST_ARGS ${example_args}
     MPI_NPROCS ${number_of_tasks}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_petsc_examples})

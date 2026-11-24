@@ -23,9 +23,6 @@ set(examples_list
     "test_sunlinsol_kokkosdense.cpp\;10 1000 0\;"
     "test_sunlinsol_kokkosdense.cpp\;100 50 0\;")
 
-# Add source directory to include directories
-include_directories(..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${examples_list})
   foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
@@ -43,6 +40,7 @@ foreach(example_tuple ${examples_list})
       # example source files
       sundials_add_executable(${example_target} ${example} ../test_sunlinsol.c
                               ../test_sunlinsol.h)
+      target_include_directories(${example_target} PRIVATE ..)
 
       # folder for IDEs
       set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
@@ -69,7 +67,7 @@ foreach(example_tuple ${examples_list})
       ${test_name} ${example_target}
       TEST_ARGS ${example_args}
       EXAMPLE_TYPE ${example_type}
-      NODIFF)
+      NO_DIFF)
 
   endforeach()
 endforeach()

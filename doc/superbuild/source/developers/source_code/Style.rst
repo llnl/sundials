@@ -44,6 +44,16 @@ can run:
 
    ./scripts/format.sh <path to directories or files to format>
 
+To run only one formatter, pass its option. If no paths are given, the current
+directory is formatted:
+
+.. code-block:: shell
+
+   ./scripts/format.sh --clang-format <path to directories or files to format>
+   ./scripts/format.sh --fprettify <path to directories or files to format>
+   ./scripts/format.sh --cmake <path to directories or files to format>
+   ./scripts/format.sh --ruff <path to directories or files to format>
+
 .. warning::
 
    The output of ``clang-format`` is sensitive to the ``clang-format`` version. We recommend
