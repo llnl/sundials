@@ -26,9 +26,6 @@ endif()
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 if(MPI_Fortran_COMPILER)
   # use MPI wrapper as the compiler

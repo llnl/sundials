@@ -32,9 +32,6 @@ if(SUNDIALS_INDEX_SIZE STREQUAL "32")
        "test_sunmatrix_ginkgo_batch.cpp\;10 100 10 0\;")
 endif()
 
-# Add source directory to include directories
-include_directories(..)
-
 sundials_add_examples_ginkgo(
   examples
   TARGETS test_sunmatrix_obj sundials_sunmatrixdense

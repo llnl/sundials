@@ -38,9 +38,6 @@ else()
   set(_ex_lang CXX)
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunlinsol_superludist_examples})
 
@@ -59,6 +56,7 @@ foreach(example_tuple ${sunlinsol_superludist_examples})
 
     # example source files
     sundials_add_executable(${example_target} ${example} ../test_sunlinsol.c)
+    target_include_directories(${example_target} PRIVATE ..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example_target} PROPERTIES FOLDER "Examples")
