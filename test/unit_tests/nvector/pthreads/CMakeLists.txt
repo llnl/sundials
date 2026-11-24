@@ -34,9 +34,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_pthreads_fortran_examples "test_fnvector_pthreads_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecpthreads)
 if(SUNDIALS_ENABLE_FORTRAN)

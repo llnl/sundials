@@ -26,7 +26,7 @@
 
 #include <sundials/sundials_domeigestimator.h>
 
-#if defined(SUNDIALS_ENABLE_PROFILING)
+#if defined(SUNDIALS_ENABLE_PROFILING) && !defined(SUNDIALS_CALIPER_ENABLED)
 static SUNProfiler getSUNProfiler(SUNDomEigEstimator DEE)
 {
   return (DEE->sunctx->profiler);

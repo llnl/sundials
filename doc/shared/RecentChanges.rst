@@ -45,6 +45,9 @@ sundials4py function that expects the corresponding SUNDIALS object. See
 
 **Bug Fixes**
 
+Fixed a bug in the band SUNMatrix ``SUNMatScaleAdd`` operation where entries
+outside the band of the second matrix were not scaled.
+
 Fixed :c:func:`SUNMatCopyOps` so it also copies the optional
 Hermitian-transpose matrix-vector operation.
 
@@ -72,5 +75,14 @@ the RKL step was called with an incorrect time argument.
 
 Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
 value was stored as the update frequency instead of restoring the default value.
+
+Fixed the Soderlind-family and ImEx Gustafsson ``SUNAdaptController`` modules so
+that a zero local error estimate no longer leads to an arbitrary step size
+reduction or growth on the following steps. A zero error estimate now restarts
+the controller history.
+
+ARKODE now returns ``ARK_CONTROLLER_ERR`` when a ``SUNAdaptController`` returns
+``NaN`` for the new step size or otherwise fails during a step. Previously these
+failures were reported as ``ARK_ERR_FAILURE`` or ``ARK_UNRECOGNIZED_ERROR``.
 
 **Deprecation Notices**

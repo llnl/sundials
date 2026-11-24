@@ -22,9 +22,6 @@ install(CODE "MESSAGE(\"\nInstall NVECTOR_MPIPLUSX\n\")")
 if(MPI_C_FOUND AND MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-elseif(MPI_C_FOUND)
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 # Create the library
