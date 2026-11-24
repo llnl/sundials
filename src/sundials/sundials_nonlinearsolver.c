@@ -19,6 +19,7 @@
  * the 'ops' structure in sundials_nonlinearsolver.h
  * ---------------------------------------------------------------------------*/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -192,12 +193,10 @@ SUNErrCode sunnlsSetFromCommandLine(SUNNonlinearSolver NLS, const char* NLSid,
 
   /* Prefix for options to set */
   const char* default_id = "sunnonlinearsolver";
-  size_t offset          = strlen(default_id) + 1;
-  if (NLSid != NULL && strlen(NLSid) > 0) { offset = strlen(NLSid) + 1; }
-  char* prefix = (char*)malloc(sizeof(char) * (offset + 1));
-  if (NLSid != NULL && strlen(NLSid) > 0) { strcpy(prefix, NLSid); }
-  else { strcpy(prefix, default_id); }
-  strcat(prefix, ".");
+  const char* id = (NLSid != NULL && NLSid[0] != '\0') ? NLSid : default_id;
+  size_t offset  = strlen(id) + 1;
+  char* prefix   = (char*)malloc(sizeof(char) * (offset + 1));
+  snprintf(prefix, offset + 1, "%s.", id);
 
   for (int idx = 1; idx < argc; idx++)
   {

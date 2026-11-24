@@ -790,7 +790,7 @@ int mriStepCoupling_GetStageType(MRIStepCoupling MRIC, int is)
   /* separately handle an embedding "stage" from normal stages */
   if (is < MRIC->stages)
   { /* normal */
-    Gdiag = Grow = Wrow = cdiff = SUNFALSE;
+    Gdiag = Grow = Wrow = SUNFALSE;
     if (MRIC->G)
     {
       for (i = 0; i < MRIC->nmat; i++)

@@ -111,7 +111,7 @@ int CVodeSetNonlinearSolverB(void* cvode_mem, int which, SUNNonlinearSolver NLS)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -154,7 +154,7 @@ int CVodeSetUserDataB(void* cvode_mem, int which, void* user_dataB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -197,7 +197,7 @@ int CVodeGetUserDataB(void* cvode_mem, int which, void** user_dataB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -242,7 +242,7 @@ int CVodeSetMaxOrdB(void* cvode_mem, int which, int maxordB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -289,7 +289,7 @@ int CVodeSetMaxNumStepsB(void* cvode_mem, int which, long int mxstepsB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -336,7 +336,7 @@ int CVodeSetStabLimDetB(void* cvode_mem, int which, sunbooleantype stldetB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -383,7 +383,7 @@ int CVodeSetInitStepB(void* cvode_mem, int which, sunrealtype hinB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -430,7 +430,7 @@ int CVodeSetMinStepB(void* cvode_mem, int which, sunrealtype hminB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -477,7 +477,7 @@ int CVodeSetMaxStepB(void* cvode_mem, int which, sunrealtype hmaxB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -523,7 +523,7 @@ int CVodeSetConstraintsB(void* cvode_mem, int which, N_Vector constraintsB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check the value of which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -576,7 +576,7 @@ int CVodeSetQuadErrConB(void* cvode_mem, int which, sunbooleantype errconQB)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, CV_ILL_INPUT, __LINE__, __func__, __FILE__,
                    MSGCV_BAD_WHICH);
@@ -637,7 +637,7 @@ void* CVodeGetAdjCVodeBmem(void* cvode_mem, int which)
   ca_mem = cv_mem->cv_adj_mem;
 
   /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
+  if (which < 0 || which >= ca_mem->ca_nbckpbs)
   {
     cvProcessError(cv_mem, 0, __LINE__, __func__, __FILE__, MSGCV_BAD_WHICH);
     return (NULL);
