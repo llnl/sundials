@@ -34,9 +34,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_openmp_fortran_examples "test_fnvector_openmp_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecopenmp)
 if(SUNDIALS_ENABLE_FORTRAN)

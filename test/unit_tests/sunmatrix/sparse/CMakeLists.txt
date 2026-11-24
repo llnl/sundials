@@ -38,9 +38,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(sunmatrix_sparse_fortran_examples "test_fsunmatrix_sparse_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunmatrix_sparse_examples})
 
@@ -54,6 +51,7 @@ foreach(example_tuple ${sunmatrix_sparse_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.c ../test_sunmatrix.c)
+    target_include_directories(${example} PRIVATE ..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
