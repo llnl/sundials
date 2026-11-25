@@ -36,8 +36,17 @@ Jacobians (CSC format only) for all SUNDIALS packages.
 
 ### Bug Fixes
 
+Fixed IDAS staggered forward sensitivity analysis retrying a failed
+converged-state residual evaluation without restoring the attempted step.
+Recoverable failures now reduce the step size and count toward the existing
+convergence-failure limit.
+
 Fixed a bug in the band SUNMatrix `SUNMatScaleAdd` operation where entries
 outside the band of the second matrix were not scaled.
+
+Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
+perturbation in the solution vector when the system function fails. The
+linear-solver setup failure behavior is unchanged.
 
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
@@ -47,6 +56,10 @@ multiple digits in an identifier.
 
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
+
+Fixed a bug in LSRKStep where calls to `LSRKStepSetNumDomEigEstPreprocessIters`
+after the first dominant eigenvalue estimate incorrectly set the number of
+preprocessing iterations to the *initial* instead of the requested value.
 
 Fixed a bug in `LSRKStepSetDomEigFrequency` where a negative `nsteps` value was
 stored as the update frequency instead of restoring the default value.
