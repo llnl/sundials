@@ -121,9 +121,9 @@ int main(int argc, char* argv[])
   inner_mem = ARKStepCreate(f0, NULL, T0, y, sunctx);
   if (check_flag((void*)inner_mem, "ARKStepCreate", 0)) { return 1; }
 
-  MRIStepInnerStepper inner_stepper = NULL;
-  flag = ARKodeCreateMRIStepInnerStepper(inner_mem, &inner_stepper);
-  if (check_flag(&flag, "ARKodeCreateMRIStepInnerStepper", 1)) { return 1; }
+  SUNStepper inner_stepper = NULL;
+  flag                     = ARKodeCreateSUNStepper(inner_mem, &inner_stepper);
+  if (check_flag(&flag, "ARKodeCreateSUNStepper", 1)) { return 1; }
 
   mristep_mem = MRIStepCreate(NULL, f, T0, y, inner_stepper, sunctx);
   if (check_flag((void*)mristep_mem, "MRIStepCreate", 0)) { return 1; }
@@ -369,7 +369,7 @@ int main(int argc, char* argv[])
   ARKodeFree(&arkstep_mem);    // Free integrator memory
   ARKodeFree(&mristep_mem);
   ARKodeFree(&inner_mem);
-  MRIStepInnerStepper_Free(&inner_stepper);
+  SUNStepper_Destroy(&inner_stepper);
   if (fixedpoint)
   {
     SUNNonlinSolFree(NLSa); // Free nonlinear solvers

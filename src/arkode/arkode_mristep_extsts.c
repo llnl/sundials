@@ -59,52 +59,23 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     return NULL;
   }
 
-  /* Create the inner stepper and attach objects and function pointers */
-  MRIStepInnerStepper inner_stepper = NULL;
-  retval = MRIStepInnerStepper_Create(sunctx, &inner_stepper);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(NULL, retval, __LINE__, __func__,
-                    __FILE__, "Failed to create MRIStep inner stepper for ExtSTS method.");
-    ARKodeFree(&sts_mem);
-    return NULL;
-  }
-  retval = MRIStepInnerStepper_SetContent(inner_stepper, sts_mem);
+  /* Create the inner stepper and override its evolve function */
+  SUNStepper inner_stepper = NULL;
+  retval                   = ARKodeCreateSUNStepper(sts_mem, &inner_stepper);
   if (retval != ARK_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set MRIStep inner stepper content.");
+                    "Failed to create SUNStepper for ExtSTS method.");
     ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
     return NULL;
   }
-  retval = MRIStepInnerStepper_SetEvolveFn(inner_stepper,
-                                           extSTSInnerStepper_Evolve);
-  if (retval != ARK_SUCCESS)
+  retval = SUNStepper_SetEvolveFn(inner_stepper, extSTSInnerStepper_Evolve);
+  if (retval != SUN_SUCCESS)
   {
     arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set MRIStep inner stepper evolve function.");
+                    "Failed to set SUNStepper evolve function.");
     ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
-    return NULL;
-  }
-  retval = MRIStepInnerStepper_SetFullRhsFn(inner_stepper,
-                                            ark_MRIStepInnerFullRhs);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set MRIStep inner stepper full RHS function.");
-    ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
-    return NULL;
-  }
-  retval = MRIStepInnerStepper_SetResetFn(inner_stepper, ark_MRIStepInnerReset);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(NULL, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set MRIStep inner stepper reset function.");
-    ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
+    SUNStepper_Destroy(&inner_stepper);
     return NULL;
   }
 
@@ -115,7 +86,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(NULL, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Failed to create MRIStep integrator.");
     ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
+    SUNStepper_Destroy(&inner_stepper);
     return NULL;
   }
 
@@ -129,7 +100,7 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
                     "Failed to access stepper memory from MRIStep.");
     ARKodeFree(&arkode_mem);
     ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
+    SUNStepper_Destroy(&inner_stepper);
     return NULL;
   }
   step_mem->extsts_method = SUNTRUE;
@@ -154,8 +125,6 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__,
                     __FILE__, "Failed to create MRIStep coupling table for ExtSTS method.");
     ARKodeFree(&arkode_mem);
-    ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
     return NULL;
   }
   retval = MRIStepSetCoupling(arkode_mem, MRIC);
@@ -164,8 +133,6 @@ void* MRIStepCreateExtSTS(ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi, sunrealtype t0,
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to set MRIStep coupling table for ExtSTS method.");
     ARKodeFree(&arkode_mem);
-    ARKodeFree(&sts_mem);
-    MRIStepInnerStepper_Free(&inner_stepper);
     return NULL;
   }
   MRIStepCoupling_Free(MRIC);
@@ -195,7 +162,10 @@ int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd, ARKRhsFn fe, ARKRhsFn fi,
   }
 
   /* Reinitialize the LSRKStep integrator */
-  retval = LSRKStepReInitSTS(step_mem->stepper->content, fd, t0, y0);
+  void* sts_mem = NULL;
+  retval        = SUNStepper_GetContent(step_mem->stepper, &sts_mem);
+  if (retval != SUN_SUCCESS) { return ARK_SUNSTEPPER_ERR; }
+  retval = LSRKStepReInitSTS(sts_mem, fd, t0, y0);
   if (retval)
   {
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
@@ -217,33 +187,29 @@ int MRIStepGetSTS(void* arkode_mem, void** sts_mem)
   if (retval) { return retval; }
 
   /* return pointer to stored STS integrator */
-  *sts_mem = step_mem->stepper->content;
-  return ARK_SUCCESS;
+  return (SUNStepper_GetContent(step_mem->stepper, sts_mem) == SUN_SUCCESS)
+           ? ARK_SUCCESS
+           : ARK_SUNSTEPPER_ERR;
 }
 
 /* Inner stepper utility routines */
-int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
-                              sunrealtype tout, N_Vector y)
+int extSTSInnerStepper_Evolve(SUNStepper stepper, sunrealtype tout, N_Vector y,
+                              sunrealtype* tret)
 {
-  /* Get the forcing data */
-  ARKodeMem ark_mem              = (ARKodeMem)sts_mem->content;
+  ARKodeMem ark_mem = NULL;
+  if (SUNStepper_GetContent(stepper, (void**)&ark_mem) != SUN_SUCCESS)
+  {
+    return -1;
+  }
+
   ARKodeLSRKStepMem lsrkstep_mem = NULL;
-  sunrealtype tshift, tscale, dsm;
-  N_Vector* forcing;
-  const sunrealtype h = tout - t0;
-  int nforcing, nflag, retval;
+  sunrealtype dsm;
+  const sunrealtype t0 = ark_mem->tn;
+  const sunrealtype h  = tout - t0;
+  int nflag, retval;
 
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &lsrkstep_mem);
   if (retval != ARK_SUCCESS) { return retval; }
-
-  retval = MRIStepInnerStepper_GetForcingData(sts_mem, &tshift, &tscale,
-                                              &forcing, &nforcing);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to retrieve forcing data for ExtSTS method.");
-    return retval;
-  }
 
   /* Reset LSRKStep to current state, using ARKodeReset so first-call
      setup invariants are preserved. */
@@ -269,15 +235,6 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
                       "Failed to initialize LSRKStep for ExtSTS method.");
       return retval;
     }
-  }
-
-  /* Set the inner forcing data. */
-  retval = ark_mem->step_setforcing(ark_mem, tshift, tscale, forcing, nforcing);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to set LSRKStep forcing for ExtSTS method.");
-    return retval;
   }
 
   /* The forcing wrapper changes the RHS, so recompute the start RHS. */
@@ -320,15 +277,6 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
   SUNLogInfo(ARK_LOGGER, "end-step-attempt",
              "status = success, dsm = " SUN_FORMAT_G, ZERO);
 
-  /* Disable inner forcing */
-  retval = ark_mem->step_setforcing(ark_mem, ZERO, ONE, NULL, 0);
-  if (retval != ARK_SUCCESS)
-  {
-    arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
-                    "Failed to reset LSRKStep forcing for ExtSTS method.");
-    return retval;
-  }
-
   /* Complete successful steps to update stats and call the inner PostStepFn. */
   retval = arkCompleteStep(ark_mem, dsm);
   if (retval != ARK_SUCCESS)
@@ -336,6 +284,8 @@ int extSTSInnerStepper_Evolve(MRIStepInnerStepper sts_mem, sunrealtype t0,
     arkProcessError(ark_mem, retval, __LINE__, __func__, __FILE__,
                     "Failed to complete LSRKStep for ExtSTS method.");
   }
+
+  *tret = tout;
 
   return retval;
 }

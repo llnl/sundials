@@ -35,9 +35,8 @@ LSRKStep supports the following categories:
 * temporal adaptivity
 
 LSRKStep does not have forcing function support when converted to a
-:c:type:`SUNStepper` or :c:type:`MRIStepInnerStepper`. See
-:c:func:`ARKodeCreateSUNStepper` and :c:func:`ARKStepCreateMRIStepInnerStepper`
-for additional details.
+:c:type:`SUNStepper`. See :c:func:`ARKodeCreateSUNStepper` for additional
+details.
 
 
 .. _ARKODE.Usage.LSRKStep.Initialization:
