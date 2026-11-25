@@ -32,9 +32,6 @@ set(nvector_hip_examples
     "test_nvector_hip.cpp\;500 128 0\;\;\;"
     "test_nvector_hip.cpp\;1000 0 0\;\;\;")
 
-# Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvechip)
 
@@ -59,6 +56,8 @@ foreach(example_tuple ${nvector_hip_examples})
   if(NOT TARGET ${example_target})
     # example source files
     sundials_add_executable(${example_target} ${example})
+    target_include_directories(${example_target}
+                               PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
 
     # link vector test utilities
     target_link_libraries(${example_target} PRIVATE test_nvector_obj)

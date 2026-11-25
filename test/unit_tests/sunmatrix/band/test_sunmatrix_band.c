@@ -37,6 +37,9 @@
 #define GSYM "g"
 #endif
 
+/* prototypes for custom tests */
+static int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix I);
+
 /* ----------------------------------------------------------------------
  * Main SUNMatrix Testing Routine
  * --------------------------------------------------------------------*/
@@ -157,6 +160,7 @@ int main(int argc, char* argv[])
   fails += Test_SUNMatCopy(A, 0);
   fails += Test_SUNMatZero(A, 0);
   fails += Test_SUNMatScaleAdd(A, I, 0);
+  fails += Test_SUNMatScaleAdd2(A, I);
   fails += Test_SUNMatScaleAddI(A, I, 0);
   fails += Test_SUNMatMatvec(A, x, y, 0);
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
@@ -188,6 +192,67 @@ int main(int argc, char* argv[])
   SUNContext_Free(&sunctx);
 
   return (fails);
+}
+
+/* ----------------------------------------------------------------------
+ * Extra ScaleAdd test for band matrices:
+ *    A should have a wider band than the identity matrix I
+ * --------------------------------------------------------------------*/
+static int Test_SUNMatScaleAdd2(SUNMatrix A, SUNMatrix I)
+{
+  int failure;
+  SUNMatrix B, C;
+  sunrealtype tol = 10 * SUN_UNIT_ROUNDOFF;
+
+  /* create clones for test */
+  B = SUNMatClone(A);
+  C = SUNMatClone(A);
+
+  failure = SUNMatCopy(A, B);
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNMatCopy returned %d \n", failure);
+    SUNMatDestroy(B);
+    SUNMatDestroy(C);
+    return (1);
+  }
+  failure = SUNMatCopy(A, C);
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNMatCopy returned %d \n", failure);
+    SUNMatDestroy(B);
+    SUNMatDestroy(C);
+    return (1);
+  }
+  failure = SUNMatScaleAddI(SUN_RCONST(2.0), B);
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNMatScaleAddI returned %d \n", failure);
+    SUNMatDestroy(B);
+    SUNMatDestroy(C);
+    return (1);
+  }
+  failure = SUNMatScaleAdd(SUN_RCONST(2.0), C, I);
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNMatScaleAdd returned %d \n", failure);
+    SUNMatDestroy(B);
+    SUNMatDestroy(C);
+    return (1);
+  }
+  failure = check_matrix(C, B, tol);
+  if (failure)
+  {
+    printf(">>> FAILED test -- SUNMatScaleAdd2 narrower bandwidth \n");
+    SUNMatDestroy(B);
+    SUNMatDestroy(C);
+    return (1);
+  }
+  else { printf("    PASSED test -- SUNMatScaleAdd2 narrower bandwidth \n"); }
+
+  SUNMatDestroy(B);
+  SUNMatDestroy(C);
+  return (0);
 }
 
 /* ----------------------------------------------------------------------

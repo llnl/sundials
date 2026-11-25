@@ -27,9 +27,6 @@ set(nvector_openmpdev_examples "test_nvector_openmpdev\;1000 0\;"
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector)
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecopenmpdev)
 
