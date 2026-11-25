@@ -17,8 +17,8 @@
 # KINSOL C++ serial unit_tests
 # ---------------------------------------------------------------
 
-# List of test tuples of the form "name\;args"
-set(unit_tests "kin_test_getjac.cpp\;")
+# List of test tuples of the form "name\;args\;options"
+set(unit_tests "kin_test_getjac.cpp\;\;" "kin_test_dq_restore.cpp\;\;NO_DIFF")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -26,6 +26,7 @@ foreach(test_tuple ${unit_tests})
   # Parse the test tuple
   list(GET test_tuple 0 test)
   list(GET test_tuple 1 test_args)
+  list(GET test_tuple 2 test_options)
 
   # Extract the file name without extension
   get_filename_component(test_target ${test} NAME_WE)
@@ -61,7 +62,7 @@ foreach(test_tuple ${unit_tests})
 
   # add test to regression tests
   sundials_add_test(
-    ${test_name} ${test_target}
+    ${test_name} ${test_target} ${test_options}
     TEST_ARGS ${test_args}
     ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     ANSWER_FILE ${test_name}.out

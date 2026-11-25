@@ -36,6 +36,18 @@ Fixed intermittent failures in the ARKODE, CVODE, CVODES, IDA, IDAS, and
 KINSOL error-handling unit tests when run in parallel by using separate output
 files for warning and error messages.
 
+Fixed IDAS staggered forward sensitivity analysis retrying a failed
+converged-state residual evaluation without restoring the attempted step.
+Recoverable failures now reduce the step size and count toward the existing
+convergence-failure limit.
+
+Fixed a bug in the band SUNMatrix ``SUNMatScaleAdd`` operation where entries
+outside the band of the second matrix were not scaled.
+
+Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
+perturbation in the solution vector when the system function fails. The
+linear-solver setup failure behavior is unchanged.
+
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
 
@@ -45,7 +57,21 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Fixed a bug in LSRKStep where calls
+:c:func:`LSRKStepSetNumDomEigEstPreprocessIters` after the first dominant
+eigenvalue estimate incorrectly set the number of preprocessing iterations to
+the *initial* instead of the requested value.
+
 Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
 value was stored as the update frequency instead of restoring the default value.
+
+Fixed the Soderlind-family and ImEx Gustafsson ``SUNAdaptController`` modules so
+that a zero local error estimate no longer leads to an arbitrary step size
+reduction or growth on the following steps. A zero error estimate now restarts
+the controller history.
+
+ARKODE now returns ``ARK_CONTROLLER_ERR`` when a ``SUNAdaptController`` returns
+``NaN`` for the new step size or otherwise fails during a step. Previously these
+failures were reported as ``ARK_ERR_FAILURE`` or ``ARK_UNRECOGNIZED_ERROR``.
 
 **Deprecation Notices**
