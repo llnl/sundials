@@ -28,9 +28,6 @@ set(nvector_cuda_examples
 # Dependencies for nvector examples
 set(nvector_examples_dependencies test_nvector)
 
-# Add source directory to include directories
-include_directories(. .. ${PROJECT_SOURCE_DIR}/examples/utilities)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nveccuda sundials_nvecserial)
 
@@ -52,6 +49,8 @@ foreach(example_tuple ${nvector_cuda_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.cu)
+    target_include_directories(${example}
+                               PRIVATE ${PROJECT_SOURCE_DIR}/examples/utilities)
 
     # link vector test utilities
     target_link_libraries(${example} PRIVATE test_nvector_obj)
@@ -84,6 +83,6 @@ foreach(example_tuple ${nvector_cuda_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_cuda_examples})

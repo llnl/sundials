@@ -244,8 +244,7 @@ int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps)
     step_mem->dom_eig_freq = DOM_EIG_FREQ_DEFAULT;
     step_mem->const_Jac    = SUNFALSE;
   }
-
-  if (nsteps == 0)
+  else if (nsteps == 0)
   {
     step_mem->const_Jac    = SUNTRUE;
     step_mem->dom_eig_freq = 1;
@@ -394,7 +393,9 @@ int LSRKStepSetNumDomEigEstPreprocessIters(void* arkode_mem, int num_iters)
   if (step_mem->DEE)
   {
     retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
-                                                      step_mem->num_init_warmups);
+                                                      step_mem->init_warmup
+                                                        ? step_mem->num_init_warmups
+                                                        : step_mem->num_warmups);
     if (retval != SUN_SUCCESS)
     {
       arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,

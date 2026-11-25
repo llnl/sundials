@@ -25,9 +25,6 @@ set(sunlinsols_onemkldense_examples
     "test_sunlinsol_onemkldense.cpp\;10 1000 0\;"
     "test_sunlinsol_onemkldense.cpp\;100 100 0\;")
 
-# Add source directory to include directories
-include_directories(..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunlinsols_onemkldense_examples})
 
@@ -68,6 +65,6 @@ foreach(example_tuple ${sunlinsols_onemkldense_examples})
     ${test_name} ${example_target}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach()

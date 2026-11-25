@@ -34,9 +34,6 @@ set(sundomeigest_power_examples
 # Dependencies for dominant eigenvalue examples
 set(sundomeigest_power_dependencies test_sundomeigest)
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(DOMEIG_LIB sundials_sundomeigestpower)
 
@@ -79,6 +76,6 @@ foreach(example_tuple ${sundomeigest_power_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sundomeigest_power_examples})

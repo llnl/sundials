@@ -39,9 +39,6 @@ else()
   set(nvector_examples_dependencies test_nvector)
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvectrilinos)
 
@@ -99,6 +96,6 @@ foreach(example_tuple ${nvector_trilinos_examples})
     TEST_ARGS ${example_args}
     MPI_NPROCS ${number_of_tasks}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_trilinos_examples})

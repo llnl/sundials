@@ -42,9 +42,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(sunlinsol_spbcgs_fortran_examples "test_fsunlinsol_spbcgs_mod_serial\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ../..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${sunlinsol_spbcgs_examples})
 
@@ -58,6 +55,7 @@ foreach(example_tuple ${sunlinsol_spbcgs_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.c ../../test_sunlinsol.c)
+    target_include_directories(${example} PRIVATE ../..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
@@ -79,7 +77,7 @@ foreach(example_tuple ${sunlinsol_spbcgs_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunlinsol_spbcgs_examples})
 
@@ -125,7 +123,7 @@ foreach(example_tuple ${sunlinsol_spbcgs_fortran_examples})
       ${test_name} ${example}
       TEST_ARGS ${example_args}
       EXAMPLE_TYPE ${example_type}
-      NODIFF)
+      NO_DIFF)
   endif()
 
 endforeach(example_tuple ${sunlinsol_spbcgs_fortran_examples})
