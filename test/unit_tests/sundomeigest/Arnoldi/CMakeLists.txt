@@ -30,9 +30,6 @@ set(sundomeigest_arnoldi_examples
 # Dependencies for dominant eigenvalue examples
 set(sundomeigest_arnoldi_dependencies test_sundomeigest)
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(DOMEIG_LIB sundials_sundomeigestarnoldi LAPACK::LAPACK)
 if(CMAKE_VERSION VERSION_LESS 3.20)
@@ -77,6 +74,6 @@ foreach(example_tuple ${sundomeigest_arnoldi_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sundomeigest_arnoldi_examples})

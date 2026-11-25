@@ -21,8 +21,6 @@
 # examples excluded from 'make test' in releases
 set(examples_list "test_nvector_kokkos.cpp\;1000 0\;")
 
-include_directories(..)
-
 # Add the build and install targets for each example
 foreach(example_tuple ${examples_list})
   foreach(backend ${KOKKOS_EXAMPLES_BACKENDS})
@@ -65,7 +63,7 @@ foreach(example_tuple ${examples_list})
       ${test_name} ${example_target}
       TEST_ARGS ${example_args}
       EXAMPLE_TYPE ${example_type}
-      NODIFF)
+      NO_DIFF)
 
   endforeach()
 endforeach()

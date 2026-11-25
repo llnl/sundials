@@ -245,8 +245,10 @@ SUNErrCode SUNAdaptController_EstimateStep_ImExGus(SUNAdaptController C,
   /* order parameter to use */
   const int ord = p + 1;
 
-  /* compute estimated time step size, modifying the first step formula */
-  if (SACIMEXGUS_FIRSTSTEP(C))
+  /* compute estimated time step size, using the first step (I controller)
+     formula when there is no usable history or the current error is zero (the
+     history formula could then form 0 * Inf = NaN) */
+  if (SACIMEXGUS_FIRSTSTEP(C) || dsm <= SUN_RCONST(0.0))
   {
     /* set usable time-step adaptivity parameters -- first step */
     const sunrealtype k = -SUN_RCONST(1.0) / ord;
@@ -316,9 +318,12 @@ SUNErrCode SUNAdaptController_UpdateH_ImExGus(SUNAdaptController C,
                                               sunrealtype h, sunrealtype dsm)
 {
   SUNFunctionBegin(C->sunctx);
-  SACIMEXGUS_EP(C)        = SACIMEXGUS_BIAS(C) * dsm;
-  SACIMEXGUS_HP(C)        = h;
-  SACIMEXGUS_FIRSTSTEP(C) = SUNFALSE;
+  SACIMEXGUS_EP(C) = SACIMEXGUS_BIAS(C) * dsm;
+  SACIMEXGUS_HP(C) = h;
+  /* A zero error carries no trend information: use the first step formula
+     again until a positive error has been stored */
+  SACIMEXGUS_FIRSTSTEP(C) = (SACIMEXGUS_EP(C) > SUN_RCONST(0.0)) ? SUNFALSE
+                                                                 : SUNTRUE;
   return SUN_SUCCESS;
 }
 

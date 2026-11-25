@@ -1,3 +1,0 @@
-List of C_openmp CVODES examples
-
-  cvsAdvDiff_bnd_omp: banded example using OpenMP

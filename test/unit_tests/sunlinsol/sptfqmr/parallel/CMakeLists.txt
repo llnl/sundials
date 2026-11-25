@@ -28,15 +28,9 @@ set(sunlinsol_sptfqmr_examples
 # Dependencies for sunlinsol examples
 set(sunlinsol_sptfqmr_dependencies test_sunlinsol)
 
-# Add source directory to include directories
-include_directories(. ../..)
-
 if(MPI_C_COMPILER)
   # use MPI wrapper as the compiler
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER})
-else()
-  # add MPI_INCLUDE_PATH to include directories
-  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 # Add the build and install targets for each example
@@ -54,6 +48,7 @@ foreach(example_tuple ${sunlinsol_sptfqmr_examples})
   if(NOT TARGET ${example})
     # example source files
     sundials_add_executable(${example} ${example}.c ../../test_sunlinsol.c)
+    target_include_directories(${example} PRIVATE ../..)
 
     # folder to organize targets in an IDE
     set_target_properties(${example} PROPERTIES FOLDER "Examples")
@@ -80,6 +75,6 @@ foreach(example_tuple ${sunlinsol_sptfqmr_examples})
     TEST_ARGS ${example_args}
     MPI_NPROCS ${number_of_tasks}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${sunlinsol_sptfqmr_examples})

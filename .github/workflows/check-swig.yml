@@ -18,16 +18,12 @@ jobs:
   swig_check:
     runs-on: ubuntu-latest
     steps:
-      - name: Install pcre
-        run: |
-          sudo apt install libpcre3-dev
-
       - name: Install swig
         run: |
           git clone https://github.com/sundials-codes/swig
           cd swig
           ./autogen.sh
-          ./configure --prefix=/usr/
+          ./configure --prefix=/usr/ --without-pcre
           make
           sudo make install
           swig -version

@@ -28,10 +28,6 @@ include(SundialsIndexSize)
 # ===============================================================
 
 if(WIN32)
-  # Under Windows, add compiler directive to inhibit warnings about use of
-  # insecure functions.
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-
   # Under Windows, we need to have dll and exe files in the same directory to
   # run the test suite properly.
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -149,7 +145,7 @@ if(SUNDIALS_ENABLE_ALL_WARNINGS)
   # run-time error with this check
   #
   # Exclude checks for subroutines and functions not marked as recursive
-  # (no-recursion) e.g., ark_brusselator1D_task_local_nls_f2003 calls
+  # (no-recursion) e.g., ark_brusselator_1d_task_local_nls_f2003 calls
   # SUNNonlinsolFree from within a custom nonlinear solver implementation of
   # SUNNonlinsolFree which causes a run-time error with this check
   set(CMAKE_Fortran_FLAGS
@@ -204,9 +200,12 @@ endif()
 if(SUNDIALS_DEBUG)
   message(STATUS "Adding debugging preprocessor directives")
 
+  # Collect the enabled debugging definitions. These are applied PRIVATE to
+  # library targets in sundials_add_library
+  set(_SUNDIALS_ENABLED_DEBUG_DEFINITIONS "")
   foreach(debug ${_SUNDIALS_DEBUG_OPTIONS})
     if(${${debug}})
-      add_compile_definitions(${debug})
+      list(APPEND _SUNDIALS_ENABLED_DEBUG_DEFINITIONS ${debug})
     endif()
   endforeach()
 endif()

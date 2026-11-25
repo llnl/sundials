@@ -1,0 +1,33 @@
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2025-2026, Lawrence Livermore National Security,
+# University of Maryland Baltimore County, and the SUNDIALS contributors.
+# Copyright (c) 2013-2025, Lawrence Livermore National Security
+# and Southern Methodist University.
+# Copyright (c) 2002-2013, Lawrence Livermore National Security.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+if(SUNDIALS_ENABLE_C_EXAMPLES)
+  add_subdirectory(c)
+  add_subdirectory(c_lsrk)
+  add_subdirectory(c_lsrk_varjac)
+  add_subdirectory(c_lsrk_domeigest)
+  add_subdirectory(c_mels)
+  add_subdirectory(c_nonlin)
+  add_subdirectory(c_ssprk)
+  add_subdirectory(c_partitioned)
+  if(SUNDIALS_ENABLE_OPENMP_DEVICE AND OPENMP_SUPPORTS_DEVICE_OFFLOADING)
+    add_subdirectory(c_openmp_device)
+  endif()
+endif()
+if(SUNDIALS_ENABLE_CXX_EXAMPLES)
+  add_subdirectory(cpp)
+endif()
+if(SUNDIALS_ENABLE_FORTRAN_EXAMPLES)
+  add_subdirectory(fortran)
+endif()

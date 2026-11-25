@@ -29,9 +29,6 @@ if(SUNDIALS_ENABLE_FORTRAN)
   set(nvector_serial_fortran_examples "test_fnvector_serial_mod\;\;")
 endif()
 
-# Add source directory to include directories
-include_directories(. ..)
-
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvecserial)
 if(SUNDIALS_ENABLE_FORTRAN)
@@ -77,7 +74,7 @@ foreach(example_tuple ${nvector_serial_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_serial_examples})
 
@@ -121,6 +118,6 @@ foreach(example_tuple ${nvector_serial_fortran_examples})
     ${test_name} ${example}
     TEST_ARGS ${example_args}
     EXAMPLE_TYPE ${example_type}
-    NODIFF)
+    NO_DIFF)
 
 endforeach(example_tuple ${nvector_serial_fortran_examples})

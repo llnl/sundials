@@ -1179,8 +1179,8 @@ int arkStep_Init(ARKodeMem ark_mem, int init_type)
     }
   }
 
-  /* Initialize the nonlinear solver object (if it exists) */
-  if (step_mem->NLS)
+  /* Initialize the nonlinear solver object for implicit methods */
+  if (step_mem->NLS && step_mem->implicit)
   {
     retval = arkStep_NlsInit(ark_mem);
     if (retval != ARK_SUCCESS)
@@ -1698,8 +1698,8 @@ int arkStep_TakeStep_Z(ARKodeMem ark_mem, sunrealtype* dsmPtr, int* nflagPtr)
   /* initialize the current stage index */
   step_mem->istage = 0;
 
-  /* call nonlinear solver setup if it exists */
-  if (step_mem->NLS)
+  /* call nonlinear solver setup for implicit methods */
+  if (step_mem->NLS && step_mem->implicit)
   {
     if ((step_mem->NLS)->ops->setup)
     {
