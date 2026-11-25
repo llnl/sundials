@@ -22,8 +22,6 @@
 #include "kinsol/kinsol_impl.h"
 #include "sundials/sundials_context.hpp"
 
-static const std::string errfile{"test_error_handling.err"};
-
 class KINErrConditionTest : public testing::Test
 {
 protected:
@@ -44,6 +42,7 @@ protected:
 
 TEST_F(KINErrConditionTest, WarningIsPrinted)
 {
+  const std::string errfile{"test_kinsol_warning.err"};
   SUNErrCode err = SUNLogger_SetWarningFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   KINMemRec* kin_mem = (KINMemRec*)kinmem;
@@ -62,6 +61,7 @@ TEST_F(KINErrConditionTest, WarningIsPrinted)
 
 TEST_F(KINErrConditionTest, ErrorIsPrinted)
 {
+  const std::string errfile{"test_kinsol_error.err"};
   SUNErrCode err = SUNLogger_SetErrorFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   // -1 is an illegal value

@@ -32,6 +32,10 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 **Bug Fixes**
 
+Fixed intermittent failures in the ARKODE, CVODE, CVODES, IDA, IDAS, and
+KINSOL error-handling unit tests when run in parallel by using separate output
+files for warning and error messages.
+
 Fixed IDAS staggered forward sensitivity analysis retrying a failed
 converged-state residual evaluation without restoring the attempted step.
 Recoverable failures now reduce the step size and count toward the existing

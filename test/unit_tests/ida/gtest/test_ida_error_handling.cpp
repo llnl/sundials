@@ -22,8 +22,6 @@
 #include "ida/ida_impl.h"
 #include "sundials/sundials_context.hpp"
 
-static const std::string errfile{"test_error_handling.err"};
-
 class IDAErrConditionTest : public testing::Test
 {
 protected:
@@ -44,6 +42,7 @@ protected:
 
 TEST_F(IDAErrConditionTest, WarningIsPrinted)
 {
+  const std::string errfile{"test_ida_warning.err"};
   SUNErrCode err = SUNLogger_SetWarningFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   IDAMemRec* ark_mem = (IDAMemRec*)IDA_mem;
@@ -62,6 +61,7 @@ TEST_F(IDAErrConditionTest, WarningIsPrinted)
 
 TEST_F(IDAErrConditionTest, ErrorIsPrinted)
 {
+  const std::string errfile{"test_ida_error.err"};
   SUNErrCode err = SUNLogger_SetErrorFilename(logger, errfile.c_str());
   ASSERT_EQ(err, SUN_SUCCESS);
   // attempting to call IDASStolerances before IDAInit is illegal
