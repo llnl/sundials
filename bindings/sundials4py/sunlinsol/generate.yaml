@@ -24,6 +24,7 @@ modules:
     macro_define_include_by_name__regex:
       - "^SUN_"
       - "^SUNKLU_"
+      - "^SUNSLUMT_"
     fn_exclude_by_name__regex:
       # Don't interface the implementation specific overrides of the generic routines
       - "^SUNLinSolGetType_.*"
@@ -74,3 +75,7 @@ modules:
     path: sunlinsol/sunlinsol_pcg_generated.hpp
     headers:
     - ../../include/sunlinsol/sunlinsol_pcg.h
+  sunlinsol_superlumt:
+    path: sunlinsol/sunlinsol_superlumt_generated.hpp
+    headers:
+    - ../../include/sunlinsol/sunlinsol_superlumt.h
