@@ -241,8 +241,8 @@ Allowable Method Families
       Since the estimator's internal work vectors cannot be resized,
       the user should create a new estimator for the new problem size
       and attach it using :c:func:`LSRKStepSetDomEigEstimator` before
-      calling :c:func:`ARKodeResize`. This ensures that the necessary
-      updates are performed before the next call to :c:func:`ARKodeEvolve`.
+      calling :c:func:`ARKodeResize`. The new estimator will be
+      initialized before time integration resumes.
       The workflow should be:
 
       1. Create a new dominant eigenvalue estimator for the new problem size.
