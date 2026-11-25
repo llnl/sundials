@@ -240,7 +240,10 @@ The SUNDomEigEstimator_Power module defines the *content* field of a
      SUNRhsFn rhsfn;
      void* rhs_data;
      long int nfevals;
+     SUNPreRhsFn prerhs_fn;
+     void* prerhs_fn_data;
      sunbooleantype is_complex;
+     sunbooleantype Fy_is_current;
    };
 
 
@@ -277,8 +280,15 @@ information:
 
 * ``nfevals`` - number of RHS evaluations,
 
+* ``prerhs_fn`` - user provided preprocessing RHS function,
+
+* ``prerhs_fn_data`` - pointer to the data structure to be passed back to ``prerhs_fn``,
+
 * ``is_complex`` - flag indicating whether the dominant eigenvalue is
-  complex-valued (default is ``SUNTRUE``).
+  complex-valued (default is ``SUNTRUE``),
+
+* ``Fy_is_current`` - flag indicating whether ``Fy`` holds the RHS value at the
+  current linearization point.
 
 This estimator is constructed to perform the following operations:
 
@@ -316,6 +326,8 @@ eigenvalue estimator operations listed in :numref:`SUNDomEigEst.API`:
 * ``SUNDomEigEstimator_SetATimes_Power``
 
 * ``SUNDomEigEstimator_SetRhs_Power``
+
+* ``SUNDomEigEstimator_SetPreRhsFn_Power``
 
 * ``SUNDomEigEstimator_SetRhsLinearizationPoint_Power``
 

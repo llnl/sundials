@@ -53,3 +53,11 @@ a dominant eigenvalue estimation function of type :c:type:`ARKDomEigFn`:
                 ARKDomEigFn as temporary storage or work space.
 
    :return: An *ARKDomEigFn* should return 0 if successful and any nonzero for a failure.
+
+   .. danger::
+
+      When :c:type:`ARKDomEigFn` is called from LSRKStep, :c:type:`N_Vector` arguments
+      `temp1`, `temp2`, and `temp3` are provided as temporary storage.
+      The rest of the :c:type:`N_Vector` arguments are the current values of the dependent
+      variable vector and the right-hand side function, as passed to the ARKDomEigFn.
+      These arguments should not be modified by the user-supplied function.
