@@ -37,6 +37,16 @@ endif()
 # Section 3: Find the TPL
 # -----------------------------------------------------------------------------
 
+# Keep the historical SUNDIALS index width unless the LAPACK integer size
+# was explicitly selected through CMake's FindLAPACK interface.
+math(EXPR SUNDIALS_LAPACK_INT_BYTES "${SUNDIALS_INDEX_SIZE} / 8")
+if(BLA_SIZEOF_INTEGER MATCHES "^(4|8)$")
+  if(CMAKE_VERSION VERSION_LESS "3.22")
+    message(FATAL_ERROR "Selecting the LAPACK integer size requires CMake 3.22 or newer")
+  endif()
+  set(SUNDIALS_LAPACK_INT_BYTES ${BLA_SIZEOF_INTEGER})
+endif()
+
 find_package(LAPACK REQUIRED)
 
 # get path to LAPACK library to use in generated makefiles for examples, if
@@ -276,14 +286,14 @@ if(NEED_FORTRAN_NAME_MANGLING)
     # name-mangling scheme has been set
     set(NEED_FORTRAN_NAME_MANGLING FALSE)
 
-    configure_file(${PROJECT_SOURCE_DIR}/src/sundials/sundials_lapack_defs.h.in
-                   ${PROJECT_BINARY_DIR}/src/sundials/sundials_lapack_defs.h)
-
   else(FTEST_OK)
     message(STATUS "Determining Fortran name-mangling scheme... FAILED")
   endif()
 
 endif()
+
+configure_file(${PROJECT_SOURCE_DIR}/src/sundials/sundials_lapack_defs.h.in
+               ${PROJECT_BINARY_DIR}/src/sundials/sundials_lapack_defs.h)
 
 # Try building a simple test
 if(SUNDIALS_ENABLE_LAPACK_CHECKS)
@@ -294,19 +304,22 @@ if(SUNDIALS_ENABLE_LAPACK_CHECKS)
   set(TEST_DIR ${PROJECT_BINARY_DIR}/LAPACK_TEST)
 
   # Create a C source file calling a BLAS (dcopy) and LAPACK (dgetrf) function
+  math(EXPR lapack_integer_bits "${SUNDIALS_LAPACK_INT_BYTES} * 8")
   file(
     WRITE ${TEST_DIR}/test.c
+    "#include <stdint.h>\n"
+    "typedef int${lapack_integer_bits}_t lapack_int;\n"
     "${LAPACK_MANGLE_MACRO1}\n"
     "#define dcopy_f77 SUNDIALS_LAPACK_FUNC(dcopy, DCOPY)\n"
     "#define dgetrf_f77 SUNDIALS_LAPACK_FUNC(dgetrf, DGETRF)\n"
-    "extern void dcopy_f77(int *n, const double *x, const int *inc_x, double *y, const int *inc_y);\n"
-    "extern void dgetrf_f77(const int *m, const int *n, double *a, int *lda, int *ipiv, int *info);\n"
+    "extern void dcopy_f77(const lapack_int *n, const double *x, const lapack_int *inc_x, double *y, const lapack_int *inc_y);\n"
+    "extern void dgetrf_f77(const lapack_int *m, const lapack_int *n, double *a, const lapack_int *lda, lapack_int *ipiv, lapack_int *info);\n"
     "int main(void) {\n"
-    "int n=1;\n"
+    "lapack_int n=1, pivot=0, info=0;\n"
     "double x=1.0;\n"
     "double y=1.0;\n"
     "dcopy_f77(&n, &x, &n, &y, &n);\n"
-    "dgetrf_f77(&n, &n, &x, &n, &n, &n);\n"
+    "dgetrf_f77(&n, &n, &x, &n, &pivot, &info);\n"
     "return 0;\n"
     "}\n")
 

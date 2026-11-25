@@ -140,6 +140,19 @@ int main(int argc, char* argv[])
   /* Run Tests */
   fails += Test_SUNLinSolInitialize(LS, 0);
   fails += Test_SUNLinSolSetup(LS, A, 0);
+  if (fails == 0)
+  {
+    SUNLinearSolverContent_LapackBand content = LS->content;
+    for (sunindextype row = 0; row < content->N; row++)
+    {
+      if (content->pivots[row] < row + 1 || content->pivots[row] > content->N)
+      {
+        printf("FAIL: Invalid public LAPACK pivot index\n");
+        fails++;
+        break;
+      }
+    }
+  }
   fails += Test_SUNLinSolSolve(LS, A, x, b, 100 * SUN_UNIT_ROUNDOFF, SUNTRUE, 0);
 
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_DIRECT, 0);

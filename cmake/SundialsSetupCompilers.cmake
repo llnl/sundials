@@ -439,9 +439,6 @@ if(SUNDIALS_LAPACK_CASE AND SUNDIALS_LAPACK_UNDERSCORES)
   # name-mangling scheme has been manually set
   set(NEED_FORTRAN_NAME_MANGLING FALSE)
 
-  configure_file(${PROJECT_SOURCE_DIR}/src/sundials/sundials_lapack_defs.h.in
-                 ${PROJECT_BINARY_DIR}/src/sundials/sundials_lapack_defs.h)
-
 endif()
 
 # Do we need a Fortran compiler?
