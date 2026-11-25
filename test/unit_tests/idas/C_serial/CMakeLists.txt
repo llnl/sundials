@@ -18,7 +18,8 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "idas_test_getuserdata\;" "idas_test_tstop\;")
+set(unit_tests "idas_test_getuserdata\;" "idas_test_tstop\;"
+               "idas_test_calcic_output\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
@@ -43,6 +44,7 @@ foreach(test_tuple ${unit_tests})
 
     # libraries to link against
     target_link_libraries(${test} sundials_idas sundials_nvecserial
+                          sundials_sunlinsoldense sundials_sunmatrixdense
                           ${EXE_EXTRA_LINK_LIBS})
 
   endif()

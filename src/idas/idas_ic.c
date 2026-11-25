@@ -114,7 +114,34 @@ static int IDAICFailFlag(IDAMem IDA_mem, int retval);
  * -----------------------------------------------------------------
  */
 
+static int IDACalcICImpl(void* ida_mem, int icopt, sunrealtype tout1,
+                         N_Vector yy, N_Vector yp);
+
 int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
+{
+  return IDACalcICImpl(ida_mem, icopt, tout1, NULL, NULL);
+}
+
+int IDACalcICWithOutput(void* ida_mem, int icopt, sunrealtype tout1,
+                        N_Vector yy, N_Vector yp)
+{
+  if (ida_mem == NULL)
+  {
+    return IDACalcICImpl(NULL, icopt, tout1, NULL, NULL);
+  }
+
+  if (yy == NULL || yp == NULL || yy == yp)
+  {
+    IDAProcessError((IDAMem)ida_mem, IDA_ILL_INPUT, __LINE__, __func__, __FILE__,
+                    "Two distinct initial-condition output vectors are required.");
+    return IDA_ILL_INPUT;
+  }
+
+  return IDACalcICImpl(ida_mem, icopt, tout1, yy, yp);
+}
+
+static int IDACalcICImpl(void* ida_mem, int icopt, sunrealtype tout1,
+                         N_Vector yy, N_Vector yp)
 {
   int ewtsetOK;
   int ier, nwt, nh, mxnh, icret, retval = 0;
@@ -340,6 +367,12 @@ int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
     }
 
   } /* End of nwt loop */
+
+  if (yy != NULL)
+  {
+    N_VScale(ONE, IDA_mem->ida_yy0, yy);
+    N_VScale(ONE, IDA_mem->ida_yp0, yp);
+  }
 
   /* Load the optional outputs. */
 

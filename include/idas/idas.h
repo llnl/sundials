@@ -184,6 +184,9 @@ SUNDIALS_EXPORT int IDAWFtolerances(void* ida_mem, IDAEwtFn efun);
 
 /* Initial condition calculation function */
 SUNDIALS_EXPORT int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1);
+SUNDIALS_EXPORT int IDACalcICWithOutput(void* ida_mem, int icopt,
+                                      sunrealtype tout1, N_Vector yy,
+                                      N_Vector yp);
 
 /* Command-line control over scalar-valued set routines */
 SUNDIALS_EXPORT int IDASetOptions(void* ida_mem, const char* idaid,

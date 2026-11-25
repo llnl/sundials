@@ -665,6 +665,29 @@ successful call to the linear system solver specification function. The call to
 :c:func:`IDACalcIC` should precede the call(s) to :c:func:`IDASolve` for the
 given problem.
 
+.. c:function:: int IDACalcICWithOutput(void* ida_mem, int icopt, sunrealtype tout1, N_Vector yy, N_Vector yp)
+
+   Computes initial conditions with the same algorithm and call sequence as
+   :c:func:`IDACalcIC`. Supply two distinct, non-null caller-owned vectors
+   compatible with the initial conditions passed to :c:func:`IDAInit`.
+   The output vectors must have independent storage.
+   The initial conditions originally passed to :c:func:`IDAInit` or
+   :c:func:`IDAReInit` may also be used for the output. The solver does not
+   take ownership of either vector.
+
+   On reaching the end of the state correction, IDA copies the final
+   candidate and its derivative to `yy` and `yp` before returning or
+   continuing to staggered sensitivity initialization in IDAS. A failure
+   during state correction can leave the candidate equal to the initial
+   guess or to a partially corrected pair. A failure before state correction
+   leaves both outputs unchanged.
+
+   This routine returns the status from :c:func:`IDACalcIC`, or
+   ``IDA_ILL_INPUT`` if the output handles are null or identical. A candidate
+   from a failed call is not certified consistent. To try again with that
+   candidate as a new guess, call :c:func:`IDAReInit` first. The solver
+   commits initial conditions under the same rules as :c:func:`IDACalcIC`.
+
 .. c:function:: int IDACalcIC(void* ida_mem, int icopt, sunrealtype tout1)
 
    The function :c:func:`IDACalcIC` corrects the initial values ``y0`` and ``yp0`` at
