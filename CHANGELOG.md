@@ -33,6 +33,10 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 ### Bug Fixes
 
+Fixed IDAS simultaneous sensitivity error control to include sensitivity
+errors in the local error test and order-decrease estimates. Previously,
+sensitivity tolerances could be ignored when the state errors were small.
+
 The Newton nonlinear solver now reports missing required callbacks during
 initialization in all build configurations, preventing NULL callback crashes
 across SUNDIALS packages.

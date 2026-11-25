@@ -66,6 +66,27 @@
 #define TWO  SUN_RCONST(2.00)
 #define FOUR SUN_RCONST(4.00)
 
+/* Use the math functions corresponding to sunrealtype. */
+#if defined(SUNDIALS_SINGLE_PRECISION)
+#define ATAN(x) (atanf((x)))
+#define ASIN(x) (asinf((x)))
+#define SIN(x)  (sinf((x)))
+#define COS(x)  (cosf((x)))
+#define SQRT(x) (sqrtf((x)))
+#elif defined(SUNDIALS_DOUBLE_PRECISION)
+#define ATAN(x) (atan((x)))
+#define ASIN(x) (asin((x)))
+#define SIN(x)  (sin((x)))
+#define COS(x)  (cos((x)))
+#define SQRT(x) (sqrt((x)))
+#elif defined(SUNDIALS_EXTENDED_PRECISION)
+#define ATAN(x) (atanl((x)))
+#define ASIN(x) (asinl((x)))
+#define SIN(x)  (sinl((x)))
+#define COS(x)  (cosl((x)))
+#define SQRT(x) (sqrtl((x)))
+#endif
+
 typedef struct
 {
   sunrealtype a;
@@ -380,7 +401,7 @@ static void setIC(N_Vector yy, N_Vector yp, UserData data)
   N_VConst(ZERO, yy);
   N_VConst(ZERO, yp);
 
-  pi = FOUR * atan(ONE);
+  pi = FOUR * ATAN(ONE);
 
   a  = data->a;
   J1 = data->J1;
@@ -388,8 +409,8 @@ static void setIC(N_Vector yy, N_Vector yp, UserData data)
   J2 = data->J2;
 
   q = pi / TWO;
-  p = asin(-a);
-  x = cos(p);
+  p = ASIN(-a);
+  x = COS(p);
 
   NV_Ith_S(yy, 0) = q;
   NV_Ith_S(yy, 1) = x;
@@ -425,15 +446,15 @@ static void force(N_Vector yy, sunrealtype* Q, UserData data)
   xd = NV_Ith_S(yy, 4);
   pd = NV_Ith_S(yy, 5);
 
-  s1  = sin(q);
-  c1  = cos(q);
-  s2  = sin(p);
-  c2  = cos(p);
+  s1  = SIN(q);
+  c1  = COS(q);
+  s2  = SIN(p);
+  c2  = COS(p);
   s21 = s2 * c1 - c2 * s1;
   c21 = c2 * c1 + s2 * s1;
 
   l2 = x * x - x * (c2 + a * c1) + (ONE + a * a) / FOUR + a * c21 / TWO;
-  l  = sqrt(l2);
+  l  = SQRT(l2);
   ld = TWO * x * xd - xd * (c2 + a * c1) + x * (s2 * pd + a * s1 * qd) -
        a * s21 * (pd - qd) / TWO;
   ld /= TWO * l;
@@ -483,10 +504,10 @@ static int ressc(sunrealtype tres, N_Vector yy, N_Vector yp, N_Vector rr,
   mu1 = yval[8];
   mu2 = yval[9];
 
-  s1 = sin(q);
-  c1 = cos(q);
-  s2 = sin(p);
-  c2 = cos(p);
+  s1 = SIN(q);
+  c1 = COS(q);
+  s2 = SIN(p);
+  c2 = COS(p);
 
   force(yy, Q, data);
 
