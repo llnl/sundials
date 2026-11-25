@@ -183,6 +183,7 @@ static int KINLineSearch(KINMem kin_mem, sunrealtype* fnormp,
                          sunrealtype* f1normp, sunbooleantype* maxStepTaken);
 static int KINPicardAA(KINMem kin_mem);
 static int KINFP(KINMem kin_mem);
+static int KINObserveIteration(KINMem kin_mem, N_Vector value, int status);
 
 static int KINLinSolDrv(KINMem kinmem);
 static int KINPicardFcnEval(KINMem kin_mem, N_Vector gval, N_Vector uval,
@@ -279,6 +280,7 @@ void* KINCreate(SUNContext sunctx)
   kin_mem->kin_delay_aa         = 0;
   kin_mem->kin_current_depth    = 0;
   kin_mem->kin_damping_fn       = NULL;
+  kin_mem->kin_iteration_fn     = NULL;
   kin_mem->kin_depth_fn         = NULL;
   kin_mem->kin_orth_aa          = KIN_ORTH_MGS;
   kin_mem->kin_orth_aa_alloc    = 0;
@@ -705,6 +707,10 @@ int KINSol(void* kinmem, N_Vector u, int strategy_in, N_Vector u_scale,
     N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
 
     kin_mem->kin_f1norm = f1normp;
+    if (sflag != STEP_TOO_SMALL)
+    {
+      ret = KINObserveIteration(kin_mem, kin_mem->kin_fval, ret);
+    }
 
     /* print the current nni, fnorm, and nfe values */
 
@@ -2109,6 +2115,10 @@ void KINPrintInfo(SUNDIALS_MAYBE_UNUSED KINMem kin_mem, int info_code,
     switch (ret)
     {
     case KIN_SUCCESS: sprintf(retstr, "KIN_SUCCESS"); break;
+    case KIN_USER_STOP: sprintf(retstr, "KIN_USER_STOP"); break;
+    case KIN_ITERATION_FN_FAIL:
+      sprintf(retstr, "KIN_ITERATION_FN_FAIL");
+      break;
     case KIN_SYSFUNC_FAIL: sprintf(retstr, "KIN_SYSFUNC_FAIL"); break;
     case KIN_REPTD_SYSFUNC_ERR: sprintf(retstr, "KIN_REPTD_SYSFUNC_ERR"); break;
     case KIN_STEP_LT_STPTOL: sprintf(retstr, "KIN_STEP_LT_STPTOL"); break;
@@ -2125,6 +2135,7 @@ void KINPrintInfo(SUNDIALS_MAYBE_UNUSED KINMem kin_mem, int info_code,
       break;
     case KIN_LSETUP_FAIL: sprintf(retstr, "KIN_PRECONDSET_FAILURE"); break;
     case KIN_LSOLVE_FAIL: sprintf(retstr, "KIN_PRECONDSOLVE_FAILURE"); break;
+    default: sprintf(retstr, "UNKNOWN"); break;
     }
 
     /* Compose the message */
@@ -2364,6 +2375,10 @@ static int KINPicardAA(KINMem kin_mem)
     /* Update the solution. Always return the newest iteration. Note this is
        also consistent with last function evaluation. */
     N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
+    if (retval == 0)
+    {
+      ret = KINObserveIteration(kin_mem, kin_mem->kin_fval, ret);
+    }
 
     if (ret == CONTINUE_ITERATIONS && kin_mem->kin_callForcingTerm)
     {
@@ -2589,6 +2604,7 @@ static int KINFP(KINMem kin_mem)
     if (ret == CONTINUE_ITERATIONS || kin_mem->kin_ret_newest)
     {
       N_VScale(ONE, kin_mem->kin_unew, kin_mem->kin_uu);
+      ret = KINObserveIteration(kin_mem, NULL, ret);
     }
 
   } /* end of loop; return */
@@ -2598,6 +2614,22 @@ static int KINFP(KINMem kin_mem)
 #endif
 
   return (ret);
+}
+
+static int KINObserveIteration(KINMem kin_mem, N_Vector value, int status)
+{
+  if (kin_mem->kin_iteration_fn == NULL) { return status; }
+
+  int flag = kin_mem->kin_iteration_fn(kin_mem->kin_nni, kin_mem->kin_uu,
+                                      value, kin_mem->kin_user_data);
+  if (flag > 0) { return KIN_USER_STOP; }
+  if (flag < 0)
+  {
+    KINProcessError(kin_mem, KIN_ITERATION_FN_FAIL, __LINE__, __func__, __FILE__,
+                    "The iteration callback failed.");
+    return KIN_ITERATION_FN_FAIL;
+  }
+  return status;
 }
 
 /*

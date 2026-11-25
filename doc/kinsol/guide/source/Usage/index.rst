@@ -1255,6 +1255,35 @@ negative, so a test ``retval`` :math:`<0` will catch any error.
       This routine will be called by :c:func:`KINSetOptions`
       when using the key "kinid.orth_aa".
 
+.. c:function:: int KINSetIterationFn(void* kin_mem, KINIterationFn iteration_fn)
+
+   Registers a callback to observe accepted iterates. Call this function
+   after :c:func:`KINCreate` and before :c:func:`KINSol`. A ``NULL`` callback
+   disables observation. Returns ``KIN_SUCCESS`` or ``KIN_MEM_NULL``.
+
+.. c:type:: int (*KINIterationFn)(long int iteration, N_Vector u, N_Vector value, void* user_data)
+
+   KINSOL calls this function after committing an iterate to the solution
+   vector, including a final accepted update. The iteration counter starts
+   at one. The initial guess, rejected trial points, and unchanged returns
+   after a failed line search do not produce notifications. With
+   ``KIN_FP``, a final candidate discarded under the default
+   :c:func:`KINSetReturnNewest` behavior does not produce a notification.
+
+   The callback receives the committed iterate `u`, the user data set by
+   :c:func:`KINSetUserData`, and the value of the system function evaluated
+   at `u`. The value is ``NULL`` for ``KIN_FP`` because advancing the
+   fixed-point iterate does not evaluate the map there. KINSOL performs
+   no extra system function evaluations for the callback. The vectors are
+   read-only and may be used only for the duration of the call. A callback
+   may query solver statistics. It must not modify or reenter the solver.
+
+   Return zero to continue normal processing, a positive integer to stop
+   with ``KIN_USER_STOP``, or a negative integer to return
+   ``KIN_ITERATION_FN_FAIL``. Both callback-requested returns leave the
+   observed iterate in the solution vector. A user-requested stop does
+   not indicate convergence.
+
 .. c:function:: int KINSetDampingFn(void* kin_mem, KINDampingFn damping_fn)
 
    Sets the function used to compute the damping factor, :math:`\beta_n`, in
