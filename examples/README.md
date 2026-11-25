@@ -10,9 +10,9 @@ The directory layout is:
 
 ```text
 examples/
-└── <package>/
-    └── <problem>/
-        └── <language-and-TPL-variant>/
+`-- <package>/
+    `-- <problem>/
+        `-- <language-and-TPL-variant>/
 ```
 
 Browse the package and problem directories to find an example, then choose a

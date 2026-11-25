@@ -539,22 +539,6 @@ MRIStepCoupling MRIStepCoupling_Copy(MRIStepCoupling MRIC)
 /*---------------------------------------------------------------
   Routine to query the MRIStepCoupling structure workspace size
   ---------------------------------------------------------------*/
-void MRIStepCoupling_Space(MRIStepCoupling MRIC, sunindextype* liw,
-                           sunindextype* lrw)
-{
-  /* initialize outputs and return if MRIC is not allocated */
-  *liw = 0;
-  *lrw = 0;
-  if (!MRIC) { return; }
-
-  /* fill outputs based on MRIC */
-  *liw = 5;
-  if (MRIC->c) { *lrw += MRIC->stages; }
-  if (MRIC->W) { *lrw += MRIC->nmat * (MRIC->stages + 1) * MRIC->stages; }
-  if (MRIC->G) { *lrw += MRIC->nmat * (MRIC->stages + 1) * MRIC->stages; }
-  if (MRIC->group) { *liw += MRIC->stages * MRIC->stages; }
-}
-
 /*---------------------------------------------------------------
   Routine to free a MRIStepCoupling structure
   ---------------------------------------------------------------*/

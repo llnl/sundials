@@ -108,9 +108,6 @@ SUNDIALS_EXPORT int CVodeGetJac(void* cvode_mem,
                                 SUNMatrix* J); // nb::rv_policy::reference
 SUNDIALS_EXPORT int CVodeGetJacTime(void* cvode_mem, sunrealtype* t_J);
 SUNDIALS_EXPORT int CVodeGetJacNumSteps(void* cvode_mem, long int* nst_J);
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-int CVodeGetLinWorkSpace(void* cvode_mem, long int* lenrwLS, long int* leniwLS);
 SUNDIALS_EXPORT int CVodeGetNumJacEvals(void* cvode_mem, long int* njevals);
 SUNDIALS_EXPORT int CVodeGetNumPrecEvals(void* cvode_mem, long int* npevals);
 SUNDIALS_EXPORT int CVodeGetNumPrecSolves(void* cvode_mem, long int* npsolves);

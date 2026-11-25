@@ -251,24 +251,14 @@ int sprkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
                     void* resize_data)
 {
   ARKodeSPRKStepMem step_mem = NULL;
-  sunindextype lrw1, liw1, lrw_diff, liw_diff;
   int retval;
 
   /* access ARKodeSPRKStepMem structure */
   retval = sprkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Determine change in vector sizes */
-  lrw1 = liw1 = 0;
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  lrw_diff      = lrw1 - ark_mem->lrw1;
-  liw_diff      = liw1 - ark_mem->liw1;
-  ark_mem->lrw1 = lrw1;
-  ark_mem->liw1 = liw1;
-
   /* Resize the local vectors */
-  if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                    &step_mem->sdata))
+  if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->sdata))
   {
     arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                     "Unable to resize vector");
@@ -277,8 +267,7 @@ int sprkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
 
   if (step_mem->yerr)
   {
-    if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                      &step_mem->yerr))
+    if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->yerr))
     {
       arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                       "Unable to resize vector");
@@ -332,13 +321,13 @@ void sprkStep_Free(ARKodeMem ark_mem)
 
     if (step_mem->sdata != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->sdata);
+      arkFreeVec(&step_mem->sdata);
       step_mem->sdata = NULL;
     }
 
     if (step_mem->yerr != NULL)
     {
-      arkFreeVec(ark_mem, &step_mem->yerr);
+      arkFreeVec(&step_mem->yerr);
       step_mem->yerr = NULL;
     }
 

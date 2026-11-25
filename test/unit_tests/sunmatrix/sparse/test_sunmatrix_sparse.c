@@ -474,7 +474,6 @@ int main(int argc, char* argv[])
   }
   fails += Test_SUNMatMatvec(A, x, y, 0);
   fails += Test_SUNMatHermitianTransposeVec(A, AT, x, y, 0);
-  fails += Test_SUNMatSpace(A, 0);
   if (mattype == SUN_CSR_MAT) { fails += Test_SUNSparseMatrixToCSC(A); }
   else { fails += Test_SUNSparseMatrixToCSR(A); }
 

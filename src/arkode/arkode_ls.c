@@ -270,7 +270,7 @@ int ARKodeSetLinearSolver(void* arkode_mem, SUNLinearSolver LS, SUNMatrix A)
   {
     arkProcessError(ark_mem, ARKLS_MEM_FAIL, __LINE__, __func__, __FILE__,
                     MSG_LS_MEM_FAIL);
-    arkFreeVec(ark_mem, &(arkls_mem->ytemp));
+    arkFreeVec(&(arkls_mem->ytemp));
     free(arkls_mem);
     arkls_mem = NULL;
     return (ARKLS_MEM_FAIL);
@@ -1159,78 +1159,6 @@ int ARKodeGetJacNumSteps(void* arkode_mem, long int* nst_J)
 }
 
 /*---------------------------------------------------------------
-  ARKodeGetLinWorkSpace returns the length of workspace allocated for
-  the ARKLS linear solver interface.
-  ---------------------------------------------------------------*/
-int ARKodeGetLinWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
-{
-  ARKodeMem ark_mem;
-  ARKLsMem arkls_mem;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* Return immediately if arkode_mem is NULL */
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* Return 0 for incompatible steppers */
-  if (!ark_mem->step_supports_implicit)
-  {
-    *lenrw = *leniw = 0;
-    return (ARK_SUCCESS);
-  }
-
-  /* access ARKLsMem structure */
-  retval = arkLs_AccessLMem(ark_mem, __func__, &arkls_mem);
-  if (retval != ARK_SUCCESS) { return (retval); }
-
-  /* start with fixed sizes plus vector/matrix pointers */
-  *lenrw = 3;
-  *leniw = 30;
-
-  /* add NVector sizes */
-  if (arkls_mem->x->ops->nvspace)
-  {
-    N_VSpace(arkls_mem->x, &lrw1, &liw1);
-    *lenrw += 2 * lrw1;
-    *leniw += 2 * liw1;
-  }
-
-  /* add SUNMatrix size (only account for the one owned by Ls interface) */
-  if (arkls_mem->savedJ)
-  {
-    if (arkls_mem->savedJ->ops->space)
-    {
-      retval = SUNMatSpace(arkls_mem->savedJ, &lrw, &liw);
-      if (retval == 0)
-      {
-        *lenrw += lrw;
-        *leniw += liw;
-      }
-    }
-  }
-
-  /* add LS sizes */
-  if (arkls_mem->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(arkls_mem->LS, &lrw, &liw);
-    if (retval == SUN_SUCCESS)
-    {
-      *lenrw += lrw;
-      *leniw += liw;
-    }
-  }
-
-  return (ARKLS_SUCCESS);
-}
-
-/*---------------------------------------------------------------
   ARKodeGetNumJacEvals returns the number of Jacobian evaluations
   ---------------------------------------------------------------*/
 int ARKodeGetNumJacEvals(void* arkode_mem, long int* njevals)
@@ -1830,77 +1758,6 @@ int ARKodeSetMassTimes(void* arkode_mem, ARKLsMassTimesSetupFn mtsetup,
     arkProcessError(ark_mem, ARKLS_SUNLS_FAIL, __LINE__, __func__, __FILE__,
                     "Error in calling SUNLinSolSetATimes");
     return (ARKLS_SUNLS_FAIL);
-  }
-
-  return (ARKLS_SUCCESS);
-}
-
-/*---------------------------------------------------------------
-  ARKodeGetMassWorkSpace
-  ---------------------------------------------------------------*/
-int ARKodeGetMassWorkSpace(void* arkode_mem, long int* lenrw, long int* leniw)
-{
-  ARKodeMem ark_mem;
-  ARKLsMassMem arkls_mem;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* Return immediately if arkode_mem is NULL */
-  if (arkode_mem == NULL)
-  {
-    arkProcessError(NULL, ARK_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_ARK_NO_MEM);
-    return (ARK_MEM_NULL);
-  }
-  ark_mem = (ARKodeMem)arkode_mem;
-
-  /* Return 0 for incompatible steppers */
-  if (!ark_mem->step_supports_massmatrix)
-  {
-    *lenrw = *leniw = 0;
-    return (ARK_SUCCESS);
-  }
-
-  /* access ARKLsMassMem structure */
-  retval = arkLs_AccessMassMem(ark_mem, __func__, &arkls_mem);
-  if (retval != ARK_SUCCESS) { return (retval); }
-
-  /* start with fixed sizes plus vector/matrix pointers */
-  *lenrw = 2;
-  *leniw = 23;
-
-  /* add NVector sizes */
-  if (ark_mem->tempv1->ops->nvspace)
-  {
-    N_VSpace(ark_mem->tempv1, &lrw1, &liw1);
-    *lenrw += lrw1;
-    *leniw += liw1;
-  }
-
-  /* add SUNMatrix size (only account for the one owned by Ls interface) */
-  if (!(arkls_mem->iterative) && arkls_mem->M_lu)
-  {
-    if (arkls_mem->M_lu->ops->space)
-    {
-      retval = SUNMatSpace(arkls_mem->M_lu, &lrw, &liw);
-      if (retval == 0)
-      {
-        *lenrw += lrw;
-        *leniw += liw;
-      }
-    }
-  }
-
-  /* add LS sizes */
-  if (arkls_mem->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(arkls_mem->LS, &lrw, &liw);
-    if (retval == SUN_SUCCESS)
-    {
-      *lenrw += lrw;
-      *leniw += liw;
-    }
   }
 
   return (ARKLS_SUCCESS);

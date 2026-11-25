@@ -18,8 +18,6 @@ Iteration               : FIXEDPOINT
 
  Final statistics for this run:
 
- CVode real workspace length              =  136 
- CVode integer workspace length           =   72 
  Number of steps                          =  196 
  Number of f-s                            =  390 
  Number of setups                         =    0 
@@ -44,8 +42,6 @@ Linear Solver           : Dense, User-Supplied Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  136 
- CVode integer workspace length           =   72 
  Number of steps                          =  266 
  Number of f-s                            =  365 
  Number of setups                         =   46 
@@ -53,8 +49,6 @@ Linear Solver           : Dense, User-Supplied Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =   23 
 
- Linear solver real workspace length      =   10 
- Linear solver integer workspace length   =   41 
  Number of Jacobian evaluations           =    5 
  Number of f evals. in linear solver      =    0 
 
@@ -75,8 +69,6 @@ Linear Solver           : Dense, Difference Quotient Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  136 
- CVode integer workspace length           =   72 
  Number of steps                          =  195 
  Number of f-s                            =  267 
  Number of setups                         =   34 
@@ -84,8 +76,6 @@ Linear Solver           : Dense, Difference Quotient Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =   15 
 
- Linear solver real workspace length      =   10 
- Linear solver integer workspace length   =   41 
  Number of Jacobian evaluations           =    4 
  Number of f evals. in linear solver      =    8 
 
@@ -106,8 +96,6 @@ Linear Solver           : Diagonal Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  136 
- CVode integer workspace length           =   72 
  Number of steps                          =  238 
  Number of f-s                            =  329 
  Number of setups                         =   40 
@@ -115,8 +103,6 @@ Linear Solver           : Diagonal Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =   20 
 
- Linear solver real workspace length      =    6 
- Linear solver integer workspace length   =    3 
  Number of Jacobian evaluations           =   40 
  Number of f evals. in linear solver      =   40 
 
@@ -136,8 +122,6 @@ Iteration               : FIXEDPOINT
 
  Final statistics for this run:
 
- CVode real workspace length              =  122 
- CVode integer workspace length           =   65 
  Number of steps                          =  262 
  Number of f-s                            =  497 
  Number of setups                         =    0 
@@ -162,8 +146,6 @@ Linear Solver           : Dense, User-Supplied Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  122 
- CVode integer workspace length           =   65 
  Number of steps                          =  265 
  Number of f-s                            =  357 
  Number of setups                         =   40 
@@ -171,8 +153,6 @@ Linear Solver           : Dense, User-Supplied Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =   18 
 
- Linear solver real workspace length      =   10 
- Linear solver integer workspace length   =   41 
  Number of Jacobian evaluations           =    5 
  Number of f evals. in linear solver      =    0 
 
@@ -193,8 +173,6 @@ Linear Solver           : Dense, Difference Quotient Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  122 
- CVode integer workspace length           =   65 
  Number of steps                          =  276 
  Number of f-s                            =  366 
  Number of setups                         =   40 
@@ -202,8 +180,6 @@ Linear Solver           : Dense, Difference Quotient Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =   17 
 
- Linear solver real workspace length      =   10 
- Linear solver integer workspace length   =   41 
  Number of Jacobian evaluations           =    6 
  Number of f evals. in linear solver      =   12 
 
@@ -224,8 +200,6 @@ Linear Solver           : Diagonal Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  122 
- CVode integer workspace length           =   65 
  Number of steps                          =  266 
  Number of f-s                            =  359 
  Number of setups                         =   39 
@@ -233,8 +207,6 @@ Linear Solver           : Diagonal Jacobian
  Number of nonlinear convergence failures =    1 
  Number of error test failures            =   17 
 
- Linear solver real workspace length      =    6 
- Linear solver integer workspace length   =    3 
  Number of Jacobian evaluations           =   39 
  Number of f evals. in linear solver      =   39 
 
@@ -266,8 +238,6 @@ Iteration               : FIXEDPOINT
 
  Final statistics for this run:
 
- CVode real workspace length              =  596 
- CVode integer workspace length           =   72 
  Number of steps                          =  341 
  Number of f-s                            =  601 
  Number of setups                         =    0 
@@ -293,8 +263,6 @@ Linear Solver           : Diagonal Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  596 
- CVode integer workspace length           =   72 
  Number of steps                          =  154 
  Number of f-s                            =  218 
  Number of setups                         =   33 
@@ -302,8 +270,6 @@ Linear Solver           : Diagonal Jacobian
  Number of nonlinear convergence failures =    4 
  Number of error test failures            =    5 
 
- Linear solver real workspace length      =   75 
- Linear solver integer workspace length   =    3 
  Number of Jacobian evaluations           =   33 
  Number of f evals. in linear solver      =   33 
 
@@ -325,8 +291,6 @@ Linear Solver           : Band, User-Supplied Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  596 
- CVode integer workspace length           =   72 
  Number of steps                          =  149 
  Number of f-s                            =  183 
  Number of setups                         =   32 
@@ -334,8 +298,6 @@ Linear Solver           : Band, User-Supplied Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =    6 
 
- Linear solver real workspace length      =  327 
- Linear solver integer workspace length   =   91 
  Number of Jacobian evaluations           =    3 
  Number of f evals. in linear solver      =    0 
 
@@ -357,8 +319,6 @@ Linear Solver           : Band, Difference Quotient Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  596 
- CVode integer workspace length           =   72 
  Number of steps                          =  124 
  Number of f-s                            =  141 
  Number of setups                         =   24 
@@ -366,8 +326,6 @@ Linear Solver           : Band, Difference Quotient Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =    1 
 
- Linear solver real workspace length      =  327 
- Linear solver integer workspace length   =   91 
  Number of Jacobian evaluations           =    3 
  Number of f evals. in linear solver      =   18 
 
@@ -388,8 +346,6 @@ Iteration               : FIXEDPOINT
 
  Final statistics for this run:
 
- CVode real workspace length              =  421 
- CVode integer workspace length           =   65 
  Number of steps                          =  372 
  Number of f-s                            =  692 
  Number of setups                         =    0 
@@ -415,8 +371,6 @@ Linear Solver           : Diagonal Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  421 
- CVode integer workspace length           =   65 
  Number of steps                          =  180 
  Number of f-s                            =  270 
  Number of setups                         =   47 
@@ -424,8 +378,6 @@ Linear Solver           : Diagonal Jacobian
  Number of nonlinear convergence failures =   12 
  Number of error test failures            =    5 
 
- Linear solver real workspace length      =   75 
- Linear solver integer workspace length   =    3 
  Number of Jacobian evaluations           =   47 
  Number of f evals. in linear solver      =   47 
 
@@ -447,8 +399,6 @@ Linear Solver           : Band, User-Supplied Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  421 
- CVode integer workspace length           =   65 
  Number of steps                          =  119 
  Number of f-s                            =  143 
  Number of setups                         =   25 
@@ -456,8 +406,6 @@ Linear Solver           : Band, User-Supplied Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =    2 
 
- Linear solver real workspace length      =  327 
- Linear solver integer workspace length   =   91 
  Number of Jacobian evaluations           =    3 
  Number of f evals. in linear solver      =    0 
 
@@ -479,8 +427,6 @@ Linear Solver           : Band, Difference Quotient Jacobian
 
  Final statistics for this run:
 
- CVode real workspace length              =  421 
- CVode integer workspace length           =   65 
  Number of steps                          =  121 
  Number of f-s                            =  144 
  Number of setups                         =   24 
@@ -488,8 +434,6 @@ Linear Solver           : Band, Difference Quotient Jacobian
  Number of nonlinear convergence failures =    0 
  Number of error test failures            =    1 
 
- Linear solver real workspace length      =  327 
- Linear solver integer workspace length   =   91 
  Number of Jacobian evaluations           =    3 
  Number of f evals. in linear solver      =   18 
 

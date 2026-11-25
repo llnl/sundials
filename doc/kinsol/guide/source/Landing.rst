@@ -16,7 +16,7 @@
 .. only:: html
 
    This is the documentation for KINSOL, a solver for nonlinear algebraic
-   systems. It includes a Newton-Krylov solver as well as Picard and fixed point
+   systems. It includes a Newton--Krylov solver as well as Picard and fixed point
    solvers, both of which can be accelerated with Anderson acceleration. KINSOL
    is based on the previous Fortran package NKSOL of Brown and Saad.
 

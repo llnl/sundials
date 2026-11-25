@@ -97,8 +97,6 @@ SUNAdaptController SUNAdaptController_ImExGus(SUNContext sunctx)
   C->ops->write        = SUNAdaptController_Write_ImExGus;
   C->ops->seterrorbias = SUNAdaptController_SetErrorBias_ImExGus;
   C->ops->updateh      = SUNAdaptController_UpdateH_ImExGus;
-  C->ops->space        = SUNAdaptController_Space_ImExGus;
-
   /* Create content */
   content = NULL;
   content = (SUNAdaptControllerContent_ImExGus)malloc(sizeof *content);
@@ -324,16 +322,5 @@ SUNErrCode SUNAdaptController_UpdateH_ImExGus(SUNAdaptController C,
      again until a positive error has been stored */
   SACIMEXGUS_FIRSTSTEP(C) = (SACIMEXGUS_EP(C) > SUN_RCONST(0.0)) ? SUNFALSE
                                                                  : SUNTRUE;
-  return SUN_SUCCESS;
-}
-
-SUNErrCode SUNAdaptController_Space_ImExGus(SUNAdaptController C,
-                                            long int* lenrw, long int* leniw)
-{
-  SUNFunctionBegin(C->sunctx);
-  SUNAssert(lenrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssert(leniw, SUN_ERR_ARG_CORRUPT);
-  *lenrw = 7;
-  *leniw = 1;
   return SUN_SUCCESS;
 }

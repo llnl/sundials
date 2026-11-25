@@ -21,7 +21,7 @@ Mathematical Considerations
 
 KINSOL solves nonlinear algebraic systems in real :math:`N`-space.
 
-Using Newton’s method, or the Picard iteration, one can solve
+Using Newton's method, or the Picard iteration, one can solve
 
 .. math::
   F(u) = 0 \, , \quad F:\mathbb{R}^N \rightarrow \mathbb{R}^N \, ,
@@ -166,7 +166,7 @@ first and simplest is the standard Newton strategy which applies step 2(b) as ab
 :math:`1`. The other method is a global strategy, which attempts to use the direction implied by :math:`\delta_n` in the
 most efficient way for furthering convergence of the nonlinear problem. This technique is implemented in the second
 strategy, called Linesearch. This option employs both the :math:`\alpha` and :math:`\beta` conditions of the
-Goldstein-Armijo linesearch given in :cite:p:`DeSc:96` for step 2(b), where :math:`\lambda` is chosen to
+Goldstein--Armijo linesearch given in :cite:p:`DeSc:96` for step 2(b), where :math:`\lambda` is chosen to
 guarantee a sufficient decrease in :math:`F` relative to the step length as well as a minimum step length relative to
 the initial rate of decrease of :math:`F`. One property of the algorithm is that the full Newton step tends to be taken
 close to the solution.
@@ -177,7 +177,7 @@ KINSOL implements a backtracking algorithm to first find a value :math:`\lambda`
 .. math:: F(u_n + \lambda\delta_n) \le F(u_n) + \alpha \nabla F(u_n)^T \lambda\delta_n \, ,
 
 where :math:`\alpha = 10^{-4}`. Although backtracking in itself guarantees that the step is not too small, KINSOL
-secondly relaxes :math:`\lambda` to satisfy the so-called :math:`\beta`-condition (equivalent to Wolfe’s curvature
+secondly relaxes :math:`\lambda` to satisfy the so-called :math:`\beta`-condition (equivalent to Wolfe's curvature
 condition):
 
 .. math:: F(u_n + \lambda\delta_n) \ge F(u_n) + \beta \nabla F(u_n)^T \lambda\delta_n \, ,
@@ -288,14 +288,14 @@ Constant :math:`\eta`
    with 0.1 as the default.
 
 The default strategy is "Eisenstat and Walker Choice 1". For both options 1 and 2, appropriate safeguards are
-incorporated to ensure that :math:`\eta` does not decrease too quickly :cite:p:`EiWa:96`.
+incorporated to ensure that :math:`\eta` does not decrease too quickly :cite:p:`EiWa:96`.
 
 Difference quotient Jacobian approximations
 -------------------------------------------
 
 With the :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` and :ref:`SUNMATRIX_BAND <SUNMatrix.Band>` matrix modules,
 the Jacobian may be supplied by a user routine, or approximated
-by difference quotients, at the user’s option. In the latter case, we use the usual approximation
+by difference quotients, at the user's option. In the latter case, we use the usual approximation
 
 .. math::
    J^{ij} = [F^i(u+\sigma_j e^j) - F^i(u)]/\sigma_j \, .
@@ -308,7 +308,7 @@ The increments :math:`\sigma_j` are given by
    :label: KIN_sigmaDQ_direct
 
 In the dense case, this scheme requires :math:`N` evaluations of :math:`F`, one for each column of :math:`J`. In the
-band case, the columns of :math:`J` are computed in groups, by the Curtis-Powell-Reid algorithm, with the number of
+band case, the columns of :math:`J` are computed in groups, by the Curtis--Powell--Reid algorithm, with the number of
 :math:`F` evaluations equal to the bandwidth. The parameter :math:`U` above can (optionally) be replaced by a
 user-specified value, ``relfunc``.
 
@@ -335,7 +335,7 @@ where :math:`u_{typ}` is a vector of typical values for the absolute values of t
 inverses of the scale factors given for :math:`u` as described below). This formula is suitable for *scaled* vectors
 :math:`u` and :math:`v`, and so is applied to :math:`D_u u` and :math:`D_u v`. The parameter :math:`U` above can
 (optionally) be replaced by a user-specified value, ``relfunc``. Convergence of the Newton method is maintained as long
-as the value of :math:`\sigma` remains appropriately small, as shown in :cite:p:`Bro:87`.
+as the value of :math:`\sigma` remains appropriately small, as shown in :cite:p:`Bro:87`.
 
 .. _KINSOL.Mathematics.FixedPoint:
 
@@ -381,7 +381,7 @@ see page 182 of :cite:p:`Ortega-Rheinbolt00`.
 Anderson Acceleration
 ---------------------
 
-The Picard and fixed point methods can be significantly accelerated using Anderson’s method
+The Picard and fixed point methods can be significantly accelerated using Anderson's method
 :cite:p:`Anderson65, Walker-Ni09, Fang-Saad09, LWWY11`. Anderson acceleration can be formulated as follows:
 
 1. Set :math:`u_0 =` an initial guess, :math:`m \ge 1`, and :math:`m_0 = 0`
@@ -443,31 +443,31 @@ Anderson Acceleration QR Factorization
 --------------------------------------
 
 The default QR factorization routine used in Anderson acceleration is Modified
-Gram-Schmidt, a stable orthogonalization routine that requires an increasing
+Gram--Schmidt, a stable orthogonalization routine that requires an increasing
 number of synchronizations per iteration dependent upon the number of vectors
 being orthgonalized against. While practical use of Anderson acceleration only
 requires a small number of vectors to be used in the QR factorization, this
 linearly scaling number of synchronizations per iteration can yield poor
 performance when Anderson acceleration is performed in a parallel setting. To
 combat this poor performance, low synchronization QR routines are available to
-the user, in particular: Inverse Compact WY Modified Gram-Schmidt
-:cite:p:`lowSyncGMRES`, along with variants of Classical Gram-Schmidt with
+the user, in particular: Inverse Compact WY Modified Gram--Schmidt
+:cite:p:`lowSyncGMRES`, along with variants of Classical Gram--Schmidt with
 Reorthogonalization :cite:p:`hernandez2005parallel`.  While all of these QR
 factorization routines are mathematically equivalent, they do not exhibit the
 same stability when performed with floating point arithmetic or in a parallel
 setting.
 
-Inverse Compact WY Modified Gram-Schmidt, which is based on triangular solve
-variants of Gram-Schmidt that were developed within the context of GMRES, is an
+Inverse Compact WY Modified Gram--Schmidt, which is based on triangular solve
+variants of Gram--Schmidt that were developed within the context of GMRES, is an
 option that only requires two synchronizations per iteration. Additionally, it
 adds a lower triangular solve at every iteration, but this generally does not
 affect performance due to the system solve being small i.e., the number of
 vectors being orthgonalized against.
 
 The remaining orthogonalization options are based on and include Classical
-Gram-Schmidt with Reorthogonalization (CGS-2). CGS-2 only requires three
+Gram--Schmidt with Reorthogonalization (CGS-2). CGS-2 only requires three
 synchronizations per iteration, but does not exhibit the same stability as
-Modified Gram-Schmidt. Classical Gram-Schmidt with Delayed Reorthogolonization
+Modified Gram--Schmidt. Classical Gram--Schmidt with Delayed Reorthogolonization
 has the same stability as CGS-2, but it reduces the number of synchronizations
 per iteration to two.
 

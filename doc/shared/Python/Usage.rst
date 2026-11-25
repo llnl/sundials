@@ -153,7 +153,7 @@ problem directories in the :examples:`SUNDIALS GitHub repository <>`,
 in a ``python`` variant subdirectory. Examples for packages not yet reorganized
 remain in ``examples/python``.
 
-This example demonstrates how to use CVODES to solve the Lotka-Volterra
+This example demonstrates how to use CVODES to solve the Lotka--Volterra
 equations, a model of predator-prey dynamics in ecology, given by
 
 .. math::

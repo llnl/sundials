@@ -218,12 +218,6 @@ struct _MRIStepInnerStepper
   /* fused op workspace */
   sunrealtype* vals;
   N_Vector* vecs;
-
-  /* Space requirements */
-  sunindextype lrw1; /* no. of sunrealtype words in 1 N_Vector          */
-  sunindextype liw1; /* no. of integer words in 1 N_Vector           */
-  long int lrw;      /* no. of sunrealtype words in ARKODE work vectors */
-  long int liw;      /* no. of integer words in ARKODE work vectors  */
 };
 
 /*===============================================================
@@ -354,8 +348,7 @@ int mriStepInnerStepper_ResetSUNStepper(MRIStepInnerStepper stepper,
 int mriStepInnerStepper_AllocVecs(MRIStepInnerStepper stepper, int count,
                                   N_Vector tmpl);
 int mriStepInnerStepper_Resize(MRIStepInnerStepper stepper, ARKVecResizeFn resize,
-                               void* resize_data, sunindextype lrw_diff,
-                               sunindextype liw_diff, N_Vector tmpl);
+                               void* resize_data, N_Vector tmpl);
 int mriStepInnerStepper_FreeVecs(MRIStepInnerStepper stepper);
 void mriStepInnerStepper_PrintMem(MRIStepInnerStepper stepper, FILE* outfile);
 
@@ -407,8 +400,6 @@ SUNErrCode SUNAdaptController_Reset_MRIStep(SUNAdaptController C);
 SUNErrCode SUNAdaptController_Write_MRIStep(SUNAdaptController C, FILE* fptr);
 SUNErrCode SUNAdaptController_UpdateH_MRIStep(SUNAdaptController C,
                                               sunrealtype h, sunrealtype dsm);
-SUNErrCode SUNAdaptController_Space_MRIStep(SUNAdaptController C,
-                                            long int* lenrw, long int* leniw);
 
 /*===============================================================
   Reusable MRIStep Error Messages

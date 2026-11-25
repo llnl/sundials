@@ -40,7 +40,6 @@ where *.lib* is typically ``.so`` for shared libraries and
 The module SUNLinSol_LapackBand provides the following
 user-callable routine:
 
-
 .. c:function:: SUNLinearSolver SUNLinSol_LapackBand(N_Vector y, SUNMatrix A, SUNContext sunctx)
 
    This function creates and allocates memory for a LAPACK band
@@ -68,12 +67,10 @@ user-callable routine:
       is allocated with appropriate upper bandwidth storage for the
       :math:`LU` factorization.
 
-
 .. _SUNLinSol_LapackBand.Description:
 
 SUNLinSol_LapackBand Description
 -----------------------------------
-
 
 SUNLinSol_LapackBand module defines the
 *content* field of a ``SUNLinearSolver`` to be the following structure:
@@ -96,7 +93,6 @@ information:
 
 * ``last_flag`` - last error return flag from internal function
   evaluations.
-
 
 The SUNLinSol_LapackBand module is a ``SUNLinearSolver`` wrapper for
 the LAPACK band matrix factorization and solve routines, ``*GBTRF``
@@ -154,9 +150,5 @@ The SUNLinSol_LapackBand module defines band implementations of all
   ``pivots`` array to perform the solve.
 
 * ``SUNLinSolLastFlag_LapackBand``
-
-* ``SUNLinSolSpace_LapackBand`` -- this only returns information for
-  the storage *within* the solver object, i.e. storage for ``N``,
-  ``last_flag``, and ``pivots``.
 
 * ``SUNLinSolFree_LapackBand``

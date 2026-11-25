@@ -135,7 +135,6 @@ SUNLinearSolver SUNLinSol_MagmaDense(N_Vector y, SUNMatrix Amat, SUNContext sunc
   S->ops->setup      = SUNLinSolSetup_MagmaDense;
   S->ops->solve      = SUNLinSolSolve_MagmaDense;
   S->ops->lastflag   = SUNLinSolLastFlag_MagmaDense;
-  S->ops->space      = SUNLinSolSpace_MagmaDense;
   S->ops->free       = SUNLinSolFree_MagmaDense;
 
   /* Create content */
@@ -456,14 +455,6 @@ int SUNLinSolSolve_MagmaDense(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 sunindextype SUNLinSolLastFlag_MagmaDense(SUNLinearSolver S)
 {
   return (LASTFLAG(S));
-}
-
-SUNErrCode SUNLinSolSpace_MagmaDense(SUNLinearSolver S, long int* lenrwLS,
-                                     long int* leniwLS)
-{
-  *lenrwLS = 0;
-  *leniwLS = 2 + MAGMADENSE_CONTENT(S)->N;
-  return SUN_SUCCESS;
 }
 
 SUNErrCode SUNLinSolFree_MagmaDense(SUNLinearSolver S)

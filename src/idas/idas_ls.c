@@ -636,46 +636,6 @@ int IDAGetJacNumSteps(void* ida_mem, long int* nst_J)
   return IDALS_SUCCESS;
 }
 
-/* IDAGetLinWorkSpace returns the length of workspace allocated
-   for the IDALS linear solver interface */
-int IDAGetLinWorkSpace(void* ida_mem, long int* lenrwLS, long int* leniwLS)
-{
-  IDAMem IDA_mem;
-  IDALsMem idals_mem;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* access IDALsMem structure */
-  retval = idaLs_AccessLMem(ida_mem, __func__, &IDA_mem, &idals_mem);
-  if (retval != IDALS_SUCCESS) { return (retval); }
-
-  /* start with fixed sizes plus vector/matrix pointers */
-  *lenrwLS = 3;
-  *leniwLS = 34;
-
-  /* add N_Vector sizes */
-  if (IDA_mem->ida_tempv1->ops->nvspace)
-  {
-    N_VSpace(IDA_mem->ida_tempv1, &lrw1, &liw1);
-    *lenrwLS += 3 * lrw1;
-    *leniwLS += 3 * liw1;
-  }
-
-  /* add LS sizes */
-  if (idals_mem->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(idals_mem->LS, &lrw, &liw);
-    if (retval == 0)
-    {
-      *lenrwLS += lrw;
-      *leniwLS += liw;
-    }
-  }
-
-  return (IDALS_SUCCESS);
-}
-
 /* IDAGetNumJacEvals returns the number of Jacobian evaluations */
 int IDAGetNumJacEvals(void* ida_mem, long int* njevals)
 {

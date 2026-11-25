@@ -137,7 +137,6 @@ N_Vector N_VNewEmpty_Sycl(SUNContext sunctx)
   v->ops->nvclone                 = N_VClone_Sycl;
   v->ops->nvcloneempty            = N_VCloneEmpty_Sycl;
   v->ops->nvdestroy               = N_VDestroy_Sycl;
-  v->ops->nvspace                 = N_VSpace_Sycl;
   v->ops->nvgetlength             = N_VGetLength_Sycl;
   v->ops->nvgetarraypointer       = N_VGetHostArrayPointer_Sycl;
   v->ops->nvgetdevicearraypointer = N_VGetDeviceArrayPointer_Sycl;
@@ -865,12 +864,6 @@ void N_VDestroy_Sycl(N_Vector v)
   free(v);
 
   return;
-}
-
-void N_VSpace_Sycl(N_Vector X, sunindextype* lrw, sunindextype* liw)
-{
-  *lrw = NVEC_SYCL_CONTENT(X)->length;
-  *liw = 2;
 }
 
 void N_VConst_Sycl(sunrealtype c, N_Vector z)

@@ -35,7 +35,6 @@ module fsunlinsol_band_mod
  public :: FSUNLinSolSetup_Band
  public :: FSUNLinSolSolve_Band
  public :: FSUNLinSolLastFlag_Band
- public :: FSUNLinSolSpace_Band
  public :: FSUNLinSolFree_Band
 
 ! WRAPPER DECLARATIONS
@@ -101,16 +100,6 @@ result(fresult)
 use, intrinsic :: ISO_C_BINDING
 type(C_PTR), value :: farg1
 integer(C_INT32_T) :: fresult
-end function
-
-function swigc_FSUNLinSolSpace_Band(farg1, farg2, farg3) &
-bind(C, name="_wrap_FSUNLinSolSpace_Band") &
-result(fresult)
-use, intrinsic :: ISO_C_BINDING
-type(C_PTR), value :: farg1
-type(C_PTR), value :: farg2
-type(C_PTR), value :: farg3
-integer(C_INT) :: fresult
 end function
 
 function swigc_FSUNLinSolFree_Band(farg1) &
@@ -235,25 +224,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(s)
 fresult = swigc_FSUNLinSolLastFlag_Band(farg1)
-swig_result = fresult
-end function
-
-function FSUNLinSolSpace_Band(s, lenrwls, leniwls) &
-result(swig_result)
-use, intrinsic :: ISO_C_BINDING
-integer(C_INT) :: swig_result
-type(SUNLinearSolver), target, intent(inout) :: s
-integer(C_LONG), dimension(*), target, intent(inout) :: lenrwls
-integer(C_LONG), dimension(*), target, intent(inout) :: leniwls
-integer(C_INT) :: fresult 
-type(C_PTR) :: farg1 
-type(C_PTR) :: farg2 
-type(C_PTR) :: farg3 
-
-farg1 = c_loc(s)
-farg2 = c_loc(lenrwls(1))
-farg3 = c_loc(leniwls(1))
-fresult = swigc_FSUNLinSolSpace_Band(farg1, farg2, farg3)
 swig_result = fresult
 end function
 

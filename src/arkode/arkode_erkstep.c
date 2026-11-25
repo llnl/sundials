@@ -131,10 +131,6 @@ void* ERKStepCreate(ARKRhsFn f, sunrealtype t0, N_Vector y0, SUNContext sunctx)
   /* Copy the input parameters into ARKODE state */
   step_mem->f = f;
 
-  /* Update the ARKODE workspace requirements -- UPDATE */
-  ark_mem->liw += 41; /* fcn/data ptr, int, long int, sunindextype, sunbooleantype */
-  ark_mem->lrw += 10;
-
   /* Initialize all the counters */
   step_mem->nfe = 0;
 
@@ -238,28 +234,18 @@ int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
                    void* resize_data)
 {
   ARKodeERKStepMem step_mem;
-  sunindextype lrw1, liw1, lrw_diff, liw_diff;
   int i, retval;
 
   /* access ARKodeERKStepMem structure */
   retval = erkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return (retval); }
 
-  /* Determine change in vector sizes */
-  lrw1 = liw1 = 0;
-  if (y0->ops->nvspace != NULL) { N_VSpace(y0, &lrw1, &liw1); }
-  lrw_diff      = lrw1 - ark_mem->lrw1;
-  liw_diff      = liw1 - ark_mem->liw1;
-  ark_mem->lrw1 = lrw1;
-  ark_mem->liw1 = liw1;
-
   /* Resize the RHS vectors */
   if (step_mem->F)
   {
     for (i = 0; i < step_mem->stages; i++)
     {
-      if (!arkResizeVec(ark_mem, resize, resize_data, lrw_diff, liw_diff, y0,
-                        &step_mem->F[i]))
+      if (!arkResizeVec(ark_mem, resize, resize_data, y0, &step_mem->F[i]))
       {
         arkProcessError(ark_mem, ARK_MEM_FAIL, __LINE__, __func__, __FILE__,
                         "Unable to resize vector");
@@ -276,7 +262,6 @@ int erkStep_Resize(ARKodeMem ark_mem, N_Vector y0,
   ---------------------------------------------------------------*/
 void erkStep_Free(ARKodeMem ark_mem)
 {
-  sunindextype Bliw, Blrw;
   ARKodeERKStepMem step_mem;
 
   /* nothing to do if ark_mem is already NULL */
@@ -290,18 +275,14 @@ void erkStep_Free(ARKodeMem ark_mem)
     /* free the Butcher table */
     if (step_mem->B != NULL)
     {
-      ARKodeButcherTable_Space(step_mem->B, &Bliw, &Blrw);
       ARKodeButcherTable_Free(step_mem->B);
       step_mem->B = NULL;
-      ark_mem->liw -= Bliw;
-      ark_mem->lrw -= Blrw;
     }
 
     /* free the RHS vectors */
     if (step_mem->F)
     {
-      arkFreeVecArray(step_mem->stages, &(step_mem->F), ark_mem->lrw1,
-                      &(ark_mem->lrw), ark_mem->liw1, &(ark_mem->liw));
+      arkFreeVecArray(step_mem->stages, &(step_mem->F));
       step_mem->F = NULL;
     }
 
@@ -310,13 +291,11 @@ void erkStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->cvals);
       step_mem->cvals = NULL;
-      ark_mem->lrw -= step_mem->nfusedopvecs;
     }
     if (step_mem->Xvecs != NULL)
     {
       free(step_mem->Xvecs);
       step_mem->Xvecs = NULL;
-      ark_mem->liw -= step_mem->nfusedopvecs;
     }
     step_mem->nfusedopvecs = 0;
 
@@ -325,14 +304,12 @@ void erkStep_Free(ARKodeMem ark_mem)
     {
       free(step_mem->stage_times);
       step_mem->stage_times = NULL;
-      ark_mem->lrw -= step_mem->stages;
     }
 
     if (step_mem->stage_coefs)
     {
       free(step_mem->stage_coefs);
       step_mem->stage_coefs = NULL;
-      ark_mem->lrw -= step_mem->stages;
     }
 
     /* free the time stepper module itself */
@@ -462,9 +439,7 @@ int erkStep_Init(ARKodeMem ark_mem, int init_type)
 
   /* Allocate RHS vector memory, update storage requirements */
   /*   Allocate F[0] ... F[stages-1] if needed */
-  if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F),
-                        ark_mem->lrw1, &(ark_mem->lrw), ark_mem->liw1,
-                        &(ark_mem->liw)))
+  if (!arkAllocVecArray(step_mem->stages, ark_mem->ewt, &(step_mem->F)))
   {
     return (ARK_MEM_FAIL);
   }
@@ -476,13 +451,11 @@ int erkStep_Init(ARKodeMem ark_mem, int init_type)
     step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                            sizeof(sunrealtype));
     if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-    ark_mem->lrw += step_mem->nfusedopvecs;
   }
   if (step_mem->Xvecs == NULL)
   {
     step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs, sizeof(N_Vector));
     if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
-    ark_mem->liw += step_mem->nfusedopvecs; /* pointers */
   }
 
   /* Allocate workspace for MRI forcing -- need to allocate here as the
@@ -491,14 +464,12 @@ int erkStep_Init(ARKodeMem ark_mem, int init_type)
   {
     step_mem->stage_times = (sunrealtype*)calloc(step_mem->stages,
                                                  sizeof(sunrealtype));
-    ark_mem->lrw += step_mem->stages;
   }
 
   if (!(step_mem->stage_coefs))
   {
     step_mem->stage_coefs = (sunrealtype*)calloc(step_mem->stages,
                                                  sizeof(sunrealtype));
-    ark_mem->lrw += step_mem->stages;
   }
 
   /* Override the interpolant degree (if needed), used in arkInitialSetup */
@@ -1284,7 +1255,6 @@ int erkStep_SetButcherTable(ARKodeMem ark_mem)
 {
   int etable;
   ARKodeERKStepMem step_mem;
-  sunindextype Bliw, Blrw;
 
   /* access ARKodeERKStepMem structure */
   if (ark_mem->step_mem == NULL)
@@ -1321,11 +1291,6 @@ int erkStep_SetButcherTable(ARKodeMem ark_mem)
   }
 
   if (etable > -1) { step_mem->B = ARKodeButcherTable_LoadERK(etable); }
-
-  /* note Butcher table space requirements */
-  ARKodeButcherTable_Space(step_mem->B, &Bliw, &Blrw);
-  ark_mem->liw += Bliw;
-  ark_mem->lrw += Blrw;
 
   /* set [redundant] stored values for stage numbers and method orders */
   if (step_mem->B != NULL)
@@ -2041,16 +2006,8 @@ int erkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
       if ((step_mem->nfusedopvecs - nvecs) < (step_mem->stages + 1))
       {
         /* free current work space */
-        if (step_mem->cvals != NULL)
-        {
-          free(step_mem->cvals);
-          ark_mem->lrw -= step_mem->nfusedopvecs;
-        }
-        if (step_mem->Xvecs != NULL)
-        {
-          free(step_mem->Xvecs);
-          ark_mem->liw -= step_mem->nfusedopvecs;
-        }
+        if (step_mem->cvals != NULL) { free(step_mem->cvals); }
+        if (step_mem->Xvecs != NULL) { free(step_mem->Xvecs); }
 
         /* allocate reusable arrays for fused vector operations */
         step_mem->nfusedopvecs = step_mem->stages + 1 + nvecs;
@@ -2059,13 +2016,11 @@ int erkStep_SetInnerForcing(ARKodeMem ark_mem, sunrealtype tshift,
         step_mem->cvals = (sunrealtype*)calloc(step_mem->nfusedopvecs,
                                                sizeof(sunrealtype));
         if (step_mem->cvals == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->lrw += step_mem->nfusedopvecs;
 
         step_mem->Xvecs = NULL;
         step_mem->Xvecs = (N_Vector*)calloc(step_mem->nfusedopvecs,
                                             sizeof(N_Vector));
         if (step_mem->Xvecs == NULL) { return (ARK_MEM_FAIL); }
-        ark_mem->liw += step_mem->nfusedopvecs;
       }
     }
   }

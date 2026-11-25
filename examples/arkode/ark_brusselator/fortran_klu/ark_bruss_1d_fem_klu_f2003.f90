@@ -1223,9 +1223,9 @@ program main
   write (503, *) (yvec(3, i), i=1, N)
 
   ! output solver parameters to screen
-  ierr = FSUNDIALSFileOpen('stdout', 'w', outstr)
+  ierr = FSUNFileOpen('stdout', 'w', outstr)
   if (ierr /= 0) then
-    print *, 'Error in FSUNDIALSFileOpen'
+    print *, 'Error in FSUNFileOpen'
     stop 1
   end if
   ierr = FARKodeWriteParameters(arkode_mem, outstr)
@@ -1233,9 +1233,9 @@ program main
     print *, 'Error in FARKodeWriteParameters'
     stop 1
   end if
-  ierr = FSUNDIALSFileClose(outstr)
+  ierr = FSUNFileClose(outstr)
   if (ierr /= 0) then
-    print *, 'Error in FSUNDIALSFileClose'
+    print *, 'Error in FSUNFileClose'
     stop 1
   end if
 

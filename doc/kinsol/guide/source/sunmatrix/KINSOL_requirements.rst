@@ -44,14 +44,9 @@ interested reader.
    +---------------------------+-----------------+-----------------+
    | :c:func:`SUNMatZero`      | x               | x               |
    +---------------------------+-----------------+-----------------+
-   | :c:func:`SUNMatSpace`     |                 | :math:`\dagger` |
-   +---------------------------+-----------------+-----------------+
 
-The matrix functions listed with a :math:`\dagger` symbol are optionally used,
-in that these are only called if they are implemented in the ``SUNMatrix``
-module that is being used (i.e. their function pointers are non-``NULL``). The
-matrix functions listed in :numref:`SUNMatrix.Description` that are *not* used
-by KINSOL are: :c:func:`SUNMatCopy`, :c:func:`SUNMatClone`,
+The matrix functions listed in :numref:`SUNMatrix.Description` that are *not*
+used by KINSOL are: :c:func:`SUNMatCopy`, :c:func:`SUNMatClone`,
 :c:func:`SUNMatScaleAdd`, :c:func:`SUNMatScaleAddI` and :c:func:`SUNMatMatvec`.
 Therefore a user-supplied ``SUNMatrix`` module for KINSOL could omit these
 functions.

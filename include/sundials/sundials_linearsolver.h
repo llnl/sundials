@@ -139,7 +139,6 @@ struct _generic_SUNLinearSolver_Ops
   int (*numiters)(SUNLinearSolver);
   sunrealtype (*resnorm)(SUNLinearSolver);
   sunindextype (*lastflag)(SUNLinearSolver);
-  SUNErrCode (*space)(SUNLinearSolver, long int*, long int*);
   N_Vector (*resid)(SUNLinearSolver);
   SUNErrCode (*free)(SUNLinearSolver);
 };
@@ -215,11 +214,6 @@ N_Vector SUNLinSolResid(SUNLinearSolver S); // nb::rv_policy::reference
               sunindextype happened to be smaller than an int.  */
 SUNDIALS_EXPORT
 sunindextype SUNLinSolLastFlag(SUNLinearSolver S);
-
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-SUNErrCode SUNLinSolSpace(SUNLinearSolver S, long int* lenrwLS,
-                          long int* leniwLS);
 
 SUNDIALS_EXPORT
 SUNErrCode SUNLinSolFree(SUNLinearSolver S);

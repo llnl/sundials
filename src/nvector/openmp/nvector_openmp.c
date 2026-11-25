@@ -117,7 +117,6 @@ N_Vector N_VNewEmpty_OpenMP(sunindextype length, int num_threads,
   v->ops->nvclone           = N_VClone_OpenMP;
   v->ops->nvcloneempty      = N_VCloneEmpty_OpenMP;
   v->ops->nvdestroy         = N_VDestroy_OpenMP;
-  v->ops->nvspace           = N_VSpace_OpenMP;
   v->ops->nvgetarraypointer = N_VGetArrayPointer_OpenMP;
   v->ops->nvsetarraypointer = N_VSetArrayPointer_OpenMP;
   v->ops->nvgetlength       = N_VGetLength_OpenMP;
@@ -383,19 +382,6 @@ void N_VDestroy_OpenMP(N_Vector v)
 /* ----------------------------------------------------------------------------
  * Get storage requirement for N_Vector
  */
-
-void N_VSpace_OpenMP(N_Vector v, sunindextype* lrw, sunindextype* liw)
-{
-  SUNFunctionBegin(v->sunctx);
-
-  SUNAssertVoid(lrw, SUN_ERR_ARG_CORRUPT);
-  SUNAssertVoid(liw, SUN_ERR_ARG_CORRUPT);
-
-  *lrw = NV_LENGTH_OMP(v);
-  *liw = 1;
-
-  return;
-}
 
 /* ----------------------------------------------------------------------------
  * Get vector data pointer

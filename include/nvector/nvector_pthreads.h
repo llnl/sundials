@@ -162,10 +162,6 @@ N_Vector N_VClone_Pthreads(N_Vector w);
 SUNDIALS_EXPORT
 void N_VDestroy_Pthreads(N_Vector v);
 
-SUNDIALS_DEPRECATED_EXPORT_MSG(
-  "Work space functions will be removed in version 8.0.0")
-void N_VSpace_Pthreads(N_Vector v, sunindextype* lrw, sunindextype* liw);
-
 SUNDIALS_EXPORT
 sunrealtype* N_VGetArrayPointer_Pthreads(N_Vector v);
 

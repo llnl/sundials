@@ -71,5 +71,3 @@ The following is a list of the example functions in ``test_sunmatrix.c``:
   :math:`z`, `computes :math:`z=Ax` using :c:func:`SUNMatMatvec`, and
   verifies that :math:`y=z`.
 
-* ``Test_SUNMatSpace``: verifies that :c:func:`SUNMatSpace` can be
-  called, and outputs the results to ``stdout``.

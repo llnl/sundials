@@ -60,17 +60,11 @@ SUNDIALS_EXPORT int ARKBraid_SetAccessFn(braid_App app, braid_PtFcnAccess access
 
 SUNDIALS_EXPORT int ARKBraid_GetVecTmpl(braid_App app, N_Vector* tmpl);
 
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKBraid_GetARKodeMem instead")
-int ARKBraid_GetARKStepMem(braid_App app, void** arkode_mem);
-
 SUNDIALS_EXPORT int ARKBraid_GetARKodeMem(braid_App app, void** arkode_mem);
 
 SUNDIALS_EXPORT int ARKBraid_GetUserData(braid_App app, void** user_data);
 
 SUNDIALS_EXPORT int ARKBraid_GetLastBraidFlag(braid_App app, int* last_flag);
-
-SUNDIALS_DEPRECATED_EXPORT_MSG("use ARKBraid_GetLastARKodeFlag instead")
-int ARKBraid_GetLastARKStepFlag(braid_App app, int* last_flag);
 
 SUNDIALS_EXPORT int ARKBraid_GetLastARKodeFlag(braid_App app, int* last_flag);
 

@@ -717,60 +717,6 @@ int CVodeGetJacNumSteps(void* cvode_mem, long int* nst_J)
   return CVLS_SUCCESS;
 }
 
-/* CVodeGetLinWorkSpace returns the length of workspace allocated
-   for the CVLS linear solver interface */
-int CVodeGetLinWorkSpace(void* cvode_mem, long int* lenrwLS, long int* leniwLS)
-{
-  CVodeMem cv_mem;
-  CVLsMem cvls_mem;
-  sunindextype lrw1, liw1;
-  long int lrw, liw;
-  int retval;
-
-  /* access CVLsMem structure */
-  retval = cvLs_AccessLMem(cvode_mem, __func__, &cv_mem, &cvls_mem);
-  if (retval != CVLS_SUCCESS) { return (retval); }
-
-  /* start with fixed sizes plus vector/matrix pointers */
-  *lenrwLS = 2;
-  *leniwLS = 30;
-
-  /* add NVector sizes */
-  if (cv_mem->cv_tempv->ops->nvspace)
-  {
-    N_VSpace(cv_mem->cv_tempv, &lrw1, &liw1);
-    *lenrwLS += 2 * lrw1;
-    *leniwLS += 2 * liw1;
-  }
-
-  /* add SUNMatrix size (only account for the one owned by Ls interface) */
-  if (cvls_mem->savedJ)
-  {
-    if (cvls_mem->savedJ->ops->space)
-    {
-      retval = SUNMatSpace(cvls_mem->savedJ, &lrw, &liw);
-      if (retval == 0)
-      {
-        *lenrwLS += lrw;
-        *leniwLS += liw;
-      }
-    }
-  }
-
-  /* add LS sizes */
-  if (cvls_mem->LS->ops->space)
-  {
-    retval = SUNLinSolSpace(cvls_mem->LS, &lrw, &liw);
-    if (retval == 0)
-    {
-      *lenrwLS += lrw;
-      *leniwLS += liw;
-    }
-  }
-
-  return (CVLS_SUCCESS);
-}
-
 /* CVodeGetNumJacEvals returns the number of Jacobian evaluations */
 int CVodeGetNumJacEvals(void* cvode_mem, long int* njevals)
 {
