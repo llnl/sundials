@@ -57,6 +57,15 @@ multiple digits in an identifier.
 Fixed a bug in the LSRKStep module where the step post-processing function for
 the RKL step was called with an incorrect time argument.
 
+Fixed a bug in CVODES where a recoverable failure of the right-hand side
+function at the converged state in the staggered sensitivity corrector
+(``CV_STAGGERED`` or ``CV_STAGGERED1``) was retried without restoring the
+predicted solution or reducing the step size. The next attempt then started
+from the advanced time, so the step covered twice the step size and the first
+half was never corrected. The failure is now handled like other recoverable
+nonlinear solver failures and counts toward the maximum number of convergence
+failures.
+
 Fixed a bug in LSRKStep where calls
 :c:func:`LSRKStepSetNumDomEigEstPreprocessIters` after the first dominant
 eigenvalue estimate incorrectly set the number of preprocessing iterations to

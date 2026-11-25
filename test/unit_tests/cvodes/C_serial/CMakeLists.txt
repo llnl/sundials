@@ -18,7 +18,8 @@
 # ---------------------------------------------------------------
 
 # List of test tuples of the form "name\;args"
-set(unit_tests "cvs_test_getuserdata\;" "cvs_test_tstop\;")
+set(unit_tests "cvs_test_getuserdata\;" "cvs_test_stgr_rhs_recovery\;"
+               "cvs_test_tstop\;")
 
 # Add the build and install targets for each test
 foreach(test_tuple ${unit_tests})
