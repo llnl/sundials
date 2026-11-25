@@ -105,7 +105,7 @@ struct ARKodeRelaxMemRec
 int arkRelaxCreate(ARKodeMem ark_mem, ARKRelaxFn relax_fn,
                    ARKRelaxJacFn relax_jac_fn, ARKRelaxDeltaEFn delta_e_fn,
                    ARKRelaxGetOrderFn get_order_fn);
-int arkRelaxDestroy(ARKodeRelaxMem relax_mem);
+void arkRelaxDestroy(ARKodeRelaxMem* relax_mem);
 int arkRelax(ARKodeMem ark_mem, int* relax_fails, sunrealtype* dsm_inout);
 
 /* User Functions */

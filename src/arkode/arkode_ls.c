@@ -3408,23 +3408,14 @@ int arkLsFree(ARKodeMem ark_mem)
   arkls_mem = (ARKLsMem)ark_step_lmem;
 
   /* Free N_Vector memory */
-  if (arkls_mem->ytemp)
-  {
-    N_VDestroy(arkls_mem->ytemp);
-    arkls_mem->ytemp = NULL;
-  }
-  if (arkls_mem->x)
-  {
-    N_VDestroy(arkls_mem->x);
-    arkls_mem->x = NULL;
-  }
+  N_VDestroy(arkls_mem->ytemp);
+  arkls_mem->ytemp = NULL;
+  N_VDestroy(arkls_mem->x);
+  arkls_mem->x = NULL;
 
   /* Free savedJ memory */
-  if (arkls_mem->savedJ)
-  {
-    SUNMatDestroy(arkls_mem->savedJ);
-    arkls_mem->savedJ = NULL;
-  }
+  SUNMatDestroy(arkls_mem->savedJ);
+  arkls_mem->savedJ = NULL;
 
   /* Nullify other N_Vector pointers */
   arkls_mem->ycur = NULL;
@@ -3866,17 +3857,11 @@ int arkLsMassFree(ARKodeMem ark_mem)
   }
 
   /* Free N_Vector memory */
-  if (arkls_mem->x)
-  {
-    N_VDestroy(arkls_mem->x);
-    arkls_mem->x = NULL;
-  }
+  N_VDestroy(arkls_mem->x);
+  arkls_mem->x = NULL;
 
   /* Free M_lu memory (direct linear solvers) */
-  if (!(arkls_mem->iterative) && arkls_mem->M_lu)
-  {
-    SUNMatDestroy(arkls_mem->M_lu);
-  }
+  if (!(arkls_mem->iterative)) { SUNMatDestroy(arkls_mem->M_lu); }
   arkls_mem->M_lu = NULL;
 
   /* Nullify other N_Vector pointers */

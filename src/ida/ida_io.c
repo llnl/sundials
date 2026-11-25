@@ -535,7 +535,8 @@ int IDASetId(void* ida_mem, N_Vector id)
 
   if (id == NULL)
   {
-    if (IDA_mem->ida_idMallocDone) { N_VDestroy(IDA_mem->ida_id); }
+    N_VDestroy(IDA_mem->ida_id);
+    IDA_mem->ida_id           = NULL;
     IDA_mem->ida_idMallocDone = SUNFALSE;
     return (IDA_SUCCESS);
   }
@@ -570,7 +571,8 @@ int IDASetConstraints(void* ida_mem, N_Vector constraints)
 
   if (constraints == NULL)
   {
-    if (IDA_mem->ida_constraints) { N_VDestroy(IDA_mem->ida_constraints); }
+    N_VDestroy(IDA_mem->ida_constraints);
+    IDA_mem->ida_constraints = NULL;
     return (IDA_SUCCESS);
   }
 

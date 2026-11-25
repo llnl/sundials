@@ -130,12 +130,12 @@ void SplittingStepCoefficients_Destroy(SplittingStepCoefficients* coefficients)
   if (coefficients == NULL || *coefficients == NULL) { return; }
 
   SplittingStepCoefficients coeffs = *coefficients;
-  if (coeffs->alpha != NULL) { free(coeffs->alpha); }
+  free(coeffs->alpha);
   if (coeffs->beta != NULL)
   {
     if (coeffs->beta[0] != NULL)
     {
-      if (coeffs->beta[0][0] != NULL) { free(coeffs->beta[0][0]); }
+      free(coeffs->beta[0][0]);
       free(coeffs->beta[0]);
     }
     free(coeffs->beta);
