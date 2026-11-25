@@ -206,7 +206,7 @@ following structure.
 
 .. code-block:: c
 
-   struct _SUNNonlinearSolverContent_FixedPoint {
+   struct SUNNonlinearSolverContent_FixedPoint_ {
 
      SUNNonlinSolSysFn      Sys;
      SUNNonlinSolConvTestFn CTest;

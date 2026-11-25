@@ -73,7 +73,7 @@ field of a ``SUNLinearSolver`` to be the following structure:
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_Band {
+   struct SUNLinearSolverContent_Band_ {
      sunindextype N;
      sunindextype *pivots;
      sunindextype last_flag;

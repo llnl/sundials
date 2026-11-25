@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_SUNAdaptControllerContent_ImExGus =
-  nb::class_<_SUNAdaptControllerContent_ImExGus>(m, "_SUNAdaptControllerContent_ImExGus",
+auto pyClassSUNAdaptControllerContent_ImExGus_ =
+  nb::class_<SUNAdaptControllerContent_ImExGus_>(m, "SUNAdaptControllerContent_ImExGus_",
                                                  "")
     .def(nb::init<>()) // implicit default constructor
   ;

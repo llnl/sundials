@@ -38,7 +38,7 @@ extern "C" {
   I. Content structure
   ---------------------------------------------------------------------------*/
 
-struct _SUNNonlinearSolverContent_FixedPoint
+struct SUNNonlinearSolverContent_FixedPoint_
 {
   /* functions provided by the integrator */
   SUNNonlinSolSysFn Sys;        /* fixed-point iteration function */
@@ -73,7 +73,7 @@ struct _SUNNonlinearSolverContent_FixedPoint
   void* ctest_data;    /* data to pass to convergence test function      */
 };
 
-typedef struct _SUNNonlinearSolverContent_FixedPoint* SUNNonlinearSolverContent_FixedPoint;
+typedef struct SUNNonlinearSolverContent_FixedPoint_* SUNNonlinearSolverContent_FixedPoint;
 
 /* -----------------------------------------------------------------------------
    II: Exported functions

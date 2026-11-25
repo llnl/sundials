@@ -32,12 +32,12 @@
 
 // Macro for creating the Fortran derived types for the generic SUNDIALS structures
 %define %sundials_generic(TYPE)
-  %fortran_struct(_generic_ ## TYPE ## _Ops);
-  %typemap(ctype) _generic_ ## TYPE * "TYPE ## _Ops";
-  %rename(TYPE ## _Ops) _generic_ ## TYPE ## _Ops;
-  %fortran_struct(_generic_ ## TYPE);
-  %typemap(ctype) _generic_ ## TYPE * "TYPE";
-  %rename(TYPE) _generic_ ## TYPE;
+  %fortran_struct(TYPE ## _Ops_);
+  %typemap(ctype) TYPE ## _Ops_* "TYPE ## _Ops";
+  %rename(TYPE ## _Ops) TYPE ## _Ops_;
+  %fortran_struct(TYPE ## _);
+  %typemap(ctype) TYPE ## _* "TYPE";
+  %rename(TYPE) TYPE ## _;
 %enddef
 
 // Treat sundials generics as void pointers
@@ -46,6 +46,7 @@
 %sundials_generic(SUNNonlinearSolver)
 %sundials_generic(SUNMatrix)
 %sundials_generic(SUNAdaptController)
+%sundials_generic(SUNDomEigEstimator)
 
 // Treat FILE* as an opaque pointer
 %apply void* { FILE* };

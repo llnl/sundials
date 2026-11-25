@@ -110,10 +110,10 @@ void bind_arkode_mristep(nb::module_& m)
   // MRIStep user-supplied function setters
   /////////////////////////////////////////////////////////////////////////////
 
-  // _MRIStepInnerStepper is a opaque/private class forward declared in a public header but
+  // MRIStepInnerStepper_ is a opaque/private class forward declared in a public header but
   // defined in a source file elsewhere. As such, we need to declare it here since its
   // not picked up in any header files by the generator.
-  nb::class_<_MRIStepInnerStepper>(m, "_MRIStepInnerStepper");
+  nb::class_<MRIStepInnerStepper_>(m, "MRIStepInnerStepper_");
 
   m.def(
     "MRIStepInnerStepper_Create",

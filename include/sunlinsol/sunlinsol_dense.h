@@ -46,14 +46,14 @@ extern "C" {
  * Dense Implementation of SUNLinearSolver
  * ---------------------------------------- */
 
-struct _SUNLinearSolverContent_Dense
+struct SUNLinearSolverContent_Dense_
 {
   sunindextype N;
   sunindextype* pivots;
   sunindextype last_flag;
 };
 
-typedef struct _SUNLinearSolverContent_Dense* SUNLinearSolverContent_Dense;
+typedef struct SUNLinearSolverContent_Dense_* SUNLinearSolverContent_Dense;
 
 /* ----------------------------------------
  * Exported Functions for SUNLINSOL_DENSE

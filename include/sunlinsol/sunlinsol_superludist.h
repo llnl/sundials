@@ -74,7 +74,7 @@ extern "C" {
  * ----------------------------------------------------------------------------
  */
 
-struct _SUNLinearSolverContent_SuperLUDIST
+struct SUNLinearSolverContent_SuperLUDIST_
 {
   sunbooleantype first_factorize;
   int last_flag;
@@ -88,7 +88,7 @@ struct _SUNLinearSolverContent_SuperLUDIST
   sunindextype N;
 };
 
-typedef struct _SUNLinearSolverContent_SuperLUDIST* SUNLinearSolverContent_SuperLUDIST;
+typedef struct SUNLinearSolverContent_SuperLUDIST_* SUNLinearSolverContent_SuperLUDIST;
 
 /*
  * ----------------------------------------------------------------------------

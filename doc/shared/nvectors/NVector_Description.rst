@@ -27,12 +27,12 @@ custom vector implementation or use one provided with SUNDIALS. The generic
 operations are described below. In the sections following, the implementations
 provided with SUNDIALS are described.
 
-An :c:type:`N_Vector` is a pointer to the :c:struct:`_generic_N_Vector`
+An :c:type:`N_Vector` is a pointer to the :c:struct:`N_Vector_`
 structure:
 
-.. c:type:: struct _generic_N_Vector *N_Vector
+.. c:type:: struct N_Vector_ *N_Vector
 
-.. c:struct:: _generic_N_Vector
+.. c:struct:: N_Vector_
 
    The structure defining the SUNDIALS vector class.
 
@@ -51,9 +51,9 @@ structure:
 
 The virtual table structure is defined as
 
-.. c:type:: _generic_N_Vector_Ops *N_Vector_Ops
+.. c:type:: N_Vector_Ops_ *N_Vector_Ops
 
-.. c:struct:: _generic_N_Vector_Ops
+.. c:struct:: N_Vector_Ops_
 
    The structure defining :c:type:`N_Vector` operations.
 

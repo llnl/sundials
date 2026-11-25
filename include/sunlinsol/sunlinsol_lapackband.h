@@ -40,14 +40,14 @@ extern "C" {
  * LAPACK band implementation of SUNLinearSolver
  * ---------------------------------------------- */
 
-struct _SUNLinearSolverContent_LapackBand
+struct SUNLinearSolverContent_LapackBand_
 {
   sunindextype N;
   sunindextype* pivots;
   sunindextype last_flag;
 };
 
-typedef struct _SUNLinearSolverContent_LapackBand* SUNLinearSolverContent_LapackBand;
+typedef struct SUNLinearSolverContent_LapackBand_* SUNLinearSolverContent_LapackBand;
 
 /* --------------------------------------------
  * Exported Functions for SUNLINSOL_LAPACKBAND

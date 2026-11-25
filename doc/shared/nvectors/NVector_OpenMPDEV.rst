@@ -32,7 +32,7 @@ the ownership of host and device data arrays.
 
 .. code-block:: c
 
-  struct _N_VectorContent_OpenMPDEV
+  struct N_VectorContent_OpenMPDEV_
   {
     sunindextype length;
     sunbooleantype  own_data;

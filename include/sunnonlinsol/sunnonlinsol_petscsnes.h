@@ -39,7 +39,7 @@ extern "C" {
  * I. Content structure
  * ---------------------------------------------------------------------------*/
 
-struct _SUNNonlinearSolverContent_PetscSNES
+struct SUNNonlinearSolverContent_PetscSNES_
 {
   int sysfn_last_err; /* last error returned by the system function Sys */
   PetscErrorCode petsc_last_err; /* last error return by PETSc */
@@ -53,7 +53,7 @@ struct _SUNNonlinearSolverContent_PetscSNES
   SUNNonlinSolSysFn Sys; /* nonlinear system function         */
 };
 
-typedef struct _SUNNonlinearSolverContent_PetscSNES* SUNNonlinearSolverContent_PetscSNES;
+typedef struct SUNNonlinearSolverContent_PetscSNES_* SUNNonlinearSolverContent_PetscSNES;
 
 /* -----------------------------------------------------------------------------
  * II: Exported functions

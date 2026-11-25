@@ -4,8 +4,8 @@
 // #endif
 //
 
-auto pyClass_SUNMatrixContent_Dense =
-  nb::class_<_SUNMatrixContent_Dense>(m, "_SUNMatrixContent_Dense", "")
+auto pyClassSUNMatrixContent_Dense_ =
+  nb::class_<SUNMatrixContent_Dense_>(m, "SUNMatrixContent_Dense_", "")
     .def(nb::init<>()) // implicit default constructor
   ;
 

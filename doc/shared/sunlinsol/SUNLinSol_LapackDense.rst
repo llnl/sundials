@@ -73,7 +73,7 @@ structure:
 
 .. code-block:: c
 
-   struct _SUNLinearSolverContent_Dense {
+   struct SUNLinearSolverContent_Dense_ {
      sunindextype N;
      sunindextype *pivots;
      sunindextype last_flag;

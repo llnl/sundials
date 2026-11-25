@@ -84,7 +84,7 @@ SUNNonlinearSolver SUNNonlinSol_PetscSNES(N_Vector y, SNES snes, SUNContext sunc
   }
 
   /* Initialize all components of content to 0/NULL */
-  memset(content, 0, sizeof(struct _SUNNonlinearSolverContent_PetscSNES));
+  memset(content, 0, sizeof(struct SUNNonlinearSolverContent_PetscSNES_));
 
   /* Attach content */
   NLS->content = content;

@@ -97,7 +97,7 @@ the beginning of the array of subvectors, and a boolean flag
 
 .. code-block:: c
 
-   struct _N_VectorContent_MPIManyVector {
+   struct N_VectorContent_MPIManyVector_ {
      MPI_Comm      comm;            /* overall MPI communicator        */
      sunindextype  num_subvectors;  /* number of vectors attached      */
      sunindextype  global_length;   /* overall mpimanyvector length    */
