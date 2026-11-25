@@ -19,7 +19,6 @@
 # ---------------------------------------------------------------
 
 if(SUNDIALS_ENABLE_CALIPER AND SUNDIALS_ENABLE_PROFILING)
-  include_directories(${caliper_INCLUDE_DIR})
   set(EXE_EXTRA_LINK_LIBS ${EXE_EXTRA_LINK_LIBS} caliper)
 endif()
 
@@ -28,12 +27,14 @@ add_subdirectory(serial)
 
 # Build the nvector test utilities
 add_library(test_nvector_obj OBJECT test_nvector.c)
+sundials_add_platform_definitions(test_nvector_obj)
 if(BUILD_SHARED_LIBS)
   # need PIC when shared libs are used since the example executables will link
   # to the shared lib
   set_property(TARGET test_nvector_obj PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif()
 target_link_libraries(test_nvector_obj PRIVATE sundials_nvecserial)
+target_include_directories(test_nvector_obj PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(parallel)
@@ -43,12 +44,15 @@ if(SUNDIALS_ENABLE_MPI)
   add_subdirectory(mpiplusx)
   # Build the mpi nvector test utilities
   add_library(test_nvectormpi_obj OBJECT test_mpinvector.c)
+  sundials_add_platform_definitions(test_nvectormpi_obj)
   if(BUILD_SHARED_LIBS)
     set_property(TARGET test_nvectormpi_obj PROPERTY POSITION_INDEPENDENT_CODE
                                                      TRUE)
   endif()
   target_link_libraries(test_nvectormpi_obj PRIVATE MPI::MPI_C
                                                     sundials_nvecparallel)
+  target_include_directories(test_nvectormpi_obj
+                             PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 if(SUNDIALS_ENABLE_NVECTOR_MANYVECTOR)
   add_subdirectory(manyvector)

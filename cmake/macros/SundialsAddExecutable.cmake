@@ -35,6 +35,7 @@ function(sundials_add_executable NAME)
   string(TOUPPER "${arg_SCALAR_TYPE}" _scalarUpper)
   if(NOT _scalarUpper OR _scalarUpper STREQUAL SUNDIALS_SCALAR_TYPE)
     add_executable(${NAME} ${arg_UNPARSED_ARGUMENTS})
+    sundials_add_platform_definitions(${NAME})
     target_include_directories(${NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     if(arg_SOURCE_PROPERTIES)
