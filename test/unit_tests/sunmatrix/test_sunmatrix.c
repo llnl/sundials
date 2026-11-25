@@ -38,8 +38,8 @@
 /* private functions */
 static double get_time(void);
 
-int print_time      = 0;
-int print_all_ranks = 0;
+static int print_time      = 0;
+static int print_all_ranks = 0;
 
 #define PRINT_TIME(format, time) \
   if (print_time) printf(format, time)
@@ -653,11 +653,10 @@ int Test_SUNMatHermitianTransposeVec(SUNMatrix A, SUNMatrix AT, N_Vector x,
  * ====================================================================*/
 
 #if defined(SUNDIALS_HAVE_POSIX_TIMERS)
-time_t base_time_tv_sec = 0; /* Base time; makes time values returned
-                                by get_time easier to read when
-                                printed since they will be zero
-                                based.
-                              */
+static time_t base_time_tv_sec = 0; /* Base time; makes time values returned
+                                       by get_time easier to read when
+                                       printed since they will be zero
+                                       based. */
 #endif
 
 void SetTiming(int onoff)

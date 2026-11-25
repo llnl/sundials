@@ -202,4 +202,4 @@ int check_vector(N_Vector expected, N_Vector computed, sunrealtype tol)
   else { return 0; }
 }
 
-void sync_device() { Kokkos::fence(); }
+void sync_device(void) { Kokkos::fence(); }

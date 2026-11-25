@@ -2814,51 +2814,28 @@ int cvLsFreeB(CVodeBMem cvB_mem)
    If any are missing it returns CVLS_MEM_NULL, CVLS_NO_ADJ,
    CVS_ILL_INPUT, or CVLS_LMEMB_NULL. */
 int cvLs_AccessLMemB(void* cvode_mem, int which, const char* fname,
-                     CVodeMem* cv_mem, CVadjMem* ca_mem, CVodeBMem* cvB_mem,
-                     CVLsMemB* cvlsB_mem)
+                     CVodeMem* cv_mem_out, CVadjMem* ca_mem_out,
+                     CVodeBMem* cvB_mem_out, CVLsMemB* cvlsB_mem_out)
 {
-  /* access CVodeMem structure */
-  if (cvode_mem == NULL)
+  /* access integrator memory structures */
+  void* cvodeB_mem_out = NULL;
+  int flag = cvaGetMem(cvode_mem, which, cv_mem_out, ca_mem_out, cvB_mem_out,
+                       &cvodeB_mem_out);
+  if (flag != CV_SUCCESS)
   {
-    cvProcessError(NULL, CVLS_MEM_NULL, __LINE__, fname, __FILE__,
-                   MSG_LS_CVMEM_NULL);
-    return (CVLS_MEM_NULL);
-  }
-  *cv_mem = (CVodeMem)cvode_mem;
-
-  /* access CVadjMem structure */
-  if ((*cv_mem)->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(*cv_mem, CVLS_NO_ADJ, __LINE__, fname, __FILE__,
-                   MSG_LS_NO_ADJ);
-    return (CVLS_NO_ADJ);
-  }
-  *ca_mem = (*cv_mem)->cv_adj_mem;
-
-  /* Check which */
-  if (which >= (*ca_mem)->ca_nbckpbs)
-  {
-    cvProcessError(*cv_mem, CVLS_ILL_INPUT, __LINE__, fname, __FILE__,
-                   MSG_LS_BAD_WHICH);
-    return (CVLS_ILL_INPUT);
+    cvProcessError(NULL, CV_MEM_NULL, __LINE__, fname, __FILE__, MSGCV_NO_MEM);
+    return flag;
   }
 
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  *cvB_mem = (*ca_mem)->cvB_mem;
-  while ((*cvB_mem) != NULL)
+  /* access linear solver memory structure */
+  *cvlsB_mem_out = NULL;
+  if ((*cvB_mem_out)->cv_lmem == NULL)
   {
-    if (which == (*cvB_mem)->cv_index) { break; }
-    *cvB_mem = (*cvB_mem)->cv_next;
-  }
-
-  /* access CVLsMemB structure */
-  if ((*cvB_mem)->cv_lmem == NULL)
-  {
-    cvProcessError(*cv_mem, CVLS_LMEMB_NULL, __LINE__, fname, __FILE__,
+    cvProcessError(*cv_mem_out, CVLS_LMEMB_NULL, __LINE__, fname, __FILE__,
                    MSG_LS_LMEMB_NULL);
     return (CVLS_LMEMB_NULL);
   }
-  *cvlsB_mem = (CVLsMemB)((*cvB_mem)->cv_lmem);
+  *cvlsB_mem_out = (CVLsMemB)((*cvB_mem_out)->cv_lmem);
 
   return (CVLS_SUCCESS);
 }

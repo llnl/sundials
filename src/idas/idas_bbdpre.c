@@ -676,49 +676,14 @@ int IDABBDPrecInitB(void* ida_mem, int which, sunindextype NlocalB,
                     sunindextype mlkeepB, sunrealtype dq_rel_yyB,
                     IDABBDLocalFnB glocalB, IDABBDCommFnB gcommB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  IDABBDPrecDataB idabbdB_mem;
-  void* ida_memB;
-  int flag;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Check if ida_mem is all right. */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDALS_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_LS_IDAMEM_NULL);
-    return (IDALS_MEM_NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDALS_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSG_LS_NO_ADJ);
-    return (IDALS_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSG_LS_BAD_WHICH);
-    return (IDALS_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  /* ida_mem corresponding to 'which' problem. */
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   /* Initialize the BBD preconditioner for this backward problem. */
   flag = IDABBDPrecInit(ida_memB, NlocalB, mudqB, mldqB, mukeepB, mlkeepB,
@@ -727,8 +692,8 @@ int IDABBDPrecInitB(void* ida_mem, int which, sunindextype NlocalB,
 
   /* Allocate memory for IDABBDPrecDataB to store the user-provided
      functions which will be called from the wrappers */
-  idabbdB_mem = NULL;
-  idabbdB_mem = (IDABBDPrecDataB)malloc(sizeof(*idabbdB_mem));
+  IDABBDPrecDataB idabbdB_mem = NULL;
+  idabbdB_mem                 = (IDABBDPrecDataB)malloc(sizeof(*idabbdB_mem));
   if (idabbdB_mem == NULL)
   {
     IDAProcessError(IDA_mem, IDALS_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -751,52 +716,17 @@ int IDABBDPrecInitB(void* ida_mem, int which, sunindextype NlocalB,
 int IDABBDPrecReInitB(void* ida_mem, int which, sunindextype mudqB,
                       sunindextype mldqB, sunrealtype dq_rel_yyB)
 {
-  IDAMem IDA_mem;
-  IDAadjMem IDAADJ_mem;
-  IDABMem IDAB_mem;
-  void* ida_memB;
-  int flag;
+  IDAMem IDA_mem       = NULL;
+  IDAadjMem IDAADJ_mem = NULL;
+  IDABMem IDAB_mem     = NULL;
+  void* ida_memB       = NULL;
 
-  /* Check if ida_mem is all right. */
-  if (ida_mem == NULL)
-  {
-    IDAProcessError(NULL, IDALS_MEM_NULL, __LINE__, __func__, __FILE__,
-                    MSG_LS_IDAMEM_NULL);
-    return (IDALS_MEM_NULL);
-  }
-  IDA_mem = (IDAMem)ida_mem;
-
-  /* Is ASA initialized? */
-  if (IDA_mem->ida_adjMallocDone == SUNFALSE)
-  {
-    IDAProcessError(IDA_mem, IDALS_NO_ADJ, __LINE__, __func__, __FILE__,
-                    MSG_LS_NO_ADJ);
-    return (IDALS_NO_ADJ);
-  }
-  IDAADJ_mem = IDA_mem->ida_adj_mem;
-
-  /* Check the value of which */
-  if (which >= IDAADJ_mem->ia_nbckpbs)
-  {
-    IDAProcessError(IDA_mem, IDALS_ILL_INPUT, __LINE__, __func__, __FILE__,
-                    MSG_LS_BAD_WHICH);
-    return (IDALS_ILL_INPUT);
-  }
-
-  /* Find the IDABMem entry in the linked list corresponding to 'which'. */
-  IDAB_mem = IDAADJ_mem->IDAB_mem;
-  while (IDAB_mem != NULL)
-  {
-    if (which == IDAB_mem->ida_index) { break; }
-    /* advance */
-    IDAB_mem = IDAB_mem->ida_next;
-  }
-  /* ida_mem corresponding to 'which' backward problem. */
-  ida_memB = (void*)IDAB_mem->IDA_mem;
+  int flag = idaaGetMem(ida_mem, which, &IDA_mem, &IDAADJ_mem, &IDAB_mem,
+                        &ida_memB);
+  if (flag != IDA_SUCCESS) { return flag; }
 
   /* ReInitialize the BBD preconditioner for this backward problem. */
-  flag = IDABBDPrecReInit(ida_memB, mudqB, mldqB, dq_rel_yyB);
-  return (flag);
+  return IDABBDPrecReInit(ida_memB, mudqB, mldqB, dq_rel_yyB);
 }
 
 /*-------------------------------------------------------------*/

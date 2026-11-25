@@ -699,49 +699,13 @@ int CVBBDPrecInitB(void* cvode_mem, int which, sunindextype NlocalB,
                    sunindextype mlkeepB, sunrealtype dqrelyB, CVLocalFnB glocB,
                    CVCommFnB cfnB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  CVBBDPrecDataB cvbbdB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVLS_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBBD_MEM_NULL);
-    return (CVLS_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CVLS_NO_ADJ, __LINE__, __func__, __FILE__,
-                   MSGBBD_NO_ADJ);
-    return (CVLS_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGBBD_BAD_WHICH);
-    return (CVLS_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    /* advance */
-    cvB_mem = cvB_mem->cv_next;
-  }
-  /* cv_mem corresponding to 'which' problem. */
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS) { return flag; }
 
   /* Initialize the BBD preconditioner for this backward problem. */
   flag = CVBBDPrecInit(cvodeB_mem, NlocalB, mudqB, mldqB, mukeepB, mlkeepB,
@@ -750,8 +714,8 @@ int CVBBDPrecInitB(void* cvode_mem, int which, sunindextype NlocalB,
 
   /* Allocate memory for CVBBDPrecDataB to store the user-provided
      functions which will be called from the wrappers */
-  cvbbdB_mem = NULL;
-  cvbbdB_mem = (CVBBDPrecDataB)malloc(sizeof(*cvbbdB_mem));
+  CVBBDPrecDataB cvbbdB_mem = NULL;
+  cvbbdB_mem                = (CVBBDPrecDataB)malloc(sizeof(*cvbbdB_mem));
   if (cvbbdB_mem == NULL)
   {
     cvProcessError(cv_mem, CVLS_MEM_FAIL, __LINE__, __func__, __FILE__,
@@ -773,52 +737,16 @@ int CVBBDPrecInitB(void* cvode_mem, int which, sunindextype NlocalB,
 int CVBBDPrecReInitB(void* cvode_mem, int which, sunindextype mudqB,
                      sunindextype mldqB, sunrealtype dqrelyB)
 {
-  CVodeMem cv_mem;
-  CVadjMem ca_mem;
-  CVodeBMem cvB_mem;
-  void* cvodeB_mem;
-  int flag;
+  CVodeMem cv_mem   = NULL;
+  CVadjMem ca_mem   = NULL;
+  CVodeBMem cvB_mem = NULL;
+  void* cvodeB_mem  = NULL;
 
-  /* Check if cvode_mem exists */
-  if (cvode_mem == NULL)
-  {
-    cvProcessError(NULL, CVLS_MEM_NULL, __LINE__, __func__, __FILE__,
-                   MSGBBD_MEM_NULL);
-    return (CVLS_MEM_NULL);
-  }
-  cv_mem = (CVodeMem)cvode_mem;
-
-  /* Was ASA initialized? */
-  if (cv_mem->cv_adjMallocDone == SUNFALSE)
-  {
-    cvProcessError(cv_mem, CVLS_NO_ADJ, __LINE__, __func__, __FILE__,
-                   MSGBBD_NO_ADJ);
-    return (CVLS_NO_ADJ);
-  }
-  ca_mem = cv_mem->cv_adj_mem;
-
-  /* Check which */
-  if (which >= ca_mem->ca_nbckpbs)
-  {
-    cvProcessError(cv_mem, CVLS_ILL_INPUT, __LINE__, __func__, __FILE__,
-                   MSGBBD_BAD_WHICH);
-    return (CVLS_ILL_INPUT);
-  }
-
-  /* Find the CVodeBMem entry in the linked list corresponding to which */
-  cvB_mem = ca_mem->cvB_mem;
-  while (cvB_mem != NULL)
-  {
-    if (which == cvB_mem->cv_index) { break; }
-    /* advance */
-    cvB_mem = cvB_mem->cv_next;
-  }
-  /* cv_mem corresponding to 'which' backward problem. */
-  cvodeB_mem = (void*)(cvB_mem->cv_mem);
+  int flag = cvaGetMem(cvode_mem, which, &cv_mem, &ca_mem, &cvB_mem, &cvodeB_mem);
+  if (flag != CV_SUCCESS) { return flag; }
 
   /* ReInitialize the BBD preconditioner for this backward problem. */
-  flag = CVBBDPrecReInit(cvodeB_mem, mudqB, mldqB, dqrelyB);
-  return (flag);
+  return CVBBDPrecReInit(cvodeB_mem, mudqB, mldqB, dqrelyB);
 }
 
 static int CVBBDPrecFreeB(CVodeBMem cvB_mem)

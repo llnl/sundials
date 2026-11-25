@@ -900,13 +900,13 @@ program driver
   end if
 
   ! Each processor outputs subdomain information
-  write (outname, '(16Hheat2d_subdomain,f4.3,4H.txt)') myid/1000.0
+  write (outname, '("heat2d_subdomain",f4.3,".txt")') myid/1000.0
   open (100, file=outname)
   write (100, '(6(i9,1x))') nx, ny, is, ie, js, je
   close (100)
 
   ! Open output streams for results, access data array
-  write (outname, '(6Hheat2d,f4.3,4H.txt)') myid/1000.0
+  write (outname, '("heat2d",f4.3,".txt")') myid/1000.0
   open (101, file=outname)
 
   ! Output initial condition to disk
