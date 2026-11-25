@@ -376,10 +376,12 @@ SUNErrCode SUNMatScaleAdd_Band(sunrealtype c, SUNMatrix A, SUNMatrix B)
   {
     A_colj = SM_COLUMN_B(A, j);
     B_colj = SM_COLUMN_B(B, j);
+    for (i = -SM_UBAND_B(A); i < -SM_UBAND_B(B); i++) { A_colj[i] *= c; }
     for (i = -SM_UBAND_B(B); i <= SM_LBAND_B(B); i++)
     {
       A_colj[i] = c * A_colj[i] + B_colj[i];
     }
+    for (i = SM_LBAND_B(B) + 1; i <= SM_LBAND_B(A); i++) { A_colj[i] *= c; }
   }
   return SUN_SUCCESS;
 }
