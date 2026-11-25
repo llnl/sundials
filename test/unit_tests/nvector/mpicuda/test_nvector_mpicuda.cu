@@ -358,7 +358,7 @@ int check_ans(sunrealtype ans, N_Vector plusX, sunindextype local_length)
 
   X = N_VGetLocalVector_MPIPlusX(plusX);
   N_VCopyFromDevice_Cuda(X);
-  Xdata = N_VGetHostArrayPointer_Cuda(X);
+  Xdata = N_VGetArrayPointer(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++) { failure += SUNRCompare(Xdata[i], ans); }
@@ -370,8 +370,7 @@ sunbooleantype has_data(N_Vector plusX)
 {
   N_Vector X = N_VGetLocalVector_MPIPlusX(plusX);
   /* check if vector data is non-null */
-  if ((N_VGetHostArrayPointer_Cuda(X) == NULL) &&
-      (N_VGetDeviceArrayPointer_Cuda(X) == NULL))
+  if ((N_VGetArrayPointer(X) == NULL) && (N_VGetDeviceArrayPointer(X) == NULL))
   {
     return SUNFALSE;
   }
@@ -395,7 +394,7 @@ void set_element_range(N_Vector plusX, sunindextype is, sunindextype ie,
 
   /* set elements [is,ie] of the data array */
   N_VCopyFromDevice_Cuda(X);
-  xd = N_VGetHostArrayPointer_Cuda(X);
+  xd = N_VGetArrayPointer(X);
   for (i = is; i <= ie; i++) { xd[i] = val; }
   N_VCopyToDevice_Cuda(X);
 }
@@ -406,7 +405,7 @@ sunrealtype get_element(N_Vector plusX, sunindextype i)
 
   /* get i-th element of data array */
   N_VCopyFromDevice_Cuda(X);
-  return (N_VGetHostArrayPointer_Cuda(X))[i];
+  return (N_VGetArrayPointer(X))[i];
 }
 
 double max_time(N_Vector plusX, double time)

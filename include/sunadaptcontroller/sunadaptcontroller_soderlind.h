@@ -65,32 +65,6 @@ SUNErrCode SUNAdaptController_SetParams_Soderlind(SUNAdaptController C,
                                                   sunrealtype k3, sunrealtype k4,
                                                   sunrealtype k5);
 
-SUNDIALS_EXPORT
-SUNAdaptController_Type SUNAdaptController_GetType_Soderlind(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_EstimateStep_Soderlind(SUNAdaptController C,
-                                                     sunrealtype h, int p,
-                                                     sunrealtype dsm,
-                                                     sunrealtype* hnew);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_Reset_Soderlind(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_SetDefaults_Soderlind(SUNAdaptController C);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_Write_Soderlind(SUNAdaptController C, FILE* fptr);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_SetErrorBias_Soderlind(SUNAdaptController C,
-                                                     sunrealtype bias);
-
-SUNDIALS_EXPORT
-SUNErrCode SUNAdaptController_UpdateH_Soderlind(SUNAdaptController C,
-                                                sunrealtype h, sunrealtype dsm);
-
 /* Convenience routines to construct subsidiary controllers */
 
 SUNDIALS_EXPORT

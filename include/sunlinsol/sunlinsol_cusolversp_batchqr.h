@@ -64,32 +64,6 @@ SUNDIALS_EXPORT SUNLinearSolver SUNLinSol_cuSolverSp_batchQR(
 
 /*
  * ----------------------------------------------------------------------------
- *  cuSolverSp implementations of SUNLinearSolver operations
- * ----------------------------------------------------------------------------
- */
-
-SUNDIALS_EXPORT SUNLinearSolver_Type
-SUNLinSolGetType_cuSolverSp_batchQR(SUNLinearSolver S);
-
-SUNDIALS_EXPORT SUNLinearSolver_ID
-SUNLinSolGetID_cuSolverSp_batchQR(SUNLinearSolver S);
-
-SUNDIALS_EXPORT SUNErrCode SUNLinSolInitialize_cuSolverSp_batchQR(SUNLinearSolver S);
-
-SUNDIALS_EXPORT int SUNLinSolSetup_cuSolverSp_batchQR(SUNLinearSolver S,
-                                                      SUNMatrix A);
-
-SUNDIALS_EXPORT int SUNLinSolSolve_cuSolverSp_batchQR(SUNLinearSolver S,
-                                                      SUNMatrix A, N_Vector x,
-                                                      N_Vector b,
-                                                      sunrealtype tol);
-
-SUNDIALS_EXPORT sunindextype SUNLinSolLastFlag_cuSolverSp_batchQR(SUNLinearSolver S);
-
-SUNDIALS_EXPORT SUNErrCode SUNLinSolFree_cuSolverSp_batchQR(SUNLinearSolver S);
-
-/*
- * ----------------------------------------------------------------------------
  *  Additional get and set functions.
  * ----------------------------------------------------------------------------
  */

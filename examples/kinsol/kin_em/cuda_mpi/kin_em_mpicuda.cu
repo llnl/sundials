@@ -431,18 +431,12 @@ static int SetupSamples(UserData* udata)
   sunrealtype mean, val;
 
   // Access problem data
-  sunrealtype* samples_local = N_VGetHostArrayPointer_Cuda(udata->samples_local);
-  if (check_retval((void*)samples_local, "N_VGetHostArrayPointer_Cuda", 0))
-  {
-    return 1;
-  }
+  sunrealtype* samples_local = N_VGetArrayPointer(udata->samples_local);
+  if (check_retval((void*)samples_local, "N_VGetArrayPointer", 0)) { return 1; }
 
   sunrealtype* mu_host =
-    N_VGetHostArrayPointer_Cuda(N_VGetLocalVector_MPIPlusX(udata->mu_true));
-  if (check_retval((void*)mu_host, "N_VGetHostArrayPointer_Cuda", 0))
-  {
-    return 1;
-  }
+    N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(udata->mu_true));
+  if (check_retval((void*)mu_host, "N_VGetArrayPointer", 0)) { return 1; }
 
   sunrealtype std_dev = ONE;
 
@@ -487,11 +481,8 @@ static int SetMus(UserData* udata)
   sunindextype i;
 
   sunrealtype* mu_host =
-    N_VGetHostArrayPointer_Cuda(N_VGetLocalVector_MPIPlusX(udata->mu_true));
-  if (check_retval((void*)mu_host, "N_VGetHostArrayPointer_Cuda", 0))
-  {
-    return 1;
-  }
+    N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(udata->mu_true));
+  if (check_retval((void*)mu_host, "N_VGetArrayPointer", 0)) { return 1; }
 
   // Fill vectors with uniform random data in [-1,1]
   for (i = 0; i < udata->nodes_loc; i++)
@@ -509,11 +500,8 @@ static int SetMus(UserData* udata)
 
 static int SetStartGuess(N_Vector u, UserData* udata)
 {
-  sunrealtype* u_host = N_VGetHostArrayPointer_Cuda(N_VGetLocalVector_MPIPlusX(u));
-  if (check_retval((void*)u_host, "N_VGetHostArrayPointer_Cuda", 0))
-  {
-    return 1;
-  }
+  sunrealtype* u_host = N_VGetArrayPointer(N_VGetLocalVector_MPIPlusX(u));
+  if (check_retval((void*)u_host, "N_VGetArrayPointer", 0)) { return 1; }
 
   for (sunindextype i = 0; i < udata->nodes_loc; i++)
   {
@@ -546,12 +534,11 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   sunrealtype scale = ONE / sqrt(TWO * PI);
 
   // Get input device pointers
-  sunrealtype* u_dev =
-    N_VGetDeviceArrayPointer_Cuda(N_VGetLocalVector_MPIPlusX(u));
-  sunrealtype* x_dev = N_VGetDeviceArrayPointer_Cuda(udata->samples_local);
+  sunrealtype* u_dev = N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(u));
+  sunrealtype* x_dev = N_VGetDeviceArrayPointer(udata->samples_local);
 
   // Get output device pointer
-  sunrealtype* Px_dev = N_VGetDeviceArrayPointer_Cuda(udata->px);
+  sunrealtype* Px_dev = N_VGetDeviceArrayPointer(udata->px);
 
   // Compute Px
   PxKernel<<<grid1, block>>>(u_dev, Px_dev, x_dev, udata->alpha1, udata->alpha2,
@@ -562,8 +549,8 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   // ---------
 
   // Get output device pointers
-  sunrealtype* mu_bottom_dev = N_VGetDeviceArrayPointer_Cuda(udata->mu_bottom);
-  sunrealtype* mu_top_dev    = N_VGetDeviceArrayPointer_Cuda(udata->mu_top);
+  sunrealtype* mu_bottom_dev = N_VGetDeviceArrayPointer(udata->mu_bottom);
+  sunrealtype* mu_top_dev    = N_VGetDeviceArrayPointer(udata->mu_top);
 
   // Initialize output vectors to zero (for sum reduction)
   N_VConst(ZERO, udata->mu_bottom);
@@ -577,8 +564,7 @@ static int EM(N_Vector u, N_Vector f, void* user_data)
   // EM FINALIZE KERNEL
   // ------------------
 
-  sunrealtype* f_dev =
-    N_VGetDeviceArrayPointer_Cuda(N_VGetLocalVector_MPIPlusX(f));
+  sunrealtype* f_dev = N_VGetDeviceArrayPointer(N_VGetLocalVector_MPIPlusX(f));
 
   EMKernelFin<<<grid2, block>>>(f_dev, mu_top_dev, mu_bottom_dev,
                                 udata->nodes_loc);

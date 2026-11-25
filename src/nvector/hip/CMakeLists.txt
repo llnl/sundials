@@ -24,6 +24,7 @@ sundials_add_library(
   sundials_nvechip
   SOURCES nvector_hip.hip.cpp
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_hip.h
+          ${SUNDIALS_SOURCE_DIR}/include/nvector/nvector_hip_deprecated.h
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES sundials_sunmemhip_obj

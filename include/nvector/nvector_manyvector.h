@@ -31,7 +31,7 @@
  *   - N_Vector arguments to arithmetic vector operations need not
  *     be distinct. For example, the following call:
  *
- *       N_VLinearSum_ManyVector(a,x,b,y,y);
+ *       N_VLinearSum(a,x,b,y,y);
  *
  *     (which stores the result of the operation a*x+b*y in y)
  *     is legal.
@@ -88,149 +88,8 @@ sunindextype N_VGetNumSubvectors_ManyVector(N_Vector v);
 /* standard vector operations */
 
 SUNDIALS_EXPORT
-N_Vector_ID N_VGetVectorID_ManyVector(N_Vector v);
-
-SUNDIALS_EXPORT
-void N_VPrint_ManyVector(N_Vector v);
-
-SUNDIALS_EXPORT
-void N_VPrintFile_ManyVector(N_Vector v, FILE* outfile);
-
-SUNDIALS_EXPORT
-N_Vector N_VCloneEmpty_ManyVector(N_Vector w);
-
-SUNDIALS_EXPORT
-N_Vector N_VClone_ManyVector(N_Vector w);
-
-SUNDIALS_EXPORT
-void N_VDestroy_ManyVector(N_Vector v);
-
-SUNDIALS_EXPORT
-sunindextype N_VGetLength_ManyVector(N_Vector v);
-
-SUNDIALS_EXPORT
 sunindextype N_VGetSubvectorLocalLength_ManyVector(N_Vector v,
                                                    sunindextype vec_num);
-
-SUNDIALS_EXPORT
-void N_VLinearSum_ManyVector(sunrealtype a, N_Vector x, sunrealtype b,
-                             N_Vector y, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VConst_ManyVector(sunrealtype c, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VProd_ManyVector(N_Vector x, N_Vector y, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VDiv_ManyVector(N_Vector x, N_Vector y, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VScale_ManyVector(sunrealtype c, N_Vector x, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VAbs_ManyVector(N_Vector x, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VInv_ManyVector(N_Vector x, N_Vector z);
-
-SUNDIALS_EXPORT
-void N_VAddConst_ManyVector(N_Vector x, sunrealtype b, N_Vector z);
-
-SUNDIALS_EXPORT
-sunrealtype N_VWrmsNorm_ManyVector(N_Vector x, N_Vector w);
-
-SUNDIALS_EXPORT
-sunrealtype N_VWrmsNormMask_ManyVector(N_Vector x, N_Vector w, N_Vector id);
-
-SUNDIALS_EXPORT
-sunrealtype N_VWL2Norm_ManyVector(N_Vector x, N_Vector w);
-
-SUNDIALS_EXPORT
-void N_VCompare_ManyVector(sunrealtype c, N_Vector x, N_Vector z);
-
-/* fused vector operations */
-
-SUNDIALS_EXPORT
-SUNErrCode N_VLinearCombination_ManyVector(int nvec, sunrealtype* c,
-                                           N_Vector* V, N_Vector z);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VScaleAddMulti_ManyVector(int nvec, sunrealtype* a, N_Vector x,
-                                       N_Vector* Y, N_Vector* Z);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VDotProdMulti_ManyVector(int nvec, N_Vector x, N_Vector* Y,
-                                      sunrealtype* dotprods);
-
-/* vector array operations */
-
-SUNDIALS_EXPORT
-SUNErrCode N_VLinearSumVectorArray_ManyVector(int nvec, sunrealtype a,
-                                              N_Vector* X, sunrealtype b,
-                                              N_Vector* Y, N_Vector* Z);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VScaleVectorArray_ManyVector(int nvec, sunrealtype* c, N_Vector* X,
-                                          N_Vector* Z);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VConstVectorArray_ManyVector(int nvecs, sunrealtype c, N_Vector* Z);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VWrmsNormVectorArray_ManyVector(int nvecs, N_Vector* X,
-                                             N_Vector* W, sunrealtype* nrm);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VWrmsNormMaskVectorArray_ManyVector(int nvec, N_Vector* X,
-                                                 N_Vector* W, N_Vector id,
-                                                 sunrealtype* nrm);
-
-/* OPTIONAL local reduction kernels (no parallel communication) */
-
-SUNDIALS_EXPORT
-sunrealtype N_VDotProdLocal_ManyVector(N_Vector x, N_Vector y);
-
-SUNDIALS_EXPORT
-sunrealtype N_VMaxNormLocal_ManyVector(N_Vector x);
-
-SUNDIALS_EXPORT
-sunrealtype N_VMinLocal_ManyVector(N_Vector x);
-
-SUNDIALS_EXPORT
-sunrealtype N_VL1NormLocal_ManyVector(N_Vector x);
-
-SUNDIALS_EXPORT
-sunrealtype N_VWSqrSumLocal_ManyVector(N_Vector x, N_Vector w);
-
-SUNDIALS_EXPORT
-sunrealtype N_VWSqrSumMaskLocal_ManyVector(N_Vector x, N_Vector w, N_Vector id);
-
-SUNDIALS_EXPORT
-sunbooleantype N_VInvTestLocal_ManyVector(N_Vector x, N_Vector z);
-
-SUNDIALS_EXPORT
-sunbooleantype N_VConstrMaskLocal_ManyVector(N_Vector c, N_Vector x, N_Vector m);
-
-SUNDIALS_EXPORT
-sunrealtype N_VMinQuotientLocal_ManyVector(N_Vector num, N_Vector denom);
-
-/* OPTIONAL single buffer reduction operations */
-
-SUNDIALS_EXPORT
-SUNErrCode N_VDotProdMultiLocal_ManyVector(int nvec, N_Vector x, N_Vector* Y,
-                                           sunrealtype* dotprods);
-
-/* OPTIONAL XBraid interface operations */
-
-SUNDIALS_EXPORT
-SUNErrCode N_VBufSize_ManyVector(N_Vector x, sunindextype* size);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VBufPack_ManyVector(N_Vector x, void* buf);
-
-SUNDIALS_EXPORT
-SUNErrCode N_VBufUnpack_ManyVector(N_Vector x, void* buf);
 
 /* -----------------------------------------------------------------
    Enable / disable fused vector operations

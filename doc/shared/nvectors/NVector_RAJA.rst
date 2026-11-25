@@ -76,28 +76,6 @@ provide macros to access its member variables. Instead, user should use the
 accessor functions:
 
 
-
-.. c:function:: sunrealtype* N_VGetHostArrayPointer_Raja(N_Vector v)
-
-   This function returns pointer to the vector data on the host.
-
-
-.. c:function:: sunrealtype* N_VGetDeviceArrayPointer_Raja(N_Vector v)
-
-   This function returns pointer to the vector data on the device.
-
-
-.. c:function:: void N_VSetHostArrayPointer_Raja(sunrealtype* h_vdata, N_Vector v)
-
-   This function sets the vector data pointer on the host. It does not free the
-   existing pointer.
-
-
-.. c:function:: void N_VSetDeviceArrayPointer_Raja(sunrealtype* d_vdata, N_Vector v)
-
-   This function sets the vector data pointer on the device. It does not free
-   the existing pointer.
-
 .. c:function:: sunbooleantype N_VIsManagedMemory_Raja(N_Vector v)
 
    This function returns a boolean flag indicating if the vector
@@ -120,10 +98,9 @@ the host and on the device. It also provides methods for copying from
 the host to the device and vice versa. Usage examples of NVECTOR_RAJA
 are provided in some example programs for CVODE :cite:p:`cvode_ex`.
 
-The names of vector operations are obtained from those in
+These operations are invoked through the generic functions listed in
 :numref:`NVectors.Ops`, :numref:`NVectors.Ops.Fused`,
-:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local` by
-appending the suffix ``_Raja`` (e.g. ``N_VDestroy_Raja``).  The module
+:numref:`NVectors.Ops.Array`, and :numref:`NVectors.Ops.Local`. The module
 NVECTOR_RAJA provides the following additional user-callable routines:
 
 
@@ -173,16 +150,6 @@ NVECTOR_RAJA provides the following additional user-callable routines:
 .. c:function:: void N_VCopyFromDevice_Raja(N_Vector v)
 
    This function copies vector data from the device to the host.
-
-
-.. c:function:: void N_VPrint_Raja(N_Vector v)
-
-   This function prints the content of a RAJA vector to ``stdout``.
-
-
-.. c:function:: void N_VPrintFile_Raja(N_Vector v, FILE *outfile)
-
-   This function prints the content of a RAJA vector to ``outfile``.
 
 
 By default all fused and vector array operations are disabled in the NVECTOR_RAJA
@@ -262,9 +229,8 @@ options as the vector they are cloned from while vectors created with
 **Notes**
 
 * When there is a need to access components of an NVECTOR_RAJA vector,
-  it is recommended to use functions :c:func:`N_VGetDeviceArrayPointer_Raja()` or
-  :c:func:`N_VGetHostArrayPointer_Raja()`. However, when using managed memory,
-  the function :c:func:`N_VGetArrayPointer` may also be used.
+  it is recommended to use functions :c:func:`N_VGetDeviceArrayPointer()` or
+  :c:func:`N_VGetArrayPointer()`.
 
 * To maximize efficiency, vector operations in the NVECTOR_RAJA implementation
   that have more than one ``N_Vector`` argument do not check for

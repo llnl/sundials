@@ -40,7 +40,7 @@ SWIGEXPORT double * _wrap_FN_VGetArrayPointer_Parallel(N_Vector farg1) {
   sunrealtype *result = 0 ;
 
   arg1 = (N_Vector)(farg1);
-  result = (sunrealtype *)N_VGetArrayPointer_Parallel(arg1);
+  result = (sunrealtype *)N_VGetArrayPointer(arg1);
   fresult = result;
   return fresult;
 }
@@ -71,6 +71,6 @@ type(C_PTR) :: farg1
 
 farg1 = c_loc(v)
 fresult = swigc_FN_VGetArrayPointer_Parallel(farg1)
-call c_f_pointer(fresult, swig_result, [FN_VGetLocalLength_Parallel(v)])
+call c_f_pointer(fresult, swig_result, [FN_VGetLocalLength(v)])
 end function
 %}

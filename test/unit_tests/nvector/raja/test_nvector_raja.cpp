@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
     }
 
     /* Fill vector with uniform random data in [-1,1] */
-    sunrealtype* xdata = N_VGetHostArrayPointer_Raja(X);
+    sunrealtype* xdata = N_VGetArrayPointer(X);
     for (sunindextype j = 0; j < length; j++)
     {
       xdata[j] = ((sunrealtype)rand() / (sunrealtype)RAND_MAX) * 2 - 1;
@@ -142,8 +142,8 @@ int main(int argc, char* argv[])
     }
 
     /* Fill vectors with uniform random data in [-1,1] */
-    sunrealtype* ydata = N_VGetHostArrayPointer_Raja(Y);
-    sunrealtype* zdata = N_VGetHostArrayPointer_Raja(Z);
+    sunrealtype* ydata = N_VGetArrayPointer(Y);
+    sunrealtype* zdata = N_VGetArrayPointer(Z);
     for (sunindextype j = 0; j < length; j++)
     {
       ydata[j] = ((sunrealtype)rand() / (sunrealtype)RAND_MAX) * 2 - 1;
@@ -315,7 +315,7 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
   sunrealtype* Xdata;
 
   N_VCopyFromDevice_Raja(X);
-  Xdata = N_VGetHostArrayPointer_Raja(X);
+  Xdata = N_VGetArrayPointer(X);
 
   /* check vector data */
   for (i = 0; i < local_length; i++) { failure += SUNRCompare(Xdata[i], ans); }
@@ -326,8 +326,7 @@ int check_ans(sunrealtype ans, N_Vector X, sunindextype local_length)
 sunbooleantype has_data(N_Vector X)
 {
   /* check if vector data is non-null */
-  if ((N_VGetHostArrayPointer_Raja(X) == NULL) &&
-      (N_VGetDeviceArrayPointer_Raja(X) == NULL))
+  if ((N_VGetArrayPointer(X) == NULL) && (N_VGetDeviceArrayPointer(X) == NULL))
   {
     return SUNFALSE;
   }
@@ -348,7 +347,7 @@ void set_element_range(N_Vector X, sunindextype is, sunindextype ie,
 
   /* set elements [is,ie] of the data array */
   N_VCopyFromDevice_Raja(X);
-  xd = N_VGetHostArrayPointer_Raja(X);
+  xd = N_VGetArrayPointer(X);
   for (i = is; i <= ie; i++) { xd[i] = val; }
   N_VCopyToDevice_Raja(X);
 }
@@ -357,7 +356,7 @@ sunrealtype get_element(N_Vector X, sunindextype i)
 {
   /* get i-th element of data array */
   N_VCopyFromDevice_Raja(X);
-  return (N_VGetHostArrayPointer_Raja(X))[i];
+  return (N_VGetArrayPointer(X))[i];
 }
 
 double max_time(N_Vector X, double time)

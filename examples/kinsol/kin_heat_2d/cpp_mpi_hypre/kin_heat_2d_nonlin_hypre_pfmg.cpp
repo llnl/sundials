@@ -1587,7 +1587,7 @@ static int FreeUserData(UserData* udata)
   if (udata->Nsend != NULL) { delete[] udata->Nsend; }
 
   // Free Linear solver
-  if (udata->LS != NULL) { SUNLinSolFree_PCG(udata->LS); }
+  if (udata->LS != NULL) { SUNLinSolFree(udata->LS); }
 
   // Free b vector
   if (udata->b)

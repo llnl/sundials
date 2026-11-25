@@ -99,18 +99,4 @@ This solver is constructed to perform the following operations:
 
 The SUNLinSol_Dense module defines dense implementations of all
 "direct" linear solver operations listed in
-:numref:`SUNLinSol.API`:
-
-* ``SUNLinSolGetType_Dense``
-
-* ``SUNLinSolInitialize_Dense`` -- this does nothing, since all
-  consistency checks are performed at solver creation.
-
-* ``SUNLinSolSetup_Dense`` -- this performs the :math:`LU` factorization.
-
-* ``SUNLinSolSolve_Dense`` -- this uses the :math:`LU` factors
-  and ``pivots`` array to perform the solve.
-
-* ``SUNLinSolLastFlag_Dense``
-
-* ``SUNLinSolFree_Dense``
+:numref:`SUNLinSol.API`.
