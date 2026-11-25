@@ -36,6 +36,10 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 Fixed a bug in the band SUNMatrix `SUNMatScaleAdd` operation where entries
 outside the band of the second matrix were not scaled.
 
+Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
+perturbation in the solution vector when the system function fails. The
+linear-solver setup failure behavior is unchanged.
+
 Fixed a segfault that could occur when handling errors without a `SUNContext`
 provided.
 
