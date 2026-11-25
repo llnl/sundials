@@ -236,10 +236,19 @@ Allowable Method Families
       :c:func:`SUNDomEigEstimator_SetATimes` after attaching the estimator with
       :c:func:`LSRKStepSetDomEigEstimator`.
 
-      The estimator's work vectors cannot be resized. After calling
-      :c:func:`ARKodeResize` with a different problem size, create an
-      estimator for the new size and attach it with this function before the
-      next call to :c:func:`ARKodeEvolve`.
+      When :c:func:`ARKodeResize` is called with a different problem size,
+      the previously attached estimator may no longer be valid.
+      Since the estimator's internal work vectors cannot be resized,
+      the user should create a new estimator for the new problem size
+      and attach it using :c:func:`LSRKStepSetDomEigEstimator` before
+      calling :c:func:`ARKodeResize`. This ensures that the necessary
+      updates are performed before the next call to :c:func:`ARKodeEvolve`.
+      The workflow should be:
+
+      1. Create a new dominant eigenvalue estimator for the new problem size.
+      2. Attach the new estimator using :c:func:`LSRKStepSetDomEigEstimator`.
+      3. Call :c:func:`ARKodeResize`.
+      4. Proceed with the next call to :c:func:`ARKodeEvolve`.
 
 
 .. c:function:: int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps);

@@ -355,6 +355,28 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
+  /* Initialize the DEE */
+  if (step_mem->DEE != NULL)
+  {
+    retval = SUNDomEigEstimator_Initialize(step_mem->DEE);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomEigEstimator_Initialize failed");
+      return ARK_DEE_FAIL;
+    }
+
+    /* Set number of DEE preprocessing iterations for the initial estimate */
+    retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
+                                                      step_mem->num_init_warmups);
+    if (retval != SUN_SUCCESS)
+    {
+      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
+                      "SUNDomEigEstimator_SetNumPreprocessIters failed");
+      return ARK_DEE_FAIL;
+    }
+  }
+
   /* the spectrum changes with the problem size, so force a new estimate */
   if (init_type == RESIZE_INIT)
   {
@@ -380,28 +402,6 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
                     "STS methods require either a user provided dominant "
                     "eigenvalue function or a SUNDomEigEstimator");
     return ARK_DOMEIG_FAIL;
-  }
-
-  /* Initialize the DEE */
-  if (step_mem->DEE != NULL)
-  {
-    retval = SUNDomEigEstimator_Initialize(step_mem->DEE);
-    if (retval != SUN_SUCCESS)
-    {
-      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNDomEigEstimator_Initialize failed");
-      return ARK_DEE_FAIL;
-    }
-
-    /* Set number of DEE preprocessing iterations for the initial estimate */
-    retval = SUNDomEigEstimator_SetNumPreprocessIters(step_mem->DEE,
-                                                      step_mem->num_init_warmups);
-    if (retval != SUN_SUCCESS)
-    {
-      arkProcessError(ark_mem, ARK_DEE_FAIL, __LINE__, __func__, __FILE__,
-                      "SUNDomEigEstimator_SetNumPreprocessIters failed");
-      return ARK_DEE_FAIL;
-    }
   }
 
   /* Allocate reusable arrays for fused vector interface */
