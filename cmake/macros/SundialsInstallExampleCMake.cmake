@@ -136,9 +136,13 @@ function(sundials_install_example_cmake _target)
            "target_link_libraries(${_target} PRIVATE ${_library_list})\n")
   endif()
 
-  foreach(_property IN ITEMS CUDA_ARCHITECTURES CXX_STANDARD LINKER_LANGUAGE)
+  foreach(_property IN ITEMS CUDA_ARCHITECTURES HIP_ARCHITECTURES CXX_STANDARD
+                             LINKER_LANGUAGE)
     get_target_property(_value ${_target} ${_property})
     if(_value)
+      if(_property STREQUAL "HIP_ARCHITECTURES" AND NOT HIP IN_LIST _languages)
+        continue()
+      endif()
       if(_property STREQUAL "CXX_STANDARD")
         # Accelerator sources may consume C++ compile features from
         # dependencies. Ignore the globally initialized C++ standard for targets

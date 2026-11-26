@@ -23,6 +23,8 @@ set(examples_list "test_nvector_raja.cpp\;1000 0\;")
 
 if(SUNDIALS_RAJA_BACKENDS MATCHES "CUDA")
   set(_lang CUDA)
+elseif(SUNDIALS_RAJA_BACKENDS MATCHES "HIP")
+  set(_lang ${SUNDIALS_HIP_LANGUAGE})
 else()
   set(_lang CXX)
 endif()

@@ -12,11 +12,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
+set_source_files_properties(cv_adv_diff_kry_hip.cpp
+                            PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
 sundials_add_example(
   cv_adv_diff_kry_hip
   EXAMPLE_TYPE develop
   SOURCES cv_adv_diff_kry_hip.cpp
   LINK_LIBRARIES
-    PRIVATE hip::device sundials_cvode sundials_nvechip
+    PRIVATE ${SUNDIALS_HIP_TARGET} sundials_cvode sundials_nvechip
     $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
     ${EXE_EXTRA_LINK_LIBS})

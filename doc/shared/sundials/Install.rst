@@ -1221,6 +1221,10 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
      -D SUNDIALS_ENABLE_HIP=ON \
      -D AMDGPU_TARGETS="gfx90a"
 
+On AMD GPUs, other C and C++ compilers (e.g., GCC) can be used as well. HIP
+sources are then compiled with the CMake HIP language, which requires CMake 3.21
+or newer.
+
 .. cmakeoption:: SUNDIALS_ENABLE_HIP
 
    Enable HIP Support
@@ -1236,6 +1240,19 @@ configure SUNDIALS with HIP support for a system with an MI250X GPU:
    Specify which AMD GPUs to target
 
    Default: None
+
+.. cmakeoption:: CMAKE_HIP_COMPILER
+
+   The HIP compiler (e.g., ``/opt/rocm/llvm/bin/clang++``), used when the C++
+   compiler is not Clang based
+
+   Default: found by CMake
+
+.. cmakeoption:: CMAKE_HIP_ARCHITECTURES
+
+   Specify which AMD GPUs to target when the C++ compiler is not Clang based
+
+   Default: :cmakeop:`AMDGPU_TARGETS`
 
 .. _Installation.Options.hypre:
 

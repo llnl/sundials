@@ -31,6 +31,12 @@ previous coefficients can load the current table(s) using
 and replace the internal `d` coefficients in the returned table with the
 previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
+HIP support on AMD GPUs no longer requires a HIP compiler such as `hipcc` as C
+and C++ compiler. With a C++ compiler that is not Clang based, HIP sources are
+compiled with the CMake HIP language, which requires CMake 3.21 or newer. The
+HIP compiler is set with `CMAKE_HIP_COMPILER` and the GPU architectures with
+`CMAKE_HIP_ARCHITECTURES`, which defaults to `AMDGPU_TARGETS`.
+
 ### Bug Fixes
 
 The Newton nonlinear solver now reports missing required callbacks during

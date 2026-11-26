@@ -16,10 +16,13 @@
 # ---------------------------------------------------------------
 
 # Create a library out of the generic sundials modules
+set_source_files_properties(sundials_hip_memory.hip.cpp
+                            PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
 sundials_add_library(
   sundials_sunmemhip
   SOURCES sundials_hip_memory.hip.cpp
   HEADERS ${SUNDIALS_SOURCE_DIR}/include/sunmemory/sunmemory_hip.h
   INCLUDE_SUBDIR sunmemory
-  LINK_LIBRARIES PUBLIC sundials_core PRIVATE hip::device
+  LINK_LIBRARIES PUBLIC sundials_core PRIVATE ${SUNDIALS_HIP_TARGET}
   OBJECT_LIB_ONLY)
