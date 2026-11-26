@@ -236,6 +236,20 @@ Allowable Method Families
       :c:func:`SUNDomEigEstimator_SetATimes` after attaching the estimator with
       :c:func:`LSRKStepSetDomEigEstimator`.
 
+      When :c:func:`ARKodeResize` is called with a different problem size,
+      the previously attached estimator may no longer be valid.
+      Since the estimator's internal work vectors cannot be resized,
+      the user should create a new estimator for the new problem size
+      and attach it using :c:func:`LSRKStepSetDomEigEstimator` before
+      calling :c:func:`ARKodeResize`. The new estimator will be
+      initialized before time integration resumes.
+      The workflow should be:
+
+      1. Create a new dominant eigenvalue estimator for the new problem size.
+      2. Attach the new estimator using :c:func:`LSRKStepSetDomEigEstimator`.
+      3. Call :c:func:`ARKodeResize`.
+      4. Proceed with the next call to :c:func:`ARKodeEvolve`.
+
 
 .. c:function:: int LSRKStepSetDomEigFrequency(void* arkode_mem, long int nsteps);
 
@@ -249,6 +263,14 @@ Allowable Method Families
    **Return value:**
       * *ARK_SUCCESS* if successful
       * *ARK_MEM_NULL* if ``arkode_mem`` was ``NULL``.
+
+   .. versionchanged:: x.y.z
+
+      The dominant eigenvalue is now always recomputed on the first step after
+      :c:func:`ARKodeResize`, regardless of ``nsteps`` (including
+      ``nsteps = 0``). Previously, the estimate from before the resize was kept
+      until ``nsteps`` successful steps had elapsed, or indefinitely for
+      ``nsteps = 0``.
 
    .. note::
 

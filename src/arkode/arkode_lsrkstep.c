@@ -343,7 +343,10 @@ int lsrkStep_ReInit_Commons(void* arkode_mem, ARKRhsFn rhs, sunrealtype t0,
   setup and allocations needed for the method and sets
   the call_fullrhs flag.
 
-  With other initialization types, this routine does nothing.
+  With RESIZE_INIT this routine reinitializes DEE and requests
+  a new dominant eigenvalue estimate.
+  
+  With RESET_INIT it does nothing.
   ---------------------------------------------------------------*/
 int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
 {
@@ -354,28 +357,8 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
   retval = lsrkStep_AccessStepMem(ark_mem, __func__, &step_mem);
   if (retval != ARK_SUCCESS) { return retval; }
 
-  /* immediately return if resize or reset */
-  if (init_type == RESIZE_INIT || init_type == RESET_INIT)
-  {
-    return ARK_SUCCESS;
-  }
-  /* enforce use of arkEwtSmallReal if using a fixed step size
-     and an internal error weight function */
-  if (ark_mem->fixedstep && !ark_mem->user_efun)
-  {
-    ark_mem->user_efun = SUNFALSE;
-    ark_mem->efun      = arkEwtSetSmallReal;
-    ark_mem->e_data    = ark_mem;
-  }
-
-  /* Check if user has provided dom_eig_fn or DEE */
-  if (!step_mem->is_SSP && step_mem->dom_eig_fn == NULL && step_mem->DEE == NULL)
-  {
-    arkProcessError(ark_mem, ARK_DOMEIG_FAIL, __LINE__, __func__, __FILE__,
-                    "STS methods require either a user provided dominant "
-                    "eigenvalue function or a SUNDomEigEstimator");
-    return ARK_DOMEIG_FAIL;
-  }
+  /* immediately return if reset */
+  if (init_type == RESET_INIT) { return ARK_SUCCESS; }
 
   /* Initialize the DEE */
   if (step_mem->DEE != NULL)
@@ -397,6 +380,31 @@ int lsrkStep_Init(ARKodeMem ark_mem, int init_type)
                       "SUNDomEigEstimator_SetNumPreprocessIters failed");
       return ARK_DEE_FAIL;
     }
+  }
+
+  /* the spectrum changes with the new problem size, so force a new estimate;
+  otherwise it is the default behavior with FIRST_INIT */
+  step_mem->dom_eig_update     = SUNTRUE;
+  step_mem->dom_eig_is_current = SUNFALSE;
+
+  if (init_type == RESIZE_INIT) { return ARK_SUCCESS; }
+
+  /* enforce use of arkEwtSmallReal if using a fixed step size
+     and an internal error weight function */
+  if (ark_mem->fixedstep && !ark_mem->user_efun)
+  {
+    ark_mem->user_efun = SUNFALSE;
+    ark_mem->efun      = arkEwtSetSmallReal;
+    ark_mem->e_data    = ark_mem;
+  }
+
+  /* Check if user has provided dom_eig_fn or DEE */
+  if (!step_mem->is_SSP && step_mem->dom_eig_fn == NULL && step_mem->DEE == NULL)
+  {
+    arkProcessError(ark_mem, ARK_DOMEIG_FAIL, __LINE__, __func__, __FILE__,
+                    "STS methods require either a user provided dominant "
+                    "eigenvalue function or a SUNDomEigEstimator");
+    return ARK_DOMEIG_FAIL;
   }
 
   /* Allocate reusable arrays for fused vector interface */

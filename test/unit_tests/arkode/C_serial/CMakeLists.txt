@@ -36,6 +36,7 @@ set(ARKODE_unit_tests
     "ark_test_interp\;-100"
     "ark_test_interp\;-10000"
     "ark_test_interp\;-1000000"
+    "ark_test_lsrkstep_resize_domeig\;"
     "ark_test_lsrkstep_domeig_warmups\;"
     "ark_test_mass\;"
     "ark_test_reset\;"
