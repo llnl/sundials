@@ -13,6 +13,9 @@
 # SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # Tests are registered separately below for their argument-specific answers.
+set_source_files_properties(cv_adv_diff_diag_hip.cpp
+                            PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
 sundials_add_example(
   cv_adv_diff_diag_hip
   SOURCES cv_adv_diff_diag_hip.cpp
@@ -20,7 +23,7 @@ sundials_add_example(
   INSTALL_FILES cv_adv_diff_diag_hip_0_0.out cv_adv_diff_diag_hip_0_1.out
                 cv_adv_diff_diag_hip_1_1.out
   LINK_LIBRARIES
-    PRIVATE hip::device sundials_cvode sundials_nvechip
+    PRIVATE ${SUNDIALS_HIP_TARGET} sundials_cvode sundials_nvechip
     $<$<BOOL:${SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS}>:sundials_cvode_fused_hip>
     ${EXE_EXTRA_LINK_LIBS})
 foreach(example_args "0 0" "0 1" "1 1")

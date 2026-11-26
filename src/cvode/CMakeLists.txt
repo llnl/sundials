@@ -64,6 +64,10 @@ if(SUNDIALS_ENABLE_PACKAGE_FUSED_KERNELS)
   endif()
 
   if(SUNDIALS_ENABLE_NVECTOR_HIP)
+
+    set_source_files_properties(cvode_fused_gpu.cpp
+                                PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
     sundials_add_library(
       sundials_cvode_fused_hip
       SOURCES cvode_fused_gpu.cpp

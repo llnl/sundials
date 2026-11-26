@@ -53,6 +53,51 @@ if(NOT DEFINED HIP_PLATFORM)
   endif()
 endif()
 
+# ===============================================================
+# Enable the HIP language
+# ===============================================================
+
+# A C++ compiler that is not Clang based cannot compile HIP sources, so they are
+# compiled with the HIP language instead. SUNDIALS_HIP_LANGUAGE is the language
+# of HIP sources and SUNDIALS_HIP_TARGET the HIP target to link: hip::device
+# compiles every C++ source as HIP, so it requires a HIP compiler as C++
+# compiler.
+if(HIP_PLATFORM STREQUAL "amd" AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if(CMAKE_VERSION VERSION_LESS 3.21)
+    message(FATAL_ERROR "The HIP language requires CMake 3.21 or newer")
+  endif()
+
+  if(NOT DEFINED CMAKE_HIP_ARCHITECTURES)
+    if(AMDGPU_TARGETS)
+      set(CMAKE_HIP_ARCHITECTURES "${AMDGPU_TARGETS}")
+    elseif(GPU_TARGETS)
+      set(CMAKE_HIP_ARCHITECTURES "${GPU_TARGETS}")
+    endif()
+  endif()
+
+  sundials_option(CMAKE_HIP_STANDARD_REQUIRED BOOL
+                  "Require HIP standard version" ON)
+
+  set(DOCSTR "The HIP standard to use if HIP is enabled (14, 17, 20, 23)")
+  sundials_option(CMAKE_HIP_STANDARD STRING "${DOCSTR}" "${CMAKE_CXX_STANDARD}"
+                  OPTIONS "14;17;20;23")
+  message(STATUS "HIP standard set to ${CMAKE_HIP_STANDARD}")
+
+  enable_language(HIP)
+  message(STATUS "HIP language compiler: ${CMAKE_HIP_COMPILER}")
+  message(STATUS "HIP architectures: ${CMAKE_HIP_ARCHITECTURES}")
+
+  set(SUNDIALS_HIP_LANGUAGE HIP)
+  set(SUNDIALS_HIP_TARGET hip::host)
+else()
+  set(SUNDIALS_HIP_LANGUAGE CXX)
+  set(SUNDIALS_HIP_TARGET hip::device)
+endif()
+
+# ===============================================================
+# Find HIP
+# ===============================================================
+
 # Set CMAKE_PREFIX_PATH as the hip-config.cmake has some find_package calls
 # which don't have the proper path set (not sure if this is a bug or
 # intentional), so without this they will fail even if we provide the PATH

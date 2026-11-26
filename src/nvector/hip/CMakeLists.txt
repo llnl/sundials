@@ -20,6 +20,9 @@
 install(CODE "MESSAGE(\"\nInstall NVECTOR_HIP\n\")")
 
 # Create the library
+set_source_files_properties(nvector_hip.hip.cpp
+                            PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
 sundials_add_library(
   sundials_nvechip
   SOURCES nvector_hip.hip.cpp
@@ -27,7 +30,7 @@ sundials_add_library(
   INCLUDE_SUBDIR nvector
   LINK_LIBRARIES PUBLIC sundials_core
   OBJECT_LIBRARIES sundials_sunmemhip_obj
-  LINK_LIBRARIES PUBLIC hip::device
+  LINK_LIBRARIES PUBLIC ${SUNDIALS_HIP_TARGET}
   OUTPUT_NAME sundials_nvechip
   VERSION ${nveclib_VERSION}
   SOVERSION ${nveclib_SOVERSION})

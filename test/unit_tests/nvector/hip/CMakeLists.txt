@@ -32,6 +32,10 @@ set(nvector_hip_examples
     "test_nvector_hip.cpp\;500 128 0\;\;\;"
     "test_nvector_hip.cpp\;1000 0 0\;\;\;")
 
+# The tests use custom_memory_helper_gpu.h, which requires a HIP compiler
+set_source_files_properties(test_nvector_hip.cpp
+                            PROPERTIES LANGUAGE ${SUNDIALS_HIP_LANGUAGE})
+
 # Specify libraries to link against
 set(NVECS_LIB sundials_nvechip)
 
