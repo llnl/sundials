@@ -222,6 +222,8 @@ SUNDIALS_EXPORT int MRIStepReInitExtSTS(void* arkode_mem, ARKRhsFn fd,
 
 /* Optional input functions -- must be called AFTER MRIStepCreate */
 SUNDIALS_EXPORT int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling MRIC);
+SUNDIALS_EXPORT int MRIStepSetUseExtSTSErrorEstimate(void* arkode_mem,
+                                                     sunbooleantype onoff);
 SUNDIALS_EXPORT int MRIStepSetPreInnerFn(void* arkode_mem,
                                          MRIStepPreInnerFn prefn);
 SUNDIALS_EXPORT int MRIStepSetPostInnerFn(void* arkode_mem,

@@ -44,7 +44,9 @@
  * implicitly using the ExtSTS method.
  *
  * Several command line options are available to change the problem parameters
- * and integrator settings. Use the flag --help for more information.
+ * and integrator settings. Use the flag --help for more information.  ARKODE
+ * options for the ExtSTS integrator may also be given with the "arkode." prefix
+ * (see ARKodeSetOptions), e.g., "arkode.use_extsts_error_estimate 1".
  * ---------------------------------------------------------------------------*/
 
 #include "ark_adr_1d_extsts.hpp"
@@ -210,6 +212,10 @@ int main(int argc, char* argv[])
   // Set stopping time
   flag = ARKodeSetStopTime(arkode_mem, udata.tf);
   if (check_flag(flag, "ARKodeSetStopTime")) { return 1; }
+
+  // Override any of the above settings with ARKODE command-line options
+  flag = ARKodeSetOptions(arkode_mem, nullptr, nullptr, argc, argv);
+  if (check_flag(flag, "ARKodeSetOptions")) { return 1; }
 
   // ----------------------
   // Evolve problem in time
