@@ -31,6 +31,17 @@ previous coefficients can load the current table(s) using
 and replace the internal `d` coefficients in the returned table with the
 previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
+sundials4py now supports implementing SUNDIALS classes in Python. The new
+`CustomNVector`, `CustomSUNMatrix`, `CustomSUNLinearSolver`,
+`CustomSUNNonlinearSolver`, `CustomSUNDomEigEstimator`, `CustomSUNHController`,
+and `CustomSUNMRIController` base classes may be subclassed to provide the
+corresponding SUNDIALS class implementation in Python, and instances of such a
+subclass may be passed to any sundials4py function that expects that SUNDIALS
+object. See the "Implementing SUNDIALS Objects in Python"
+section of the documentation for details, and the `cvs_custom_nonlinsol.py`,
+`kin_custom_linsol.py`, and `ark_custom_adaptcontroller.py` examples for
+annotated templates.
+
 ### Bug Fixes
 
 The Newton nonlinear solver now reports missing required callbacks during
@@ -44,6 +55,22 @@ convergence-failure limit.
 
 Fixed a bug in the band SUNMatrix `SUNMatScaleAdd` operation where entries
 outside the band of the second matrix were not scaled.
+
+Fixed `SUNMatCopyOps` so it also copies the optional Hermitian-transpose
+matrix-vector operation.
+
+Fixed `SUNMatClone` to return safely when an implementation's clone operation
+fails and returns `NULL`.
+
+Fixed the sundials4py `SUNLinSolSetPreconditioner` binding so setup-only
+preconditioners are retained, the solve callback has the correct type, and
+either callback may be `None`.
+
+Fixed sundials4py generation so
+`SUNDomEigEstimator_SetRhsLinearizationPoint` is exposed.
+
+Fixed leaks of Python callback tables attached to native linear solvers,
+nonlinear solvers, and dominant eigenvalue estimators.
 
 Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
 perturbation in the solution vector when the system function fails. The

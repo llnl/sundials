@@ -67,7 +67,11 @@ cmake.build-type = "RelWithDebInfo"
 [tool.pytest.ini_options]
 python_files = ["*.py"]
 addopts = [
-  "--import-mode=importlib"
+  "--import-mode=importlib",
+  "-m", "not bench"
+]
+markers = [
+  "bench: opt-in performance measurements (run with `pytest -m bench -s`)"
 ]
 pythonpath = [
   "bindings/sundials4py", "bindings/sundials4py/test"

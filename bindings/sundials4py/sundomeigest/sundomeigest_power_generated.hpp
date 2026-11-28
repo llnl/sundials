@@ -10,8 +10,8 @@ auto pyClassSUNDomEigEstimatorContent_Power_ =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNDomEigEstimator_Power",
+sundials4py::scoped_def(
+  m, "SUNDomEigEstimator_Power",
   [](N_Vector q, long max_iters, sunrealtype rel_tol, SUNContext sunctx)
     -> std::shared_ptr<std::remove_pointer_t<SUNDomEigEstimator>>
   {
@@ -33,8 +33,9 @@ m.def(
   nb::arg("q"), nb::arg("max_iters"), nb::arg("rel_tol"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNDomEigEstimator_SetIsReal_Power", SUNDomEigEstimator_SetIsReal_Power,
-      nb::arg("DEE"), nb::arg("real"));
+sundials4py::scoped_def(m, "SUNDomEigEstimator_SetIsReal_Power",
+                        SUNDomEigEstimator_SetIsReal_Power, nb::arg("DEE"),
+                        nb::arg("real"));
 // #ifdef __cplusplus
 //
 // #endif

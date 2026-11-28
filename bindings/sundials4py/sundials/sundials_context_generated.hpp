@@ -4,8 +4,8 @@
 // #endif
 //
 
-m.def(
-  "SUNContext_Create",
+sundials4py::scoped_def(
+  m, "SUNContext_Create",
   [](SUNComm comm)
     -> std::tuple<SUNErrCode, std::shared_ptr<std::remove_pointer_t<SUNContext>>>
   {
@@ -34,15 +34,17 @@ m.def(
   },
   nb::arg("comm"), nb::rv_policy::reference);
 
-m.def("SUNContext_GetLastError", SUNContext_GetLastError, nb::arg("sunctx"));
+sundials4py::scoped_def(m, "SUNContext_GetLastError", SUNContext_GetLastError,
+                        nb::arg("sunctx"));
 
-m.def("SUNContext_PeekLastError", SUNContext_PeekLastError, nb::arg("sunctx"));
+sundials4py::scoped_def(m, "SUNContext_PeekLastError", SUNContext_PeekLastError,
+                        nb::arg("sunctx"));
 
-m.def("SUNContext_ClearErrHandlers", SUNContext_ClearErrHandlers,
-      nb::arg("sunctx"));
+sundials4py::scoped_def(m, "SUNContext_ClearErrHandlers",
+                        SUNContext_ClearErrHandlers, nb::arg("sunctx"));
 
-m.def(
-  "SUNContext_GetProfiler",
+sundials4py::scoped_def(
+  m, "SUNContext_GetProfiler",
   [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNProfiler>
   {
     auto SUNContext_GetProfiler_adapt_modifiable_immutable_to_return =
@@ -58,11 +60,11 @@ m.def(
   },
   nb::arg("sunctx"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def("SUNContext_SetProfiler", SUNContext_SetProfiler, nb::arg("sunctx"),
-      nb::arg("profiler"));
+sundials4py::scoped_def(m, "SUNContext_SetProfiler", SUNContext_SetProfiler,
+                        nb::arg("sunctx"), nb::arg("profiler"));
 
-m.def(
-  "SUNContext_GetLogger",
+sundials4py::scoped_def(
+  m, "SUNContext_GetLogger",
   [](SUNContext sunctx) -> std::tuple<SUNErrCode, SUNLogger>
   {
     auto SUNContext_GetLogger_adapt_modifiable_immutable_to_return =
@@ -78,8 +80,8 @@ m.def(
   },
   nb::arg("sunctx"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def("SUNContext_SetLogger", SUNContext_SetLogger, nb::arg("sunctx"),
-      nb::arg("logger"));
+sundials4py::scoped_def(m, "SUNContext_SetLogger", SUNContext_SetLogger,
+                        nb::arg("sunctx"), nb::arg("logger"));
 // #ifdef __cplusplus
 //
 // #endif

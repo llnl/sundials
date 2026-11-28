@@ -66,8 +66,8 @@ auto pyClassMRIStepCouplingMem =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "MRIStepCoupling_LoadTable",
+sundials4py::scoped_def(
+  m, "MRIStepCoupling_LoadTable",
   [](ARKODE_MRITableID method)
     -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
   {
@@ -85,8 +85,8 @@ m.def(
   },
   nb::arg("method"), "Accessor routine to load built-in MRI table");
 
-m.def(
-  "MRIStepCoupling_LoadTableByName",
+sundials4py::scoped_def(
+  m, "MRIStepCoupling_LoadTableByName",
   [](const char* method) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
   {
     auto MRIStepCoupling_LoadTableByName_adapt_return_type_to_shared_ptr =
@@ -103,8 +103,8 @@ m.def(
   },
   nb::arg("method"), "Accessor routine to load built-in MRI table from string");
 
-m.def(
-  "MRIStepCoupling_Create",
+sundials4py::scoped_def(
+  m, "MRIStepCoupling_Create",
   [](int nmat, int stages, int q, int p, sundials4py::Array1d W_1d,
      sundials4py::Array1d G_1d, sundials4py::Array1d c_1d)
     -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
@@ -144,8 +144,8 @@ m.def(
   nb::arg("nmat"), nb::arg("stages"), nb::arg("q"), nb::arg("p"),
   nb::arg("W_1d"), nb::arg("G_1d"), nb::arg("c_1d"));
 
-m.def(
-  "MRIStepCoupling_MIStoMRI",
+sundials4py::scoped_def(
+  m, "MRIStepCoupling_MIStoMRI",
   [](ARKodeButcherTable B, int q,
      int p) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
   {
@@ -163,8 +163,8 @@ m.def(
   },
   nb::arg("B"), nb::arg("q"), nb::arg("p"));
 
-m.def(
-  "MRIStepCoupling_Copy",
+sundials4py::scoped_def(
+  m, "MRIStepCoupling_Copy",
   [](MRIStepCoupling MRIC) -> std::shared_ptr<std::remove_pointer_t<MRIStepCoupling>>
   {
     auto MRIStepCoupling_Copy_adapt_return_type_to_shared_ptr =
@@ -181,14 +181,14 @@ m.def(
   },
   nb::arg("MRIC"));
 
-m.def("MRIStepCoupling_Write", MRIStepCoupling_Write, nb::arg("MRIC"),
-      nb::arg("outfile"));
+sundials4py::scoped_def(m, "MRIStepCoupling_Write", MRIStepCoupling_Write,
+                        nb::arg("MRIC"), nb::arg("outfile"));
 
-m.def("MRIStepSetCoupling", MRIStepSetCoupling, nb::arg("arkode_mem"),
-      nb::arg("MRIC"));
+sundials4py::scoped_def(m, "MRIStepSetCoupling", MRIStepSetCoupling,
+                        nb::arg("arkode_mem"), nb::arg("MRIC"));
 
-m.def(
-  "MRIStepGetCurrentCoupling",
+sundials4py::scoped_def(
+  m, "MRIStepGetCurrentCoupling",
   [](void* arkode_mem) -> std::tuple<int, MRIStepCoupling>
   {
     auto MRIStepGetCurrentCoupling_adapt_modifiable_immutable_to_return =
@@ -207,8 +207,8 @@ m.def(
   " Optional output functions\n\n nb::rv_policy::reference",
   nb::rv_policy::reference);
 
-m.def(
-  "MRIStepGetLastInnerStepFlag",
+sundials4py::scoped_def(
+  m, "MRIStepGetLastInnerStepFlag",
   [](void* arkode_mem) -> std::tuple<int, int>
   {
     auto MRIStepGetLastInnerStepFlag_adapt_modifiable_immutable_to_return =
@@ -225,8 +225,8 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def(
-  "MRIStepGetNumInnerStepperFails",
+sundials4py::scoped_def(
+  m, "MRIStepGetNumInnerStepperFails",
   [](void* arkode_mem) -> std::tuple<int, long>
   {
     auto MRIStepGetNumInnerStepperFails_adapt_modifiable_immutable_to_return =
@@ -244,8 +244,9 @@ m.def(
   },
   nb::arg("arkode_mem"));
 
-m.def("MRIStepInnerStepper_AddForcing", MRIStepInnerStepper_AddForcing,
-      nb::arg("stepper"), nb::arg("t"), nb::arg("f"));
+sundials4py::scoped_def(m, "MRIStepInnerStepper_AddForcing",
+                        MRIStepInnerStepper_AddForcing, nb::arg("stepper"),
+                        nb::arg("t"), nb::arg("f"));
 // #ifdef __cplusplus
 //
 // #endif

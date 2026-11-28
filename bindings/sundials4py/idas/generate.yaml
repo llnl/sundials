@@ -49,6 +49,10 @@ modules:
     fn_exclude_by_name__regex:
     # We do custom handling of Create so we can wrap the void* in a IDAView
     - "^IDACreate$"
+    # Handwritten to attach the custom-operation exception call policy.
+    - "^IDASolve$"
+    - "^IDASolveF$"
+    - "^IDASolveB$"
     # we use user_data for sneaking in python contexts, users can instead capture their states in a class
     - "^IDAGetUserData$" 
     - "^IDASetUserData$" 

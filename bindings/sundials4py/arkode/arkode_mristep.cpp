@@ -121,8 +121,8 @@ void bind_arkode_mristep(nb::module_& m)
   // not picked up in any header files by the generator.
   nb::class_<_MRIStepInnerStepper>(m, "_MRIStepInnerStepper");
 
-  m.def(
-    "MRIStepInnerStepper_Create",
+  sundials4py::scoped_def(
+    m, "MRIStepInnerStepper_Create",
     [](SUNContext sunctx)
     {
       MRIStepInnerStepper stepper = nullptr;
@@ -140,8 +140,8 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("sunctx"));
 
-  m.def(
-    "MRIStepInnerStepper_CreateFromSUNStepper",
+  sundials4py::scoped_def(
+    m, "MRIStepInnerStepper_CreateFromSUNStepper",
     [](SUNStepper stepper)
     {
       MRIStepInnerStepper inner_stepper = nullptr;
@@ -156,8 +156,8 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("stepper"));
 
-  m.def(
-    "MRIStepInnerStepper_GetForcingData",
+  sundials4py::scoped_def(
+    m, "MRIStepInnerStepper_GetForcingData",
     [](MRIStepInnerStepper stepper)
       -> std::tuple<int, sunrealtype, sunrealtype, std::vector<N_Vector>, int>
     {
@@ -177,8 +177,8 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::rv_policy::reference);
 
-  m.def(
-    "ARKodeCreateMRIStepInnerStepper",
+  sundials4py::scoped_def(
+    m, "ARKodeCreateMRIStepInnerStepper",
     [](void* inner_arkode_mem)
     {
       MRIStepInnerStepper stepper = nullptr;
@@ -191,8 +191,8 @@ void bind_arkode_mristep(nb::module_& m)
     },
     nb::arg("inner_arkode_mem"));
 
-  m.def(
-    "MRIStepCreate",
+  sundials4py::scoped_def(
+    m, "MRIStepCreate",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fse,
        std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
        N_Vector y0, MRIStepInnerStepper stepper, SUNContext sunctx)
@@ -229,8 +229,8 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("fse").none(), nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"),
     nb::arg("inner_stepper"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
 
-  m.def(
-    "MRIStepCreateExtSTS",
+  sundials4py::scoped_def(
+    m, "MRIStepCreateExtSTS",
     [](std::function<std::remove_pointer_t<ARKRhsFn>> fd,
        std::function<std::remove_pointer_t<ARKRhsFn>> fse,
        std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
@@ -271,8 +271,8 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("fd").none(), nb::arg("fse").none(), nb::arg("fsi").none(),
     nb::arg("t0"), nb::arg("y0"), nb::arg("sunctx"), nb::keep_alive<0, 6>());
 
-  m.def(
-    "MRIStepReInitExtSTS",
+  sundials4py::scoped_def(
+    m, "MRIStepReInitExtSTS",
     [](void* arkode_mem, std::function<std::remove_pointer_t<ARKRhsFn>> fd,
        std::function<std::remove_pointer_t<ARKRhsFn>> fse,
        std::function<std::remove_pointer_t<ARKRhsFn>> fsi, sunrealtype t0,
@@ -300,8 +300,8 @@ void bind_arkode_mristep(nb::module_& m)
     nb::arg("arkode_mem"), nb::arg("fd").none(), nb::arg("fse").none(),
     nb::arg("fsi").none(), nb::arg("t0"), nb::arg("y0"));
 
-  m.def(
-    "MRIStepGetSTS",
+  sundials4py::scoped_def(
+    m, "MRIStepGetSTS",
     [](void* arkode_mem)
     {
       void* sts_mem = nullptr;

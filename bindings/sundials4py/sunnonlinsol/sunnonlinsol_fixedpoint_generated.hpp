@@ -10,8 +10,8 @@ auto pyClass_SUNNonlinearSolverContent_FixedPoint =
     .def(nb::init<>()) // implicit default constructor
   ;
 
-m.def(
-  "SUNNonlinSol_FixedPoint",
+sundials4py::scoped_def(
+  m, "SUNNonlinSol_FixedPoint",
   [](N_Vector y, int m, SUNContext sunctx)
     -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
@@ -30,8 +30,8 @@ m.def(
   nb::arg("y"), nb::arg("m"), nb::arg("sunctx"), "nb::keep_alive<0, 3>()",
   nb::keep_alive<0, 3>());
 
-m.def(
-  "SUNNonlinSol_FixedPointSens",
+sundials4py::scoped_def(
+  m, "SUNNonlinSol_FixedPointSens",
   [](int count, N_Vector y, int m, SUNContext sunctx)
     -> std::shared_ptr<std::remove_pointer_t<SUNNonlinearSolver>>
   {
@@ -51,8 +51,9 @@ m.def(
   nb::arg("count"), nb::arg("y"), nb::arg("m"), nb::arg("sunctx"),
   "nb::keep_alive<0, 4>()", nb::keep_alive<0, 4>());
 
-m.def("SUNNonlinSolSetDamping_FixedPoint", SUNNonlinSolSetDamping_FixedPoint,
-      nb::arg("NLS"), nb::arg("beta"));
+sundials4py::scoped_def(m, "SUNNonlinSolSetDamping_FixedPoint",
+                        SUNNonlinSolSetDamping_FixedPoint, nb::arg("NLS"),
+                        nb::arg("beta"));
 // #ifdef __cplusplus
 //
 // #endif

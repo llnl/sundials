@@ -66,100 +66,113 @@ m.attr("IDA_REIFWD_FAIL")        = -105;
 m.attr("IDA_FWD_FAIL")           = -106;
 m.attr("IDA_GETY_BADT")          = -107;
 
-m.def("IDAReInit", IDAReInit, nb::arg("ida_mem"), nb::arg("t0"), nb::arg("yy0"),
-      nb::arg("yp0"));
+sundials4py::scoped_def(m, "IDAReInit", IDAReInit, nb::arg("ida_mem"),
+                        nb::arg("t0"), nb::arg("yy0"), nb::arg("yp0"));
 
-m.def("IDASStolerances", IDASStolerances, nb::arg("ida_mem"), nb::arg("reltol"),
-      nb::arg("abstol"));
+sundials4py::scoped_def(m, "IDASStolerances", IDASStolerances,
+                        nb::arg("ida_mem"), nb::arg("reltol"), nb::arg("abstol"));
 
-m.def("IDASVtolerances", IDASVtolerances, nb::arg("ida_mem"), nb::arg("reltol"),
-      nb::arg("abstol"));
+sundials4py::scoped_def(m, "IDASVtolerances", IDASVtolerances,
+                        nb::arg("ida_mem"), nb::arg("reltol"), nb::arg("abstol"));
 
-m.def("IDACalcIC", IDACalcIC, nb::arg("ida_mem"), nb::arg("icopt"),
-      nb::arg("tout1"), "Initial condition calculation function");
+sundials4py::scoped_def(m, "IDACalcIC", IDACalcIC, nb::arg("ida_mem"),
+                        nb::arg("icopt"), nb::arg("tout1"),
+                        "Initial condition calculation function");
 
-m.def("IDASetNonlinConvCoefIC", IDASetNonlinConvCoefIC, nb::arg("ida_mem"),
-      nb::arg("epiccon"));
+sundials4py::scoped_def(m, "IDASetNonlinConvCoefIC", IDASetNonlinConvCoefIC,
+                        nb::arg("ida_mem"), nb::arg("epiccon"));
 
-m.def("IDASetMaxNumStepsIC", IDASetMaxNumStepsIC, nb::arg("ida_mem"),
-      nb::arg("maxnh"));
+sundials4py::scoped_def(m, "IDASetMaxNumStepsIC", IDASetMaxNumStepsIC,
+                        nb::arg("ida_mem"), nb::arg("maxnh"));
 
-m.def("IDASetMaxNumJacsIC", IDASetMaxNumJacsIC, nb::arg("ida_mem"),
-      nb::arg("maxnj"));
+sundials4py::scoped_def(m, "IDASetMaxNumJacsIC", IDASetMaxNumJacsIC,
+                        nb::arg("ida_mem"), nb::arg("maxnj"));
 
-m.def("IDASetMaxNumItersIC", IDASetMaxNumItersIC, nb::arg("ida_mem"),
-      nb::arg("maxnit"));
+sundials4py::scoped_def(m, "IDASetMaxNumItersIC", IDASetMaxNumItersIC,
+                        nb::arg("ida_mem"), nb::arg("maxnit"));
 
-m.def("IDASetLineSearchOffIC", IDASetLineSearchOffIC, nb::arg("ida_mem"),
-      nb::arg("lsoff"));
+sundials4py::scoped_def(m, "IDASetLineSearchOffIC", IDASetLineSearchOffIC,
+                        nb::arg("ida_mem"), nb::arg("lsoff"));
 
-m.def("IDASetStepToleranceIC", IDASetStepToleranceIC, nb::arg("ida_mem"),
-      nb::arg("steptol"));
+sundials4py::scoped_def(m, "IDASetStepToleranceIC", IDASetStepToleranceIC,
+                        nb::arg("ida_mem"), nb::arg("steptol"));
 
-m.def("IDASetMaxBacksIC", IDASetMaxBacksIC, nb::arg("ida_mem"),
-      nb::arg("maxbacks"));
+sundials4py::scoped_def(m, "IDASetMaxBacksIC", IDASetMaxBacksIC,
+                        nb::arg("ida_mem"), nb::arg("maxbacks"));
 
-m.def("IDASetDeltaCjLSetup", IDASetDeltaCjLSetup, nb::arg("ida_max"),
-      nb::arg("dcj"));
+sundials4py::scoped_def(m, "IDASetDeltaCjLSetup", IDASetDeltaCjLSetup,
+                        nb::arg("ida_max"), nb::arg("dcj"));
 
-m.def("IDASetMaxOrd", IDASetMaxOrd, nb::arg("ida_mem"), nb::arg("maxord"));
+sundials4py::scoped_def(m, "IDASetMaxOrd", IDASetMaxOrd, nb::arg("ida_mem"),
+                        nb::arg("maxord"));
 
-m.def("IDASetMaxNumSteps", IDASetMaxNumSteps, nb::arg("ida_mem"),
-      nb::arg("mxsteps"));
+sundials4py::scoped_def(m, "IDASetMaxNumSteps", IDASetMaxNumSteps,
+                        nb::arg("ida_mem"), nb::arg("mxsteps"));
 
-m.def("IDASetInitStep", IDASetInitStep, nb::arg("ida_mem"), nb::arg("hin"));
+sundials4py::scoped_def(m, "IDASetInitStep", IDASetInitStep, nb::arg("ida_mem"),
+                        nb::arg("hin"));
 
-m.def("IDASetMaxStep", IDASetMaxStep, nb::arg("ida_mem"), nb::arg("hmax"));
+sundials4py::scoped_def(m, "IDASetMaxStep", IDASetMaxStep, nb::arg("ida_mem"),
+                        nb::arg("hmax"));
 
-m.def("IDASetMinStep", IDASetMinStep, nb::arg("ida_mem"), nb::arg("hmin"));
+sundials4py::scoped_def(m, "IDASetMinStep", IDASetMinStep, nb::arg("ida_mem"),
+                        nb::arg("hmin"));
 
-m.def("IDASetStopTime", IDASetStopTime, nb::arg("ida_mem"), nb::arg("tstop"));
+sundials4py::scoped_def(m, "IDASetStopTime", IDASetStopTime, nb::arg("ida_mem"),
+                        nb::arg("tstop"));
 
-m.def("IDAClearStopTime", IDAClearStopTime, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDAClearStopTime", IDAClearStopTime,
+                        nb::arg("ida_mem"));
 
-m.def("IDASetMaxErrTestFails", IDASetMaxErrTestFails, nb::arg("ida_mem"),
-      nb::arg("maxnef"));
+sundials4py::scoped_def(m, "IDASetMaxErrTestFails", IDASetMaxErrTestFails,
+                        nb::arg("ida_mem"), nb::arg("maxnef"));
 
-m.def("IDASetSuppressAlg", IDASetSuppressAlg, nb::arg("ida_mem"),
-      nb::arg("suppressalg"));
+sundials4py::scoped_def(m, "IDASetSuppressAlg", IDASetSuppressAlg,
+                        nb::arg("ida_mem"), nb::arg("suppressalg"));
 
-m.def("IDASetId", IDASetId, nb::arg("ida_mem"), nb::arg("id"));
+sundials4py::scoped_def(m, "IDASetId", IDASetId, nb::arg("ida_mem"),
+                        nb::arg("id"));
 
-m.def("IDASetConstraints", IDASetConstraints, nb::arg("ida_mem"),
-      nb::arg("constraints"));
+sundials4py::scoped_def(m, "IDASetConstraints", IDASetConstraints,
+                        nb::arg("ida_mem"), nb::arg("constraints"));
 
-m.def("IDASetMaxNumConstraintFails", IDASetMaxNumConstraintFails,
-      nb::arg("ida_mem"), nb::arg("max_fails"));
+sundials4py::scoped_def(m, "IDASetMaxNumConstraintFails",
+                        IDASetMaxNumConstraintFails, nb::arg("ida_mem"),
+                        nb::arg("max_fails"));
 
-m.def("IDASetEtaFixedStepBounds", IDASetEtaFixedStepBounds, nb::arg("ida_mem"),
-      nb::arg("eta_min_fx"), nb::arg("eta_max_fx"));
+sundials4py::scoped_def(m, "IDASetEtaFixedStepBounds", IDASetEtaFixedStepBounds,
+                        nb::arg("ida_mem"), nb::arg("eta_min_fx"),
+                        nb::arg("eta_max_fx"));
 
-m.def("IDASetEtaMin", IDASetEtaMin, nb::arg("ida_mem"), nb::arg("eta_min"));
+sundials4py::scoped_def(m, "IDASetEtaMin", IDASetEtaMin, nb::arg("ida_mem"),
+                        nb::arg("eta_min"));
 
-m.def("IDASetEtaMax", IDASetEtaMax, nb::arg("ida_mem"), nb::arg("eta_max"));
+sundials4py::scoped_def(m, "IDASetEtaMax", IDASetEtaMax, nb::arg("ida_mem"),
+                        nb::arg("eta_max"));
 
-m.def("IDASetEtaLow", IDASetEtaLow, nb::arg("ida_mem"), nb::arg("eta_low"));
+sundials4py::scoped_def(m, "IDASetEtaLow", IDASetEtaLow, nb::arg("ida_mem"),
+                        nb::arg("eta_low"));
 
-m.def("IDASetEtaMinErrFail", IDASetEtaMinErrFail, nb::arg("ida_mem"),
-      nb::arg("eta_min_ef"));
+sundials4py::scoped_def(m, "IDASetEtaMinErrFail", IDASetEtaMinErrFail,
+                        nb::arg("ida_mem"), nb::arg("eta_min_ef"));
 
-m.def("IDASetEtaConvFail", IDASetEtaConvFail, nb::arg("ida_mem"),
-      nb::arg("eta_cf"));
+sundials4py::scoped_def(m, "IDASetEtaConvFail", IDASetEtaConvFail,
+                        nb::arg("ida_mem"), nb::arg("eta_cf"));
 
-m.def("IDASetMaxConvFails", IDASetMaxConvFails, nb::arg("ida_mem"),
-      nb::arg("maxncf"));
+sundials4py::scoped_def(m, "IDASetMaxConvFails", IDASetMaxConvFails,
+                        nb::arg("ida_mem"), nb::arg("maxncf"));
 
-m.def("IDASetMaxNonlinIters", IDASetMaxNonlinIters, nb::arg("ida_mem"),
-      nb::arg("maxcor"));
+sundials4py::scoped_def(m, "IDASetMaxNonlinIters", IDASetMaxNonlinIters,
+                        nb::arg("ida_mem"), nb::arg("maxcor"));
 
-m.def("IDASetNonlinConvCoef", IDASetNonlinConvCoef, nb::arg("ida_mem"),
-      nb::arg("epcon"));
+sundials4py::scoped_def(m, "IDASetNonlinConvCoef", IDASetNonlinConvCoef,
+                        nb::arg("ida_mem"), nb::arg("epcon"));
 
-m.def("IDASetNonlinearSolver", IDASetNonlinearSolver, nb::arg("ida_mem"),
-      nb::arg("NLS"));
+sundials4py::scoped_def(m, "IDASetNonlinearSolver", IDASetNonlinearSolver,
+                        nb::arg("ida_mem"), nb::arg("NLS"));
 
-m.def(
-  "IDASetRootDirection",
+sundials4py::scoped_def(
+  m, "IDASetRootDirection",
   [](void* ida_mem, std::vector<int> rootdir_1d) -> int
   {
     auto IDASetRootDirection_adapt_arr_ptr_to_std_vector =
@@ -175,37 +188,17 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("rootdir_1d"));
 
-m.def("IDASetNoInactiveRootWarn", IDASetNoInactiveRootWarn, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDASetNoInactiveRootWarn", IDASetNoInactiveRootWarn,
+                        nb::arg("ida_mem"));
 
-m.def(
-  "IDASolve",
-  [](void* ida_mem, sunrealtype tout, N_Vector yret, N_Vector ypret,
-     int itask) -> std::tuple<int, sunrealtype>
-  {
-    auto IDASolve_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem, sunrealtype tout, N_Vector yret, N_Vector ypret,
-         int itask) -> std::tuple<int, sunrealtype>
-    {
-      sunrealtype tret_adapt_modifiable;
+sundials4py::scoped_def(m, "IDAComputeY", IDAComputeY, nb::arg("ida_mem"),
+                        nb::arg("ycor"), nb::arg("y"));
 
-      int r = IDASolve(ida_mem, tout, &tret_adapt_modifiable, yret, ypret, itask);
-      return std::make_tuple(r, tret_adapt_modifiable);
-    };
+sundials4py::scoped_def(m, "IDAComputeYp", IDAComputeYp, nb::arg("ida_mem"),
+                        nb::arg("ycor"), nb::arg("yp"));
 
-    return IDASolve_adapt_modifiable_immutable_to_return(ida_mem, tout, yret,
-                                                         ypret, itask);
-  },
-  nb::arg("ida_mem"), nb::arg("tout"), nb::arg("yret"), nb::arg("ypret"),
-  nb::arg("itask"), "Solver function");
-
-m.def("IDAComputeY", IDAComputeY, nb::arg("ida_mem"), nb::arg("ycor"),
-      nb::arg("y"));
-
-m.def("IDAComputeYp", IDAComputeYp, nb::arg("ida_mem"), nb::arg("ycor"),
-      nb::arg("yp"));
-
-m.def(
-  "IDAComputeYSens",
+sundials4py::scoped_def(
+  m, "IDAComputeYSens",
   [](void* ida_mem, std::vector<N_Vector> ycor_1d,
      std::vector<N_Vector> yyS_1d) -> int
   {
@@ -224,8 +217,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("ycor_1d"), nb::arg("yyS_1d"));
 
-m.def(
-  "IDAComputeYpSens",
+sundials4py::scoped_def(
+  m, "IDAComputeYpSens",
   [](void* ida_mem, std::vector<N_Vector> ycor_1d,
      std::vector<N_Vector> ypS_1d) -> int
   {
@@ -244,11 +237,11 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("ycor_1d"), nb::arg("ypS_1d"));
 
-m.def("IDAGetDky", IDAGetDky, nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"),
-      nb::arg("dky"));
+sundials4py::scoped_def(m, "IDAGetDky", IDAGetDky, nb::arg("ida_mem"),
+                        nb::arg("t"), nb::arg("k"), nb::arg("dky"));
 
-m.def(
-  "IDAGetNumSteps",
+sundials4py::scoped_def(
+  m, "IDAGetNumSteps",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumSteps_adapt_modifiable_immutable_to_return =
@@ -264,8 +257,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumResEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumResEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumResEvals_adapt_modifiable_immutable_to_return =
@@ -281,8 +274,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumLinSolvSetups",
+sundials4py::scoped_def(
+  m, "IDAGetNumLinSolvSetups",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumLinSolvSetups_adapt_modifiable_immutable_to_return =
@@ -298,8 +291,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumErrTestFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumErrTestFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -315,8 +308,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumBacktrackOps",
+sundials4py::scoped_def(
+  m, "IDAGetNumBacktrackOps",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumBacktrackOps_adapt_modifiable_immutable_to_return =
@@ -332,11 +325,12 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAGetConsistentIC", IDAGetConsistentIC, nb::arg("ida_mem"),
-      nb::arg("yy0_mod"), nb::arg("yp0_mod"));
+sundials4py::scoped_def(m, "IDAGetConsistentIC", IDAGetConsistentIC,
+                        nb::arg("ida_mem"), nb::arg("yy0_mod"),
+                        nb::arg("yp0_mod"));
 
-m.def(
-  "IDAGetLastOrder",
+sundials4py::scoped_def(
+  m, "IDAGetLastOrder",
   [](void* ida_mem) -> std::tuple<int, int>
   {
     auto IDAGetLastOrder_adapt_modifiable_immutable_to_return =
@@ -352,8 +346,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetCurrentOrder",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentOrder",
   [](void* ida_mem) -> std::tuple<int, int>
   {
     auto IDAGetCurrentOrder_adapt_modifiable_immutable_to_return =
@@ -369,8 +363,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetCurrentCj",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentCj",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetCurrentCj_adapt_modifiable_immutable_to_return =
@@ -386,8 +380,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetCurrentY",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentY",
   [](void* ida_mem) -> std::tuple<int, N_Vector>
   {
     auto IDAGetCurrentY_adapt_modifiable_immutable_to_return =
@@ -403,8 +397,8 @@ m.def(
   },
   nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "IDAGetCurrentYp",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentYp",
   [](void* ida_mem) -> std::tuple<int, N_Vector>
   {
     auto IDAGetCurrentYp_adapt_modifiable_immutable_to_return =
@@ -420,8 +414,8 @@ m.def(
   },
   nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "IDAGetActualInitStep",
+sundials4py::scoped_def(
+  m, "IDAGetActualInitStep",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetActualInitStep_adapt_modifiable_immutable_to_return =
@@ -437,8 +431,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetLastStep",
+sundials4py::scoped_def(
+  m, "IDAGetLastStep",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetLastStep_adapt_modifiable_immutable_to_return =
@@ -454,8 +448,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetCurrentStep",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentStep",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetCurrentStep_adapt_modifiable_immutable_to_return =
@@ -471,8 +465,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetCurrentTime",
+sundials4py::scoped_def(
+  m, "IDAGetCurrentTime",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetCurrentTime_adapt_modifiable_immutable_to_return =
@@ -488,8 +482,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetTolScaleFactor",
+sundials4py::scoped_def(
+  m, "IDAGetTolScaleFactor",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetTolScaleFactor_adapt_modifiable_immutable_to_return =
@@ -505,14 +499,14 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAGetErrWeights", IDAGetErrWeights, nb::arg("ida_mem"),
-      nb::arg("eweight"));
+sundials4py::scoped_def(m, "IDAGetErrWeights", IDAGetErrWeights,
+                        nb::arg("ida_mem"), nb::arg("eweight"));
 
-m.def("IDAGetEstLocalErrors", IDAGetEstLocalErrors, nb::arg("ida_mem"),
-      nb::arg("ele"));
+sundials4py::scoped_def(m, "IDAGetEstLocalErrors", IDAGetEstLocalErrors,
+                        nb::arg("ida_mem"), nb::arg("ele"));
 
-m.def(
-  "IDAGetNumConstraintFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumConstraintFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumConstraintFails_adapt_modifiable_immutable_to_return =
@@ -528,8 +522,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumConstraintCorrections",
+sundials4py::scoped_def(
+  m, "IDAGetNumConstraintCorrections",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumConstraintCorrections_adapt_modifiable_immutable_to_return =
@@ -548,8 +542,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumGEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumGEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumGEvals_adapt_modifiable_immutable_to_return =
@@ -565,8 +559,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetRootInfo",
+sundials4py::scoped_def(
+  m, "IDAGetRootInfo",
   [](void* ida_mem, sundials4py::IntArray1d rootsfound_1d) -> int
   {
     auto IDAGetRootInfo_adapt_arr_ptr_to_std_vector =
@@ -583,8 +577,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("rootsfound_1d"));
 
-m.def(
-  "IDAGetIntegratorStats",
+sundials4py::scoped_def(
+  m, "IDAGetIntegratorStats",
   [](void* ida_mem) -> std::tuple<int, long, long, long, long, int, int,
                                   sunrealtype, sunrealtype, sunrealtype, sunrealtype>
   {
@@ -624,8 +618,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "IDAGetNumNonlinSolvIters",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
@@ -641,8 +635,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumNonlinSolvConvFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumNonlinSolvConvFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return =
@@ -659,8 +653,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNonlinSolvStats",
+sundials4py::scoped_def(
+  m, "IDAGetNonlinSolvStats",
   [](void* ida_mem) -> std::tuple<int, long, long>
   {
     auto IDAGetNonlinSolvStats_adapt_modifiable_immutable_to_return =
@@ -679,8 +673,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumStepSolveFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumStepSolveFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumStepSolveFails_adapt_modifiable_immutable_to_return =
@@ -696,24 +690,28 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAPrintAllStats", IDAPrintAllStats, nb::arg("ida_mem"),
-      nb::arg("outfile"), nb::arg("fmt"));
+sundials4py::scoped_def(m, "IDAPrintAllStats", IDAPrintAllStats,
+                        nb::arg("ida_mem"), nb::arg("outfile"), nb::arg("fmt"));
 
-m.def("IDAGetReturnFlagName", IDAGetReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "IDAGetReturnFlagName", IDAGetReturnFlagName,
+                        nb::arg("flag"));
 
-m.def("IDAQuadReInit", IDAQuadReInit, nb::arg("ida_mem"), nb::arg("yQ0"));
+sundials4py::scoped_def(m, "IDAQuadReInit", IDAQuadReInit, nb::arg("ida_mem"),
+                        nb::arg("yQ0"));
 
-m.def("IDAQuadSStolerances", IDAQuadSStolerances, nb::arg("ida_mem"),
-      nb::arg("reltolQ"), nb::arg("abstolQ"));
+sundials4py::scoped_def(m, "IDAQuadSStolerances", IDAQuadSStolerances,
+                        nb::arg("ida_mem"), nb::arg("reltolQ"),
+                        nb::arg("abstolQ"));
 
-m.def("IDAQuadSVtolerances", IDAQuadSVtolerances, nb::arg("ida_mem"),
-      nb::arg("reltolQ"), nb::arg("abstolQ"));
+sundials4py::scoped_def(m, "IDAQuadSVtolerances", IDAQuadSVtolerances,
+                        nb::arg("ida_mem"), nb::arg("reltolQ"),
+                        nb::arg("abstolQ"));
 
-m.def("IDASetQuadErrCon", IDASetQuadErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQ"));
+sundials4py::scoped_def(m, "IDASetQuadErrCon", IDASetQuadErrCon,
+                        nb::arg("ida_mem"), nb::arg("errconQ"));
 
-m.def(
-  "IDAGetQuad",
+sundials4py::scoped_def(
+  m, "IDAGetQuad",
   [](void* ida_mem, N_Vector yQout) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetQuad_adapt_modifiable_immutable_to_return =
@@ -729,11 +727,11 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("yQout"));
 
-m.def("IDAGetQuadDky", IDAGetQuadDky, nb::arg("ida_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("dky"));
+sundials4py::scoped_def(m, "IDAGetQuadDky", IDAGetQuadDky, nb::arg("ida_mem"),
+                        nb::arg("t"), nb::arg("k"), nb::arg("dky"));
 
-m.def(
-  "IDAGetQuadNumRhsEvals",
+sundials4py::scoped_def(
+  m, "IDAGetQuadNumRhsEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetQuadNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -749,8 +747,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetQuadNumErrTestFails",
+sundials4py::scoped_def(
+  m, "IDAGetQuadNumErrTestFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetQuadNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -766,11 +764,11 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAGetQuadErrWeights", IDAGetQuadErrWeights, nb::arg("ida_mem"),
-      nb::arg("eQweight"));
+sundials4py::scoped_def(m, "IDAGetQuadErrWeights", IDAGetQuadErrWeights,
+                        nb::arg("ida_mem"), nb::arg("eQweight"));
 
-m.def(
-  "IDAGetQuadStats",
+sundials4py::scoped_def(
+  m, "IDAGetQuadStats",
   [](void* ida_mem) -> std::tuple<int, long, long>
   {
     auto IDAGetQuadStats_adapt_modifiable_immutable_to_return =
@@ -789,8 +787,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDASensReInit",
+sundials4py::scoped_def(
+  m, "IDASensReInit",
   [](void* ida_mem, int ism, std::vector<N_Vector> yS0_1d,
      std::vector<N_Vector> ypS0_1d) -> int
   {
@@ -810,8 +808,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("ism"), nb::arg("yS0_1d"), nb::arg("ypS0_1d"));
 
-m.def(
-  "IDASensSStolerances",
+sundials4py::scoped_def(
+  m, "IDASensSStolerances",
   [](void* ida_mem, sunrealtype reltolS, sundials4py::Array1d abstolS_1d) -> int
   {
     auto IDASensSStolerances_adapt_arr_ptr_to_std_vector =
@@ -829,8 +827,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("reltolS"), nb::arg("abstolS_1d"));
 
-m.def(
-  "IDASensSVtolerances",
+sundials4py::scoped_def(
+  m, "IDASensSVtolerances",
   [](void* ida_mem, sunrealtype reltolS, std::vector<N_Vector> abstolS_1d) -> int
   {
     auto IDASensSVtolerances_adapt_arr_ptr_to_std_vector =
@@ -848,10 +846,11 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("reltolS"), nb::arg("abstolS_1d"));
 
-m.def("IDASensEEtolerances", IDASensEEtolerances, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDASensEEtolerances", IDASensEEtolerances,
+                        nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensConsistentIC",
+sundials4py::scoped_def(
+  m, "IDAGetSensConsistentIC",
   [](void* ida_mem, std::vector<N_Vector> yyS0_1d,
      std::vector<N_Vector> ypS0_1d) -> int
   {
@@ -872,17 +871,18 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"));
 
-m.def("IDASetSensDQMethod", IDASetSensDQMethod, nb::arg("ida_mem"),
-      nb::arg("DQtype"), nb::arg("DQrhomax"));
+sundials4py::scoped_def(m, "IDASetSensDQMethod", IDASetSensDQMethod,
+                        nb::arg("ida_mem"), nb::arg("DQtype"),
+                        nb::arg("DQrhomax"));
 
-m.def("IDASetSensErrCon", IDASetSensErrCon, nb::arg("ida_mem"),
-      nb::arg("errconS"));
+sundials4py::scoped_def(m, "IDASetSensErrCon", IDASetSensErrCon,
+                        nb::arg("ida_mem"), nb::arg("errconS"));
 
-m.def("IDASetSensMaxNonlinIters", IDASetSensMaxNonlinIters, nb::arg("ida_mem"),
-      nb::arg("maxcorS"));
+sundials4py::scoped_def(m, "IDASetSensMaxNonlinIters", IDASetSensMaxNonlinIters,
+                        nb::arg("ida_mem"), nb::arg("maxcorS"));
 
-m.def(
-  "IDASetSensParams",
+sundials4py::scoped_def(
+  m, "IDASetSensParams",
   [](void* ida_mem, sundials4py::Array1d p_1d, sundials4py::Array1d pbar_1d,
      std::vector<int> plist_1d) -> int
   {
@@ -904,16 +904,19 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("p_1d"), nb::arg("pbar_1d"), nb::arg("plist_1d"));
 
-m.def("IDASetNonlinearSolverSensSim", IDASetNonlinearSolverSensSim,
-      nb::arg("ida_mem"), nb::arg("NLS"));
+sundials4py::scoped_def(m, "IDASetNonlinearSolverSensSim",
+                        IDASetNonlinearSolverSensSim, nb::arg("ida_mem"),
+                        nb::arg("NLS"));
 
-m.def("IDASetNonlinearSolverSensStg", IDASetNonlinearSolverSensStg,
-      nb::arg("ida_mem"), nb::arg("NLS"));
+sundials4py::scoped_def(m, "IDASetNonlinearSolverSensStg",
+                        IDASetNonlinearSolverSensStg, nb::arg("ida_mem"),
+                        nb::arg("NLS"));
 
-m.def("IDASensToggleOff", IDASensToggleOff, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDASensToggleOff", IDASensToggleOff,
+                        nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSens",
+sundials4py::scoped_def(
+  m, "IDAGetSens",
   [](void* ida_mem, std::vector<N_Vector> yySout_1d) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetSens_adapt_arr_ptr_to_std_vector =
@@ -941,8 +944,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("yySout_1d"));
 
-m.def(
-  "IDAGetSens1",
+sundials4py::scoped_def(
+  m, "IDAGetSens1",
   [](void* ida_mem, int is, N_Vector yySret) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetSens1_adapt_modifiable_immutable_to_return =
@@ -958,8 +961,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("is_"), nb::arg("yySret"));
 
-m.def(
-  "IDAGetSensDky",
+sundials4py::scoped_def(
+  m, "IDAGetSensDky",
   [](void* ida_mem, sunrealtype t, int k, std::vector<N_Vector> dkyS_1d) -> int
   {
     auto IDAGetSensDky_adapt_arr_ptr_to_std_vector =
@@ -975,11 +978,12 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"), nb::arg("dkyS_1d"));
 
-m.def("IDAGetSensDky1", IDAGetSensDky1, nb::arg("ida_mem"), nb::arg("t"),
-      nb::arg("k"), nb::arg("is_"), nb::arg("dkyS"));
+sundials4py::scoped_def(m, "IDAGetSensDky1", IDAGetSensDky1, nb::arg("ida_mem"),
+                        nb::arg("t"), nb::arg("k"), nb::arg("is_"),
+                        nb::arg("dkyS"));
 
-m.def(
-  "IDAGetSensNumResEvals",
+sundials4py::scoped_def(
+  m, "IDAGetSensNumResEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetSensNumResEvals_adapt_modifiable_immutable_to_return =
@@ -995,8 +999,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumResEvalsSens",
+sundials4py::scoped_def(
+  m, "IDAGetNumResEvalsSens",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumResEvalsSens_adapt_modifiable_immutable_to_return =
@@ -1012,8 +1016,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensNumErrTestFails",
+sundials4py::scoped_def(
+  m, "IDAGetSensNumErrTestFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetSensNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -1029,8 +1033,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensNumLinSolvSetups",
+sundials4py::scoped_def(
+  m, "IDAGetSensNumLinSolvSetups",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetSensNumLinSolvSetups_adapt_modifiable_immutable_to_return =
@@ -1047,8 +1051,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensErrWeights",
+sundials4py::scoped_def(
+  m, "IDAGetSensErrWeights",
   [](void* ida_mem, std::vector<N_Vector> eSweight_1d) -> int
   {
     auto IDAGetSensErrWeights_adapt_arr_ptr_to_std_vector =
@@ -1065,8 +1069,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("eSweight_1d"));
 
-m.def(
-  "IDAGetSensStats",
+sundials4py::scoped_def(
+  m, "IDAGetSensStats",
   [](void* ida_mem) -> std::tuple<int, long, long, long, long>
   {
     auto IDAGetSensStats_adapt_modifiable_immutable_to_return =
@@ -1091,8 +1095,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensNumNonlinSolvIters",
+sundials4py::scoped_def(
+  m, "IDAGetSensNumNonlinSolvIters",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetSensNumNonlinSolvIters_adapt_modifiable_immutable_to_return =
@@ -1109,8 +1113,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensNumNonlinSolvConvFails",
+sundials4py::scoped_def(
+  m, "IDAGetSensNumNonlinSolvConvFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetSensNumNonlinSolvConvFails_adapt_modifiable_immutable_to_return =
@@ -1128,8 +1132,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetSensNonlinSolvStats",
+sundials4py::scoped_def(
+  m, "IDAGetSensNonlinSolvStats",
   [](void* ida_mem) -> std::tuple<int, long, long>
   {
     auto IDAGetSensNonlinSolvStats_adapt_modifiable_immutable_to_return =
@@ -1148,8 +1152,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumStepSensSolveFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumStepSensSolveFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumStepSensSolveFails_adapt_modifiable_immutable_to_return =
@@ -1166,8 +1170,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAQuadSensReInit",
+sundials4py::scoped_def(
+  m, "IDAQuadSensReInit",
   [](void* ida_mem, std::vector<N_Vector> yQS0_1d) -> int
   {
     auto IDAQuadSensReInit_adapt_arr_ptr_to_std_vector =
@@ -1183,8 +1187,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("yQS0_1d"));
 
-m.def(
-  "IDAQuadSensSStolerances",
+sundials4py::scoped_def(
+  m, "IDAQuadSensSStolerances",
   [](void* ida_mem, sunrealtype reltolQS, sundials4py::Array1d abstolQS_1d) -> int
   {
     auto IDAQuadSensSStolerances_adapt_arr_ptr_to_std_vector =
@@ -1204,8 +1208,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("reltolQS"), nb::arg("abstolQS_1d"));
 
-m.def(
-  "IDAQuadSensSVtolerances",
+sundials4py::scoped_def(
+  m, "IDAQuadSensSVtolerances",
   [](void* ida_mem, sunrealtype reltolQS, std::vector<N_Vector> abstolQS_1d) -> int
   {
     auto IDAQuadSensSVtolerances_adapt_arr_ptr_to_std_vector =
@@ -1225,13 +1229,14 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("reltolQS"), nb::arg("abstolQS_1d"));
 
-m.def("IDAQuadSensEEtolerances", IDAQuadSensEEtolerances, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDAQuadSensEEtolerances", IDAQuadSensEEtolerances,
+                        nb::arg("ida_mem"));
 
-m.def("IDASetQuadSensErrCon", IDASetQuadSensErrCon, nb::arg("ida_mem"),
-      nb::arg("errconQS"));
+sundials4py::scoped_def(m, "IDASetQuadSensErrCon", IDASetQuadSensErrCon,
+                        nb::arg("ida_mem"), nb::arg("errconQS"));
 
-m.def(
-  "IDAGetQuadSens",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSens",
   [](void* ida_mem,
      std::vector<N_Vector> yyQSout_1d) -> std::tuple<int, sunrealtype>
   {
@@ -1261,8 +1266,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("yyQSout_1d"));
 
-m.def(
-  "IDAGetQuadSens1",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSens1",
   [](void* ida_mem, int is, N_Vector yyQSret) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetQuadSens1_adapt_modifiable_immutable_to_return =
@@ -1279,8 +1284,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("is_"), nb::arg("yyQSret"));
 
-m.def(
-  "IDAGetQuadSensDky",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSensDky",
   [](void* ida_mem, sunrealtype t, int k, std::vector<N_Vector> dkyQS_1d) -> int
   {
     auto IDAGetQuadSensDky_adapt_arr_ptr_to_std_vector =
@@ -1296,11 +1301,12 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"), nb::arg("dkyQS_1d"));
 
-m.def("IDAGetQuadSensDky1", IDAGetQuadSensDky1, nb::arg("ida_mem"),
-      nb::arg("t"), nb::arg("k"), nb::arg("is_"), nb::arg("dkyQS"));
+sundials4py::scoped_def(m, "IDAGetQuadSensDky1", IDAGetQuadSensDky1,
+                        nb::arg("ida_mem"), nb::arg("t"), nb::arg("k"),
+                        nb::arg("is_"), nb::arg("dkyQS"));
 
-m.def(
-  "IDAGetQuadSensNumRhsEvals",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSensNumRhsEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetQuadSensNumRhsEvals_adapt_modifiable_immutable_to_return =
@@ -1316,8 +1322,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetQuadSensNumErrTestFails",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSensNumErrTestFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetQuadSensNumErrTestFails_adapt_modifiable_immutable_to_return =
@@ -1335,8 +1341,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetQuadSensErrWeights",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSensErrWeights",
   [](void* ida_mem, std::vector<N_Vector> eQSweight_1d) -> int
   {
     auto IDAGetQuadSensErrWeights_adapt_arr_ptr_to_std_vector =
@@ -1354,8 +1360,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("eQSweight_1d"));
 
-m.def(
-  "IDAGetQuadSensStats",
+sundials4py::scoped_def(
+  m, "IDAGetQuadSensStats",
   [](void* ida_mem) -> std::tuple<int, long, long>
   {
     auto IDAGetQuadSensStats_adapt_modifiable_immutable_to_return =
@@ -1374,13 +1380,13 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAAdjInit", IDAAdjInit, nb::arg("ida_mem"), nb::arg("steps"),
-      nb::arg("interp"));
+sundials4py::scoped_def(m, "IDAAdjInit", IDAAdjInit, nb::arg("ida_mem"),
+                        nb::arg("steps"), nb::arg("interp"));
 
-m.def("IDAAdjReInit", IDAAdjReInit, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDAAdjReInit", IDAAdjReInit, nb::arg("ida_mem"));
 
-m.def(
-  "IDACreateB",
+sundials4py::scoped_def(
+  m, "IDACreateB",
   [](void* ida_mem) -> std::tuple<int, int>
   {
     auto IDACreateB_adapt_modifiable_immutable_to_return =
@@ -1396,29 +1402,35 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAReInitB", IDAReInitB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("tB0"), nb::arg("yyB0"), nb::arg("ypB0"));
+sundials4py::scoped_def(m, "IDAReInitB", IDAReInitB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("tB0"), nb::arg("yyB0"),
+                        nb::arg("ypB0"));
 
-m.def("IDASStolerancesB", IDASStolerancesB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("relTolB"), nb::arg("absTolB"));
+sundials4py::scoped_def(m, "IDASStolerancesB", IDASStolerancesB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("relTolB"), nb::arg("absTolB"));
 
-m.def("IDASVtolerancesB", IDASVtolerancesB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("relTolB"), nb::arg("absTolB"));
+sundials4py::scoped_def(m, "IDASVtolerancesB", IDASVtolerancesB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("relTolB"), nb::arg("absTolB"));
 
-m.def("IDAQuadReInitB", IDAQuadReInitB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("yQB0"));
+sundials4py::scoped_def(m, "IDAQuadReInitB", IDAQuadReInitB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("yQB0"));
 
-m.def("IDAQuadSStolerancesB", IDAQuadSStolerancesB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("reltolQB"), nb::arg("abstolQB"));
+sundials4py::scoped_def(m, "IDAQuadSStolerancesB", IDAQuadSStolerancesB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("reltolQB"), nb::arg("abstolQB"));
 
-m.def("IDAQuadSVtolerancesB", IDAQuadSVtolerancesB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("reltolQB"), nb::arg("abstolQB"));
+sundials4py::scoped_def(m, "IDAQuadSVtolerancesB", IDAQuadSVtolerancesB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("reltolQB"), nb::arg("abstolQB"));
 
-m.def("IDACalcICB", IDACalcICB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("tout1"), nb::arg("yy0"), nb::arg("yp0"));
+sundials4py::scoped_def(m, "IDACalcICB", IDACalcICB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("tout1"), nb::arg("yy0"),
+                        nb::arg("yp0"));
 
-m.def(
-  "IDACalcICBS",
+sundials4py::scoped_def(
+  m, "IDACalcICBS",
   [](void* ida_mem, int which, sunrealtype tout1, N_Vector yy0, N_Vector yp0,
      std::vector<N_Vector> yyS0_1d, std::vector<N_Vector> ypS0_1d) -> int
   {
@@ -1440,64 +1452,42 @@ m.def(
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("tout1"), nb::arg("yy0"),
   nb::arg("yp0"), nb::arg("yyS0_1d"), nb::arg("ypS0_1d"));
 
-m.def(
-  "IDASolveF",
-  [](void* ida_mem, sunrealtype tout, N_Vector yret, N_Vector ypret,
-     int itask) -> std::tuple<int, sunrealtype, int>
-  {
-    auto IDASolveF_adapt_modifiable_immutable_to_return =
-      [](void* ida_mem, sunrealtype tout, N_Vector yret, N_Vector ypret,
-         int itask) -> std::tuple<int, sunrealtype, int>
-    {
-      sunrealtype tret_adapt_modifiable;
-      int ncheckPtr_adapt_modifiable;
+sundials4py::scoped_def(m, "IDAAdjSetNoSensi", IDAAdjSetNoSensi,
+                        nb::arg("ida_mem"));
 
-      int r = IDASolveF(ida_mem, tout, &tret_adapt_modifiable, yret, ypret,
-                        itask, &ncheckPtr_adapt_modifiable);
-      return std::make_tuple(r, tret_adapt_modifiable,
-                             ncheckPtr_adapt_modifiable);
-    };
+sundials4py::scoped_def(m, "IDASetMaxOrdB", IDASetMaxOrdB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("maxordB"));
 
-    return IDASolveF_adapt_modifiable_immutable_to_return(ida_mem, tout, yret,
-                                                          ypret, itask);
-  },
-  nb::arg("ida_mem"), nb::arg("tout"), nb::arg("yret"), nb::arg("ypret"),
-  nb::arg("itask"));
+sundials4py::scoped_def(m, "IDASetMaxNumStepsB", IDASetMaxNumStepsB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("mxstepsB"));
 
-m.def("IDASolveB", IDASolveB, nb::arg("ida_mem"), nb::arg("tBout"),
-      nb::arg("itaskB"));
+sundials4py::scoped_def(m, "IDASetInitStepB", IDASetInitStepB,
+                        nb::arg("ida_mem"), nb::arg("which"), nb::arg("hinB"));
 
-m.def("IDAAdjSetNoSensi", IDAAdjSetNoSensi, nb::arg("ida_mem"));
+sundials4py::scoped_def(m, "IDASetMaxStepB", IDASetMaxStepB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("hmaxB"));
 
-m.def("IDASetMaxOrdB", IDASetMaxOrdB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("maxordB"));
+sundials4py::scoped_def(m, "IDASetSuppressAlgB", IDASetSuppressAlgB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("suppressalgB"));
 
-m.def("IDASetMaxNumStepsB", IDASetMaxNumStepsB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("mxstepsB"));
+sundials4py::scoped_def(m, "IDASetIdB", IDASetIdB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("idB"));
 
-m.def("IDASetInitStepB", IDASetInitStepB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("hinB"));
+sundials4py::scoped_def(m, "IDASetConstraintsB", IDASetConstraintsB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("constraintsB"));
 
-m.def("IDASetMaxStepB", IDASetMaxStepB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("hmaxB"));
+sundials4py::scoped_def(m, "IDASetQuadErrConB", IDASetQuadErrConB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("errconQB"));
 
-m.def("IDASetSuppressAlgB", IDASetSuppressAlgB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("suppressalgB"));
+sundials4py::scoped_def(m, "IDASetNonlinearSolverB", IDASetNonlinearSolverB,
+                        nb::arg("ida_mem"), nb::arg("which"), nb::arg("NLS"));
 
-m.def("IDASetIdB", IDASetIdB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("idB"));
-
-m.def("IDASetConstraintsB", IDASetConstraintsB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("constraintsB"));
-
-m.def("IDASetQuadErrConB", IDASetQuadErrConB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("errconQB"));
-
-m.def("IDASetNonlinearSolverB", IDASetNonlinearSolverB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("NLS"));
-
-m.def(
-  "IDAGetB",
+sundials4py::scoped_def(
+  m, "IDAGetB",
   [](void* ida_mem, int which, N_Vector yy,
      N_Vector yp) -> std::tuple<int, sunrealtype>
   {
@@ -1515,8 +1505,8 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("yy"), nb::arg("yp"));
 
-m.def(
-  "IDAGetQuadB",
+sundials4py::scoped_def(
+  m, "IDAGetQuadB",
   [](void* ida_mem, int which, N_Vector qB) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetQuadB_adapt_modifiable_immutable_to_return =
@@ -1532,16 +1522,18 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("qB"));
 
-m.def("IDAGetAdjIDABmem", IDAGetAdjIDABmem, nb::arg("ida_mem"), nb::arg("which"));
+sundials4py::scoped_def(m, "IDAGetAdjIDABmem", IDAGetAdjIDABmem,
+                        nb::arg("ida_mem"), nb::arg("which"));
 
-m.def("IDAGetConsistentICB", IDAGetConsistentICB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("yyB0"), nb::arg("ypB0"));
+sundials4py::scoped_def(m, "IDAGetConsistentICB", IDAGetConsistentICB,
+                        nb::arg("ida_mem"), nb::arg("which"), nb::arg("yyB0"),
+                        nb::arg("ypB0"));
 
-m.def("IDAGetAdjY", IDAGetAdjY, nb::arg("ida_mem"), nb::arg("t"), nb::arg("yy"),
-      nb::arg("yp"));
+sundials4py::scoped_def(m, "IDAGetAdjY", IDAGetAdjY, nb::arg("ida_mem"),
+                        nb::arg("t"), nb::arg("yy"), nb::arg("yp"));
 
-m.def(
-  "IDAGetAdjDataPointHermite",
+sundials4py::scoped_def(
+  m, "IDAGetAdjDataPointHermite",
   [](void* ida_mem, int which, std::optional<N_Vector> yy = std::nullopt,
      std::optional<N_Vector> yd = std::nullopt) -> std::tuple<int, sunrealtype>
   {
@@ -1586,8 +1578,8 @@ m.def(
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("yy").none() = nb::none(),
   nb::arg("yd").none() = nb::none());
 
-m.def(
-  "IDAGetAdjDataPointPolynomial",
+sundials4py::scoped_def(
+  m, "IDAGetAdjDataPointPolynomial",
   [](void* ida_mem, int which,
      std::optional<N_Vector> y = std::nullopt) -> std::tuple<int, sunrealtype, int>
   {
@@ -1648,8 +1640,8 @@ m.attr("IDALS_SUNLS_FAIL")      = -9;
 m.attr("IDALS_NO_ADJ")          = -101;
 m.attr("IDALS_LMEMB_NULL")      = -102;
 
-m.def(
-  "IDASetLinearSolver",
+sundials4py::scoped_def(
+  m, "IDASetLinearSolver",
   [](void* ida_mem, SUNLinearSolver LS,
      std::optional<SUNMatrix> A = std::nullopt) -> int
   {
@@ -1669,19 +1661,21 @@ m.def(
   },
   nb::arg("ida_mem"), nb::arg("LS"), nb::arg("A").none() = nb::none());
 
-m.def("IDASetEpsLin", IDASetEpsLin, nb::arg("ida_mem"), nb::arg("eplifac"));
+sundials4py::scoped_def(m, "IDASetEpsLin", IDASetEpsLin, nb::arg("ida_mem"),
+                        nb::arg("eplifac"));
 
-m.def("IDASetLSNormFactor", IDASetLSNormFactor, nb::arg("ida_mem"),
-      nb::arg("nrmfac"));
+sundials4py::scoped_def(m, "IDASetLSNormFactor", IDASetLSNormFactor,
+                        nb::arg("ida_mem"), nb::arg("nrmfac"));
 
-m.def("IDASetLinearSolutionScaling", IDASetLinearSolutionScaling,
-      nb::arg("ida_mem"), nb::arg("onoff"));
+sundials4py::scoped_def(m, "IDASetLinearSolutionScaling",
+                        IDASetLinearSolutionScaling, nb::arg("ida_mem"),
+                        nb::arg("onoff"));
 
-m.def("IDASetIncrementFactor", IDASetIncrementFactor, nb::arg("ida_mem"),
-      nb::arg("dqincfac"));
+sundials4py::scoped_def(m, "IDASetIncrementFactor", IDASetIncrementFactor,
+                        nb::arg("ida_mem"), nb::arg("dqincfac"));
 
-m.def(
-  "IDAGetJac",
+sundials4py::scoped_def(
+  m, "IDAGetJac",
   [](void* ida_mem) -> std::tuple<int, SUNMatrix>
   {
     auto IDAGetJac_adapt_modifiable_immutable_to_return =
@@ -1697,8 +1691,8 @@ m.def(
   },
   nb::arg("ida_mem"), "nb::rv_policy::reference", nb::rv_policy::reference);
 
-m.def(
-  "IDAGetJacCj",
+sundials4py::scoped_def(
+  m, "IDAGetJacCj",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetJacCj_adapt_modifiable_immutable_to_return =
@@ -1714,8 +1708,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetJacTime",
+sundials4py::scoped_def(
+  m, "IDAGetJacTime",
   [](void* ida_mem) -> std::tuple<int, sunrealtype>
   {
     auto IDAGetJacTime_adapt_modifiable_immutable_to_return =
@@ -1731,8 +1725,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetJacNumSteps",
+sundials4py::scoped_def(
+  m, "IDAGetJacNumSteps",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetJacNumSteps_adapt_modifiable_immutable_to_return =
@@ -1748,8 +1742,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumJacEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumJacEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumJacEvals_adapt_modifiable_immutable_to_return =
@@ -1765,8 +1759,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumPrecEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumPrecEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumPrecEvals_adapt_modifiable_immutable_to_return =
@@ -1782,8 +1776,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumPrecSolves",
+sundials4py::scoped_def(
+  m, "IDAGetNumPrecSolves",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumPrecSolves_adapt_modifiable_immutable_to_return =
@@ -1799,8 +1793,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumLinIters",
+sundials4py::scoped_def(
+  m, "IDAGetNumLinIters",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumLinIters_adapt_modifiable_immutable_to_return =
@@ -1816,8 +1810,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumLinConvFails",
+sundials4py::scoped_def(
+  m, "IDAGetNumLinConvFails",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumLinConvFails_adapt_modifiable_immutable_to_return =
@@ -1833,8 +1827,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumJTSetupEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumJTSetupEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumJTSetupEvals_adapt_modifiable_immutable_to_return =
@@ -1850,8 +1844,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumJtimesEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumJtimesEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumJtimesEvals_adapt_modifiable_immutable_to_return =
@@ -1867,8 +1861,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetNumLinResEvals",
+sundials4py::scoped_def(
+  m, "IDAGetNumLinResEvals",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetNumLinResEvals_adapt_modifiable_immutable_to_return =
@@ -1884,8 +1878,8 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def(
-  "IDAGetLastLinFlag",
+sundials4py::scoped_def(
+  m, "IDAGetLastLinFlag",
   [](void* ida_mem) -> std::tuple<int, long>
   {
     auto IDAGetLastLinFlag_adapt_modifiable_immutable_to_return =
@@ -1901,10 +1895,11 @@ m.def(
   },
   nb::arg("ida_mem"));
 
-m.def("IDAGetLinReturnFlagName", IDAGetLinReturnFlagName, nb::arg("flag"));
+sundials4py::scoped_def(m, "IDAGetLinReturnFlagName", IDAGetLinReturnFlagName,
+                        nb::arg("flag"));
 
-m.def(
-  "IDASetLinearSolverB",
+sundials4py::scoped_def(
+  m, "IDASetLinearSolverB",
   [](void* ida_mem, int which, SUNLinearSolver LS,
      std::optional<SUNMatrix> A = std::nullopt) -> int
   {
@@ -1926,17 +1921,19 @@ m.def(
   nb::arg("ida_mem"), nb::arg("which"), nb::arg("LS"),
   nb::arg("A").none() = nb::none());
 
-m.def("IDASetEpsLinB", IDASetEpsLinB, nb::arg("ida_mem"), nb::arg("which"),
-      nb::arg("eplifacB"));
+sundials4py::scoped_def(m, "IDASetEpsLinB", IDASetEpsLinB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("eplifacB"));
 
-m.def("IDASetLSNormFactorB", IDASetLSNormFactorB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("nrmfacB"));
+sundials4py::scoped_def(m, "IDASetLSNormFactorB", IDASetLSNormFactorB,
+                        nb::arg("ida_mem"), nb::arg("which"), nb::arg("nrmfacB"));
 
-m.def("IDASetLinearSolutionScalingB", IDASetLinearSolutionScalingB,
-      nb::arg("ida_mem"), nb::arg("which"), nb::arg("onoffB"));
+sundials4py::scoped_def(m, "IDASetLinearSolutionScalingB",
+                        IDASetLinearSolutionScalingB, nb::arg("ida_mem"),
+                        nb::arg("which"), nb::arg("onoffB"));
 
-m.def("IDASetIncrementFactorB", IDASetIncrementFactorB, nb::arg("ida_mem"),
-      nb::arg("which"), nb::arg("dqincfacB"));
+sundials4py::scoped_def(m, "IDASetIncrementFactorB", IDASetIncrementFactorB,
+                        nb::arg("ida_mem"), nb::arg("which"),
+                        nb::arg("dqincfacB"));
 // #ifdef __cplusplus
 //
 // #endif

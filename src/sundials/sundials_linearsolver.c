@@ -319,6 +319,11 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
 {
   if (S == NULL) { return SUN_SUCCESS; }
 
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNLinearSolverFunctionTable_Destroy(S->python);
+#endif
+  S->python = NULL;
+
   /* if the free operation exists use it */
   if (S->ops)
   {
@@ -332,11 +337,6 @@ SUNErrCode SUNLinSolFree(SUNLinearSolver S)
 
   free(S->ops);
   S->ops = NULL;
-
-#if defined(SUNDIALS_ENABLE_PYTHON)
-  SUNLinearSolverFunctionTable_Destroy(S->python);
-#endif
-  S->python = NULL;
 
   free(S);
   S = NULL;

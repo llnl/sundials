@@ -395,6 +395,10 @@ SUNErrCode SUNDomEigEstimator_Destroy(SUNDomEigEstimator* DEEptr)
   SUNErrCode ier = SUN_SUCCESS;
   if (DEEptr == NULL) { return ier; }
   if (*DEEptr == NULL) { return ier; }
+#if defined(SUNDIALS_ENABLE_PYTHON)
+  SUNDomEigEstimatorFunctionTable_Destroy((*DEEptr)->python);
+#endif
+  (*DEEptr)->python = NULL;
   if ((*DEEptr)->ops->destroy) { ier = (*DEEptr)->ops->destroy(DEEptr); }
   else
   {
