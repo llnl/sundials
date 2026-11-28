@@ -53,6 +53,11 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
   if(SUNDIALS_INDEX_SIZE MATCHES "64")
     # Check size of SuiteSparse_long
     include(CheckTypeSize)
+    # check_type_size skips the check when a cached result exists. Clear it so a
+    # corrected KLU_INCLUDE_DIR or newly installed KLU is picked up on the next
+    # configure instead of reusing a cached failure.
+    unset(HAVE_SIZEOF_SUITESPARSE_LONG CACHE)
+    unset(SIZEOF_SUITESPARSE_LONG CACHE)
     set(save_CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES})
     list(APPEND CMAKE_EXTRA_INCLUDE_FILES "klu.h")
     set(save_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
@@ -60,6 +65,18 @@ if(SUNDIALS_ENABLE_KLU_CHECKS)
     check_type_size("SuiteSparse_long" SIZEOF_SUITESPARSE_LONG)
     set(CMAKE_EXTRA_INCLUDE_FILES ${save_CMAKE_EXTRA_INCLUDE_FILES})
     set(CMAKE_REQUIRED_INCLUDES ${save_CMAKE_REQUIRED_INCLUDES})
+    if(NOT HAVE_SIZEOF_SUITESPARSE_LONG)
+      # The test program did not compile, so the size is unknown rather than
+      # mismatched. This usually means klu.h (or a header it includes) could not
+      # be found in KLU_INCLUDE_DIR.
+      message(CHECK_FAIL "failed")
+      message(
+        FATAL_ERROR
+          "Could not compile a test program that includes klu.h using "
+          "KLU_INCLUDE_DIR='${KLU_INCLUDE_DIR}'. Check that the KLU headers "
+          "are installed there. The compiler output is in the CMake configure "
+          "log in ${CMAKE_BINARY_DIR}/CMakeFiles.")
+    endif()
     message(STATUS "Size of SuiteSparse_long is ${SIZEOF_SUITESPARSE_LONG}")
     if(NOT SIZEOF_SUITESPARSE_LONG EQUAL "8")
       message(CHECK_FAIL "failed")

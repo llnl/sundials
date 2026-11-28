@@ -79,9 +79,18 @@ elseif(APPLE)
 endif()
 
 # Find include dir
-find_path(temp_KLU_INCLUDE_DIR klu.h ${KLU_INCLUDE_DIR})
+if(KLU_INCLUDE_DIR)
+  find_path(temp_KLU_INCLUDE_DIR klu.h "${KLU_INCLUDE_DIR}" NO_DEFAULT_PATH)
+else()
+  find_path(temp_KLU_INCLUDE_DIR klu.h)
+endif()
 if(temp_KLU_INCLUDE_DIR)
   set(KLU_INCLUDE_DIR ${temp_KLU_INCLUDE_DIR})
+elseif(KLU_INCLUDE_DIR)
+  # The user provided an include directory that does not contain klu.h. Mark it
+  # as not found so the failure is reported here rather than by a later check.
+  message(WARNING "klu.h was not found in KLU_INCLUDE_DIR (${KLU_INCLUDE_DIR})")
+  set(KLU_INCLUDE_DIR "KLU_INCLUDE_DIR-NOTFOUND")
 endif()
 unset(temp_KLU_INCLUDE_DIR CACHE)
 
@@ -131,6 +140,21 @@ if(NOT SUITESPARSECONFIG_LIBRARY)
   mark_as_advanced(SUITESPARSECONFIG_LIBRARY)
 endif()
 
+# Libraries provided by the user bypass find_library, so make sure any absolute
+# paths actually exist. Otherwise KLU is reported as found and the problem only
+# surfaces later as a confusing compile or link failure.
+foreach(_klu_lib_var KLU_LIBRARY AMD_LIBRARY COLAMD_LIBRARY BTF_LIBRARY
+                     SUITESPARSECONFIG_LIBRARY)
+  foreach(_klu_lib ${${_klu_lib_var}})
+    if(IS_ABSOLUTE "${_klu_lib}" AND NOT EXISTS "${_klu_lib}")
+      message(
+        WARNING "${_klu_lib_var} is set to '${_klu_lib}', which does not exist")
+      set(${_klu_lib_var} "${_klu_lib_var}-NOTFOUND")
+      break()
+    endif()
+  endforeach()
+endforeach()
+
 set(KLU_LIBRARIES ${KLU_LIBRARY} ${AMD_LIBRARY} ${COLAMD_LIBRARY}
                   ${BTF_LIBRARY} ${SUITESPARSECONFIG_LIBRARY})
 
@@ -156,8 +180,16 @@ else()
 endif()
 
 # set package variables including KLU_FOUND
-find_package_handle_standard_args(KLU REQUIRED_VARS KLU_LIBRARY KLU_LIBRARIES
-                                                    KLU_INCLUDE_DIR)
+find_package_handle_standard_args(
+  KLU
+  REQUIRED_VARS
+    KLU_LIBRARY
+    KLU_LIBRARIES
+    AMD_LIBRARY
+    COLAMD_LIBRARY
+    BTF_LIBRARY
+    SUITESPARSECONFIG_LIBRARY
+    KLU_INCLUDE_DIR)
 
 # Create target for KLU
 if(KLU_FOUND)
