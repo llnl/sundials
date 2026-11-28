@@ -35,6 +35,10 @@ Jacobians (CSC format only) for all SUNDIALS packages.
 
 **Bug Fixes**
 
+The Newton nonlinear solver now reports missing required callbacks during
+initialization in all build configurations, preventing NULL callback crashes
+across SUNDIALS packages.
+
 Fixed IDAS staggered forward sensitivity analysis retrying a failed
 converged-state residual evaluation without restoring the attempted step.
 Recoverable failures now reduce the step size and count toward the existing
