@@ -32,8 +32,21 @@ previous values, [ 4247.0/9840.0, 21343.0/108240.0, 49.0/132.0 ].
 
 **Bug Fixes**
 
+The Newton nonlinear solver now reports missing required callbacks during
+initialization in all build configurations, preventing NULL callback crashes
+across SUNDIALS packages.
+
+Fixed IDAS staggered forward sensitivity analysis retrying a failed
+converged-state residual evaluation without restoring the attempted step.
+Recoverable failures now reduce the step size and count toward the existing
+convergence-failure limit.
+
 Fixed a bug in the band SUNMatrix ``SUNMatScaleAdd`` operation where entries
 outside the band of the second matrix were not scaled.
+
+Fixed the KINSOL dense difference-quotient Jacobian leaving a temporary
+perturbation in the solution vector when the system function fails. The
+linear-solver setup failure behavior is unchanged.
 
 Fixed a segfault that could occur when handling errors without a ``SUNContext``
 provided.
@@ -50,6 +63,11 @@ of reporting KLU as found, the 64-bit index check no longer reports a failure to
 compile against ``klu.h`` as a ``SuiteSparse_long`` size mismatch, and a failed
 check is no longer cached across reconfigures. See GitHub issue `#1016
 <https://github.com/LLNL/sundials/issues/1016>`__.
+
+Fixed a bug in LSRKStep where calls
+:c:func:`LSRKStepSetNumDomEigEstPreprocessIters` after the first dominant
+eigenvalue estimate incorrectly set the number of preprocessing iterations to
+the *initial* instead of the requested value.
 
 Fixed a bug in :c:func:`LSRKStepSetDomEigFrequency` where a negative ``nsteps``
 value was stored as the update frequency instead of restoring the default value.
