@@ -85,12 +85,11 @@ to CVODES will expand as new ``SUNLinearSolver`` modules are developed.
 Additionally, CVODES includes the *diagonal* linear solver interface, CVDIAG,
 that creates an internally generated diagonal approximation to the Jacobian.
 
-For users employing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>` or
-:ref:`SUNMATRIX_BAND <SUNMatrix.Band>` Jacobian matrices, CVODES includes
+For users employing :ref:`SUNMATRIX_DENSE <SUNMatrix.Dense>`,
+:ref:`SUNMATRIX_BAND <SUNMatrix.Band>`, or :ref:`SUNMATRIX_SPARSE <SUNMatrix.Sparse>` Jacobian matrices in ``SUN_CSC_MAT`` format, CVODES includes
 algorithms for their approximation through difference quotients, although the
 user also has the option of supplying a routine to compute the Jacobian (or an
-approximation to it) directly. This user-supplied routine is required when using
-sparse or user-supplied Jacobian matrices.
+approximation to it) directly.  For :ref:`SUNMATRIX_SPARSE <SUNMatrix.Sparse>` Jacobian matrices in ``SUN_CSR_MAT`` format, the user must supply the Jacobian routine.
 
 For users employing matrix-free iterative linear solvers, CVODES includes an
 algorithm for the approximation by difference quotients of the product

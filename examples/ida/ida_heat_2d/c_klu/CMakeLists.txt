@@ -18,3 +18,9 @@ sundials_add_example(
   EXAMPLE_TYPE develop
   LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
                  sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
+sundials_add_example(
+  ida_heat_2d_sparse_dq_klu
+  SOURCES ida_heat_2d_sparse_dq_klu.c
+  EXAMPLE_TYPE develop
+  LINK_LIBRARIES PRIVATE ${IDA_C_LIBS} sundials_nvecserial
+                 sundials_sunlinsolklu ${EXE_EXTRA_LINK_LIBS})
